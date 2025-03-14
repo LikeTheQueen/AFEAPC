@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  --darkest-teal: #002626;
+  --dark-teal: #0E4749;
+  --bright-pink: #F61067;
+  --light-grey: #9AA0A8;
+  --gright-green: #95C623;
+
+
+}

@@ -1,0 +1,12 @@
+@reference "tailwindcss";
+/*Import Fonts*/
+/*Import the Fonts*/
+@font-face {
+    font-family: 'Montserrat';
+    src: local('Montserrat'), url(./fonts/Montserrat-Regular.woff) format('woff');
+  }
+/*Apply a custom style for the small caps Varient*/
+.custom-style {
+    font-variant: small-caps;   
+    font-family: 'Montserrat';
+}
