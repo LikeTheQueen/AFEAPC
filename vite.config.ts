@@ -5,5 +5,14 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://executedemo.quorumsoftware.com/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  plugins: [tailwindcss(), reactRouter(), tsconfigPaths(),],
 });

@@ -9,10 +9,10 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 
 const tabs = [
   
-  { name: 'Partner Library', href: "/configurations/partnerlibrary", current: true },
-  { name: 'GL Library', href: "/configurations/gllibrary", current: false },
-  { name: 'Data Export', href: "/configurations/dataexport", current: false },
-  { name: 'System Connections', href: "/configurations/systemConfigurations", current: false },
+  { id:1, name: 'Partner Library', href: "/configurations/partnerlibrary", current: true },
+  { id:2, name: 'GL Library', href: "/configurations/gllibrary", current: false },
+  { id:3, name: 'Data Export', href: "/configurations/dataexport", current: false },
+  { id:4, name: 'System Connections', href: "/configurations/systemConfigurations", current: false },
 ]
 
 function classNames(...classes: string[]) {
@@ -44,13 +44,15 @@ export default function Configurations() {
             {tabs.map((item) => (
                 
                 <NavLink
+                key={item.id}
+                to={item.href}
                 className={({isActive})=>
                 isActive
                 ? 'w-1/4 border-3 px-1 py-4 text-center border-[var(--darkest-teal)] text-[var(--darkest-teal)] custom-style font-semibold hover:bg-[var(--dark-teal)] hover:text-white'
                 
                 : 'w-1/4 border px-1 py-4 text-center text-m font-medium custom-style hover:border-b-2 hover:border hover:border-b-2-[var(--darkest-teal)] hover:text-white hover:font-semibold hover:bg-[var(--dark-teal)]'
                 }
-                  to={item.href}
+                  
   
                 >
                   
