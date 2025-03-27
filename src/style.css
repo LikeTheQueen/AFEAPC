@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+/*@reference "tailwindcss";*/
 /*Import Fonts*/
 /*Import the Fonts*/
 @font-face {
@@ -9,4 +9,7 @@
 .custom-style {
     font-variant: small-caps;   
     font-family: 'Montserrat';
+}
+.custom-style-long-text {
+  font-family: 'Montserrat';
 }

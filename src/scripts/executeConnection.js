@@ -1,32 +1,34 @@
-
-
-
-const baseURL='/api';
-const urlPath = "/api/Authentication/ApiKey/Login";
-const ID = 'b236d444-ebb2-470d-bcc5-d1ef8c21e4fb';
-const Key = '9Sr9xstNsdU5L2PUWG236JGR2YZ7l6FiqCxTA41p71gRsIkHl4xo9Au12YIXfO6X';
       
-export default function fetchAuthTokens() {
-
+export default async function fetchAuthToken(ID, Key, urlPath, baseURL) {
+  
   var requestOptions = {
     method: 'POST',
     body: JSON.stringify ({ Id: ID, Key: Key}),
     headers: {"Content-type": "application/json"}, 
     redirect: 'follow'
   };
-
-fetch(baseURL+urlPath, requestOptions)
-  .then(response => response.json())
-  .then(data => {
-    if (data.AuthenticationToken) {
-      console.log('Auth Token:', data.AuthenticationToken);
-      return data.AuthenticationToken;
-    } else {
-      console.error('AuthenticationToken not found in response');
-      return 'AuthenticationToken not found in response'
-    }
-  })
   
-  .catch(error => console.error('Error fetching data:', error));
+  try {
+    console.log(ID, Key, urlPath);
+const response = await fetch(baseURL+urlPath, requestOptions);
+
+if (!response.ok) {
+  console.error('Request failed with status:', response.status);
+  const errorText = await response.text();
+  console.error('Response body:', errorText);
+  return 'Request failed with status: '+response.status+errorText;
+}
+
+if(response.ok) {
+  const jsonResponse = await response.json();
+  console.log('Auth Token:', jsonResponse.AuthenticationToken);
+  
+
+  return jsonResponse;
+}
+  }
+  catch (error) {
+    console.log(error);
+    return null;
+  }
 };
-fetchAuthTokens();
