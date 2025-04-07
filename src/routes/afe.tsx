@@ -1,77 +1,69 @@
+import React, { useState, useEffect, useContext } from "react";
 import { Outlet } from "react-router";
 import { PaperClipIcon } from '@heroicons/react/20/solid';
-import type { Route } from "./+types/afe";
+import  supabase  from '../../provider/supabase'
+import type { UUID } from "crypto";
+import type {AFEType} from "../types/index";
+import { useSupabaseData } from "../types/SupabaseContext";
+import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
 
 export default function AFE() {
+  const { afes, operators, loading } = useSupabaseData();
+  
+  if (loading) return <p>Loading...</p>;
   return (
     <div>
-      <div className="px-4 sm:px-0">
-        <h3 className="text-base/7 font-semibold text-white">Applicant Information</h3>
-        <p className="mt-1 max-w-2xl text-sm/6 text-gray-400">Personal details and application.</p>
-      </div>
-      <div className="mt-6 border-t border-white/10">
-        <dl className="divide-y divide-white/10">
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">Full name</dt>
-            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Margot Foster</dd>
+      
+      <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {afes?.filter(afe => afe.op_status === "IAPP").map((afe) => (
+        <li key={afe.id} className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+          <div className="flex w-full items-center justify-between space-x-6 p-6">
+            <div className="flex-1 truncate">
+              <div className="flex items-center justify-between space-x-3">
+                <h3 className="truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Operator: </span>{afe.operator}</h3>
+                <span className="inline-flex shrink-0 items-center border-r rounded-full bg-[var(--dark-teal)]/30 px-1.5 py-0.5 text-sm font-semibold text-[var(--darkest-teal)] ring-1 ring-[var(--darkest-teal)]/20 ring-inset">
+                  {afe.partner_status}
+                </span>
+              </div>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Approved by Operator: </span>{afe.created_at}</p>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
+            </div>
+            
           </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">Application for</dt>
-            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">Backend Developer</dd>
+          <div>
+            <div className="-mt-px flex divide-x divide-gray-300">
+              <div className="flex w-0 flex-1">
+                <a
+                  href={`mailto:${afe.afe_number}`}
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                >
+                  <EnvelopeIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  ${afe.total_gross_estimate}
+                </a>
+              </div>
+              <div className="flex w-0 flex-1">
+                <a
+                  href={`mailto:${afe.afe_number}`}
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                >
+                  <EnvelopeIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  WI: {afe.partner_wi}%
+                </a>
+              </div>
+              <div className="-ml-px flex w-0 flex-1">
+                <a
+                  href={`tel:${afe.afe_number}`}
+                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                >
+                  <PhoneIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  Net Estimate
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">Email address</dt>
-            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">margotfoster@example.com</dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">Salary expectation</dt>
-            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">$120,000</dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">About</dt>
-            <dd className="mt-1 text-sm/6 text-gray-400 sm:col-span-2 sm:mt-0">
-              Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur
-              qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud
-              pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
-            </dd>
-          </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-white">Attachments</dt>
-            <dd className="mt-2 text-sm text-white sm:col-span-2 sm:mt-0">
-              <ul role="list" className="divide-y divide-white/10 rounded-md border border-white/20">
-                <li className="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
-                  <div className="flex w-0 flex-1 items-center">
-                    <PaperClipIcon aria-hidden="true" className="size-5 shrink-0 text-gray-400" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">resume_back_end_developer.pdf</span>
-                      <span className="shrink-0 text-gray-400">2.4mb</span>
-                    </div>
-                  </div>
-                  <div className="ml-4 shrink-0">
-                    <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300">
-                      Download
-                    </a>
-                  </div>
-                </li>
-                <li className="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
-                  <div className="flex w-0 flex-1 items-center">
-                    <PaperClipIcon aria-hidden="true" className="size-5 shrink-0 text-gray-400" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">coverletter_back_end_developer.pdf</span>
-                      <span className="shrink-0 text-gray-400">4.5mb</span>
-                    </div>
-                  </div>
-                  <div className="ml-4 shrink-0">
-                    <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300">
-                      Download
-                    </a>
-                  </div>
-                </li>
-              </ul>
-            </dd>
-          </div>
-        </dl>
-      </div>
+        </li>
+      ))}
+    </ul>
     </div>
   )
 }

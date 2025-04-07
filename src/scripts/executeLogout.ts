@@ -1,6 +1,6 @@
-export default async function executeLogout(authToken, urlPath, baseURL) {
+export default async function executeLogout(authToken: string, urlPath: string, baseURL: string) {
   
-    var requestOptions = {
+    var requestOptions : RequestInit = {
       method: 'POST',
       body: JSON.stringify ({ AuthenticationToken: authToken}),
       headers: {"Content-type": "application/json"}, 
@@ -20,7 +20,7 @@ export default async function executeLogout(authToken, urlPath, baseURL) {
   
   if(response.ok) {
     const jsonResponse = await response.json();
-    console.log('response was okay');
+    console.log('You have been logged out');
   
     return "Success";
   }

@@ -16,10 +16,10 @@ const AuthButton = () => {
       setResponseError('');
       console.log('Fetching new auth token...');
       const result = await fetchAuthToken(docId, key, urlPath, baseURL);
-      if (result.AuthenticationToken) {
-        sessionStorage.setItem('authToken', result.AuthenticationToken);
-        setAuthToken(result.AuthenticationToken);
-        console.log('Token stored:', result.AuthenticationToken);
+      if (result) {
+        sessionStorage.setItem('authToken', result);
+        setAuthToken(result);
+        console.log('Token stored:', result);
       } else {
         console.error('Failed to retrieve auth token');
         console.error('Response', result);

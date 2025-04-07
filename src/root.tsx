@@ -7,11 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 import type { Route } from "./+types/root";
-
-import appStylesHref from "./app.css?url";
-
 import MainScreen from "./routes/mainScreen";
-
+import { SupabaseProvider } from "./types/SupabaseContext"; 
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +30,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 //This may need to be changed to Root
 export default function Root() {
-  return <MainScreen />;
+  
+  return <SupabaseProvider><MainScreen /></SupabaseProvider>;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
