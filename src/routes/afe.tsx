@@ -1,22 +1,18 @@
-import { Navigate, NavLink, useNavigate } from "react-router";
+import { NavLink, Link } from "react-router";
 import { useSupabaseData } from "../types/SupabaseContext";
 import { CurrencyDollarIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
-import { useState } from "react";
-import type { AFEType } from "../types/index";
 
 
 export default function AFE() {
-  const { afes, loading } = useSupabaseData();
-  const [afe, setAFE] = useState<AFEType | null>(null)
-  
-  if (loading) return <p>Loading...</p>;
+  const { afes } = useSupabaseData();
+
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8">
       <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {afes?.map((afe) => (
-        <NavLink key={afe.id} 
-        to="/mainscreen/afeDetail"
-        state={{ selectedAFE: afe }}
+        <Link key={afe.id} 
+        to={`/mainscreen/afeDetail/${afe.id}`}
+        
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
           
           <div className="flex w-full items-center justify-between space-x-6 p-6">
@@ -57,7 +53,7 @@ export default function AFE() {
               </div>
             </div>
           </div>
-        </NavLink>
+        </Link>
       ))}
     </ul>
     </div>

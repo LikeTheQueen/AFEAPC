@@ -7,11 +7,12 @@ import {
   ScrollRestoration,
 } from "react-router";
 import type { Route } from "./+types/root";
-import MainScreen from "./routes/mainScreen";
-import LandingPage from "./routes/landing";
-import Login from "./routes/login";
+import LoadingPage from "./routes/loadingPage";
 import { SupabaseProvider } from "./types/SupabaseContext"; 
 import { isAuthApiError } from "@supabase/supabase-js";
+import { useSupabaseData } from "./types/SupabaseContext";
+
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -74,9 +75,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
 export function HydrateFallback() {
   return (
-    <div id="loading-splash">
-      <div id="loading-splash-spinner" />
-      <p>Loading, please wait...</p>
-    </div>
+    <LoadingPage/>
   );
 }

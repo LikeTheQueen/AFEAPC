@@ -24,7 +24,7 @@ export default [
         route("/mainScreen/configurations/partnerlibrary", "./routes/partnerLibrary.tsx"),
     ]),
     route("/mainScreen/profile", "./routes/profile.tsx"),
-    route("/mainScreen/afeDetail", "./routes/afeDetail.tsx"),]),
+    route("/mainScreen/afeDetail/:afeID", "./routes/afeDetail.tsx"),]),
     route("/contactsupport", "./routes/contactSupport.tsx"),
     route("/missingAFEsupport", "./routes/missingAFEsupport.tsx"),
     route("/notifications", "./routes/notifications.tsx"),

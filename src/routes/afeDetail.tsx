@@ -1,4 +1,5 @@
-'use client'
+import { useSupabaseData } from "../types/SupabaseContext";
+import type { Route } from "../routes/+types/afeDetail";
 import { useLocation } from 'react-router';
 import { useState } from 'react';
 import type { AFEType } from "../types/index";
@@ -60,11 +61,23 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+function returnSingleAFE(id:string) {
+    const { afes } = useSupabaseData(); 
+    const singleAFE = afes?.filter((afe) => {
+        return afe.id===id
+    })
+    
+    return singleAFE?.[0]
+}
+export function clientLoader({ params }: Route.ClientLoaderArgs) {
+    return params;
+  }
 
-export default function AFEDetail() {
-  const location = useLocation();
-  const [selectedAFE, setSelectedAFE] = useState<AFEType>(location.state?.selectedAFE);
-  console.log(location.state?.selectedAFE);
+
+export default function AFEDetailURL( { loaderData }: Route.ComponentProps ) {
+
+    const singleAFE = returnSingleAFE(loaderData.afeID)
+    
   
 
   return (
@@ -90,21 +103,42 @@ export default function AFEDetail() {
               </nav>
 
               {/* Heading */}
+              <h1 className="text-right gap-x-3 text-base/7 bg-[var(--darkest-teal)]">
+                      <span className="font-semibold text-white custom-style">Operator:</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
+                      
+                    </h1>
               <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-[var(--darkest-teal)] px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
                 <div>
-                  <div className="flex items-center gap-x-3">
-                    
-                    <h1 className="flex gap-x-3 text-base/7">
-                      <span className="font-semibold text-white custom-style">AFE Number:</span>
-                      <span className="font-normal text-white custom-style-long-text">{selectedAFE?.afe_number}</span>
+                  <h1 className="flex gap-x-3 text-base/7">
+                      <span className="font-semibold text-white custom-style">Well Name:</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
                       
                     </h1>
                     <h1 className="flex gap-x-3 text-base/7">
                       <span className="font-semibold text-white custom-style">AFE Number:</span>
-                      <span className="font-normal text-white custom-style-long-text">{selectedAFE?.afe_number}</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
                       
                     </h1>
-                  </div>
+                    <h1 className="flex gap-x-3 text-base/7">
+                      <span className="font-semibold text-white custom-style">AFE Type:</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
+                      
+                    </h1>
+                  <p className="mt-2 text-xs/6 text-gray-400">Deploys from GitHub via main branch</p>
+                </div>
+                <div>
+                  
+                    <h1 className="flex gap-x-3 text-base/7">
+                      <span className="font-semibold text-white custom-style">Gross Amount:</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
+                      
+                    </h1>
+                    <h1 className="flex gap-x-3 text-base/7">
+                      <span className="font-semibold text-white custom-style">Net Amount:</span>
+                      <span className="font-normal text-white custom-style-long-text">{singleAFE?.afe_number}</span>
+                      
+                    </h1>
                   <p className="mt-2 text-xs/6 text-gray-400">Deploys from GitHub via main branch</p>
                 </div>
                 <div className="order-first flex-none rounded-full bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-indigo-400/30 ring-inset sm:order-none">
