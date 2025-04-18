@@ -1,4 +1,5 @@
-import type { AFEType, OperatorType, ExecuteAFEDocIDType, ExecuteAFEDataType, ExecuteAFEEstimatesType } from "./index";
+import type { Session } from "@supabase/supabase-js";
+import type { AFEType, OperatorType, ExecuteAFEDocIDType, ExecuteAFEDataType, ExecuteAFEEstimatesType, UserProfileSupabaseType } from "./index";
 
 export const transformAFEs = (data: any[]) : AFEType[] => {
     return data.map(item => ({
@@ -81,5 +82,15 @@ export const transformExecuteAFEEstimates = (data: any[], docID: string) : Execu
         partner_wi: 50.0,
         partner_net_amount: item.Amounts[0].Gross*(50.00/100),
 
+    }))
+};
+
+export const transformUserProfileSupabase = (data: any[]) : UserProfileSupabaseType [] => {
+    return data.map(item => ({
+        firstName: item.first_name,
+        lastName: item.last_name,
+        opCompany: item.op_company.name,
+        email: item.email,
+        
     }))
 };

@@ -76,3 +76,12 @@ export interface AFEType {
     partner_wi: number;
     partner_net_amount: number;
   }
+
+//Interface for User Profiles pulled from Supabase
+  export interface UserProfileSupabaseType {
+    firstName: string;
+    lastName: string;
+    opCompany: string;
+    email: string;
+  }
+

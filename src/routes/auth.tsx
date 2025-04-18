@@ -5,14 +5,14 @@ export default function Auth() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
 
-  const handleLogin = async (event:React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault()
 
     setLoading(true)
     const { error } = await supabase.auth.signInWithOtp({ email })
 
     if (error) {
-      alert(error.error_description || error.message)
+      alert(error.message || error.message)
     } else {
       alert('Check your email for the login link!')
     }

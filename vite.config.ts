@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 
+
 export default defineConfig({
   server: {
     proxy: {
@@ -15,4 +16,5 @@ export default defineConfig({
     },
   },
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths(),],
+  
 });

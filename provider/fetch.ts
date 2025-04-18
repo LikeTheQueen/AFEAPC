@@ -16,3 +16,5 @@ export const fetchFromSupabase = async (table: string, select: string) => {
         return [];
       }
   };
+
+  //operator_id IN (SELECT operator_id FROM USER_ROLES WHERE user_id = (SELECT auth.uid()))

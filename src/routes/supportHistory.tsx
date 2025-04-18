@@ -1,7 +1,7 @@
 
 //import {fetchExecuteAFEDocHandle} from 'src/scripts/executeAFEbyDoc';
 //import fetchExecuteAFEDocID from 'src/scripts/executeGetAFEs';
-import executeAFECall from "src/scripts/executeReadWritePromise";
+//import executeAFECall from "src/scripts/executeReadWritePromise";
 
 export default function SupportHistory() {
     return <div>

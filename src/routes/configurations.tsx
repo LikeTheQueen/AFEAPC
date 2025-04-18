@@ -8,10 +8,10 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import "../style.css";
 
 const tabs = [
-  { id:1, name: 'Partner Library', href: "/configurations/partnerlibrary", current: false },
-  { id:2, name: 'GL Library', href: "/configurations/gllibrary", current: true },
-  { id:3, name: 'Data Export', href: "/configurations/dataexport", current: false },
-  { id:4, name: 'System Connections', href: "/configurations/systemConfigurations", current: false },
+  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/partnerlibrary", current: false },
+  { id:2, name: 'GL Library', href: "/mainScreen/configurations/gllibrary", current: true },
+  { id:3, name: 'Data Export', href: "/mainScreen/configurations/dataexport", current: false },
+  { id:4, name: 'System Connections', href: "/mainScreen/configurations/systemConfigurations", current: false },
 ]
 
 function classNames(...classes: string[]) {
@@ -40,7 +40,7 @@ export default function Configurations() {
   };
 
   return (
-    <div>
+    <div className="py-10 px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select

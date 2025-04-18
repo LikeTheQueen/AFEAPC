@@ -1,22 +1,24 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Outlet } from "react-router";
-import { PaperClipIcon } from '@heroicons/react/20/solid';
-import  supabase  from '../../provider/supabase'
-import type { UUID } from "crypto";
-import type {AFEType} from "../types/index";
+import { Navigate, NavLink, useNavigate } from "react-router";
 import { useSupabaseData } from "../types/SupabaseContext";
-import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
+import { CurrencyDollarIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
+import { useState } from "react";
+import type { AFEType } from "../types/index";
+
 
 export default function AFE() {
-  const { afes, operators, loading } = useSupabaseData();
+  const { afes, loading } = useSupabaseData();
+  const [afe, setAFE] = useState<AFEType | null>(null)
   
   if (loading) return <p>Loading...</p>;
   return (
-    <div>
-      
+    <div className="py-10 px-4 sm:px-6 lg:px-8">
       <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {afes?.filter(afe => afe.op_status === "IAPP").map((afe) => (
-        <li key={afe.id} className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+      {afes?.map((afe) => (
+        <NavLink key={afe.id} 
+        to="/mainscreen/afeDetail"
+        state={{ selectedAFE: afe }}
+        className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+          
           <div className="flex w-full items-center justify-between space-x-6 p-6">
             <div className="flex-1 truncate">
               <div className="flex items-center justify-between space-x-3">
@@ -33,35 +35,29 @@ export default function AFE() {
           <div>
             <div className="-mt-px flex divide-x divide-gray-300">
               <div className="flex w-0 flex-1">
-                <a
-                  href={`mailto:${afe.afe_number}`}
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                >
-                  <EnvelopeIcon aria-hidden="true" className="size-5 text-gray-400" />
-                  ${afe.total_gross_estimate}
-                </a>
+                <div
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)}
+                </div>
               </div>
               <div className="flex w-0 flex-1">
-                <a
-                  href={`mailto:${afe.afe_number}`}
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                >
-                  <EnvelopeIcon aria-hidden="true" className="size-5 text-gray-400" />
-                  WI: {afe.partner_wi}%
-                </a>
+                <div
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <ArrowTrendingUpIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  WI: {afe.partner_wi.toFixed(6)}%
+                </div>
               </div>
               <div className="-ml-px flex w-0 flex-1">
-                <a
-                  href={`tel:${afe.afe_number}`}
-                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                >
-                  <PhoneIcon aria-hidden="true" className="size-5 text-gray-400" />
-                  Net Estimate
-                </a>
+                <div
+                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+                  <CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" />
+                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)}
+                </div>
               </div>
             </div>
           </div>
-        </li>
+        </NavLink>
       ))}
     </ul>
     </div>

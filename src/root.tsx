@@ -8,7 +8,10 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import MainScreen from "./routes/mainScreen";
+import LandingPage from "./routes/landing";
+import Login from "./routes/login";
 import { SupabaseProvider } from "./types/SupabaseContext"; 
+import { isAuthApiError } from "@supabase/supabase-js";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -31,13 +34,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 //This may need to be changed to Root
 export default function Root() {
   
-  return <SupabaseProvider><MainScreen /></SupabaseProvider>;
+  //return <SupabaseProvider><LoggedInUserLayout /></SupabaseProvider>;
+  return (
+  <SupabaseProvider><Outlet/></SupabaseProvider>
+  
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
+  
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
@@ -48,7 +56,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
-  }
+    
+  } 
 
   return (
     <main className="pt-16 p-4 container mx-auto">
@@ -60,5 +69,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         </pre>
       )}
     </main>
+  );
+}
+
+export function HydrateFallback() {
+  return (
+    <div id="loading-splash">
+      <div id="loading-splash-spinner" />
+      <p>Loading, please wait...</p>
+    </div>
   );
 }
