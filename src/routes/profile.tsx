@@ -1,19 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import type { UserProfileSupabaseType } from "../types/index";
+import { type UserRolesSupabaseType, type UserProfileSupabaseType } from "../types/interfaces";
 import { useLocation } from 'react-router'
+import { fetchFromSupabaseMatchOnString, fetchFromSupabase } from '../../provider/fetch';
+import { transformUserRolesSupabase } from "../types/transform";
+import { useSupabaseData } from "../types/SupabaseContext";
+
 
 
 export default function Profile() {
     const location = useLocation();
-    const [userProfile, setUserProfile] = useState<UserProfileSupabaseType>(location.state.userProfile);
-      return (
+    const [userProfile] = useState<UserProfileSupabaseType>(location.state.userProfile);
+    const session = useSupabaseData();
+    const userID: string = session?.session?.user.id;
+    const [roles, setRoles] = useState<UserRolesSupabaseType[] | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            
+            const rawRoles = await fetchFromSupabase("USER_ROLES", 'role_id(name, description, title)');
+            const transformRoles = transformUserRolesSupabase(rawRoles);
+            setRoles(transformRoles);
+            
+            console.log(rawRoles);
+        };
+        fetchData();
+    },[])
+    console.log(roles);
+    return (
+        
         <>
-        <div className="h-full  border-l">
-            <div className="xl:pl-32">
-                <h1 className="sr-only">Account Settings</h1>
+        
+            <div className="h-full  border-l">
+                <div className="xl:pl-32">
+                    <h1 className="sr-only">Account Settings</h1>
                     {/* Settings forms */}
                     <div className="divide-y divide-[var(--darkest-teal)]">
                         <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-0 py-16 sm:px-8 md:grid-cols-3 lg:px-8 px-4">
@@ -108,20 +130,18 @@ export default function Profile() {
                                         <label htmlFor="partCompany" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             Partner Company Name
                                         </label>
-                                        <div className="mt-2 grid grid-cols-1">
-                                            <select
-                                                id="partCompany"
-                                                name="partCompany"
-                                                className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-1.5 pr-8 pl-3 custom-style-long-text text-white outline-1 -outline-offset-1 outline-[var(--darkest-teal)] *:bg-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
-                                            >
-                                                <option>Pacific Standard Time</option>
-                                                <option>Eastern Standard Time</option>
-                                                <option>Greenwich Mean Time</option>
-                                            </select>
-                                            <ChevronDownIcon
-                                                aria-hidden="true"
-                                                className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                                            />
+                                        <div className="mt-2 ">
+                                            <div className="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+
+                                                <input
+                                                    id="partCompany"
+                                                    name="partCompany"
+                                                    type="text"
+                                                    value={userProfile?.partnerCompany}
+                                                    readOnly
+                                                    className="block min-w-0 grow bg-white/5 py-1.5 pr-3 pl-1 custom-style-long-text text-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-none sm:text-sm/6"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

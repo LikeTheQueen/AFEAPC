@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useId } from 'react';
 import { useParams, Await, useLoaderData } from 'react-router';
-import fetchAuthToken from '../scripts/executeConnection'; // Import Execute API login function
+import fetchAuthToken from '../scripts/executeFetchAuthToken'; // Import Execute API login function
 import executeLogout from '../scripts/executeLogout';
 import {EyeIcon, EyeSlashIcon} from '@heroicons/react/20/solid';
 const baseURL = '/api';

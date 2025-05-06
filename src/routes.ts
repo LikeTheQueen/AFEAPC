@@ -9,8 +9,6 @@ import {
 
     
 export default [
-    
-    //route("*?", "./routes/catchall.tsx"),
     route("/", "./routes/landing.tsx"),
     route("/login", "./routes/login.tsx"),
     layout("./routes/loggedInUserSupabase.tsx",[
@@ -24,11 +22,12 @@ export default [
         route("/mainScreen/configurations/partnerlibrary", "./routes/partnerLibrary.tsx"),
     ]),
     route("/mainScreen/profile", "./routes/profile.tsx"),
-    route("/mainScreen/afeDetail/:afeID", "./routes/afeDetail.tsx"),]),
+    route("/mainScreen/afeDetail/:afeID", "./routes/afeDetail.tsx"),
+    route("/mainScreen/supporthistory", "./routes/supportHistory.tsx"),]),
     route("/contactsupport", "./routes/contactSupport.tsx"),
     route("/missingAFEsupport", "./routes/missingAFEsupport.tsx"),
     route("/notifications", "./routes/notifications.tsx"),
-    route("/supporthistory", "./routes/supportHistory.tsx"),
+    
     
     route("/homeScreen", "./routes/homeScreen.tsx"),
     route("/dashboard", "./routes/dashboard.tsx"),

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link, NavLink, useNavigate } from "react-router";
-import { Outlet } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import  Footer  from "./footer"
 
 const navigation = [
@@ -13,12 +12,9 @@ const navigation = [
 export default function LandingPage() {
    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
    const navigate = useNavigate();
-   const handleLoginNavigation = () => {
-    navigate('login');
-  };
 
-    return <div>
-    <section className="relative py-6 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24">
+return <div>
+    <section className="relative py-6 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24" aria-label='landingPage'>
         <nav aria-label="Global" className="flex items-center justify-between p-4 lg:px-8 border-b-1 border-b-white/50">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
@@ -95,7 +91,7 @@ export default function LandingPage() {
                   <NavLink
                     
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-white custom-style hover:bg-gray-800" to="login">
-                    Loginmini
+                    Login
                   </NavLink>
                 </div>
                 

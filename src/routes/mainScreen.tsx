@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
 import { transformUserProfileSupabase } from "../types/transform";
-import type { UserProfileSupabaseType } from "../types/index";
+import type { UserProfileSupabaseType } from "../types/interfaces";
 import { fetchFromSupabase } from "../../provider/fetch";
 import "../style.css";
 import {
@@ -33,7 +33,7 @@ import { useSupabaseData } from "../types/SupabaseContext"
 const navigation = [
   { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon },
   { name: 'Notifications', href: "/mainScreen/notifications", icon: BellIcon },
-  { name: 'AFE Histories', href: "/login", icon: ClockIcon },
+  { name: 'AFE Histories', href: "/mainscreen/afeHistory", icon: ClockIcon },
   { name: 'Support History', href: "/mainScreen/supporthistory", icon: PhoneArrowUpRightIcon },
   { name: 'Configurations', href: "/mainScreen/configurations", icon: Cog6ToothIcon },
 
@@ -64,7 +64,7 @@ export default function MainScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const rawUser = await fetchFromSupabase("USER_PROFILE", 'first_name, last_name, op_company(name), email');
+      const rawUser = await fetchFromSupabase("USER_PROFILE", 'first_name, last_name, op_company(name), email, partner_company(partner_name)');
       const transformedUser = transformUserProfileSupabase(rawUser);
       const singleUser = transformedUser[0] || null;
       setUser(singleUser);
