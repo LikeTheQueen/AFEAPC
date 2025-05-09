@@ -10,20 +10,7 @@ const routes = [
 
 
 describe('Users should be able to navigate to the login button from the landing page',() => {
-   /*
-    beforeEach(() => {
-        render(<LandingPage />, {
-            wrapper: ({children}) => (
-                <MemoryRouter initialEntries={['/']}>
-                    {children}
-                </MemoryRouter>
-            ),
-        });
-    });
-    afterEach(() => {
-        vi.clearAllMocks();
-    });
-*/
+
     test('Should naviagte to login page on NavLink click', async () => {
         const user = userEvent.setup();
         const router = createMemoryRouter(routes, { initialEntries: ['/'] });
@@ -32,7 +19,5 @@ describe('Users should be able to navigate to the login button from the landing 
         const loginButton = screen.getByRole('button', { name: /login/i });
         await user.click(loginButton);
         expect(await screen.findByText('Login Page')).toBeInTheDocument();
-
-    
     })
 })

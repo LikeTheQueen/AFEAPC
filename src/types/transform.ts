@@ -6,7 +6,9 @@ import type {
     ExecuteAFEDataType,
     ExecuteAFEEstimatesType,
     UserProfileSupabaseType,
-    UserRolesSupabaseType
+    UserRolesSupabaseType,
+    EstimatesSupabaseType,
+    AFEHistorySupabaseType
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -116,3 +118,30 @@ export const transformUserRolesSupabase = (data: any[]): UserRolesSupabaseType[]
         
     }))
 };
+
+export const transformEstimatesSupabase = (data: any[]): EstimatesSupabaseType[] => {
+    return data.map(item => ({
+        id: item.id,
+        amount_gross: item.amount_gross,
+        partner_wi: item.partner_wi,
+        partner_net_amount: item.partner_net_amount,
+        operator_account_number: item.operator_account_number,
+        operator_account_description: item.operator_account_description,
+        operator_account_group: item.operator_account_group,
+        partner_account_number: item.partner_account_number,
+        partner_account_description: item.partner_account_description,
+        partner_account_group: item.partner_account_group,
+        
+    }))
+};
+
+export const transformAFEHistorySupabase = (data: any[]): AFEHistorySupabaseType[] => {
+    return data.map(item => ({
+        id: item.id,
+        afe_id: item.afe_id,
+        created_at: item.created_at,
+        user:item.user_id.first_name+' '+item.user_id.last_name,
+        description: item.description,
+        type: item.type,
+    }))
+}

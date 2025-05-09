@@ -1,13 +1,14 @@
-import { NavLink, Link } from "react-router";
+import { Link } from "react-router";
 import { useSupabaseData } from "../types/SupabaseContext";
 import { CurrencyDollarIcon, ArrowTrendingUpIcon } from '@heroicons/react/20/solid';
 import { updateAFEPartnerStatusSupabase, addAFEHistorySupabase } from '../../provider/fetch';
-import type { AFEType } from "src/types/interfaces";
 
-const handleClick = (id:string, partnerStatus: string) => {
-  if(partnerStatus==='No Status') {
+
+export const handleClick = (id:string, partnerStatus: string) => {
+  console.log(partnerStatus)
+  if(partnerStatus==='New') {
     updateAFEPartnerStatusSupabase(id);
-    addAFEHistorySupabase(id, 'The Partner Status on the AFE changed from No Status to Viewed');
+    addAFEHistorySupabase(id, 'The Partner Status on the AFE changed from New to Viewed');
   }
 };
 

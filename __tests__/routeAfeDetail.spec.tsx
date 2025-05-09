@@ -8,33 +8,42 @@ import { singleAFE } from './test-utils/afeRecords';
 vi.mock('../src/types/SupabaseContext', () => ({
   useSupabaseData: vi.fn(),
 }));
+vi.mock('../provider/fetch', () => ({
+  fetchFromSupabaseMatchOnString: vi.fn(),
+}))
 
 import { useSupabaseData } from '../src/types/SupabaseContext';
+import { fetchFromSupabaseMatchOnString } from '../provider/fetch';
 
 // Define a complete mock AFE 
 const mockAFE = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    operator: '123e4567-e89b-12d3-a456-426614174000',
-    created_at: 'May 1',
-    afe_type: 'Drilling',
-    afe_number: 'TESTNum1',
-    description: 'Desc',
-    total_gross_estimate: 100,
-    version_string: '',
-    supp_gross_estimate: 0,
-    operator_wi: 10,
-    partnerID: '',
-    partner_name: 'PartnerNaem',
-    partner_wi: 23,
-    partner_status: 'New',
-    op_status: 'IAPP',
-    iapp_date: 'May5',
-    last_mod_date: 'Jun3',
-    legacy_chainID: 1,
-    legacy_afeid: 2,
-    chain_version: 1,
-    source_system_id: 'ex ID'
+  id: '123e4567-e89b-12d3-a456-426614174000',
+  operator: '123e4567-e89b-12d3-a456-426614174000',
+  created_at: 'May 1',
+  afe_type: 'Drilling',
+  afe_number: 'TESTNum1',
+  description: 'Desc',
+  total_gross_estimate: 100,
+  version_string: '',
+  supp_gross_estimate: 0,
+  operator_wi: 10,
+  partnerID: '',
+  partner_name: 'PartnerNaem',
+  partner_wi: 23,
+  partner_status: 'New',
+  op_status: 'IAPP',
+  iapp_date: 'May5',
+  last_mod_date: 'Jun3',
+  legacy_chainID: 1,
+  legacy_afeid: 2,
+  chain_version: 1,
+  source_system_id: 'ex ID'
 };
+
+const mockEstimates = {
+  partner_net_amount: 234,
+  operator_account_number: '20.60.700'
+}
 
 describe('AFEDetailURL', () => {
   it('shows loading when afes are not loaded', () => {
@@ -75,6 +84,10 @@ describe('AFEDetailURL', () => {
       afes: [mockAFE],
     });
 
+    (fetchFromSupabaseMatchOnString as any).mockReturnValue({
+      mockEstimates,
+    });
+
     render(
       <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
         <Routes>
@@ -82,8 +95,9 @@ describe('AFEDetailURL', () => {
         </Routes>
       </MemoryRouter>
     );
-    
+
     // Check if the AFE number is displayed in the document
     expect(screen.getByText(/TESTNum1/i)).toBeInTheDocument();
+    expect(screen.getByText(/20.60.700/i)).toBeInTheDocument();
   });
 });

@@ -90,3 +90,27 @@ export interface AFEType {
     description: string;
     title: string;
   }
+
+//Interface for AFE Estimates pulled from Supabase
+  export interface EstimatesSupabaseType {
+    id: number;
+    amount_gross: number;
+    partner_wi: number;
+    partner_net_amount: number;
+    operator_account_number: string;
+    operator_account_description: string;
+    operator_account_group: string;
+    partner_account_number: string;
+    partner_account_description: string;
+    partner_account_group: string;
+  }
+
+//Interface for AFE History pulled from Supabase
+  export interface AFEHistorySupabaseType {
+    id: number;
+    afe_id: string;
+    created_at: Date;
+    user: string;
+    description: string;
+    type: string;
+  }
