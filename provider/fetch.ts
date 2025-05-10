@@ -20,8 +20,8 @@ export const fetchFromSupabase = async (table: string, select: string) => {
   return 'success';
   };
 
-  export const addAFEHistorySupabase = async (afe_id:string, description:string) => {
-    const { error } = await supabase.from('AFE_HISTORY').insert({afe_id: afe_id, description: description});
+  export const addAFEHistorySupabase = async (afe_id:string, description:string, type: string) => {
+    const { error } = await supabase.from('AFE_HISTORY').insert({afe_id: afe_id, description: description, type:type});
     if (error) {
         console.error(`Error Updating AFE History`, error);
         return [];

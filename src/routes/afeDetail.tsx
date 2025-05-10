@@ -1,9 +1,9 @@
 import { useSupabaseData } from "../types/SupabaseContext";
 import type { Route } from "../routes/+types/afeDetail";
 import { useLocation, useParams } from 'react-router';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { type AFEHistorySupabaseType, type AFEType, type EstimatesSupabaseType } from "../types/interfaces";
-import { fetchEstimatesFromSupabaseMatchOnAFEandPartner, fetchFromSupabaseMatchOnString } from "provider/fetch";
+import { addAFEHistorySupabase, fetchEstimatesFromSupabaseMatchOnAFEandPartner, fetchFromSupabaseMatchOnString } from "provider/fetch";
 import { transformAFEHistorySupabase, transformEstimatesSupabase } from "src/types/transform";
 import {
   Dialog,
@@ -33,8 +33,17 @@ export default function AFEDetailURL() {
 
   const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | null>(null);
   const [singleAFE, setAFEID] = useState<AFEType | null>(null);
-  const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | null>(null);
+  const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
+  const [commentVal, setCommentVal] = useState('');
 
+  let afeHistoryMaxId: number=0;
+  
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCommentVal(event.target.value);
+  }
+
+ 
   useEffect(() => {
     const singleAFE = afes?.find((afe) => afe.id === afeID);
     setAFEID(singleAFE || null);
@@ -90,6 +99,24 @@ export default function AFEDetailURL() {
       return 'Missing WI and gross amount';
     }
   }
+  function setAFEHistoryMaxID () {
+    if(afeHistories === undefined || afeHistories === null){
+      afeHistoryMaxId=0;
+    } else {
+      afeHistoryMaxId=afeHistories.length;
+    }
+
+  }
+
+  function handleComment ()  {
+    setAFEHistoryMaxID(); 
+    console.log('hello')
+    const newComment: AFEHistorySupabaseType = {id: afeHistoryMaxId, afe_id: afeID!, user: 'You', description: commentVal, type: "comment", created_at: new Date()};
+    setHistory([...afeHistories, newComment]);
+    addAFEHistorySupabase(afeID!, commentVal, 'comment');
+    console.log(afeHistories)
+    console.log(newComment)
+  }
 
   return (
     <>
@@ -98,7 +125,7 @@ export default function AFEDetailURL() {
           <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
             {/* AFE Actions */}
             <div className="relative content-center isolate pt-0 lg:col-start-3 lg:row-end-1 h-15">
-              <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+              <div aria-hidden="true" className="absolute rounded-lg blur-xs inset-0 -z-10 overflow-hidden">
                 <div className="absolute rounded-md top-full left-1 -mt-16 transform-gpu opacity-50 blur-2xl xl:left-1/2 xl:-ml-80">
                   <div
                     style={{
@@ -108,16 +135,16 @@ export default function AFEDetailURL() {
                     className="aspect-1154/678 w-[52.125rem] bg-linear-to-br from-[var(--dark-teal)] to-[var(--dark-teal)]"
                   />
                 </div>
-                <div className="absolute rounded-md inset-x-0 bottom-0 h-px " />
+                <div className="absolute inset-x-0 bottom-0 h-px " />
               </div>
 
               <div className="mx-auto max-w-7xl px-1 py-1 sm:px-1 lg:px-2 ">
-                <div className="mx-auto flex justify-start sm:justify-end max-w-2xl gap-x-1 lg:mx-0 lg:max-w-none">
+                <div className="mx-auto flex justify-end sm:justify-end max-w-2xl gap-x-1 lg:mx-0 lg:max-w-none">
                   
                   <div className="flex items-center gap-x-4 sm:gap-x-6">
                     <a
                       href="#"
-                      className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                      className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                       Accept
                     </a>
                     <a
@@ -306,7 +333,7 @@ export default function AFEDetailURL() {
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-[1rem] font-medium text-white ">
                   C
                 </span>
-                <form action="#" className="relative flex-auto">
+                <div className="relative flex-auto">
                   <div className="overflow-hidden rounded-lg pb-12 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
                     <label htmlFor="comment" className="sr-only">
                       Add your comment
@@ -317,17 +344,21 @@ export default function AFEDetailURL() {
                       rows={2}
                       placeholder="Add your comment..."
                       className="block w-full resize-none bg-transparent px-3 py-1.5 text-base text-[var(--darkest-teal)] placeholder:text-gray-400 focus:outline-none sm:text-sm/6 custom-style"
-                      defaultValue={''}
+                      //defaultValue={''}
+                      value={commentVal}
+                      onChange={handleCommentChange}
                     />
                   </div>
                   <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pr-2 pl-3 ">
                     <button
                       type="submit"
-                      className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-[var(--bright-pink)] hover:text-white">
+                      className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-[var(--bright-pink)] hover:text-white"
+                      onClick={handleComment}>
+                      
                       Comment
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>

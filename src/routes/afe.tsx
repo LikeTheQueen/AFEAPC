@@ -8,7 +8,7 @@ export const handleClick = (id:string, partnerStatus: string) => {
   console.log(partnerStatus)
   if(partnerStatus==='New') {
     updateAFEPartnerStatusSupabase(id);
-    addAFEHistorySupabase(id, 'The Partner Status on the AFE changed from New to Viewed');
+    addAFEHistorySupabase(id, 'The Partner Status on the AFE changed from New to Viewed','action');
   }
 };
 
