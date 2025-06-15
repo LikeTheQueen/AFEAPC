@@ -26,7 +26,7 @@ export default function LoginForm() {
     })
   }, [])
 if(session) {
-  location.href = '/mainscreen'
+  location.href = '/mainscreen/afe'
 }
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

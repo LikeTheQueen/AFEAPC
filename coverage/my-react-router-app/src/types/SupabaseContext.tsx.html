@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.82% </span>
+                <span class="strong">97.87% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>45/46</span>
+                <span class='fraction'>46/47</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.82% </span>
+                <span class="strong">97.87% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>45/46</span>
+                <span class='fraction'>46/47</span>
             </div>
         
             
@@ -129,11 +129,13 @@
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
 <a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -150,7 +152,6 @@
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">8x</span>
@@ -163,6 +164,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,12 +191,12 @@
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { createContext, useState, useEffect, useContext } from "react";
 import { fetchFromSupabase } from "../../provider/fetch";
 import { transformAFEs, transformOperator, transformUserProfileSupabase } from "./transform";
@@ -208,6 +210,7 @@ export interface SupabaseContextType {
     operators: OperatorType[] | null;
     loading: boolean;
     session: Session | null;
+    refreshData: () =&gt; Promise&lt;void&gt;;
 }
 &nbsp;
 export const SupabaseContext = createContext&lt;SupabaseContextType | undefined&gt;(undefined);
@@ -217,10 +220,9 @@ export const SupabaseProvider = ({ children }: {children: React.ReactNode }) =&g
     const [loading, setLoading] = useState(true);
     const [session, setSession] = useState&lt;Session | null&gt;(null);
     
-&nbsp;
-    useEffect(() =&gt; {
-        const fetchData = async () =&gt; {
-            const rawAFEs = await fetchFromSupabase("AFE_PROCESSED",'id,created_at,afe_type,afe_number,description,total_gross_estimate,version_string,supp_gross_estimate,operator_wi,apc_partner_id,apc_partner_name,partner_wi,partner_status,op_status,iapp_date,last_mod_date,legacy_chainID,legacy_afeid,chain_version, apc_operator_id(name), source_system_id');
+    const fetchData = async () =&gt; {
+      console.log('let referesh')
+            const rawAFEs = await fetchFromSupabase("AFE_PROCESSED",'id,created_at,afe_type,afe_number,description,total_gross_estimate,version_string,supp_gross_estimate,operator_wi,apc_partner_id,apc_partner_name,partner_wi,partner_status,op_status,iapp_date,last_mod_date,legacy_chainID,legacy_afeid,chain_version, apc_operator_id(name), source_system_id, sortID, partner_status_date');
             const rawOperators = await fetchFromSupabase("OPERATORS","*");
 &nbsp;
             setAFEs(transformAFEs(rawAFEs));
@@ -229,6 +231,7 @@ export const SupabaseProvider = ({ children }: {children: React.ReactNode }) =&g
             setLoading(false);
         };
 &nbsp;
+    useEffect(() =&gt; {
         fetchData();
     }, []);
 &nbsp;
@@ -248,7 +251,7 @@ export const SupabaseProvider = ({ children }: {children: React.ReactNode }) =&g
       }, []);
 &nbsp;
     return (
-    &lt;SupabaseContext.Provider value={{ afes, operators, loading, session}}&gt;
+    &lt;SupabaseContext.Provider value={{ afes, operators, loading, session, refreshData: fetchData}}&gt;
       {children}
     &lt;/SupabaseContext.Provider&gt;
     );
@@ -268,7 +271,7 @@ export const useSupabaseData = (): SupabaseContextType =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-05T22:49:35.653Z
+                at 2025-05-19T22:21:22.064Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

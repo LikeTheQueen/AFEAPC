@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import  MainScreen  from "./mainScreen";
-import  AFE  from "./afe";
+import  AFE  from "./afeDashboard/routes/afe";
 import { Outlet } from "react-router";
 
 

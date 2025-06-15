@@ -4,7 +4,7 @@ import type { UUID } from "crypto";
 export interface AFEType {
     id: UUID;
     operator: string;
-    created_at: string;
+    created_at: Date;
     afe_type: string;
     afe_number: string;
     description: string;
@@ -23,9 +23,13 @@ export interface AFEType {
     legacy_afeid: number;
     chain_version: number;
     source_system_id: string;
+    sortID: number;
+    partner_status_date: Date;
+    apc_operator_id: string;
+    archived: boolean;
   }
 
-//Interface for AFE IDs pulled from execute
+//Interface for AFE IDs pulled from Execute
   export interface ExecuteAFEDocIDType {
     docID: string;
     docHandle: string;
@@ -57,12 +61,22 @@ export interface AFEType {
   }
 //Interface for Operators pulled from the database
   export interface OperatorType {
-    id: UUID;
-    created_at: string;
+    id?: UUID;
+    created_at?: Date;
     name: string;
-    base_url: string;
-    key: string;
-    docID: string;
+    base_url?: string;
+    key?: string;
+    docID?: string;
+    source_system?: number;
+    active?: boolean;
+  }
+
+//Interface for Partners pulled from the database
+  export interface PartnerType {
+    id?: UUID;
+    created_at?: Date;
+    name: string;
+    active?: boolean;
   }
 
 //Interface for Estimates pulled from Execute
@@ -82,6 +96,31 @@ export interface AFEType {
     opCompany: string;
     email: string;
     partnerCompany: string;
+    apc_operator_id: string;
+    apc_partner_id: string;
+    user_id: UUID;
+  }
+//Interface for Role Operator Entry pulled from Supavase via User Profile
+  export interface APCIDwithRole{
+    id: string;
+    name: string;
+  }
+  export interface RoleEntry{
+    role: number;
+    apc_id: string;
+    apc_name: string;
+  }
+//Interface for User Profiles pulled from Supabase
+  export interface UserProfileRecordSupabaseType {
+    firstName: string;
+    lastName: string;
+    email: string;
+    active: boolean;
+    operatorRoles: RoleEntry[];
+    partnerRoles: RoleEntry[];
+    operators: string[];
+    partners: string[];
+    user_id?: UUID | null;
   }
 
 //Interface for User Roles pulled from Supabase
@@ -113,4 +152,29 @@ export interface AFEType {
     user: string;
     description: string;
     type: string;
+  }
+
+//Interface for Source System List pulled from Supabase
+  export interface AFESourceSystemType {
+    id: number;
+    system: string;
+  }
+
+//Interface for Addresses pulled from Supabse
+  export interface AddressType {
+    id: number;
+    street: string | undefined;
+    suite: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    zip: string | undefined;
+    country: string | undefined;
+  }
+
+//Interface for Roles and names pulled from Supabase
+  export interface RoleTypesGeneric {
+    id: number;
+    name: string;
+    description: string;
+    title: string;
   }

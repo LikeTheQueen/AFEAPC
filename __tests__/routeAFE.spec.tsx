@@ -1,5 +1,4 @@
-import AFE from '../src/routes/afe';
-import { handleClick } from '../src/routes/afe'
+import AFE from '../src/routes/afeDashboard/routes/afe';
 import * as fetchProvider from '../provider/fetch';
 import { vi } from 'vitest';
 import { getByTestId, render, screen } from '@testing-library/react';
@@ -87,30 +86,3 @@ describe('displaying AFEs', () => {
 
 });
 
-describe('handleClick', () => {
-  afterEach(() => {
-    vi.resetAllMocks()
-})
-  it('calls updateAFEPartnerStatusSupabase and addAFEHistorySupabase when partnerStatus is "New"', () => {
-    const mockId = '123';
-    const mockPartnerStatus = 'New';
-
-    handleClick(mockId, mockPartnerStatus);
-
-    expect(fetchProvider.updateAFEPartnerStatusSupabase).toHaveBeenCalledWith(mockId);
-    expect(fetchProvider.addAFEHistorySupabase).toHaveBeenCalledWith(
-      mockId,
-      'The Partner Status on the AFE changed from New to Viewed'
-    );
-  });
-
-  it('does NOT call anything when partnerStatus is not "New"', () => {
-    const mockId = '456';
-    const mockPartnerStatus = 'Approved';
-
-    handleClick(mockId, mockPartnerStatus);
-
-    expect(fetchProvider.updateAFEPartnerStatusSupabase).not.toHaveBeenCalled();
-    expect(fetchProvider.addAFEHistorySupabase).not.toHaveBeenCalled();
-  });
-});

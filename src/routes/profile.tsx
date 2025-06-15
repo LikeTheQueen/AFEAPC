@@ -11,24 +11,23 @@ import { useSupabaseData } from "../types/SupabaseContext";
 
 
 export default function Profile() {
-    const location = useLocation();
-    const [userProfile] = useState<UserProfileSupabaseType>(location.state.userProfile);
-    const session = useSupabaseData();
-    const userID: string = session?.session?.user.id;
+    const { loggedInUser } = useSupabaseData();
+    const { session } = useSupabaseData();
     const [roles, setRoles] = useState<UserRolesSupabaseType[] | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            
+            /*
             const rawRoles = await fetchFromSupabase("USER_ROLES", 'role_id(name, description, title)');
             const transformRoles = transformUserRolesSupabase(rawRoles);
             setRoles(transformRoles);
             
             console.log(rawRoles);
+            */
         };
         fetchData();
     },[])
-    console.log(roles);
+    console.log(loggedInUser);
     return (
         
         <>
@@ -40,7 +39,7 @@ export default function Profile() {
                     <div className="divide-y divide-[var(--darkest-teal)]">
                         <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-0 py-16 sm:px-8 md:grid-cols-3 lg:px-8 px-4">
                             <div>
-                                <h2 className="custom-style-long-text/7 font-semibold text-[var(--darkest-teal)] custom-style">Personal Information</h2>
+                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Personal Information</h2>
                                 <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Contact Support to change your email or associated company.</p>
                             </div>
                             <form className="md:col-span-2">
@@ -66,14 +65,8 @@ export default function Profile() {
                                         <label htmlFor="first-name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             First name
                                         </label>
-                                        <div className="mt-2">
-                                            <input
-                                                id="first-name"
-                                                name="first-name"
-                                                type="text"
-                                                defaultValue={userProfile?.firstName}
-                                                className="block w-full rounded-md bg-white/5 px-3 py-1.5 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
-                                            />
+                                        <div className="mt-1">
+                                            <span className="block w-full rounded-md bg-white/5 px-3 py-1.75 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9.5 sm:text-sm/6">{loggedInUser?.firstName} </span>
                                         </div>
                                     </div>
 
@@ -81,14 +74,8 @@ export default function Profile() {
                                         <label htmlFor="last-name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             Last name
                                         </label>
-                                        <div className="mt-2">
-                                            <input
-                                                id="last-name"
-                                                name="last-name"
-                                                type="text"
-                                                defaultValue={userProfile?.lastName}
-                                                className="block w-full rounded-md bg-white/5 px-3 py-1.5 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
-                                            />
+                                        <div className="mt-1">
+                                            <span className="block w-full rounded-md bg-white/5 px-3 py-1.75 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9.5 sm:text-sm/6">{loggedInUser?.lastName}</span>
                                         </div>
                                     </div>
 
@@ -96,14 +83,8 @@ export default function Profile() {
                                         <label htmlFor="email" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             Email address
                                         </label>
-                                        <div className="mt-2">
-                                            <input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                defaultValue={userProfile?.email}
-                                                className="block w-full rounded-md bg-white/5 px-3 py-1.5 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
-                                            />
+                                        <div className="mt-1">
+                                            <span className="block w-full rounded-md bg-white/5 px-3 py-1.75 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9.5 sm:text-sm/6">{loggedInUser?.email} </span>
                                         </div>
                                     </div>
 
@@ -111,18 +92,8 @@ export default function Profile() {
                                         <label htmlFor="opCompany" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             Operating Company Name
                                         </label>
-                                        <div className="mt-2">
-                                            <div className="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
-
-                                                <input
-                                                    id="opCompany"
-                                                    name="opCompany"
-                                                    type="text"
-                                                    value={userProfile?.opCompany}
-                                                    readOnly
-                                                    className="block min-w-0 grow bg-white/5 py-1.5 pr-3 pl-1 custom-style-long-text text-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-none sm:text-sm/6"
-                                                />
-                                            </div>
+                                        <div className="mt-1">
+                                            <span className="block w-full rounded-md bg-white/5 px-3 py-1.75 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9.5 sm:text-sm/6">{loggedInUser?.email} </span>
                                         </div>
                                     </div>
 
@@ -130,18 +101,8 @@ export default function Profile() {
                                         <label htmlFor="partCompany" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text">
                                             Partner Company Name
                                         </label>
-                                        <div className="mt-2 ">
-                                            <div className="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
-
-                                                <input
-                                                    id="partCompany"
-                                                    name="partCompany"
-                                                    type="text"
-                                                    value={userProfile?.partnerCompany}
-                                                    readOnly
-                                                    className="block min-w-0 grow bg-white/5 py-1.5 pr-3 pl-1 custom-style-long-text text-[var(--darkest-teal)] placeholder:text-[var(--dark-teal)] focus:outline-none sm:text-sm/6"
-                                                />
-                                            </div>
+                                        <div className="mt-1">
+                                            <span className="block w-full rounded-md bg-white/5 px-3 py-1.75 custom-style-long-text text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9.5 sm:text-sm/6">{loggedInUser?.email} </span>
                                         </div>
                                     </div>
                                 </div>

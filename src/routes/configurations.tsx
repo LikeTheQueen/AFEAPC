@@ -8,8 +8,8 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import "../style.css";
 
 const tabs = [
-  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/partnerlibrary", current: false },
-  { id:2, name: 'GL Library', href: "/mainScreen/configurations/gllibrary", current: true },
+  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/partnerlibrary", current: true },
+  { id:2, name: 'GL Library', href: "/mainScreen/configurations/gllibrary", current: false },
   { id:3, name: 'Data Export', href: "/mainScreen/configurations/dataexport", current: false },
   { id:4, name: 'System Connections', href: "/mainScreen/configurations/systemConfigurations", current: false },
 ]
@@ -35,7 +35,7 @@ export default function Configurations() {
     // Find the selected tab and navigate
     const selectedTab = updatedTabs.find((tab) => tab.id === selectedTabId);
     if (selectedTab) {
-      navigate(selectedTab.href); // Redirect using React Router
+      navigate(selectedTab.href); 
     }
   };
 
@@ -67,10 +67,12 @@ export default function Configurations() {
                 key={item.id}
                 to={item.href}
                 className={({isActive})=>
+                 
                 isActive
-                ? 'w-1/4 border-3 px-1 py-4 text-center border-[var(--darkest-teal)] text-[var(--darkest-teal)] custom-style font-semibold hover:bg-[var(--dark-teal)] hover:text-white'
+                ? ' w-1/4 border-3 px-1 py-4 text-center custom-style font-semibold border-[var(--darkest-teal)] bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)]'
                 
-                : 'w-1/4 border px-1 py-4 text-center text-m font-medium custom-style hover:border-b-2 hover:border hover:border-b-2-[var(--darkest-teal)] hover:text-white hover:font-semibold hover:bg-[var(--dark-teal)]'
+                : ' w-1/4 border-3 px-1 py-4 text-center font-medium custom-style border-[var(--darkest-teal)]/30 hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)] hover:text-white'
+                
                 }>
                   <span className="">{item.name}</span>
                   
@@ -78,6 +80,7 @@ export default function Configurations() {
               
             ))}
           </nav>
+          
           <div><Outlet /></div>
         </div>
       </div>

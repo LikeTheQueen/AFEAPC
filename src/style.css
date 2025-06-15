@@ -14,3 +14,9 @@
   font-family: 'Montserrat';
 }
 
+.custom-style-info {
+  font-family: 'Montserrat';
+  font-variant: small-caps; 
+  font-style: italic;
+}
+

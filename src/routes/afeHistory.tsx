@@ -1,28 +1,145 @@
-import { ChevronRightIcon } from '@heroicons/react/20/solid';
-import { useState } from 'react';
-import { Dialog, DialogPanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-const today = new Date();
-const tet = "this is a string";
-const name = "John Doe";
-const currentDate = new Date();
-const fourDaysAgo = new Date(today.getTime() - (1 * 24 * 60 * 60 * 1000));
-const navigation = [
-   { name: 'How it Works', href: '#' },
-   { name: 'AFE Systems', href: '#' },
-   { name: 'About', href: '#' }
- ];
-export default function AFEHistory() {
-   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    return <div>
-      
-        
-      
-       <p>{tet}</p>
-       Today's date is: {currentDate.toLocaleDateString()}
-       <p>4 days ago</p>
-       Today's date is: {fourDaysAgo.toLocaleDateString()}
-     
+import { ChatBubbleBottomCenterTextIcon, CommandLineIcon } from '@heroicons/react/20/solid';
+import { useEffect, useState } from 'react';
+import type { AFEHistorySupabaseType, AFEType } from 'src/types/interfaces';
+import { setAFEHistoryMaxID } from 'src/helpers/helpers';
+import { addAFEHistorySupabase, fetchFromSupabaseMatchOnString } from 'provider/fetch';
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(' ')
+};
+
+ type AFEHistoryProps = {
+   historyAFEs: AFEHistorySupabaseType[];
+ };
+
+export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
+   
+    const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
+    const [commentVal, setCommentVal] = useState('');
+   
+    useEffect(() => {
+    setHistory(historyAFEs);    
+   }, [historyAFEs]);
+
+
+    const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
     
-    </div>;
-  }
+    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setCommentVal(event.target.value);
+    }
+    
+    function handleComment() {
+        setAFEHistoryMaxID(afeHistories);
+        const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: historyAFEs[0].afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
+        setHistory([...afeHistories, newComment]);
+        addAFEHistorySupabase(historyAFEs[0].afe_id, commentVal, 'comment');
+        setCommentVal('');
+    }
+
+    return (
+        <>
+            <div className="lg:col-start-3">
+                {/* History feed */}
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)]">AFE History</h2>
+                <ul role="list" className="mt-6 space-y-6">
+                    {
+                     
+                    afeHistories?.map((afeHistory, afeHistoryIdx) => (
+                        <li key={afeHistory.id} className="relative flex gap-x-4">
+                            <div
+                                className={classNames(
+                                    afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6',
+                                    'absolute top-0 left-0 flex w-6 justify-center',
+                                )}
+                            >
+                                <div className="w-px bg-gray-200" />
+                            </div>
+                            {afeHistory.type === 'action' ? (
+                                <>
+                                    <CommandLineIcon aria-hidden="true" className="relative size-6 flex-none text-[var(--darkest-teal)]" />
+                                    <div className="flex-auto px-2">
+                                        <div className="flex justify-between gap-x-4">
+                                            <div className="text-sm/6 ">
+                                                <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
+                                            </div>
+                                            <p className="flex-none text-sm/6 text-gray-500 custom-style-long-text">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                hour12: true,
+                                            })}</p>
+
+                                        </div>
+                                        <p className="text-sm/6 text-gray-500 custom-style-long-text">{afeHistory.description}</p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="relative flex size-6 flex-none items-center justify-center bg-white">
+                                        {afeHistory.type === 'comment' ? (
+                                            <ChatBubbleBottomCenterTextIcon aria-hidden="true" className="size-6 text-[var(--bright-pink)]" />
+                                        ) : (
+                                            <div className="size-1.5 rounded-full bg-gray-300 ring-1 ring-gray-400" />
+                                        )}
+                                    </div>
+                                    <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)] ">
+                                        <div className="flex justify-between gap-x-4">
+                                            <div className=" text-sm/6 text-gray-500">
+                                                <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
+                                            </div>
+                                            <p className="flex-none text-sm/6 text-gray-500 custom-style-long-text">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                hour12: true,
+                                            })}</p>
+
+                                        </div>
+                                        <p className="text-sm/6 text-gray-500 custom-style-long-text">{afeHistory.description}</p>
+                                    </div>
+                                </>
+                            )}
+                        </li>
+                    ))
+                       
+                    }
+                </ul>
+                {/* New comment form */}
+                <div className="mt-6 flex gap-x-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-[1rem] font-medium text-white ">
+
+                    </span>
+                    <div className="relative flex-auto">
+                        <div className="overflow-hidden rounded-lg pb-12 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                            <label htmlFor="comment" className="sr-only">
+                                Add your comment
+                            </label>
+                            <textarea
+                                id="comment"
+                                name="comment"
+                                rows={2}
+                                placeholder="Add your comment..."
+                                className="block w-full resize-none bg-transparent px-3 py-1.5 text-base text-[var(--darkest-teal)] placeholder:text-gray-400 focus:outline-none sm:text-sm/6 custom-style"
+                                value={commentVal}
+                                onChange={handleCommentChange}
+                            />
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pr-2 pl-3 ">
+                            <button
+                                type="submit"
+                                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-[var(--bright-pink)] hover:text-white"
+                                onClick={handleComment}>
+
+                                Comment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}

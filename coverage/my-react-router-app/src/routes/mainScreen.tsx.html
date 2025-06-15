@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.42% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>13/19</span>
+                <span class='fraction'>12/18</span>
             </div>
         
             
@@ -429,9 +429,7 @@
 <a name='L364'></a><a href='#L364'>364</a>
 <a name='L365'></a><a href='#L365'>365</a>
 <a name='L366'></a><a href='#L366'>366</a>
-<a name='L367'></a><a href='#L367'>367</a>
-<a name='L368'></a><a href='#L368'>368</a>
-<a name='L369'></a><a href='#L369'>369</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L367'></a><a href='#L367'>367</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -462,6 +460,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -484,9 +484,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -498,8 +495,8 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -657,7 +654,6 @@
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">15x</span>
@@ -818,7 +814,7 @@ import {
   MenuItem,
   MenuItems,
   TransitionChild,
-} from '@headlessui/react'
+} from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -827,12 +823,14 @@ import {
   FolderIcon,
   XMarkIcon,
   PhoneArrowUpRightIcon,
-} from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useSupabaseData } from "../types/SupabaseContext"
+} from '@heroicons/react/24/outline';
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { useSupabaseData } from "../types/SupabaseContext";
+&nbsp;
+&nbsp;
 &nbsp;
 const navigation = [
-  { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon },
+  { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon},
   { name: 'Notifications', href: "/mainScreen/notifications", icon: BellIcon },
   { name: 'AFE Histories', href: "/mainscreen/afeHistory", icon: ClockIcon },
   { name: 'Support History', href: "/mainScreen/supporthistory", icon: PhoneArrowUpRightIcon },
@@ -852,16 +850,13 @@ const userNavigation = [
 <span class="cstat-no" title="statement not covered" >  return classes.filter(Boolean).join(' ')</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
 export default function MainScreen() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { session } = useSupabaseData();
   const [error, setError] = useState&lt;string | null&gt;(null)
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState&lt;UserProfileSupabaseType | null&gt;(null);
-&nbsp;
+  
 &nbsp;
   useEffect(() =&gt; {
     const fetchData = async () =&gt; {
@@ -1025,7 +1020,6 @@ export default function MainScreen() {
                                 : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
                           }
                           to={item.href}
-&nbsp;
                         &gt;
                           &lt;span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white"&gt;
                             &lt;item.icon aria-hidden="true" className="size-4 shrink-0 " /&gt;
@@ -1174,7 +1168,7 @@ export default function MainScreen() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-05T22:49:35.653Z
+                at 2025-05-19T22:21:22.064Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -19,10 +19,12 @@ const TestSupabaseProvider = ({
   overrides: Partial<SupabaseContextType>;
 }) => {
   const defaultValue: SupabaseContextType = {
-    afes: null,
-    operators: null,
+    afes: undefined,
+    loggedInUser: null,
+    isSuperUser: false,
     loading: false,
     session: null,
+    refreshData: async()=>{},
     ...overrides, // <-- inject your test values here
   };
   console.log('Rendering TestSupabaseProvider with value:', defaultValue);

@@ -4,8 +4,7 @@ import { processAFEDocIDsToDocHandle } from "./executeBatchProcessAFEDocIDToDocH
 import { transformExecuteAFEsID } from "../types/transform";
 import type { ExecuteAFEDocIDType } from "../types/interfaces";
 import executeLogout from "./executeLogout";
-import { error } from "console";
-import { isNull } from "util";
+
 
 const baseURL = '/api';
 const urlPath = "api/Authentication/ApiKey/Login";

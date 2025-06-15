@@ -11,6 +11,7 @@ import LoadingPage from "./routes/loadingPage";
 import { SupabaseProvider } from "./types/SupabaseContext"; 
 import { isAuthApiError } from "@supabase/supabase-js";
 import { useSupabaseData } from "./types/SupabaseContext";
+import PageNotFound from "./routes/pageNotFound";
 
 
 
@@ -52,7 +53,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     message = error.status === 404 ? "404" : "Error";
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? "Page Not Found"
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
@@ -61,15 +62,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   } 
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+     <PageNotFound message={message} details={details} stack={stack} />
   );
 }
 

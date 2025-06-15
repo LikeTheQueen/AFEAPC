@@ -17,7 +17,7 @@ import {
   MenuItem,
   MenuItems,
   TransitionChild,
-} from '@headlessui/react'
+} from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -26,14 +26,16 @@ import {
   FolderIcon,
   XMarkIcon,
   PhoneArrowUpRightIcon,
-} from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useSupabaseData } from "../types/SupabaseContext"
+} from '@heroicons/react/24/outline';
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { useSupabaseData } from "../types/SupabaseContext";
+
+
 
 const navigation = [
-  { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon },
+  { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon},
+  { name: 'Historical AFEs', href: "/mainscreen/afeArchived", icon: ClockIcon },
   { name: 'Notifications', href: "/mainScreen/notifications", icon: BellIcon },
-  { name: 'AFE Histories', href: "/mainscreen/afeHistory", icon: ClockIcon },
   { name: 'Support History', href: "/mainScreen/supporthistory", icon: PhoneArrowUpRightIcon },
   { name: 'Configurations', href: "/mainScreen/configurations", icon: Cog6ToothIcon },
 
@@ -41,6 +43,10 @@ const navigation = [
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
   { id: 2, name: 'Contact Support', href: "contactsupport", initial: 'C' }
+]
+const onboarding = [
+  { id: 1, name: 'Create Operator', href: "/mainscreen/createOperator", initial: 'O' },
+  { id: 2, name: 'Create Users', href: "/mainscreen/createUser", initial: 'U' }
 ]
 const userNavigation = [
   { name: 'Your profile', href: '/mainScreen/profile' },
@@ -52,34 +58,18 @@ function classNames(...classes: string[]) {
 }
 
 
-
-
 export default function MainScreen() {
+  const { loggedInUser } = useSupabaseData();
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { session } = useSupabaseData();
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<UserProfileSupabaseType | null>(null);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const rawUser = await fetchFromSupabase("USER_PROFILE", 'first_name, last_name, op_company(name), email, partner_company(partner_name)');
-      const transformedUser = transformUserProfileSupabase(rawUser);
-      const singleUser = transformedUser[0] || null;
-      setUser(singleUser);
-    };
-    fetchData();
-  }, []);
-
-
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      // Update this route to redirect to an authenticated route. The user already has an active session.
       location.href = '/'
     } catch (error: unknown) {
       setError(error instanceof Error ? error.name : 'An error occurred')
@@ -190,6 +180,39 @@ export default function MainScreen() {
                         ))}
                       </ul>
                     </li>
+                    <li>
+                      <div className="relative">
+                        <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white" />
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">Onboarding</span>
+                        </div>
+                      </div>
+
+                      <ul role="list" className="-mx-2 mt-2 space-y-1">
+                        {onboarding.map((onboarding) => (
+                          <li key={onboarding.name}>
+                            <NavLink
+                              className={({ isActive, isPending }) =>
+                                isActive
+                                  ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+                                  : isPending
+                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                              }
+                              to={onboarding.href}
+                              onClick={handleClick}
+                            >
+                              <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                                {onboarding.initial}
+                              </span>
+                              <span className="truncate">{onboarding.name}</span>
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
 
                   </ul>
                 </nav>
@@ -218,13 +241,12 @@ export default function MainScreen() {
                         <NavLink
                           className={({ isActive, isPending }) =>
                             isActive
-                              ? 'bg-[var(--dark-teal)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
                               : isPending
                                 ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
                                 : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
                           }
                           to={item.href}
-
                         >
                           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
                             <item.icon aria-hidden="true" className="size-4 shrink-0 " />
@@ -252,7 +274,7 @@ export default function MainScreen() {
                         <NavLink
                           className={({ isActive, isPending }) =>
                             isActive
-                              ? 'bg-[var(--dark-teal)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
                               : isPending
                                 ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
                                 : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
@@ -262,6 +284,37 @@ export default function MainScreen() {
                             {help.initial}
                           </span>
                           <span className="">{help.name}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li>
+                  <div className="relative">
+                    <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">Onboarding</span>
+                    </div>
+                  </div>
+
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {onboarding.map((onboarding) => (
+                      <li key={onboarding.name}>
+                        <NavLink
+                          className={({ isActive, isPending }) =>
+                            isActive
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              : isPending
+                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+                                : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                          }
+                          to={onboarding.href}>
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {onboarding.initial}
+                          </span>
+                          <span className="">{onboarding.name}</span>
                         </NavLink>
                       </li>
                     ))}
@@ -300,7 +353,7 @@ export default function MainScreen() {
               <div className="flex items-center gap-x-4 lg:gap-x-6">
                 <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
                   <span className="sr-only">View notifications</span>
-                  <NavLink to="/notifications"><BellIcon aria-hidden="true" className="size-6" /></NavLink>
+                  <NavLink to="/mainscreen/notifications"><BellIcon aria-hidden="true" className="size-6" /></NavLink>
                 </button>
 
                 {/* Separator */}
@@ -317,7 +370,7 @@ export default function MainScreen() {
                     />
                     <span className="hidden lg:flex lg:items-center">
                       <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
-                        {user?.firstName + ' ' + user?.lastName}
+                        {loggedInUser?.firstName + ' ' + loggedInUser?.lastName}
                       </span>
                       <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
                     </span>

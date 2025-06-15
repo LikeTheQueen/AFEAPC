@@ -42,12 +42,12 @@ vi.mock('../provider/supabase', () => ({
 
 // Create a test consumer
 const TestComponent = () => {
-  const { afes, operators, loading, session } = useSupabaseData();
+  const { afes, loggedInUser, loading, session } = useSupabaseData();
   return (
     <>
       <div data-testid="loading">{loading ? 'loading' : 'loaded'}</div>
       <div data-testid="afes">{JSON.stringify(afes)}</div>
-      <div data-testid="operators">{JSON.stringify(operators)}</div>
+      <div data-testid="loggedInUser">{JSON.stringify(loggedInUser)}</div>
       <div data-testid="session">{JSON.stringify(session)}</div>
     </>
   );
@@ -55,9 +55,7 @@ const TestComponent = () => {
 
 describe('SupabaseProvider', () => {
   const mockAFEs = [{ id: 1, afe_number: 'AFE123' }];
-  const mockOperators = [{ id: 1, name: 'Operator X' }];
-  const transformedAFEs: AFEType[] = [{ id:'123e4567-e89b-12d3-a456-426614174000', operator:'123e4567-e89b-12d3-a456-426614174000', created_at:'May 1', afe_type: 'Drilling', afe_number:'TESTNum1', description:'Desc', total_gross_estimate:100, version_string:'', supp_gross_estimate:0, operator_wi:10, partnerID:'', partner_name:'PartnerNaem', partner_wi:23, partner_status:'New', op_status:'IAPP', iapp_date:'May5', last_mod_date:'Jun3', legacy_chainID:1, legacy_afeid:2, chain_version:1, source_system_id:'ex ID' }];
-  const transformedOperators: OperatorType[] = [{ id:'123e4567-e89b-12d3-a456-426614174000', created_at:'May 1', name:'Nav Oil', base_url:'', key:'', docID:'' }];
+  const transformedAFEs: AFEType[] = [{ id:'123e4567-e89b-12d3-a456-426614174000', operator:'123e4567-e89b-12d3-a456-426614174000', created_at: new Date(), afe_type: 'Drilling', afe_number:'TESTNum1', description:'Desc', total_gross_estimate:100, version_string:'', supp_gross_estimate:0, operator_wi:10, partnerID:'', partner_name:'PartnerNaem', partner_wi:23, partner_status:'New', op_status:'IAPP', iapp_date:'May5', last_mod_date:'Jun3', legacy_chainID:1, legacy_afeid:2, chain_version:1, source_system_id:'ex ID', sortID:1,partner_status_date:new Date(),archived: false,apc_operator_id:'' }];
   const mockSession: Session = { access_token: 'abc', token_type: 'bearer', user: { id: '123' } } as any;
 
   beforeEach(() => {
@@ -66,15 +64,11 @@ describe('SupabaseProvider', () => {
         if (table === 'AFE_PROCESSED') {
           return mockAFEs;
         }
-        if (table === 'OPERATORS') {
-          return mockOperators;
-        }
         return [];
       }
     );
   
     vi.mocked(transformAFEs).mockReturnValue(transformedAFEs);
-    vi.mocked(transformOperator).mockReturnValue(transformedOperators);
 
   
     (supabase.auth.onAuthStateChange as any).mockImplementation((cb: any) => {
@@ -108,7 +102,6 @@ describe('SupabaseProvider', () => {
     });
 
     expect(screen.getByTestId('afes')).toHaveTextContent(JSON.stringify(transformedAFEs));
-    expect(screen.getByTestId('operators')).toHaveTextContent(JSON.stringify(transformedOperators));
     expect(screen.getByTestId('session')).toHaveTextContent(JSON.stringify(mockSession));
   });
 

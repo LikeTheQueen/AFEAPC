@@ -294,3 +294,103 @@ export const fetchExecuteAFEEstimates = async (item: ExecuteAFEDocIDType, authen
                 </tfoot>
               </table>
               */
+
+              /* 
+              describe('AFEDetailURL', () => {
+  afterEach(() => {
+        vi.resetAllMocks()
+    })
+
+  it('shows loading when afes are not loaded', () => {
+    (useSupabaseData as any).mockReturnValue({ afes: undefined });
+
+    render(
+      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
+        <Routes>
+          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // You might need to add a loading indicator to your component
+    // expect(screen.getByText(/loading afe data/i)).toBeInTheDocument();
+  });
+
+  it('shows not found when afeID does not match', () => {
+    (useSupabaseData as any).mockReturnValue({
+      afes: [{ id: '999', afe_number: 'Some Other AFE' }],
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
+        <Routes>
+          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // You might need to add a not found message to your component
+    // expect(screen.getByText(/afe not found/i)).toBeInTheDocument();
+  });
+
+  it('shows AFE details when matching afeID is found', async () => {
+    // Mock the useSupabaseData hook to return mock AFE
+ 
+    (useSupabaseData as any).mockReturnValue({ afes: [mockAFE]});
+    //(fetchFromSupabaseMatchOnString as any).mockResolvedValue(mockHistoryData);
+    (fetchEstimatesFromSupabaseMatchOnAFEandPartner as any).mockResolvedValue([mockEstimates]);
+    
+    
+
+   
+    render(
+      
+      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
+        <Routes>
+          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
+        </Routes>
+      </MemoryRouter>
+      
+    );
+    
+    screen.debug(undefined, 100000);
+     await waitFor(() => {
+    expect(screen.getByText(/TESTNum1/i)).toBeInTheDocument();
+    expect(screen.getByText(/727.15/i)).toBeInTheDocument(); 
+    }); 
+    //const comment = await screen.findByText(/Initial comment/i);
+//expect(comment).toBeInTheDocument();
+
+
+
+   
+  
+  });
+});
+<AFEHistory {...afeRecord!} />
+
+export const transformUserProfileSupabase = (data: any[]): UserProfileSupabaseType[] => {
+        return data.map(item => ({
+        firstName: item.first_name,
+        lastName: item.last_name,
+        opCompany: item.op_company.name,
+        email: item.email,
+        partnerCompany: item.partner_company.partner_name,
+
+    }))
+};
+
+export const transformUserProfileSupabase = (data: any): UserProfileSupabaseType => {
+    return data.map((item: { first_name: string; last_name: string; op_company: { name: string; }; email: string; partner_company: { partner_name: string; }; }) => ({
+        firstName: item.first_name,
+        lastName: item.last_name,
+        opCompany: item.op_company.name,
+        email: item.email,
+        partnerCompany: item.partner_company.partner_name,
+
+    }))
+};
+
+
+
+              */
