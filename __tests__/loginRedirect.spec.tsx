@@ -1,7 +1,7 @@
 // __tests__/LoginRedirect.spec.tsx
 import { describe, it, vi, beforeEach, afterEach, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import LoginForm from '../src/routes/login';
+import LoginForm from '../src/routes/userLogin/routes/login';
 
 vi.mock('../provider/supabase', () => ({
   default: {

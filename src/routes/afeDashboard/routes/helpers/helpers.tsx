@@ -1,4 +1,4 @@
-import { addAFEHistorySupabase, fetchFromSupabase, updateAFEPartnerStatusSupabase } from "provider/fetch";
+import { addAFEHistorySupabase, fetchFromSupabase, updateAFEPartnerStatusSupabase, updatePartnerArchiveStatus } from "provider/fetch";
 import { addOperatorSupabase } from "provider/write";
 import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, UserProfileRecordSupabaseType } from "src/types/interfaces";
 import { transformSourceSystemSupabase, transformUserProfileSupabase } from "src/types/transform";
@@ -11,6 +11,11 @@ export function handlePartnerStatusChange(id: string, partnerStatus: string, new
     updateAFEPartnerStatusSupabase(id, newPartnerStatus);
     addAFEHistorySupabase(id, description, type);
   }
+};
+
+export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string){
+  updatePartnerArchiveStatus(id, archivedStatus);
+  addAFEHistorySupabase(id, description, type);
 };
 
 export function archiveDate(date: Date, days: number) {

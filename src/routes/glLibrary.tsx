@@ -1,3 +1,9 @@
 export default function GLLibrary() {
-    return <div>This is a hold for GL LIbrary</div>;
+    return (
+      <>
+      <div>
+        THIS IS HTE LIBRARY
+      </div>
+      </>
+    );
   }

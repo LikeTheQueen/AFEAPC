@@ -24,7 +24,7 @@ export function disableCreateButton(operator: OperatorType, operatorAddress: Add
 
 }
 
-export function disableSaveAndSaveAnother(opPartnerID: UUID | null, operatorPartnerAddress: AddressType) {
+export function disableSaveAndSaveAnother(opPartnerID: string | undefined, operatorPartnerAddress: AddressType) {
     if(!opPartnerID && !operatorPartnerAddress) {
         return true;
     } else if(opPartnerID && !operatorPartnerAddress) {

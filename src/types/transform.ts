@@ -13,9 +13,12 @@ import type {
     AddressType,
     PartnerType,
     UserProfileRecordSupabaseType,
-    RoleEntry,
+    RoleEntryRead,
     APCIDwithRole,
-    RoleTypesGeneric
+    RoleTypesGeneric,
+    OperatorPartnerAddressType,
+    OperatorPartnerAddressWithOpNameType,
+    PartnerRowData
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -45,6 +48,7 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         partner_status_date: item.partner_status_date,
         apc_operator_id: item.apc_operator_id.id,
         archived: item.archived,
+        partner_archived: item.partner_archived,
     }));
 };
 
@@ -152,16 +156,42 @@ export const transformUserProfileSupabaseSingle = (item: any): UserProfileSupaba
 export const transformUserProfileRecordSupabase = (item: any): UserProfileRecordSupabaseType => {
     const crosswalkOperator = item.OPERATOR_USER_CROSSWALK || [];
     const crosswalkPartner = item.PARTNER_USER_CROSSWALK || [];
-    return{
+    return {
     firstName: item.first_name,
     lastName: item.last_name,
     email: item.email,
     active: item.active,
-    operatorRoles: crosswalkOperator.map((c: any) => ({role: c.role, apc_id: c.apc_op_id.id, apc_name:c.apc_op_id.name})),
-    partnerRoles: crosswalkPartner.map((c: any) => ({role: c.role, apc_id: c.apc_partner_id.id, apc_name:c.apc_partner_id.partner_name})),
-    operators: crosswalkOperator.map((c: any) => c.apc_op_id.id),
-    partners: crosswalkPartner.map((c: any) => c.apc_partner_id.id),
-    user_id:item.user_id,
+    operatorRoles: crosswalkOperator.map((c: any) => ({
+        id: c.id, 
+        role:c.role, 
+        apc_id: c.apc_id.id, 
+        apc_name:c.apc_id.name, 
+        apc_address_id:c.apc_address_id.id,
+        apc_address:c.apc_address_id,
+        active: c.active,
+        user_id: item.id,
+        user_firstname: item.first_name, 
+        user_lastName: item.last_name, 
+        user_email: item.email, 
+        user_active: item.active 
+    })),
+    partnerRoles: crosswalkPartner.map((c: any) => ({
+        id: c.id, 
+        role:c.role, 
+        apc_id: c.apc_id.id, 
+        apc_name:c.apc_id.name, 
+        apc_address_id:c.apc_address_id.id,
+        apc_address:c.apc_address_id,
+        active: c.active,
+        user_id: item.id,
+        user_firstname: item.first_name, 
+        user_lastName: item.last_name, 
+        user_email: item.email, 
+        user_active: item.active
+    })),
+    operators: crosswalkOperator.map((c: any) => c.apc_id),
+    partners: crosswalkPartner.map((c: any) => c.apc_id),
+    user_id:item.id,
     };
 };
 
@@ -225,7 +255,7 @@ export const transformOperatorSingle = (item: any): OperatorType => ({
 export const transformPartnerSingle = (item: any): PartnerType => ({
         id: item.id,
         created_at: item.created_at,
-        name: item.partner_name,
+        name: item.name,
         active: item.active,
     });
 
@@ -248,4 +278,129 @@ export const transformRolesGeneric = (data: any[]): RoleTypesGeneric[] => {
         description: item.description,
         title: item.title,
         }))
+};
+
+export const transformOperatorPartnerAddress = (data: any[]): OperatorPartnerAddressType[] => {
+    return data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
+    .map(item => ({
+        apc_id: item.apc_id.id,
+        name: item.apc_id.name,
+        apc_address_id:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country
+        
+    }));
+};
+
+export const transformOperatorasPartnerAddress = (data: any[]): OperatorPartnerAddressType[] => {
+    return data
+    .filter(item => item.address !==null && item.apc_partner_id.id !== null && item.apc_partner_id.id !== undefined )
+    .map(item => ({
+        id: item.apc_partner_id.id || item.id,
+        name: item.apc_partner_id.partner_name || item.name,
+        addressID:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country
+        
+    }));
+};
+
+export const transformOperatorPartnerAddressSuperUser = (data: any[]): OperatorPartnerAddressType[] => {
+    
+    const filterdata = data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined );
+    console.log(filterdata, 'I FILTER')
+    return data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
+    .map(item => ({
+        apc_id: item.apc_id,
+        name: item.name,
+        apc_address_id:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country
+        
+    })); 
+};
+
+export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
+    return data 
+    .map(item => ({
+    id: item.id, 
+    role:item.role, 
+    apc_id: item.apc_id.id, 
+    apc_name:item.apc_id.name, 
+    apc_address_id:item.address.id, 
+    active: item.active,
+    apc_address:item.address, 
+    user_id: item.user_id.id, 
+    user_firstname: item.user_id.first_name, 
+    user_lastName: item.user_id.last_name, 
+    user_email: item.user_id.email,
+    user_active: item.user_id.active,
+    }));
+};
+
+export const transformRoleEntryPartnerSupabase = (data: any[]): RoleEntryRead[] => {
+    return data 
+    .map(item => ({
+    role_id: item.id, 
+    role:item.role, 
+    apc_id: item.apc_partner_id.id, 
+    apc_name:item.apc_partner_id.partner_name, 
+    apc_address_id:item.address.id, 
+    active: item.active,
+    apc_address:item.address, 
+    user_id: item.user_id.id, 
+    user_firstname: item.user_id.first_name, 
+    user_lastName: item.user_id.last_name, 
+    user_email: item.user_id.email,
+    user_active: item.user_id.active
+    }));
+};
+
+export const transformOperatorPartnerAddressWithOpName = (data: any[]): OperatorPartnerAddressWithOpNameType[] => {
+    return data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
+    .map(item => ({
+        apc_id: item.apc_id,
+        name: item.name,
+        apc_address_id:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country,
+        apc_op_id: (item.apc_op_id === null ? '' : item.apc_op_id.id),
+        apc_op_name: (item.apc_op_id === null ? '' : item.apc_op_id.name),
+        
+    }));
+};
+
+export const transformPartnerSourceSystemAddress = (data: any[]) : PartnerRowData[] => {
+    return data.map(item => ({
+        source_id: item.source_id,
+        apc_op_id: item.apc_op_id,
+        name: item.name,
+        street: item.street,
+        suite: item.suite,
+        city: item.city,
+        state: item.state,
+        zip: item.zip,
+        country: item.country,
+        active: item.active
+    }))
 }

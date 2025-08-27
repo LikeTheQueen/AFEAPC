@@ -11,6 +11,7 @@ import { activeTab } from "src/helpers/styleHelpers";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 
 
+
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
   {id:2, name:"Operated AFEs", current: false},
@@ -27,8 +28,7 @@ export default function AFE() {
     const updateCurrentTab = activeTab(tabs, selected);
     setCurrentTab(updateCurrentTab.selectedTabId);
     setTabList(updateCurrentTab.updatedTabs);
-
-  }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement> ) => {
     const selectedTabId = parseInt(event.target.value, 10);
@@ -38,11 +38,11 @@ export default function AFE() {
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
   const operatedAFEs = afes?.filter((afe) => allowedOperatorIds.has(afe.apc_operator_id) && afe.archived !==true);
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
-  const nonOperatedAFEs = afes?.filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.archived !==true);
+  const nonOperatedAFEs = afes?.filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true);
 
   return (
     <>
-    <div className="py-4 px-4 sm:px-6 lg:px-8">
+    <div className="pt-16 px-4 sm:px-32 ">
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select
@@ -60,22 +60,24 @@ export default function AFE() {
         />
         
       </div>
-      <div className="hidden sm:block">
-        <div className="">
-          <nav aria-label="Tabs" className="-mb-px flex gap-x-8">
-            {tabList.map((item) => (
+      <div className="hidden sm:flex ">
+        <div className="pb-1 w-full">
+          <nav aria-label="Tabs" className="-mb-px flex  rounded-t-md border border-[var(--darkest-teal)]">
+            {tabList.map((item, index) => (
                 <Button
                 key={item.id}
                 onClick={e => handleTabChange(item.id)}
-                className={
-                item.current
-                ? ' w-1/4 border-3 px-1 py-4 text-center custom-style font-semibold border-[var(--darkest-teal)] bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)]'
-                
-                : ' w-1/4 border-3 px-1 py-4 text-center font-medium custom-style border-[var(--darkest-teal)]/30 hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)] hover:text-white'
-                
-                }>
+                className={`flex-1 text-center px-4 py-3 custom-style transition-colors ease-in-out duration-300
+      
+      ${item.current
+          ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium shadow-sm z-10'
+          : 'bg-white text-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal'}
+          ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
+        ${index === 0 ? 'rounded-tl-md' : ''}
+        ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
+          
+          `}>
                   <span className="">{item.name}</span>
-                  
                 </Button>
               
             ))}
@@ -84,24 +86,11 @@ export default function AFE() {
           
         </div>
       </div>
-
-    </div>
+      </div>
     {/* Non-Operated AFEs */}
-    <div hidden = {currentTab ===2} className="py-4 px-4 sm:px-6 lg:px-8 ">
-      <div hidden ={setIsHidden(nonOperatedAFEs)} className="overflow-visible bg-white sm:rounded-lg flex justify-center items-center" data-testid="NonOperatedAFElistHeader">
-    <div className="relative w-full -mb-2 -mt-2">
-      <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
-        <div className="w-full border-t border-[var(--dark-teal)]/30 border-3" />
-      </div>
-      <div className="relative flex justify-start items-center ">
-        <span className="bg-white px-3 text-lg font-semibold custom-style text-[var(--darkest-teal)]">Non Operated AFEs</span>
-        
-      </div>
-      
-    </div>
-        
-      </div>
-      <span hidden ={setIsHidden(nonOperatedAFEs)} className="bg-white px-3 text-sm font-normal custom-style-info text-[var(--darkest-teal)]">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</span>
+    <div hidden = {currentTab ===2} className="py-8 px-4 sm:px-16 ">
+      <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Non-Operated AFEs</h2>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={setIsHidden(nonOperatedAFEs)} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="NonOperatedAFElist">
       {nonOperatedAFEs?.map((afe) => (
         <Link key={afe.id} 
@@ -132,7 +121,10 @@ export default function AFE() {
                 <div
                   className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Gross:</span>
-                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)}
+                  { afe.supp_gross_estimate > 0 ?
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.supp_gross_estimate) :
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)
+                  }
                 </div>
               </div>
               <div className="flex w-0 flex-1">
@@ -146,40 +138,32 @@ export default function AFE() {
                 <div
                   className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Net:</span>
-                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)}
+                  { afe.supp_gross_estimate > 0 ?
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.supp_gross_estimate*afe.partner_wi)/100) :
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)
+                  }
                 </div>
               </div>
             </div>
         </Link>
       ))}
     </ul>
-    <div hidden ={!setIsHidden(nonOperatedAFEs)} className="overflow-hidden bg-white shadow-md sm:rounded-lg border flex justify-center items-center" data-testid="NoNonOperatedAFElist">
+    <div hidden ={!setIsHidden(nonOperatedAFEs)} className="overflow-hidden bg-white sm:rounded-lg flex justify-center items-center" data-testid="NoNonOperatedAFElist">
     <div className="relative w-2/3 h-20 ">
       <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
         <div className="w-full border-t border-[var(--dark-teal)]" />
       </div>
       <div className="relative flex justify-center items-center h-20">
-        <span className="bg-white px-3 text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Non-Operated AFEs to view</span>
+        <span className="bg-white text-xs sm:px-3 sm:text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Non-Operated AFEs to view</span>
       </div>
     </div>
         
       </div>
     </div>
        {/* Operated AFEs */}
-    <div hidden = {currentTab ===1} className="py-4 px-4 sm:px-6 lg:px-8">
-      
-    <div hidden ={setIsHidden(operatedAFEs) } className="overflow-visible bg-white sm:rounded-lg flex justify-center items-center" data-testid="OperatedAFElistHeader">
-    <div className="relative w-full -mb-2 -mt-2">
-      <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
-        <div className="w-full border-t border-[var(--dark-teal)]/30 border-3" />
-      </div>
-      <div className="relative flex justify-start items-center">
-        <span className="bg-white px-3 text-lg font-semibold custom-style text-[var(--darkest-teal)]">Operated AFEs</span>
-      </div>
-    </div>
-        
-      </div>
-      <span hidden ={setIsHidden(operatedAFEs)} className="bg-white px-3 text-sm font-normal custom-style-info text-[var(--darkest-teal)]">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</span>
+    <div hidden = {currentTab ===1} className="py-8 px-4 sm:px-16">
+    <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Operated AFEs</h2>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={setIsHidden(operatedAFEs)} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="OperatedAFElist">
       {operatedAFEs?.map((afe) => (
         
@@ -220,7 +204,10 @@ export default function AFE() {
                 <div
                   className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Gross:</span>
-                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)}
+                  { afe.supp_gross_estimate > 0 ?
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.supp_gross_estimate) :
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)
+                 }
                 </div>
               </div>
               <div className="flex w-0 flex-1">
@@ -234,7 +221,10 @@ export default function AFE() {
                 <div
                   className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
                   <span>Net:</span>
-                  {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)}
+                  { afe.supp_gross_estimate > 0 ?
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.supp_gross_estimate*afe.partner_wi)/100) :
+                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)
+                  }
                 </div>
               </div>
             </div>
@@ -242,22 +232,18 @@ export default function AFE() {
         </Link>
       ))}
     </ul>
-    <div hidden ={!setIsHidden(operatedAFEs)} className="overflow-hidden bg-white shadow-md sm:rounded-lg border flex justify-center items-center" data-testid="NoOperatedAFElist">
+    <div hidden ={!setIsHidden(operatedAFEs)} className="overflow-hidden bg-white shadow-md sm:rounded-lg flex justify-center items-center" data-testid="NoOperatedAFElist">
     <div className="relative w-2/3 h-20 ">
       <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
         <div className="w-full border-t border-[var(--dark-teal)]" />
       </div>
       <div className="relative flex justify-center items-center h-20">
-        <span className="bg-white px-3 text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Operated AFEs to view </span>
+        <span className="bg-white text-xs sm:px-3 sm:text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Operated AFEs to view </span>
       </div>
     </div>
         
       </div>
-      </div>
-      
-
-      
-    
+    </div>
     </>
   )
 }

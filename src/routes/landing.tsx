@@ -9,6 +9,7 @@ const navigation = [
    { name: 'AFE Systems', href: '#' },
    { name: 'About', href: '#' }
  ];
+ 
 export default function LandingPage() {
    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
    const navigate = useNavigate();

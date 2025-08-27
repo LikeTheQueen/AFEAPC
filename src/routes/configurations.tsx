@@ -1,51 +1,60 @@
-'use client'
-
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import "../style.css";
+import { Button } from '@headlessui/react';
+import { activeTab } from "src/helpers/styleHelpers";
+import AuthButton from './systemConfigurations';
+import GLLibrary from './glLibrary';
+import DataExport from './dataExport';
+import PartnerLibrary from '../routes/partnerConfigurations/routes/partnerLibrary';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
+import { PhoneIcon, PlayCircleIcon, RectangleGroupIcon } from '@heroicons/react/20/solid'
+import { ChartPieIcon, CursorArrowRaysIcon, FingerPrintIcon, SquaresPlusIcon } from '@heroicons/react/24/outline'
+
 
 const tabs = [
-  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/partnerlibrary", current: true },
-  { id:2, name: 'GL Library', href: "/mainScreen/configurations/gllibrary", current: false },
-  { id:3, name: 'Data Export', href: "/mainScreen/configurations/dataexport", current: false },
-  { id:4, name: 'System Connections', href: "/mainScreen/configurations/systemConfigurations", current: false },
-]
+  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/", current: false, 
+  sublist: [
+  {id:1, name:"Upload Partner List", current: true, href:"/mainScreen/configurations/partnerupload"},
+  {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping"},
+  {id:3, name:"View Current Mappings", current: false, href:"/mainScreen/configurations/partnermapping"},
+]},
+  { id:2, name: 'GL Library', href: "/mainScreen/configurations", current: false,
+    sublist:[]
+   },
+  { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,
+    sublist:[] },
+  { id:4, name: 'System Connections', href: "/mainScreen/configurations", current: false,
+    sublist:[] },
+];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
- 
 export default function Configurations() {
   const navigate = useNavigate();
   const [tabList, setTabList] = useState(tabs);
+  const [currentTab, setCurrentTab] = useState(1);
+  const [currentSubTab, setCurrentSubTab] = useState(1);
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement> ) => {
-    const selectedTabId = parseInt(event.target.value, 10);
-    // Update the 'current' property
-    const updatedTabs = tabList.map((tab) => ({
-      ...tab,
-      current: tab.id === selectedTabId,
-    }));
-
-    setTabList(updatedTabs);
-
-    // Find the selected tab and navigate
-    const selectedTab = updatedTabs.find((tab) => tab.id === selectedTabId);
-    if (selectedTab) {
-      navigate(selectedTab.href); 
-    }
+function handleTabChange(selected: number){
+    const updateCurrentTab = activeTab(tabs, selected);
+    setCurrentTab(updateCurrentTab.selectedTabId);
+    setTabList(updateCurrentTab.updatedTabs);
   };
 
+function handleSubTabChange(selected: number){
+  setCurrentSubTab(selected);
+  close();
+};
+
   return (
-    <div className="py-10 px-4 sm:px-6 lg:px-8">
+    <form onSubmit={(e) => e.preventDefault()}>
+    <div className="px-4 sm:px-32 ">
+      <div className="h-16 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select
-          value={tabList.find((tab) => tab.current)?.id || ""}
-          onChange={handleChange}
+          onChange={e => handleTabChange(Number(e.target.value))}
           aria-label="Select a tab"
           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
           {tabs.map((tab) => (
@@ -56,34 +65,77 @@ export default function Configurations() {
           aria-hidden="true"
           className="pointer-events-none col-start-1 row-start-1 gap-x-8 mr-2 size-5 self-center justify-self-end fill-[var(--darkest-teal)]"
         />
-        <div><Outlet /></div>
       </div>
-      <div className="hidden sm:block">
-        <div className="">
-          <nav aria-label="Tabs" className="-mb-px flex gap-x-8">
-            {tabs.map((item) => (
-                
-                <NavLink
-                key={item.id}
-                to={item.href}
-                className={({isActive})=>
-                 
-                isActive
-                ? ' w-1/4 border-3 px-1 py-4 text-center custom-style font-semibold border-[var(--darkest-teal)] bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)]'
-                
-                : ' w-1/4 border-3 px-1 py-4 text-center font-medium custom-style border-[var(--darkest-teal)]/30 hover:bg-[var(--bright-pink)] hover:border-[var(--bright-pink)] hover:text-white'
-                
-                }>
-                  <span className="">{item.name}</span>
-                  
-                </NavLink>
+      <div className="hidden sm:flex sm:sticky z-11 sm:top-32 ">
+              <div className="pb-0 flex flex-1 rounded-t-md border border-[var(--darkest-teal)]">
+        {tabList.map((item, index) => (
+          <div key={item.id} className="relative isolate z-50 flex w-full">    
+      <Popover className="relative isolate z-50 flex w-full">
+          <PopoverButton
+          as={NavLink}
+          to={item.href}
+              onClick={e => handleTabChange(item.id)}
+              className={`inline-flex flex-1 justify-center items-center px-4 py-3 custom-style transition-colors ease-in-out duration-200 
+            ${item.current
+                  ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
+                  : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--darkest-teal)] hover:text-white hover:font-semibold font-normal hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-[var(--bright-pink)]'}
+              ${index !== 0 ? 'border-l border-l-1 border-[var(--darkest-teal)]' : ''}
+        ${index === 0 ? 'rounded-tl-md' : ''}
+        ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
+              `}>
+              <span className="">{item.name}</span>
+              <span hidden={item.sublist.length < 1}><ChevronDownIcon aria-hidden="true" className="size-5" /></span>
+            </PopoverButton>
+            {item.sublist.length > 0 && (
+      <PopoverPanel 
+      transition
+      className="absolute inset-x-0 top-16 w-full bg-[var(--darkest-teal)] text-white data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in ">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 top-1/2 shadow-lg ring-1 ring-gray-900/30"
+        />
+        <div className="relative ">
+          <div className="mx-auto flex flex-col px-2 py-1 lg:px-2 xl:gap-x-8">
+          {item.sublist.map((sub) => (
+            <PopoverButton key={sub.id}
+            as={NavLink}
+            to={sub.href}
+            onClick={e => {handleSubTabChange(sub.id) }}
+            className="group relative rounded-lg p-4 custom-style hover:text-white hover:font-semibold font-normal hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-[var(--bright-pink)]">
+              {sub.name}
+            </PopoverButton>
+          ))}
+          </div>
+          </div>
+        
+      </PopoverPanel>
+    )}
               
-            ))}
-          </nav>
-          
-          <div><Outlet /></div>
-        </div>
-      </div>
+    </Popover>
     </div>
+      ))}
+    </div>
+    </div>
+    <div className="py-8">
+    <Outlet></Outlet>
+    </div>
+    {/* 
+            <div hidden={currentTab !==1}>
+            <PartnerLibrary
+             selectedSubTab={currentSubTab}>
+            </PartnerLibrary>
+            </div>
+            <div hidden={currentTab !==2}>
+            <GLLibrary/>
+            </div>
+            <div hidden={currentTab !==3}>
+            <DataExport/>
+            </div>
+            <div hidden={currentTab !==4}>
+            <AuthButton/>
+            </div>
+            */}
+    </div>
+    </form>
   )
 }

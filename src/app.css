@@ -9,6 +9,10 @@
   --bright-pink: #F61067;
   --light-grey: #9AA0A8;
   --gright-green: #95C623;
+  --toastify-color-light: #002626;
+  --toastify-toast-padding: 0px;
+  --toastify-toast-width: 500px;
+  --toastify-color-progress-light: linear-gradient(to right,#002626, #F61067, #fff, #F61067);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);

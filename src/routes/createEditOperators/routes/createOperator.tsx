@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase } from 'provider/write';
 import { disableCreateButton, disableSaveAndSaveAnother, isAddressListHidden } from './helpers/helpers';
 import type { UUID } from 'crypto';
+import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
+
 
 
 
@@ -38,7 +40,7 @@ export default function CreateOperator() {
     const [operatorBillingAddress, setOpBillAddress] = useState<AddressType>(opAddressBlank);
     const [operatorPartnerAddressSingle, setOpPartnerAddressSingle] = useState<AddressType>(opPartnerAddressBlank);
     const [operatorPartnerAddresses, setOpPartnerAddress] = useState<AddressType[] | []>([]);
-    const [opPartnerID, setOpPartnerID] = useState<UUID | null>(null);
+    const [opPartnerID, setOpPartnerID] = useState<string | null>(null);
     const [showSaved, setShowSaved] = useState<boolean>(true);
     const [showAddressList, setShowAddressList] = useState<boolean>(true);
     
@@ -76,11 +78,7 @@ export default function CreateOperator() {
   async function handleClickSaveOpName() {
     try {
       const operatorRecord = await addOperatorSupabase(operator?.name!, operator?.source_system!);
-      const partnerRecord = await addPartnerSupabase(operator.name!, operator.id!);
       
-      if (partnerRecord) {
-        setOpPartnerID(partnerRecord?.id!);
-      }
       if (operatorRecord) {
         setOperator(operatorRecord); 
         setShowSaved(false);
@@ -110,8 +108,13 @@ export default function CreateOperator() {
     }
   }
   async function handleClickSaveAnother() {
+    const partnerRecord = await addPartnerSupabase(operator.name!, operator.id!);
+      
+      if (partnerRecord) {
+        setOpPartnerID(partnerRecord?.id!);
+      }
     try {
-        const operatorAddressRecord = await addOperatorPartnerAddressSupabase(opPartnerID!, 
+        const operatorAddressRecord = await addOperatorPartnerAddressSupabase(partnerRecord?.id!, 
         operatorPartnerAddressSingle?.street!,
         operatorPartnerAddressSingle?.suite!,
         operatorPartnerAddressSingle?.city!,
@@ -132,7 +135,7 @@ export default function CreateOperator() {
       console.error("Failed to add operator Address:", error);
     }
   }
-  
+  console.log(operator.id, 'THE OP ID')
   return (
     <div className="py-4 px-4 sm:px-6 lg:px-8 divide-y divide-gray-900/20">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
@@ -312,6 +315,23 @@ export default function CreateOperator() {
           Operator has been saved.</div>
         </form>
       </div>
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
+        <div className="px-4 sm:px-0">
+          <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
+          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
+            From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
+          </p>
+        </div>
+
+        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-2">
+          <div >
+            <PartnerToOperatorGrid
+            singleOpID={true}
+            currentOpID={operator.id!}>
+            </PartnerToOperatorGrid>
+          </div>
+        </form>
+      </div>
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
         <div className="px-4 sm:px-0">
@@ -449,7 +469,7 @@ export default function CreateOperator() {
           </div>
           <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/20 px-4 py-4 sm:px-8">
             <button
-              disabled={disableSaveAndSaveAnother(opPartnerID,operatorPartnerAddressSingle)}
+              disabled={disableSaveAndSaveAnother(operator.id,operatorPartnerAddressSingle)}
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickSaveAnother(); 

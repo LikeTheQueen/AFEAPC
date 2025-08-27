@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import LandingPage from 'src/routes/landing';
-import LoginForm from 'src/routes/login';
+import LoginForm from 'src/routes/userLogin/routes/login';
 import { MemoryRouter, useNavigate } from 'react-router';
 
 test( 'renders the landing page by default', () => {

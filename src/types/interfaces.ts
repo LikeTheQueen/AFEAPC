@@ -27,6 +27,7 @@ export interface AFEType {
     partner_status_date: Date;
     apc_operator_id: string;
     archived: boolean;
+    partner_archived: boolean;
   }
 
 //Interface for AFE IDs pulled from Execute
@@ -61,7 +62,7 @@ export interface AFEType {
   }
 //Interface for Operators pulled from the database
   export interface OperatorType {
-    id?: UUID;
+    id?: string;
     created_at?: Date;
     name: string;
     base_url?: string;
@@ -105,10 +106,41 @@ export interface AFEType {
     id: string;
     name: string;
   }
-  export interface RoleEntry{
+  
+  export interface RoleEntryWrite{
+    user_id?: string;
     role: number;
+    id?: number;
     apc_id: string;
+    apc_address_id: number;
+    active: boolean;
+  }
+  
+  export interface RoleEntryRead extends RoleEntryWrite{
     apc_name: string;
+    apc_address: AddressType | null;
+    active: boolean;
+    user_id: string;
+    user_firstname: string;
+    user_lastName: string;
+    user_email: string;
+    user_active: boolean;
+  }
+
+  export interface PartnerRoleEntryWrite{
+    user_id: string;
+    role: number;
+    id?: number | null | undefined;
+    apc_partner_id: string;
+    apc_partner_id_address_id: number;
+    active: boolean;
+  }
+
+  export interface RoleTypeSupabaseOperator{
+    user_id: string;
+    role: number;
+    apc_op_id: string;
+    apc_op_id_address_id: number;
   }
 //Interface for User Profiles pulled from Supabase
   export interface UserProfileRecordSupabaseType {
@@ -116,8 +148,8 @@ export interface AFEType {
     lastName: string;
     email: string;
     active: boolean;
-    operatorRoles: RoleEntry[];
-    partnerRoles: RoleEntry[];
+    operatorRoles: RoleEntryRead[];
+    partnerRoles: RoleEntryRead[];
     operators: string[];
     partners: string[];
     user_id?: UUID | null;
@@ -178,3 +210,76 @@ export interface AFEType {
     description: string;
     title: string;
   }
+
+//Interface for Operator Names, IDs and addresses  
+  export interface OperatorPartnerAddressType {
+    apc_id?: string;
+    name: string;
+    apc_address_id?: number | null;
+    street?: string | undefined;
+    suite?: string | undefined;
+    city?: string | undefined;
+    state?: string | undefined;
+    zip?: string | undefined;
+    country?: string | undefined;
+  }
+
+  export interface OperatorPartnerAddressWithOpNameType extends OperatorPartnerAddressType {
+    apc_op_id?: string | null;
+    apc_op_name?: string;
+  }
+
+  export interface PartnerRecordToUpdate {
+    id: string;
+    apc_op_id: string | null; 
+
+  }
+
+//Interface for grouping roles by user and apc_id
+  export interface GroupedByUserAndApc {
+  userId: string;
+  name: string;
+  email: string | null;
+  apcs: {
+    apc_id: string;
+    apc_name: string;
+    apc_address_id: number;
+    roles: RoleEntryWrite[];
+  }[];
+};
+
+//Interface for Partners from the source system  
+  export interface SourceSystemPartnerAddressType {
+    id: number;
+    apc_op_id?: string;
+    source_id: string;
+    name: string;
+    apc_address_id?: number | null;
+    street?: string | undefined;
+    suite?: string | undefined;
+    city?: string | undefined;
+    state?: string | undefined;
+    zip?: string | undefined;
+    country?: string | undefined;
+    active: boolean;
+    mapped: boolean;
+  };
+
+export interface PartnerRowData {
+  source_id: string;
+  apc_op_id: string;
+  name: string;
+  street: string;
+  suite: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  active: boolean;
+};
+
+export interface PartnerMappingRecord {
+    operator?: string | UUID;
+    op_partner_id?: string;
+    partner_id?: string | UUID;
+};

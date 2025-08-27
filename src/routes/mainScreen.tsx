@@ -4,9 +4,7 @@ import supabase from "provider/supabase";
 import { useState, useEffect } from 'react';
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
-import { transformUserProfileSupabase } from "../types/transform";
 import type { UserProfileSupabaseType } from "../types/interfaces";
-import { fetchFromSupabase } from "../../provider/fetch";
 import "../style.css";
 import {
   Dialog,
@@ -29,6 +27,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { useSupabaseData } from "../types/SupabaseContext";
+import { DialogTitle } from '@headlessui/react'
+
 
 
 
@@ -37,12 +37,16 @@ const navigation = [
   { name: 'Historical AFEs', href: "/mainscreen/afeArchived", icon: ClockIcon },
   { name: 'Notifications', href: "/mainScreen/notifications", icon: BellIcon },
   { name: 'Support History', href: "/mainScreen/supporthistory", icon: PhoneArrowUpRightIcon },
-  { name: 'Configurations', href: "/mainScreen/configurations", icon: Cog6ToothIcon },
-
+  
 ]
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
   { id: 2, name: 'Contact Support', href: "contactsupport", initial: 'C' }
+]
+const settings = [
+  { id: 1, name: 'Manage Permissions', href: "/mainscreen/managePermissions", initial: 'P' },
+  { id: 2, name: 'Manage Users', href: "/mainscreen/manageUsers", initial: 'U' },
+  { id: 3, name: 'Configurations', href: "/mainScreen/configurations", initial: 'C' }
 ]
 const onboarding = [
   { id: 1, name: 'Create Operator', href: "/mainscreen/createOperator", initial: 'O' },
@@ -64,6 +68,7 @@ export default function MainScreen() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<UserProfileSupabaseType | null>(null);
+  const [open, setOpen] = useState(true)
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,14 +101,11 @@ export default function MainScreen() {
         <Dialog open={sidebarOpen} onClose={setSidebarOpen} className="relative z-50 lg:hidden">
           <DialogBackdrop
             transition
-            className="fixed inset-0 bg-[var(--darkest-teal)]/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"
-          />
-
+            className="fixed inset-0 bg-[var(--darkest-teal)]/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"/>
           <div className="fixed inset-0 flex">
             <DialogPanel
               transition
-              className="relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full"
-            >
+              className="relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
               <TransitionChild>
                 <div className="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out data-closed:opacity-0">
                   <button type="button" onClick={() => setSidebarOpen(false)} className="-m-2.5 p-2.5">
@@ -142,6 +144,39 @@ export default function MainScreen() {
                                 <item.icon aria-hidden="true" className="size-3.5 shrink-0 " />
                               </span>
                               <span className="">{item.name}</span>
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                    <li>
+                      <div className="relative">
+                        <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white" />
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">System</span>
+                        </div>
+                      </div>
+
+                      <ul role="list" className="-mx-2 mt-2 space-y-1">
+                        {settings.map((setting) => (
+                          <li key={setting.name}>
+                            <NavLink
+                              className={({ isActive, isPending }) =>
+                                isActive
+                                  ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+                                  : isPending
+                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                              }
+                              to={setting.href}
+                              onClick={handleClick}
+                            >
+                              <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                                {setting.initial}
+                              </span>
+                              <span className="truncate">{setting.name}</span>
                             </NavLink>
                           </li>
                         ))}
@@ -213,7 +248,6 @@ export default function MainScreen() {
                         ))}
                       </ul>
                     </li>
-
                   </ul>
                 </nav>
               </div>
@@ -244,7 +278,7 @@ export default function MainScreen() {
                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
                               : isPending
                                 ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
-                                : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
                           }
                           to={item.href}
                         >
@@ -253,6 +287,37 @@ export default function MainScreen() {
                           </span>
                           <span className="">{item.name}</span>
 
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li>
+                  <div className="relative">
+                    <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">System</span>
+                    </div>
+                  </div>
+
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {settings.map((setting) => (
+                      <li key={setting.name}>
+                        <NavLink
+                          className={({ isActive, isPending }) =>
+                            isActive
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              : isPending
+                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                          }
+                          to={setting.href}>
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {setting.initial}
+                          </span>
+                          <span className="">{setting.name}</span>
                         </NavLink>
                       </li>
                     ))}
@@ -277,7 +342,7 @@ export default function MainScreen() {
                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
                               : isPending
                                 ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
-                                : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
                           }
                           to={help.href}>
                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
@@ -308,7 +373,7 @@ export default function MainScreen() {
                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
                               : isPending
                                 ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
-                                : 'text-white font-normal text-m/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
                           }
                           to={onboarding.href}>
                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
@@ -327,31 +392,19 @@ export default function MainScreen() {
         </div>
 
         <div className="lg:pl-72">
-          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-8">
+          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-[var(--darkest-teal)] px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-8">
             <button type="button" onClick={() => setSidebarOpen(true)} className="-m-2.5 p-2.5 text-gray-700 lg:hidden">
               <span className="sr-only">Open sidebar</span>
-              <Bars3Icon aria-hidden="true" className="size-6" />
+              <Bars3Icon aria-hidden="true" className="size-6 text-white" />
             </button>
 
             {/* Separator */}
-            <div aria-hidden="true" className="h-6 w-px bg-gray-900/10 lg:hidden" />
+            <div aria-hidden="true" className="h-6 w-px lg:hidden" />
 
-            <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-              <form action="#" method="GET" className="grid flex-1 grid-cols-1">
-                <input
-                  name="search"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  className="col-start-1 row-start-1 block size-full bg-white pl-8 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm/6"
-                />
-                <MagnifyingGlassIcon
-                  aria-hidden="true"
-                  className="pointer-events-none col-start-1 row-start-1 size-5 self-center text-gray-400"
-                />
-              </form>
-              <div className="flex items-center gap-x-4 lg:gap-x-6">
-                <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+            <div className="flex flex-1 gap-x-4 justify-end self-stretch lg:gap-x-6">
+              
+              <div className="flex items-center gap-x-4 lg:gap-x-6 bg-[var(--darkest-teal)]">
+                <button type="button" className="-m-2.5 p-2.5 text-white hover:text-[var(--bright-pink)]">
                   <span className="sr-only">View notifications</span>
                   <NavLink to="/mainscreen/notifications"><BellIcon aria-hidden="true" className="size-6" /></NavLink>
                 </button>
@@ -360,7 +413,7 @@ export default function MainScreen() {
                 <div aria-hidden="true" className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" />
 
                 {/* Profile dropdown */}
-                <Menu as="div" className="relative">
+                <Menu as="div" className="relative custom-style">
                   <MenuButton className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
                     <img
@@ -369,7 +422,7 @@ export default function MainScreen() {
                       className="size-8 rounded-full bg-gray-50"
                     />
                     <span className="hidden lg:flex lg:items-center">
-                      <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
+                      <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-white">
                         {loggedInUser?.firstName + ' ' + loggedInUser?.lastName}
                       </span>
                       <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
@@ -385,10 +438,8 @@ export default function MainScreen() {
                           item.href ? (
                             <NavLink
                               to={item.href}
-                              state={{ userProfile: user }}
-
-                              className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden">
-
+                              state={{ userProfile: loggedInUser }}
+                              className="w-full block px-3 py-1 text-sm/6 text-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover: rounded-md">
                               {item.name}
                             </NavLink>
 
@@ -396,7 +447,7 @@ export default function MainScreen() {
                             <button
 
                               onClick={handleLogout}
-                              className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden">
+                              className="w-full block px-3 py-1 text-sm/6 text-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover: rounded-md">
 
                               {item.name}
                             </button>
@@ -415,6 +466,7 @@ export default function MainScreen() {
             <div ><Outlet /></div>
           </main>
         </div>
+        
       </div>
     </>
   )

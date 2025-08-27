@@ -1,6 +1,6 @@
 import { useSupabaseData } from "../types/SupabaseContext";
 import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable } from "src/helpers/helpers";
-import { isLoggedInUserOperator } from "src/helpers/styleHelpers";
+import { doesLoggedInUserHaveAcceptRejectRole, isLoggedInUserOperator } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./afeDashboard/routes/helpers/styleHelpers";
 import { useParams } from 'react-router';
 import React, { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ import {
   EllipsisVerticalIcon,
 } from '@heroicons/react/20/solid'
 import { Bars3Icon, ChatBubbleBottomCenterTextIcon, CommandLineIcon } from '@heroicons/react/20/solid'
-import { handlePartnerStatusChange } from "./afeDashboard/routes/helpers/helpers";
+import { handlePartnerArchiveStatusChange, handlePartnerStatusChange } from "./afeDashboard/routes/helpers/helpers";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -37,7 +37,7 @@ export default function AFEDetailURL() {
   const [statusColor, setStatusColor] = useState('blue-900');
   const [statusBackgroundColor, setStatusBgColor] = useState('blue-900');
   const [statusRingColor, setStatusRgColor] = useState('blue-900');
-
+  const [doesUserHaveAcceptRejectRole, setUserAcceptRejectRole] = useState(false);
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
   const { refreshData } = useSupabaseData();
 
@@ -93,6 +93,11 @@ useEffect(() => {
     fetchAllRelatedData();
   }, [afeRecord]);
 
+  useEffect(() => {
+    if(!loggedInUser) return;
+    const userRole = doesLoggedInUserHaveAcceptRejectRole(loggedInUser?.partnerRoles!, 6, afeRecord?.partnerID!)
+    setUserAcceptRejectRole(userRole);
+  },[loggedInUser])
   const groupedAccounts = groupByAccountGroup(afeEstimates);
  
   function handleStatusComment(status: string) {
@@ -100,17 +105,14 @@ useEffect(() => {
     const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: afeID!, user: 'You', description: `AFE has been marked as ${status}`, type: "action", created_at: new Date() };
     setHistory([...afeHistories, newComment]);
   }
-  const ishidden = isLoggedInUserOperator(afeRecord?.apc_operator_id, loggedInUser?.operators[0]);
-  console.log(ishidden);
-  console.log(afeRecord);
-  console.log('afe id ', afeRecord?.apc_operator_id,' USE ID ', loggedInUser?.operators[0])
+  
   return (
     <>
       <main>
-        <div className="px-4 py-4 sm:px-6 lg:px-8 ">
+        <div className="pt-16 px-4 sm:px-16 ">
           <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {/* AFE Actions */}
-            <div hidden = {isLoggedInUserOperator(afeRecord?.apc_operator_id, loggedInUser?.operators[0])} className="relative content-center isolate pt-0 lg:col-start-3 lg:row-end-1 h-15">
+            {/* AFE Actions 
+            <div hidden = {!doesUserHaveAcceptRejectRole} className="relative content-center isolate pt-0 lg:col-start-3 lg:row-end-1 h-15">
               <div aria-hidden="true" className="absolute rounded-lg blur-xs inset-0 -z-10 overflow-hidden">
                 <div className="absolute rounded-md top-full left-1 -mt-16 transform-gpu opacity-50 blur-2xl xl:left-1/2 xl:-ml-80">
                   <div
@@ -124,11 +126,16 @@ useEffect(() => {
                 <div className="absolute inset-x-0 bottom-0 h-px " />
               </div>
 
-              <div className="mx-auto max-w-7xl px-1 py-1 sm:px-1 lg:px-2 ">
-                <div className="mx-auto flex justify-end sm:justify-end max-w-2xl gap-x-1 lg:mx-0 lg:max-w-none">
-                  <div className="flex items-center gap-x-4 sm:gap-x-6">
+              
+
+            </div>*/}
+            
+            <div className="lg:col-start-3 lg:row-end-1 h-15 shadow-lg ring-3 ring-[var(--darkest-teal)]/9 sm:mx-0 sm:rounded-lg px-3 py-3">
+              <div className="max-w-7xl">
+                <div className="flex justify-between max-w-2xl gap-x-1 lg:mx-0 lg:max-w-none">
+                  <div className="flex gap-x-4 sm:gap-x-6">
                     <button
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Approved', 'The partner marked the AFE as approved', 'action'),
                         setButtonDisabled(true),
@@ -143,7 +150,7 @@ useEffect(() => {
                       Approve
                     </button>
                     <button
-                      className="rounded-md bg-white disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-red-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
+                      className="rounded-md bg-white disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs transition-colors ease-in-out duration-300 hover:bg-red-800 hover:text-white outline-2 -outline-offset-2 outline-[var(--dark-teal)] hover:outline-red-800"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Rejected', 'The partner marked the AFE as rejected', 'action'),
                         setButtonDisabled(true),
@@ -157,80 +164,87 @@ useEffect(() => {
                       disabled={statusButtonDisabled}>
                       Reject
                     </button>
-                    <Menu as="div" className="relative sm:hidden">
-                      <MenuButton className="-m-3 block p-3">
-                        <span className="sr-only">More</span>
-                        <EllipsisVerticalIcon aria-hidden="true" className="size-5 text-gray-500" />
-                      </MenuButton>
-                      <MenuItems
-                        transition
-                        className="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-[var(--dark-teal)]/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                    
+                    
+                  </div>
+                  <div className="flex items-center gap-x-4 sm:gap-x-6">
+                    <button
+                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      onClick={(e: any) => {
+                        
+                        handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action'),
+                        refreshData();
+                      }}
                       >
-                        <MenuItem>
-                          <button
-                            type="button"
-                            className="block w-full px-3 py-1 text-left text-sm/6 text-[var(--dark-teal)] data-focus:bg-gray-50 data-focus:outline-hidden"
-                          >
-                            Share AFE
-                          </button>
-                        </MenuItem>
+                      {afeRecord?.partner_archived === true ? 'Un-Archive' : 'Archive'}
+                    </button>
+                    
 
-                      </MenuItems>
-                    </Menu>
                   </div>
                 </div>
               </div>
-
             </div>
             {/* AFE Estimates */}
             <div className="-mx-4 px-4 py-8 shadow-lg ring-3 ring-[var(--darkest-teal)]/9 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-8 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
-              <div className="m-0 flex justify-between">
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right mt-2">AFE Number<span className={`font-normal pl-2`}>{afeRecord?.afe_number}</span></h2>
+              <div className="m-0 sm:flex justify-between">
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
+                <div>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">Operator Approval Date<span className="font-normal pl-2">{afeRecord?.iapp_date}</span></h2>
+                </div>
               </div>
-              <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] text-right">Version<span className="font-normal pl-2">{afeRecord?.version_string}</span></h2>
-              <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
-              <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">Operator Approval Date<span className="font-normal pl-2">{afeRecord?.iapp_date}</span></h2>
+              
               <div className="mt-2 border-t border-t-2 border-[var(--darkest-teal)] border-b border-b-4 border-double border-[var(--darkest-teal)]">
-                <dl className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-1 text-sm/6 bg-[var(--darkest-teal)]/11 sm:grid-cols-3">
-                  <div className="sm:pr-4">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">AFE Type</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2 capitalize">
+                <dl className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-4">
+                  <div className="sm:pr-4 text-left">
+                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                      {afeRecord?.afe_number}
+                    </dd>
+                  </div>
+                  <div className="sm:pr-4 text-left border ">
+                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                      {afeRecord?.version_string}
+                    </dd>
+                  </div>
+                  <div className="sm:pr-4 text-left">
+                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-4">
+                  <div className="sm:pr-4 text-left">
+                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                      {afeRecord?.afe_type}
+                    </dd>
+                  </div>
+                  
+                  <div className="sm:pr-4 text-left">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                      ${ afeRecord?.supp_gross_estimate! > 0 ?
+                      afeRecord?.supp_gross_estimate!.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) :
+                      afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      }
+                    </dd>
+                  </div>
+                  <div className="sm:pr-4 text-left">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Net Total</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                      { afeRecord?.supp_gross_estimate! > 0 ?
+                      calcPartnerNet(afeRecord?.supp_gross_estimate!, afeRecord?.partner_wi) :
+                      calcPartnerNet(afeRecord?.total_gross_estimate, afeRecord?.partner_wi)
+                      }
+                    </dd>
+                  </div>
+                  <div className="sm:pr-4 col-span-2 text-left">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] capitalize truncate">{afeRecord?.partner_name.toLowerCase()} WI</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2">
                       {afeRecord?.partner_wi.toFixed(6)}%
                     </dd>
                   </div>
-                  <div className="sm:pr-4">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]"></dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2">
-                      {' '}
-                    </dd>
-                  </div>
-                  <div className="sm:pr-4">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Well Name</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2 capitalize">
-                      {afeRecord?.afe_type}
-                    </dd>
-                  </div>
-                  <div className="sm:pr-4">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2">
-                      ${afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </dd>
-                  </div>
-                  <div className="sm:pr-4">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Net Total</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2">
-                      {calcPartnerNet(afeRecord?.total_gross_estimate, afeRecord?.partner_wi)}
-                    </dd>
-                  </div>
-
-
                 </dl>
               </div>
               <table className="mt-6 w-full text-left text-sm/6 whitespace-nowrap table-auto">
