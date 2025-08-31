@@ -8,10 +8,14 @@ import { transformOperator,
   transformUserProfileRecordSupabase, 
   transformUserProfileSupabaseSingle, 
   transformRoleEntryPartnerSupabase,
+  transformPartnerMapRecordForDisplay,
   transformOperatorPartnerAddressWithOpName,
-  transformPartnerSourceSystemAddress} from 'src/types/transform';
+  transformPartnerSourceSystemAddress,
+  transformOperatorForDropDown,
+  transformGLCodes} from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
+import type { OperatorOrPartnerList } from 'src/types/interfaces';
 
 
 export const fetchFromSupabase = async (table: string, select: string) => {
@@ -202,9 +206,11 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
     return apcPartListSorted;
 };
 
-export const fetchPartnersFromSourceSystemInSupabase = async() => {
+ export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
+  if(apc_op_id==='') return;
   const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('source_id, street, suite, city, state, zip, country, active, name')
-  .eq('mapped',false);
+  .eq('mapped',false)
+  .eq('apc_op_id',apc_op_id);
   if (error || !data) {
       console.error(`Error fetching Partners:`, error);
       return [];
@@ -225,14 +231,61 @@ export const fetchPartnersFromSourceSystemInSupabase = async() => {
     return sourcePartListSorted;
 };
 
-export const fetchPartnersFromPartnersCrosswalk = async() => {
-  const { data, error } = await supabase.from("PARTNERS_CROSSWALK").select('apc_id:operator(name, id), source_system_id:op_partner_id, partner_id(address:PARTNER_ADDRESS!apc_id(id,street, suite, city, state, zip, country))')
+ export const fetchPartnersFromPartnersCrosswalk = async(apc_op_id: string) => {
+  const { data, error } = await supabase.from("PARTNERS_CROSSWALK").select('id,apc_partner:partner_id(name,apc_id:id, address:PARTNER_ADDRESS!apc_id(id,street, suite, city, state, zip, country)), source_partner:AFE_PARTNERS_PROCESSED!mapped_partners_fk_partner_library(apc_op_id,source_id,name,street, suite, city, state, zip, country)')
+  .eq('operator',apc_op_id)
+  .eq('active', true);
   
   if (error || !data) {
       console.error(`Error fetching Partners:`, error);
       return [];
     }
-    console.log(data,'THE MAPPED PARTERN')
-    return data;
+    const mappedData = transformPartnerMapRecordForDisplay(data);
+    return mappedData;
+};
+
+ export const fetchAllOperators = async() => {
+  const emptyArray: OperatorOrPartnerList[] = []
+  const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`apc_id(id,name)`)
+      if (error || !data) {
+      console.error(`Error fetching Operators and Partners:`, error);
+      return emptyArray;
+      }
+    const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
+    return dataFormatted; 
+};
+
+ export const fetchAllPartners = async() => {
+  const emptyArray: OperatorOrPartnerList[] = []
+  const { data, error } = await supabase.from('PARTNER_ADDRESS').select(`apc_id(id,name)`)
+      if (error || !data) {
+      console.error(`Error fetching Operators and Partners:`, error);
+      return emptyArray;
+      }
+    const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
+    return dataFormatted; 
+};
+
+export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, apc_part_id:string) => {
+  if(apc_op_id !==''){
+  const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`account_number, account_group, account_description`)
+  .eq('apc_op_id',apc_op_id);
+      if (error || !data) {
+      console.error(`Error fetching GL Codes:`, error);
+      return [];
+      } 
+      console.log(data, 'THE CALLLLLLLL', console.log(apc_op_id,'the op id'))
+      return transformGLCodes(data);
+    } else if(apc_part_id !==''){
+      const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`account_number, account_group, account_description`)
+  .eq('apc_part_id',apc_part_id);
+      if (error || !data) {
+      console.error(`Error fetching GL Codes:`, error);
+      return [];
+      } 
+      console.log(data, 'THE CALLLLLLLL', console.log(apc_part_id,'the PART id'))
+      return transformGLCodes(data);
+
+    }
 }
 

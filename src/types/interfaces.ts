@@ -278,8 +278,30 @@ export interface PartnerRowData {
   active: boolean;
 };
 
+export interface GLCodeRowData {
+  account_number: string | null;
+  account_group: string | null;
+  account_description: string | null;
+  apc_op_id: string | null;
+  apc_part_id: string | null;
+};
 export interface PartnerMappingRecord {
     operator?: string | UUID;
     op_partner_id?: string;
     partner_id?: string | UUID;
 };
+
+export interface PartnerMappingDisplayRecord {
+  id: string;
+  apc_partner: OperatorPartnerAddressType;
+  source_partner: PartnerRowData;
+};
+
+export interface OperatorOrPartnerList {
+    apc_id: string;
+    apc_name: string;
+};
+
+export interface GLCodeType extends GLCodeRowData{
+  id: number;
+}

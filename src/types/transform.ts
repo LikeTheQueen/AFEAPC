@@ -18,7 +18,10 @@ import type {
     RoleTypesGeneric,
     OperatorPartnerAddressType,
     OperatorPartnerAddressWithOpNameType,
-    PartnerRowData
+    PartnerRowData,
+    PartnerMappingDisplayRecord,
+    OperatorOrPartnerList,
+    GLCodeType
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -316,9 +319,6 @@ export const transformOperatorasPartnerAddress = (data: any[]): OperatorPartnerA
 
 export const transformOperatorPartnerAddressSuperUser = (data: any[]): OperatorPartnerAddressType[] => {
     
-    const filterdata = data
-    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined );
-    console.log(filterdata, 'I FILTER')
     return data
     .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
     .map(item => ({
@@ -402,5 +402,52 @@ export const transformPartnerSourceSystemAddress = (data: any[]) : PartnerRowDat
         zip: item.zip,
         country: item.country,
         active: item.active
+    }))
+};
+
+export const transformPartnerMapRecordForDisplay = (data: any[]) : PartnerMappingDisplayRecord[] => {
+    return data.map(item => ({
+        id: item.id,
+        apc_partner: {
+        apc_id: item.apc_partner.apc_id,
+        name: item.apc_partner.name,
+        apc_address_id: item.apc_partner.address.id,
+        street: item.apc_partner.address.street,
+        suite: (item.apc_partner.address.suite === null ? '' : item.apc_partner.address.suite),
+        city: item.apc_partner.address.city,
+        state: item.apc_partner.address.state,
+        zip: item.apc_partner.address.zip,
+        country: item.apc_partner.address.country
+        },
+        source_partner: {
+        apc_op_id: item.source_partner.apc_op_id,
+        name: item.source_partner.name,
+        source_id:item.source_partner.source_id,
+        street: item.source_partner.street,
+        suite: (item.source_partner.suite === null ? '' : item.source_partner.suite),
+        city: item.source_partner.city,
+        state: item.source_partner.state,
+        zip: item.source_partner.zip,
+        country: item.source_partner.country,
+        active: true,
+        }
+    }))
+};
+
+export const transformOperatorForDropDown = (data: any[]) : OperatorOrPartnerList[] => {
+    return data.map(item => ({
+        apc_id: item.apc_id.id,
+        apc_name:item.apc_id.name
+    }))
+};
+
+export const transformGLCodes = (data: any[]) : GLCodeType[] => {
+    return data.map(item => ({
+        account_number: item.account_number,
+        account_description: item.account_description,
+        account_group: item.account_group,
+        id: item.id,
+        apc_op_id:'',
+        apc_part_id:''
     }))
 }

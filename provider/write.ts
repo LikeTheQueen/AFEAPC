@@ -2,7 +2,7 @@
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
-import type { OperatorPartnerAddressWithOpNameType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { GLCodeRowData, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 //import adminAuthClient from './serverfunctions';
 
   export const addOperatorSupabase = async (name: string, source_system:number) => {
@@ -163,16 +163,39 @@ import type { OperatorPartnerAddressWithOpNameType, PartnerMappingRecord, Partne
       }
       return data;
   };
-
   
-  export const updatePartnerMapping = async(partnerSourceID: string[]) => {
-   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': true}).eq('source_id',partnerSourceID);
+  export const updatePartnerProcessedMapping = async(partnerSourceID: string[], mapValue: boolean) => {
+    console.log('I AM CALLD', partnerSourceID, mapValue)
+   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('source_id',partnerSourceID).select();
     
     if (error) {
         console.error(`Error adding the Operator's Partner Maps`, error, data);
         return null;
       }
+      console.log('no error', data)
       return data;
   };
+
+  export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
+   const {data, error} = await supabase.from('PARTNERS_CROSSWALK').update({'active': mapValue}).eq('id',partnerSourceID).select();
+    
+    if (error) {
+        console.error(`Error updating the Partner Mapping Record`, error, data);
+        return null;
+      }
+      console.log('no error', data)
+      return data;
+  };
+
+   export const writeGLAccountlistFromSourceToDB = async(accountRecords: GLCodeRowData[]) => {
+    const { data, error } = await supabase.from('GL_CODES').insert(accountRecords).select();
+    if (error) {
+        console.error(`Error adding the Operator's GL Codes`, error);
+        return null;
+      }
+      return data;
+  };
+
+  
 
   

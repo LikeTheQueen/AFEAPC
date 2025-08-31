@@ -121,7 +121,7 @@ export default function CreateNewUser() {
 
   return (
     <>
-      <div className="py-4 px-4 sm:px-6 lg:px-8 divide-y divide-gray-900/30 ">
+      <div className="px-4 sm:px-10 sm:py-4 divide-y divide-gray-900/30 ">
         <div className="divide-y divide-gray-900/30">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-4 ">
             <div className="px-4 sm:px-0 md:col-span-1">

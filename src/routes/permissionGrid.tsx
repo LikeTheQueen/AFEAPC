@@ -202,13 +202,13 @@ useEffect(() => {
  
   return (
     <>
-    <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3">
-      <div>
+    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
+      <div className="md:col-span-2 ">
         <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Operated AFEs</h2>
           <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
           <p hidden ={!readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
         </div>
-      <div className="md:col-span-2 ">
+      <div className="md:col-span-5">
      
         <div className="">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
@@ -315,13 +315,13 @@ useEffect(() => {
         
       </div>
       </div>
-    <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 pt-4">
-      <div>
+    <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 pt-4">
+      <div className="md:col-span-2 ">
         <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
           <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
           <p hidden ={!readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
         </div>
-      <div className="md:col-span-2">
+      <div className="md:col-span-5">
       
         <div className="">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">

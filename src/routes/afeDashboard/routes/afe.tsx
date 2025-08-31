@@ -42,7 +42,9 @@ export default function AFE() {
 
   return (
     <>
-    <div className="pt-16 px-4 sm:px-32 ">
+    
+    <div className="px-4 sm:px-10 sm:py-4">
+      <div className="h-4 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select
@@ -88,7 +90,7 @@ export default function AFE() {
       </div>
       </div>
     {/* Non-Operated AFEs */}
-    <div hidden = {currentTab ===2} className="py-8 px-4 sm:px-16 ">
+    <div hidden = {currentTab ===2} className="py-4 px-4 sm:px-8">
       <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Non-Operated AFEs</h2>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={setIsHidden(nonOperatedAFEs)} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="NonOperatedAFElist">
@@ -161,7 +163,7 @@ export default function AFE() {
       </div>
     </div>
        {/* Operated AFEs */}
-    <div hidden = {currentTab ===1} className="py-8 px-4 sm:px-16">
+    <div hidden = {currentTab ===1} className="py-4 px-4 sm:px-8">
     <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Operated AFEs</h2>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={setIsHidden(operatedAFEs)} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="OperatedAFElist">

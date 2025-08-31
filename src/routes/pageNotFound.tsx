@@ -11,7 +11,7 @@ export default function PageNotFound({message, details, stack} : pageNotFoundPro
         <>
         <div className="bg-black h-full">
         
-        <main className="pt-16 p-4 container mx-auto bg-black text-white">
+        <main className="pt-16 p-1 container mx-auto bg-black text-white">
           <FuzzyText 
   baseIntensity={0.3} 
   hoverIntensity={1} 

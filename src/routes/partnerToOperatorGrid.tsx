@@ -118,8 +118,8 @@ if (loading) return <LoadingPage/>
                             </svg>
                           </div>
             </div>
-            <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-800/50">
-              <div className="flex-1 truncate px-4 py-2 text-sm">
+            <div className="flex flex-1 items-center justify-between rounded-r-md border-t border-r border-b border-gray-200 bg-white ">
+              <div className="flex-1  px-4 py-2 text-xs/6 2xl:text-sm/6">
                 <p className="font-bold text-[var(--dark-teal)] custom-style">Associated Operator: <span className="font-medium not-italic custom-style-long-text">{partner.apc_op_name ? partner.apc_op_name :'Unclaimed'}</span></p>
                 <p className="font-bold text-[var(--dark-teal)] custom-style">Alias: <span className="font-medium not-italic custom-style-long-text">{partner.name}</span></p>
                 <p className="text-[var(--dark-teal)] custom-style-long-text font-normal mt-1 w-full ">{partner.street} {partner.suite} {partner.city}, {partner.state} {partner.zip}</p>  

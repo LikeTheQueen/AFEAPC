@@ -3,31 +3,33 @@ import { useNavigate } from "react-router";
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { Button } from '@headlessui/react';
 import { activeTab } from "src/helpers/styleHelpers";
-import AuthButton from './systemConfigurations';
-import GLLibrary from './glLibrary';
-import DataExport from './dataExport';
-import PartnerLibrary from '../routes/partnerConfigurations/routes/partnerLibrary';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { PhoneIcon, PlayCircleIcon, RectangleGroupIcon } from '@heroicons/react/20/solid'
-import { ChartPieIcon, CursorArrowRaysIcon, FingerPrintIcon, SquaresPlusIcon } from '@heroicons/react/24/outline'
-
 
 const tabs = [
   { id:1, name: 'Partner Library', href: "/mainScreen/configurations/", current: false, 
   sublist: [
   {id:1, name:"Upload Partner List", current: true, href:"/mainScreen/configurations/partnerupload"},
   {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping"},
-  {id:3, name:"View Current Mappings", current: false, href:"/mainScreen/configurations/partnermapping"},
+  {id:3, name:"View & Manage Partner Mappings", current: false, href:"/mainScreen/configurations/partnermappingview"},
 ]},
   { id:2, name: 'GL Library', href: "/mainScreen/configurations", current: false,
-    sublist:[]
+    sublist:[
+  {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload"},
+  {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping"},
+  {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview"},
+    ]
    },
   { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,
-    sublist:[] },
+    sublist:[
+  {id:1, name:"Upload Export Templates", current: true, href:"/mainScreen/configurations/partnerupload"},
+  {id:2, name:"Export Data", current: false, href:"/mainScreen/configurations/partnermapping"},
+    ] },
   { id:4, name: 'System Connections', href: "/mainScreen/configurations", current: false,
-    sublist:[] },
+    sublist:[
+  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations"},
+  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/partnermapping"},
+    ] },
 ];
 
 export default function Configurations() {
@@ -49,7 +51,7 @@ function handleSubTabChange(selected: number){
 
   return (
     <form onSubmit={(e) => e.preventDefault()}>
-    <div className="px-4 sm:px-32 ">
+    <div className="px-4 sm:px-10 ">
       <div className="h-16 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
       <div className="grid grid-cols-1 sm:hidden">
         {}
@@ -75,7 +77,7 @@ function handleSubTabChange(selected: number){
           as={NavLink}
           to={item.href}
               onClick={e => handleTabChange(item.id)}
-              className={`inline-flex flex-1 justify-center items-center px-4 py-3 custom-style transition-colors ease-in-out duration-200 
+              className={`inline-flex flex-1 justify-center xl:justify-center items-center px-0 pl-2 py-3 custom-style transition-colors ease-in-out duration-200 text-xs xl:text-lg
             ${item.current
                   ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
                   : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--darkest-teal)] hover:text-white hover:font-semibold font-normal hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-[var(--bright-pink)]'}
@@ -84,7 +86,7 @@ function handleSubTabChange(selected: number){
         ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
               `}>
               <span className="">{item.name}</span>
-              <span hidden={item.sublist.length < 1}><ChevronDownIcon aria-hidden="true" className="size-5" /></span>
+              <span ><ChevronDownIcon aria-hidden="true" className="size-5" /></span>
             </PopoverButton>
             {item.sublist.length > 0 && (
       <PopoverPanel 
@@ -94,8 +96,8 @@ function handleSubTabChange(selected: number){
           aria-hidden="true"
           className="absolute inset-0 top-1/2 shadow-lg ring-1 ring-gray-900/30"
         />
-        <div className="relative ">
-          <div className="mx-auto flex flex-col px-2 py-1 lg:px-2 xl:gap-x-8">
+        <div className="relative">
+          <div className="mx-auto flex flex-col px-2 py-1 lg:px-2 xl:gap-x-8 ">
           {item.sublist.map((sub) => (
             <PopoverButton key={sub.id}
             as={NavLink}

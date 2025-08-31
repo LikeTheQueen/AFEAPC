@@ -1,11 +1,10 @@
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType } from 'src/types/interfaces';
 import { sourceSystemList, writeOperatorToSupabase } from 'src/helpers/helpers';
 import { useEffect, useState } from 'react';
 import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase } from 'provider/write';
 import { disableCreateButton, disableSaveAndSaveAnother, isAddressListHidden } from './helpers/helpers';
-import type { UUID } from 'crypto';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 
 
@@ -42,7 +41,7 @@ export default function CreateOperator() {
     const [operatorPartnerAddresses, setOpPartnerAddress] = useState<AddressType[] | []>([]);
     const [opPartnerID, setOpPartnerID] = useState<string | null>(null);
     const [showSaved, setShowSaved] = useState<boolean>(true);
-    const [showAddressList, setShowAddressList] = useState<boolean>(true);
+    
     
     const fetchData = async () => {
     const afeSystemList = await sourceSystemList();
@@ -137,15 +136,15 @@ export default function CreateOperator() {
   }
   console.log(operator.id, 'THE OP ID')
   return (
-    <div className="py-4 px-4 sm:px-6 lg:px-8 divide-y divide-gray-900/20">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
-        <div className="px-4 sm:px-0">
+    <div className="px-4 sm:px-10 sm:py-4 divide-y divide-gray-900/20">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
+        <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
           <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
             Create the Operator with the billing address.  Below add additional addresses to be used as Partner addresses
           </p>
         </div>
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-2">
+        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -315,15 +314,15 @@ export default function CreateOperator() {
           Operator has been saved.</div>
         </form>
       </div>
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
-        <div className="px-4 sm:px-0">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
+        <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
           <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
             From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
           </p>
         </div>
 
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-2">
+        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
           <div >
             <PartnerToOperatorGrid
             singleOpID={true}
@@ -333,8 +332,8 @@ export default function CreateOperator() {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-3">
-        <div className="px-4 sm:px-0">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
+        <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
           <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
             Add Addresses to be used when the Operator is a Partner.  Add the billing address (again) if applicable.
@@ -354,7 +353,7 @@ export default function CreateOperator() {
           </ul>
         </div>
 
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-2">
+        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               

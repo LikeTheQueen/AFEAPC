@@ -32,7 +32,7 @@ export default function UserPermissionDashboard() {
 
   return (
     <>
-    <div className="py-16 px-4 sm:px-32 divide-y divide-gray-900/20 ">
+    <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
     <UserDashboard 
     readOnly={false}
     operatorRoles={opUserRoleList}

@@ -1,6 +1,6 @@
-import { fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
+import { fetchAccountCodesForOperatorOrPartner, fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
-import { type PartnerRowData, type OperatorPartnerAddressType } from "src/types/interfaces";
+import { type PartnerRowData, type OperatorPartnerAddressType, type GLCodeRowData } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -9,11 +9,35 @@ import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { OperatorDropdown } from 'src/routes/operatorDropdown';
+import { PartnerDropdown } from "src/routes/partnerDropdown";
+import { BuildingOffice2Icon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline'
 
 interface PartnerMappingRecord {
     operator?: string;
     op_partner_id?: string;
     partner_id?: string;
+};
+
+interface GLMappingRecord {
+    apc_operator_id: string;
+    operator_account_group: string;
+    operator_account_description: string;
+    operator_account_number: string;
+    apc_partner_id: string;
+    partner_account_group: string;
+    partner_account_description: string;
+    partner_account_number: string;
+};
+
+interface GLMappingDisplay {
+    apc_operator_name: string;
+    operator_account_group: string;
+    operator_account_description: string;
+    operator_account_number: string;
+    apc_partner_name: string;
+    partner_account_group: string;
+    partner_account_description: string;
+    partner_account_number: string;
 };
 
 interface PartnerMapDisplay {
@@ -25,13 +49,18 @@ interface PartnerMapDisplay {
     source_partner_id?: string;
 };
 
-export default function PartnerMapping() {
+export default function GLMapping() {
     const [apcPartnerList, setAPCPartnerList] = useState<OperatorPartnerAddressType[] | []>([]);
     const [sourcePartnerList, setSourcePartnerList] = useState<PartnerRowData[] | []>([]);
     const [currentPartnerMapDisplay, setCurrentPartnerMapDisplay] = useState<PartnerMapDisplay | null>(null);
     const [cumaltivePartnerMapDisplay, setCumlativePartnerDisplay] = useState<PartnerMapDisplay[] | []>([]);
     const [loading, setLoading] = useState(false);
+    const [operatorAccountCodes, setOperatorAccountCodes] = useState<GLCodeRowData[]|[]>([])
+    const [partnerAccountCodes, setPartnerAccountCodes] = useState<GLCodeRowData[]|[]>([])
+    
     const [opAPCID, setOpAPCID] = useState('');
+    const [partnerAPCID, setPartnerAPCID] = useState('');
+    
     const [rowsLimit] = useState(5);
     const [rowsToShow, setRowsToShow] = useState<PartnerMapDisplay[]>([]);
     const [customPagination, setCustomPagination] = useState<number[] | []>([]);
@@ -74,14 +103,14 @@ export default function PartnerMapping() {
 
     useEffect(() => {
         let isMounted = true;
-        async function getPartnerLists() {
+        async function getAccountCodes() {
             setLoading(true);
             try {
-                const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
-                const sourcePartList = await fetchPartnersFromSourceSystemInSupabase(opAPCID);
+                const operatorAccountList = await fetchAccountCodesForOperatorOrPartner(opAPCID, partnerAPCID);
+                const partnerAccountList = await fetchAccountCodesForOperatorOrPartner(opAPCID, partnerAPCID);
                 if (isMounted) {
-                    setAPCPartnerList(apcPartList ?? [])
-                    setSourcePartnerList(sourcePartList ?? [])
+                    setOperatorAccountCodes(operatorAccountList ?? [])
+                    setPartnerAccountCodes(partnerAccountList ?? [])
                 }
             } finally {
                 if (isMounted) {
@@ -89,12 +118,13 @@ export default function PartnerMapping() {
                 }
             }
         }
-        getPartnerLists();
+        getAccountCodes();
         return () => {
             isMounted = false;
         };
     }, [opAPCID]);
-    
+    console.log(operatorAccountCodes,'OP ACCOUNT CODES')
+    console.log(partnerAccountCodes,'PARTNER ACCOUNT CODES')
     const toggleSourcePartner = (
         sourcePartner: PartnerRowData
     ) => {
@@ -182,31 +212,39 @@ export default function PartnerMapping() {
     };
     return (
         <>
-            <div>
+        
+            <div >
                 <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
-                                <div className="">
-                                    <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
-                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
-                                 </div>
-                                 <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
-                                        <div className="">
-                                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-base">Select an Operator to Create Mappings For:</h1>
-                                        <div className="">
-                                        <OperatorDropdown 
-                                            onChange={(id) => {setOpAPCID(id)} }
-                                            limitedList={true}
-                                        />
-                                        </div>
-                                        
-                                        </div>
-                                        
-                                 </div>
-                        
-                        </div>
-                              
+                <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+        <div className="">
+            <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map GL Account Codes for Non-Op AFEs</h2>
+                <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to map GL Account Codes</p><br></br>
+         </div>
+         
+         <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                <div className="">
+                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Operator of Non-Op AFEs:</h1>
+                <div className="">
+                <OperatorDropdown 
+                    onChange={(id) => {setOpAPCID(id)} }
+                    limitedList={false}
+                />
                 </div>
+                </div>
+                <div className="">
+                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
+                <div className="">
+                <PartnerDropdown 
+                    onChange={(id) => {setPartnerAPCID(id)} }
+                    limitedList={true}
+                />
+                </div>
+                </div>
+         </div>
+
+        </div>
+                </div>
+
                 {loading ? (
                     <div className="mt-60">
                         <LoadingPage></LoadingPage>
@@ -215,15 +253,15 @@ export default function PartnerMapping() {
                     <div className="divide-y divide-gray-900/20">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                             <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Partner Library in Your AFE System</h2>
+                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Operator Account Codes</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div
-                                        hidden={(opAPCID === '' || sourcePartnerList.length < 1) ? false : true}
+                                        hidden={(opAPCID === '' || operatorAccountCodes.length < 1) ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
                                         <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">You haven't selected an Operator from the dropdown or the Partner Library from your source system has not been loaded for the Operator selected.</h2>
                                     </div>
                                     <div
-                                        hidden={(opAPCID !== '' && sourcePartnerList.length > 0) ? false : true}
+                                        hidden={(opAPCID !== '' && operatorAccountCodes.length > 0) ? false : true}
                                         className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                                             <div className="inline-block min-w-full py-2 align-middle">
@@ -233,7 +271,7 @@ export default function PartnerMapping() {
                                                             <th
                                                                 scope="col"
                                                                 className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
-                                                                Partner Name and Address
+                                                                Account Group, Number and Description
                                                             </th>
 
                                                             <th
@@ -244,39 +282,36 @@ export default function PartnerMapping() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {sourcePartnerList.map((partner, partnerIdx) => (
-                                                            <tr key={partner.source_id}>
+                                                        {operatorAccountCodes.map((account, accountIdx) => (
+                                                            <tr key={accountIdx}>
 
                                                                 <td
-                                                                    className={`${partnerIdx !== apcPartnerList.length - 1 ? 'border-b border-gray-300' : ''}
-                                                                ${cumaltivePartnerMapDisplay.find(list => list.source_partner_id === partner.source_id) ? 'bg-[var(--darkest-teal)]/20' : ''}
+                                                                    className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-gray-300' : ''}
+                                                                ${cumaltivePartnerMapDisplay.find(list => list.source_partner_id === account.account_number) ? 'bg-[var(--darkest-teal)]/20' : ''}
                                                                 max-w-xs overflow-hidden text-ellipsis`}>
                                                                     <p className="pt-4 pr-3 pl-10 text-sm/6 custom-style font-medium whitespace-wrap text-[var(--dark-teal)] sm:pl-10 lg:pl-10">
-                                                                        {partner.name}
+                                                                        {account.account_group}
 
                                                                     </p>
                                                                     <p className="pt-2 pr-3 pl-10 text-sm/6 custom-style-long-text whitespace-wrap text-gray-500 ">
-                                                                        {partner.street.concat(' ',
-                                                                            `${partner.suite === undefined ? '' : partner.suite.concat(' ')}`,
-                                                                            `${partner.city === undefined ? '' : partner.city.concat(', ')}`,
-                                                                            `${partner.state === undefined ? '' : partner.state.concat(' ')}`,
-                                                                            `${partner.zip === undefined ? '' : partner.zip.concat(' ')}`,
-                                                                            `${partner.country === undefined ? '' : partner.country}`)}
+                                                                        {account.account_number} {' '}
+                                                                        {account.account_description}
+
 
                                                                     </p>
                                                                 </td>
                                                                 <td
-                                                                    className={`${partnerIdx !== sourcePartnerList.length - 1 ? 'border-b border-gray-300' : ''} pt-2 pr-15 pl-2 whitespace-nowrap sm:pr-15 lg:pr-15
-                                                                ${cumaltivePartnerMapDisplay.find(list => list.source_partner_id === partner.source_id) ? 'bg-[var(--darkest-teal)]/20' : ''}
+                                                                    className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-gray-300' : ''} pt-2 pr-15 pl-2 whitespace-nowrap sm:pr-15 lg:pr-15
+                                                                ${cumaltivePartnerMapDisplay.find(list => list.source_partner_id === account.apc_op_id) ? 'bg-[var(--darkest-teal)]/20' : ''}
                                                                 `}>
                                                                     <div className="flex shrink-0 items-center justify-center">
                                                                         <div className="group grid size-4 grid-cols-1">
                                                                             <input
                                                                                 type="checkbox"
-                                                                                checked={partner.source_id === currentPartnerMapDisplay?.source_partner_id}
+                                                                                //checked={partner.source_id === currentPartnerMapDisplay?.source_partner_id}
                                                                                 //disabled={(currentPartnerMap?.op_partner_id?.length ? true : false) && (currentPartnerMap?.op_partner_id !== partner.source_id)}
-                                                                                value={partner.source_id}
-                                                                                onChange={(e) => toggleSourcePartner(partner)}
+                                                                                //value={partner.source_id}
+                                                                                //onChange={(e) => toggleSourcePartner(partner)}
                                                                                 aria-describedby="checkbox"
                                                                                 className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..." />
                                                                             <svg

@@ -1,21 +1,39 @@
 import * as XLSX from 'xlsx';
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { PartnerRowData } from 'src/types/interfaces';
 import { writePartnerlistFromSourceToDB } from 'provider/write';
 import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
+import { useSupabaseData } from 'src/types/SupabaseContext';
+import { OperatorDropdown } from 'src/routes/operatorDropdown';
 
 const expectedHeaders = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country"];
+interface PartnerOpList {
+    apc_id: string;
+    apc_name: string;
+};
 
 export default function PartnerFileUpload() {
     const [data, setData] = useState<PartnerRowData[]>([]);
     const [fileName, setFileName] = useState('');
+    const [opAPCID, setOpAPCID] = useState('');
     const [rowsLimit] = useState(10);
     const [rowsToShow, setRowsToShow] = useState<PartnerRowData[]>([]);
     const [customPagination, setCustomPagination] = useState<number[] | []>([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
+    const { loggedInUser } = useSupabaseData();
+
+    function filterOpsList() {
+        if (!loggedInUser) return [];
+        return (loggedInUser.operatorRoles ?? [])
+            .filter(operator => operator.role === 7)
+            .map(({ apc_id, apc_name }) => ({ apc_id, apc_name }));
+    };
+    
+    const filteredOperators: PartnerOpList[] = filterOpsList();
+    
     const nextPage = () => {
     const startIndex = rowsLimit * (currentPage + 1);
     const endIndex = startIndex + rowsLimit;
@@ -49,14 +67,18 @@ export default function PartnerFileUpload() {
         Math.ceil(data.length / rowsLimit)
     )
     }, [data]);
+    useEffect(() => {
+                if (!loggedInUser) return;
+                if (filteredOperators.length === 1) {
+                    setOpAPCID(filteredOperators[0].apc_id)
+                }
+            }, [loggedInUser])
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const file = e.target.files?.[0];
-    console.log(file,'the file')
     if (!file) return;
 
     const reader = new FileReader();
-console.log(data,'THE DATA')
     reader.onload = (event: ProgressEvent<FileReader>) => {
       const arrayBuffer = event.target?.result;
       if (!arrayBuffer) return;
@@ -71,7 +93,6 @@ console.log(data,'THE DATA')
       });
 
       const firstRow = XLSX.utils.sheet_to_json(worksheet, {header: 1})[0] as string[];
-      console.log(firstRow,'THIS IS THE FIRST WO')
       const headersMatch = expectedHeaders.every((expected, i) =>
         String(firstRow?.[i] ?? '').trim().toLowerCase() === expected.toLowerCase()
       );
@@ -92,7 +113,7 @@ console.log(data,'THE DATA')
 
       const mappedData: PartnerRowData[] = dataRows.map((row) => ({
         source_id: String(row[0] ?? ''),
-        apc_op_id: String('a4367e56-14bf-4bd1-b0f1-fecc7d97b58c'),
+        apc_op_id: String(opAPCID),
         name: String(row[1] ?? ''),
         street: String(row[2] ?? ''),
         suite: String(row[3] ?? ''),
@@ -113,32 +134,41 @@ console.log(data,'THE DATA')
 
   return (
     <>
-    <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20">
-      <div className="py-3 px-2">
-        <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Upload Partner Library from AFE System</h2>
-        <div className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">
-          <p>
-            Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span>
-            <br></br>Do <span className="font-semibold">not</span> include your own addresses.  Only Partner Addresses should be uploaded.
-          </p>
+    <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+                <div className="">
+                    <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload Partner Library from Your AFE System</h2>
+                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p><br></br>
+                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span>
+                        <br></br>Do <span className="font-semibold">not</span> include your own addresses.  Only Partner Addresses should be uploaded.</p>
+                 </div>
+                 <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                        <div className="">
+                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-base">Select an Operator to upload Partners For:</h1>
+                        <div className="">
+                        <OperatorDropdown 
+                            onChange={(id) => {setOpAPCID(id)} }
+                            limitedList={true}
+                        />
+                        </div>
+                        <div className="mt-5">
+                              <label
+                                htmlFor="file-upload">
+                                <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCID===''}/>
+                                <span className="cursor-pointer rounded-md bg-[var(--darkest-teal)] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-gray-300 peer-disabled:text-gray-500
+                       peer-disabled:hover:bg-gray-300 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
+                              </label>
+                            </div>
+                            <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
+                        </div>
+                        
+                 </div>
+        
         </div>
-        <div className="mt-5 px-3">
-          <div className="flex justify-left">
-                    <div className="flex justify-left">
-                      <label
-                        htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-[var(--darkest-teal)] font-semibold text-white hover:text-white ">
-                        <span className="rounded-md bg-[var(--darkest-teal)] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] custom-style">Choose File</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" accept=".xlsx, .xls" onChange={handleFileUpload} />
-                      </label>
-                    </div>
-
-                </div>
-                <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
-        </div>
-      </div>
-    </div>  
-        <div className="mt-5">
+              
+    </div>
+    
+        <div className="">
                 <table className="table-auto min-w-full">
                     <thead>
                     <tr>
@@ -153,10 +183,10 @@ console.log(data,'THE DATA')
                        {rowsToShow.map(partnerRow =>(
                         <tr key={partnerRow.source_id} className="text-end sm:text-start custom-style-long-text border-l border-l-[var(--darkest-teal)]/30 even:bg-[var(--darkest-teal)]/20">
                         <td scope="col" className="text-start pl-2 border-r border-r-[var(--darkest-teal)]/30">{partnerRow.source_id}</td>
-                        <td scope="col" className="pl-2 border-r border-r-[var(--darkest-teal)]/30">{partnerRow.name}
+                        <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{partnerRow.name}
                         <dl className="font-normal sm:hidden">
                     <dt className="sr-only">Address</dt>
-                    <dd className="mt-1 truncate text-end">{partnerRow.street} {partnerRow.suite}</dd>
+                    <dd className="mt-1 truncate text-end ">{partnerRow.street} {partnerRow.suite}</dd>
                     <dd className="mt-1 truncate text-end sm:hidden">{partnerRow.city}, {partnerRow.state}</dd>
                     <dd className="mt-1 truncate text-end sm:hidden">{partnerRow.zip}</dd>
                   </dl>
