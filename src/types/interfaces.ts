@@ -286,9 +286,9 @@ export interface GLCodeRowData {
   apc_part_id: string | null;
 };
 export interface PartnerMappingRecord {
-    operator?: string | UUID;
-    op_partner_id?: string;
-    partner_id?: string | UUID;
+  operator?: string | UUID;
+  op_partner_id?: string;
+  partner_id?: string | UUID;
 };
 
 export interface PartnerMappingDisplayRecord {
@@ -298,10 +298,25 @@ export interface PartnerMappingDisplayRecord {
 };
 
 export interface OperatorOrPartnerList {
-    apc_id: string;
-    apc_name: string;
+  apc_id: string;
+  apc_name: string;
 };
 
 export interface GLCodeType extends GLCodeRowData{
   id: number;
+}
+
+export interface GLMappingRecord {
+    apc_operator_id: string;
+    operator_account_group: string;
+    operator_account_description: string;
+    operator_account_number: string;
+    apc_partner_id: string;
+    partner_account_group: string;
+    partner_account_description: string;
+    partner_account_number: string;
+};
+
+export interface GLMappedRecord extends GLMappingRecord {
+   id: number | null;
 }

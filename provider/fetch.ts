@@ -12,10 +12,12 @@ import { transformOperator,
   transformOperatorPartnerAddressWithOpName,
   transformPartnerSourceSystemAddress,
   transformOperatorForDropDown,
-  transformGLCodes} from 'src/types/transform';
+  transformGLCodes,
+  transformGLCodeCrosswalk} from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
 import type { OperatorOrPartnerList } from 'src/types/interfaces';
+import { callEdge } from 'src/edge';
 
 
 export const fetchFromSupabase = async (table: string, select: string) => {
@@ -283,9 +285,57 @@ export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, ap
       console.error(`Error fetching GL Codes:`, error);
       return [];
       } 
-      console.log(data, 'THE CALLLLLLLL', console.log(apc_part_id,'the PART id'))
+      console.log(data, 'THE CAzzzzz', console.log(apc_part_id,'the PART id'))
       return transformGLCodes(data);
 
     }
-}
+};
+
+export const fetchAccountCodesforOperatorToMap = async(apc_op_id: string, apc_part_id:string, getOpCodes: boolean, getPartnerCodes: boolean) => {
+  if(apc_op_id !=='' && apc_part_id !=='') {
+    if(getOpCodes) {
+    const { data, error } = await supabase.rpc('retrieve_unmapped_gl_codes_operators', {
+    opapcid: apc_op_id, 
+    partnerapcid: apc_part_id
+  });
+  if (error || !data) {
+      console.error(`Error fetching GL Codes:`, error);
+      return [];
+      } 
+      return transformGLCodes(data);
+
+    } if(getPartnerCodes) {
+      const { data, error } = await supabase.rpc('retrieve_unmapped_gl_codes_partners', {
+    opapcid: apc_op_id, 
+    partnerapcid: apc_part_id
+  });
+  if (error || !data) {
+      console.error(`Error fetching GL Codes:`, error);
+      return [];
+      } 
+      return transformGLCodes(data);
+
+    }
+  }
+};
+
+export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:string) => {
+  if(apc_op_id !=='' && apc_part_id !=='') {
+    const { data, error } = await supabase.from('GL_CODE_CROSSWALK').select('*').eq('apc_operator_id',apc_op_id).eq('apc_partner_id',apc_part_id).eq('active', true);
+  if (error || !data) {
+      console.error(`Error fetching GL Codes:`, error);
+      return [];
+      } 
+      return transformGLCodeCrosswalk(data);
+  } return [];
+};
+
+export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
+    
+    type TogglePayload = { apc_op_id: string; apc_part_id:string };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("fetch_mapped_gl_codes", { apc_op_id, apc_part_id }, token);
+    
+  };
 

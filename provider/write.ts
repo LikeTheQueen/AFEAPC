@@ -2,8 +2,9 @@
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
-import type { GLCodeRowData, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
-//import adminAuthClient from './serverfunctions';
+import type { GLCodeRowData, GLMappingRecord, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import { callEdge } from 'src/edge';
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
   export const addOperatorSupabase = async (name: string, source_system:number) => {
     const { data, error } = await supabase.from('OPERATORS').insert({name: name, source_system: source_system, active:true}).select();
@@ -165,7 +166,6 @@ import type { GLCodeRowData, PartnerMappingRecord, PartnerRecordToUpdate, Partne
   };
   
   export const updatePartnerProcessedMapping = async(partnerSourceID: string[], mapValue: boolean) => {
-    console.log('I AM CALLD', partnerSourceID, mapValue)
    const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('source_id',partnerSourceID).select();
     
     if (error) {
@@ -187,13 +187,30 @@ import type { GLCodeRowData, PartnerMappingRecord, PartnerRecordToUpdate, Partne
       return data;
   };
 
-   export const writeGLAccountlistFromSourceToDB = async(accountRecords: GLCodeRowData[]) => {
+  export const writeGLAccountlistFromSourceToDB = async(accountRecords: GLCodeRowData[]) => {
     const { data, error } = await supabase.from('GL_CODES').insert(accountRecords).select();
     if (error) {
         console.error(`Error adding the Operator's GL Codes`, error);
         return null;
       }
       return data;
+  };
+
+  export const writeGLCodeMapping = async(glMappings: GLMappingRecord[]) => {
+    const { data, error } = await supabase.from('GL_CODE_CROSSWALK').insert(glMappings).select();
+    if (error) {
+        console.error(`Error adding the GL CodeMappings`, error);
+        return null;
+      }
+      return data;
+  };
+
+  export async function writeGLCodeMappingUpdate(id: number, active: boolean, token: string) {
+    
+    type TogglePayload = { id: number; active: boolean };
+    type ToggleResult  = { ok: true; data: { id: number; active: boolean } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("gl-crosswalk-set-active", { id, active }, token);
   };
 
   

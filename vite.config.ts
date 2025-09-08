@@ -7,14 +7,14 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 
 export default defineConfig({
-  server: {
-    proxy: {
+  server: { proxy: { "/functions/v1": "http://127.0.0.1:54321" }
+    /*proxy: {
       '/api': {
         target: 'https://executedemo.quorumsoftware.com/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-    },
+    },*/
   },
   plugins: [!process.env.VITEST && reactRouter(), tailwindcss(), tsconfigPaths()],
   test: {

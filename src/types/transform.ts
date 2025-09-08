@@ -21,7 +21,9 @@ import type {
     PartnerRowData,
     PartnerMappingDisplayRecord,
     OperatorOrPartnerList,
-    GLCodeType
+    GLCodeType,
+    GLMappingRecord,
+    GLMappedRecord
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -449,5 +451,19 @@ export const transformGLCodes = (data: any[]) : GLCodeType[] => {
         id: item.id,
         apc_op_id:'',
         apc_part_id:''
+    }))
+};
+
+export const transformGLCodeCrosswalk = (data: any[]) : GLMappedRecord[] => {
+    return data.map(item => ({
+        apc_operator_id: item.apc_operator_id,
+        operator_account_group: item.operator_account_group,
+        operator_account_description: item.operator_account_description,
+        operator_account_number: item.operator_account_number,
+        apc_partner_id: item.apc_partner_id,
+        partner_account_group: item.partner_account_group,
+        partner_account_description: item.partner_account_description,
+        partner_account_number: item.partner_account_number,
+        id: item.id,
     }))
 }

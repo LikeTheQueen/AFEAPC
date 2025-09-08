@@ -122,7 +122,7 @@ export default function GLFileUpload() {
     <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4">
     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
             <div className="">
-                <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload GL Accounts from AFE System</h2>
+                <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload GL Account Codes from AFE System</h2>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the GL Account Codes on <span className="font-bold">YOUR</span> AFEs, as the Operator.</p><br></br>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span></p>
              </div>
@@ -130,8 +130,8 @@ export default function GLFileUpload() {
              <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
               <fieldset>
       <legend className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3 font-semibold">Are you an Operator or a Partner?</legend>
-      <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-6">If you are an <span className="font-semibold">Operator</span> you do <span className="font-semibold">NOT</span> need to upload GL Accounts for your Partner addresses</p>
-      <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-6">If you are a <span className="font-semibold">Partner</span> you only need to upload GL Accounts if you want to map those for your Non-Op AFEs.</p>
+      <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-6">If you are an <span className="font-semibold">Operator</span> you do <span className="font-semibold">NOT</span> need to upload GL Account Codes for your Partner addresses</p>
+      <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-6">If you are a <span className="font-semibold">Partner</span> you only need to upload GL Account Codes if you want to map those for your Non-Op AFEs.</p>
       <div className="mt-6 space-y-6 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
         {notificationMethods.map((entity) => (
           <div key={entity.id} className="flex items-center">
@@ -150,7 +150,7 @@ export default function GLFileUpload() {
       </div>
     </fieldset>
                     <div hidden={entityStyle !=='operator' ? true: false} className="">
-                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select an Operator to upload GL Accounts For:</h1>
+                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select an Operator to upload GL Account Codes For:</h1>
                     <div className="">
                     <OperatorDropdown 
                         onChange={(id) => {setOpAPCID(id), setPartnerAPCID('')} }
@@ -168,7 +168,7 @@ export default function GLFileUpload() {
                         <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
                     </div>
                     <div hidden={entityStyle !=='partner' ? true: false} className="">
-                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select a Partner to upload GL Accounts For:</h1>
+                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select a Partner to upload GL Account Codes For:</h1>
                     <div className="">
                     <PartnerDropdown 
                         onChange={(id) => {setPartnerAPCID(id), setOpAPCID('')} }
@@ -220,7 +220,7 @@ export default function GLFileUpload() {
             {currentPage == totalPage - 1
               ? data?.length
               : (currentPage + 1) * rowsLimit}{" "}
-            of {data?.length} GL Accounts
+            of {data?.length} GL Account Codes
           </div>
           <div className="flex">
             <ul
@@ -265,18 +265,18 @@ export default function GLFileUpload() {
             <button
                     disabled={data.length>0 ? false : true}
                     className="w-full sm:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {setData([]),setRowsToShow([]),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Accounts were NOT saved)`)}}>
+                    onClick={(e) => {setData([]),setRowsToShow([]),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`)}}>
                         Cancel
                     </button>
                     <button
                     disabled={data.length>0 ? false : true}
                     className="w-full sm:w-60 rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {writeGLAccountlistFromSourceToDB(data),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Accounts ARE saved)`), setData([])}}>
-                        Save GL Account List
+                    onClick={(e) => {writeGLAccountlistFromSourceToDB(data),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`), setData([])}}>
+                        Save GL Account Code List
                     </button>
             </div>     
            <ToastContainer />
-          {warnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library")}
+          {warnUnsavedChanges(data.length>0,"You have NOT saved your GL Account Codes to AFE Partner Connections")}
     </>
   )
 }

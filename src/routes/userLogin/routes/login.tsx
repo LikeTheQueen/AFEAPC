@@ -13,7 +13,7 @@ export default function LoginForm() {
   const [session, setSession] = useState<Session | null>()
   const navigate = useNavigate();
   
-console.log(session,'THE SESSION ON THE LOGIN')
+
   useEffect(() => {
   const getInitialSession = async () => {
     const { data, error } = await supabase.auth.getSession();
