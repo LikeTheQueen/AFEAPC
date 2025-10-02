@@ -58,13 +58,12 @@ export function activeTab(tabList: any[], selected: number | null) {
     }));
     return {updatedTabs, selectedTabId}
   } else {
-    console.log('psse tab');
+    
     const selectedTabId = selected;
     const updatedTabs = tabList.map((tab) => ({
       ...tab,
       current: tab.id === selectedTabId,
     }));
-    console.log('i upate ', updatedTabs)
     return {updatedTabs, selectedTabId}
   }
 
@@ -78,7 +77,6 @@ export async function sourceSystemList() {
 
 export async function writeOperatorToSupabase (name: string, source_system:number) {
   const result = await addOperatorSupabase('Op4', 2);
-  console.log(result, 'this is the result');
   return result;
 };
 

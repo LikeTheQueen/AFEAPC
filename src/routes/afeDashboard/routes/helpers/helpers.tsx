@@ -1,27 +1,24 @@
-import { addAFEHistorySupabase, fetchFromSupabase, updateAFEPartnerStatusSupabase, updatePartnerArchiveStatus } from "provider/fetch";
-import { addOperatorSupabase } from "provider/write";
-import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, UserProfileRecordSupabaseType } from "src/types/interfaces";
-import { transformSourceSystemSupabase, transformUserProfileSupabase } from "src/types/transform";
+import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
+import type { UserProfileRecordSupabaseType } from "src/types/interfaces";
+import { insertAFEHistory } from 'provider/write'
 
-
-export function handlePartnerStatusChange(id: string, partnerStatus: string, newPartnerStatus: string, description: string, type: string) {
+export function handlePartnerStatusChange(id: string, partnerStatus: string, newPartnerStatus: string, description: string, type: string, token: string) {
   if (partnerStatus === newPartnerStatus) {
     return;
   } else {
-    updateAFEPartnerStatusSupabase(id, newPartnerStatus);
-    addAFEHistorySupabase(id, description, type);
+    updateAFEPartnerStatus(id, newPartnerStatus, token);
+    insertAFEHistory(id, description, type, token);
   }
 };
 
-export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string){
-  updatePartnerArchiveStatus(id, archivedStatus);
-  addAFEHistorySupabase(id, description, type);
+export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
+  updateAFEPartnerArchiveStatus(id, archivedStatus, token);
+  insertAFEHistory(id, description, type, token);
 };
 
-export function archiveDate(date: Date, days: number) {
-  const newDate = new Date(date);
-  newDate.setDate(date.getDate() - days);
-  return newDate;
+export function handleOperatorArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
+  updateAFEOperatorArchiveStatus(id, archivedStatus, token);
+  insertAFEHistory(id, description, type, token);
 };
 
 export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
@@ -36,5 +33,5 @@ export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | 
     return user?.partnerRoles
       .filter(role => role.role === 3)
       .map(role => role.apc_id);
-  }
+  };
 

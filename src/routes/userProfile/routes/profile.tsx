@@ -1,14 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { type UserRolesSupabaseType, type UserProfileSupabaseType, type OperatorPartnerAddressType, type RoleEntryRead } from "../../../types/interfaces";
-import { useLocation } from 'react-router'
-import { fetchFromSupabaseMatchOnString, fetchFromSupabase, fetchOperatorsForLoggedInUser } from '../../../../provider/fetch';
-import { transformUserRolesSupabase } from "../../../types/transform";
+import { type RoleEntryRead } from "../../../types/interfaces";
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { isOpPrivChecked } from './helpers/helpers';
 import PermissionDashboard from "../../../routes/permissionGrid"
-
 
 
 export default function Profile() {

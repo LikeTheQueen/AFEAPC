@@ -12,7 +12,6 @@ export default async function fetchAuthToken(ID: string, Key: string, urlPath: s
 
     if (response.ok) {
       const jsonResponse = await response.json();
-      console.log("Step 1: Get the AuthToken", jsonResponse.AuthenticationToken);
       return jsonResponse.AuthenticationToken;
     }
 
@@ -20,7 +19,6 @@ export default async function fetchAuthToken(ID: string, Key: string, urlPath: s
 
   }
   catch (e) {
-    console.log(e);
     return new Error('Request Failed and could not login');
   }
 };

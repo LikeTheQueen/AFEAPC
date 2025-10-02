@@ -57,6 +57,37 @@ export const transformAFEs = (data: any[]): AFEType[] => {
     }));
 };
 
+export const transformSingleAFE = (item: any): AFEType => {
+    return {
+        id: item.id,
+        operator: item.apc_operator_id.name,
+        created_at: new Date(item.created_at),
+        afe_type: item.afe_type,
+        afe_number: item.afe_number,
+        description: item.description,
+        total_gross_estimate: item.total_gross_estimate,
+        version_string: item.version_string,
+        supp_gross_estimate: item.supp_gross_estimate,
+        operator_wi: item.operator_wi,
+        partnerID: item.apc_partner_id,
+        partner_name: item.apc_partner_name,
+        partner_wi: item.partner_wi,
+        partner_status: item.partner_status,
+        op_status: item.op_status,
+        iapp_date: new Date(item.iapp_date).toLocaleDateString(),
+        last_mod_date: new Date(item.last_mod_date).toLocaleDateString(),
+        legacy_chainID: item.legacy_chainID,
+        legacy_afeid: item.legacy_afeid,
+        chain_version: item.chain_version,
+        source_system_id: item.source_system_id,
+        sortID: item.sortID,
+        partner_status_date: item.partner_status_date,
+        apc_operator_id: item.apc_operator_id.id,
+        archived: item.archived,
+        partner_archived: item.partner_archived,
+    };
+};
+
 export const transformExecuteAFEsID = (data: any[]): ExecuteAFEDocIDType[] => {
     return data.map(item => ({
         docID: item.DocumentId,

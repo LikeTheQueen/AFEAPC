@@ -2,8 +2,10 @@ import { ChatBubbleBottomCenterTextIcon, CommandLineIcon } from '@heroicons/reac
 import { useEffect, useState } from 'react';
 import type { AFEHistorySupabaseType, AFEType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
-import { addAFEHistorySupabase, fetchFromSupabaseMatchOnString } from 'provider/fetch';
+import { fetchFromSupabaseMatchOnString } from 'provider/fetch';
 import { transformAFEHistorySupabase } from 'src/types/transform';
+import { insertAFEHistory } from 'provider/write'
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -12,6 +14,8 @@ function classNames(...classes: string[]) {
 export default function AFEHistories(singleAFE: AFEType) {
     const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
     const [commentVal, setCommentVal] = useState('');
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? "";
 
     const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
     
@@ -34,7 +38,7 @@ export default function AFEHistories(singleAFE: AFEType) {
         setAFEHistoryMaxID(afeHistories);
         const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: singleAFE.id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
         setHistory([...afeHistories, newComment]);
-        addAFEHistorySupabase(singleAFE.id, commentVal, 'comment');
+        insertAFEHistory(singleAFE.id, commentVal, 'comment', token);
         setCommentVal('');
     }
 

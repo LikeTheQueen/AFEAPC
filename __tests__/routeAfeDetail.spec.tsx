@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { vi } from 'vitest';
-import AFEDetailURL from '../src/routes/afeDetail';
+import AFEDetailURL from '../src/routes/afeDashboard/routes/afeDetail';
 import userEvent from '@testing-library/user-event';
 import { addAFEHistorySupabase } from '../provider/fetch';
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";

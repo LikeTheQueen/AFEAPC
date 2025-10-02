@@ -11,7 +11,6 @@ export default async function executeLogout(authToken: string, urlPath: string, 
     const response = await fetch(baseURL + urlPath, requestOptions);
 
     if (!response.ok) {
-      console.log('I cannot logout', authToken);
       console.error('Request failed with status:', response.status);
       const errorText = await response.text();
       console.error('Response body:', errorText);
@@ -20,7 +19,6 @@ export default async function executeLogout(authToken: string, urlPath: string, 
 
     if (response.ok) {
       await response.json();
-      console.log('You have been logged out');
 
       return "Success";
     }

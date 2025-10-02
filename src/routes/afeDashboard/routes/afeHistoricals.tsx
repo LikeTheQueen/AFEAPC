@@ -18,7 +18,7 @@ const tabs = [
   {id:2, name:"Operated AFEs", current: false},
   {id:3, name:"All AFEs", current: false},
 ];
-export default function AFE() {
+export default function AFEHistorical() {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
   const [tabList, setTabList] = useState(tabs);
@@ -73,10 +73,10 @@ export default function AFE() {
   function sortAndFilterAFEs() {
   allAFEs.sort((a,b) => b.sortID - a.sortID)
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
-  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_operator_id) && afe.archived !==true);
+  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_operator_id) && afe.archived ===true);
   setOperatedAFEs(opAFEs);
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true);
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived ===true);
   setNonOperatedAFEs(nonOpAFEs);    
 };
     sortAndFilterAFEs();

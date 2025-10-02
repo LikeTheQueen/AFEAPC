@@ -134,7 +134,7 @@ export default function CreateOperator() {
       console.error("Failed to add operator Address:", error);
     }
   }
-  console.log(operator.id, 'THE OP ID')
+  
   return (
     <div className="px-4 sm:px-10 sm:py-4 divide-y divide-gray-900/20">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">

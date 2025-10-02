@@ -44,7 +44,6 @@ const handleTextChange = (input: string, index: number) => {
 
     if (newPin.every((digit) => digit !== '')) {
       onComplete(newPin.join(''));
-      console.log(newPin)
     }
   };
 

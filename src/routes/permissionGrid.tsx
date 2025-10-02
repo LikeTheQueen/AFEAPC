@@ -226,14 +226,18 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="rounded-tl-xl w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Operated AFEs
               </th>
               <th scope="col" 
-                  className="w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Edit Operator Users
               </th>
-              <th scope="col" className="rounded-tr-lg w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" 
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                Manage Libraries
+              </th>
+              <th scope="col" className="rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Billing Details
               </th>
             </tr>
@@ -251,7 +255,7 @@ useEffect(() => {
             <br></br>{operator.apc_zip}</p>  
             
           </td>
-          {[2, 4, 7].map(roleVal => (
+          {[2, 4, 8, 7].map(roleVal => (
         <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
           <div className="flex shrink-0 items-center justify-center">
             <div className="group grid size-4 grid-cols-1">  
@@ -339,14 +343,18 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="rounded-tl-xl w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Non-Op AFEs
               </th>
               <th scope="col" 
-                  className="w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Edit Partner Users
               </th>
-              <th scope="col" className="rounded-tr-lg w-1/4 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" 
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                Manage Libraries
+              </th>
+              <th scope="col" className="rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Accept/Reject Non-Op AFEs
               </th>
             </tr>
@@ -364,7 +372,7 @@ useEffect(() => {
             <br></br>{operator.apc_zip}</p>  
             
           </td>
-          {[3, 5, 6].map(roleVal => (
+          {[3, 5, 9, 6].map(roleVal => (
         <td key={roleVal} className="px-3 py-4 text-sm text-[var(--dark-teal)] lg:table-cell">
           <div className="flex h-6 shrink-0 items-center justify-center">
             <div className="group grid size-4 grid-cols-1">

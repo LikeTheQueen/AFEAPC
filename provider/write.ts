@@ -1,4 +1,4 @@
-'use server'
+
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
@@ -56,7 +56,7 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
         console.error(`Error adding User`, error);
         return null;
       }
-      console.log(data);
+      
       return (data);
   };
 
@@ -66,7 +66,6 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
         console.error(`Error Deactivating User`, error);
         return null;
       }
-      console.log(user);
       const { data } = await supabase.from('USER_PROFILE').update({'active': false}).eq('id',userID);
       return (user);
   };
@@ -143,7 +142,7 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
         console.error(`Error updating Partner with Operator ID`, error);
         return null;
       }
-      console.log('I made the change')
+      
       return;
   };
 
@@ -172,7 +171,6 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
         console.error(`Error adding the Operator's Partner Maps`, error, data);
         return null;
       }
-      console.log('no error', data)
       return data;
   };
 
@@ -183,7 +181,6 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
         console.error(`Error updating the Partner Mapping Record`, error, data);
         return null;
       }
-      console.log('no error', data)
       return data;
   };
 
@@ -204,13 +201,47 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
       }
       return data;
   };
-
-  export async function writeGLCodeMappingUpdate(id: number, active: boolean, token: string) {
+//INSERT DATA
+  export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
     
-    type TogglePayload = { id: number; active: boolean };
+    type TogglePayload = { afe_id:string; description: string; type: string; };
+    type ToggleResult  = { ok: true; data: { afe_id: number; description: string; type: string; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type }, token);
+  };
+
+
+//UPDATE DATA
+  export async function updateGLCodeMapping(id: number, active: boolean, token: string) {
+    
+    type TogglePayload = { id: number; active: boolean; };
     type ToggleResult  = { ok: true; data: { id: number; active: boolean } } | { ok: false; message: string };
     
-    return callEdge<TogglePayload, ToggleResult>("gl-crosswalk-set-active", { id, active }, token);
+    return callEdge<TogglePayload, ToggleResult>("update_GL_crosswalk_status", { id, active }, token);
+  };
+
+  export async function updateAFEPartnerStatus(id: string, status: string, token: string) {
+    
+    type TogglePayload = { id: string; status: string; };
+    type ToggleResult  = { ok: true; data: { id: string; status: string; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_partner_status_on_AFE", { id, status }, token);
+  };
+
+  export async function updateAFEPartnerArchiveStatus(id: string, status: boolean, token: string) {
+    
+    type TogglePayload = { id: string; status: boolean; };
+    type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_partner_archive_status_on_AFE", { id, status }, token);
+  };
+
+  export async function updateAFEOperatorArchiveStatus(id: string, status: boolean, token: string) {
+    
+    type TogglePayload = { id: string; status: boolean; };
+    type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_operator_archive_status_on_AFE", { id, status }, token);
   };
 
   

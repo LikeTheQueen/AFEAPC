@@ -23,10 +23,10 @@ export default async function executeAFECall(baseURL:string, urlPath: string, do
         const validData: ExecuteAFEDocIDType[] = uniqueAFEDocIDList.filter((item) => item !== undefined) as ExecuteAFEDocIDType[];
         //Make a call to get the Doc Handle, a call to get the AFE Document and write Estimates to DB
         await processAFEDocIDsToDocHandle(validData, authToken, 2, 60000, 1);
-        console.log("Phew lots of work.  Now I'll log off");
+       
         
     } catch(errorMessage) {
-        console.log(errorMessage);
+        
         return errorMessage;
       } finally {
         if(authToken!=='') {

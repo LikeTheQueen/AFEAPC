@@ -20,16 +20,14 @@ export const fetchExecuteAFEEstimates = async (docHandle: string, authentication
             },
             redirect: 'follow'
         });
-        console.log(response);
+        
         if (!response.ok) {
-            console.log(`Failed to get the Estimates for ${docHandle}`);
             throw new Error(`Failed to get Estimates ${docHandle}: ${response.statusText}`);
         }
         const jsonResponse = await response.json();
         const afeEstimatesForAFE: ExecuteAFEEstimatesType[] = transformExecuteAFEEstimates(jsonResponse.LineItems, docID);
         writeExecuteAFEEstimatesSupabase('AFE_ESTIMATES_EXECUTE', afeEstimatesForAFE);
-        console.log("Step 6 was I wrote this to the DB", afeEstimatesForAFE);
-
+        
         return jsonResponse;
 
     } catch (error) {

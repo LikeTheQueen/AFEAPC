@@ -5,12 +5,9 @@ export const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 export const retryWithBackoff = async (docHandle: string, authToken: string, maxRetries: number, docID: string) => {
   let attempt = 0;
   let delayMs = 1000; // Start with 1 second delay
-console.log(docHandle);
   while (attempt < maxRetries) {
     const result = await fetchExecuteAFEEstimates(docHandle, authToken, docID);
     if (result) {
-        console.log("results from retry", result);
-        
         return result; // Success, return response
       }
 

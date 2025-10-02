@@ -119,7 +119,7 @@ export default function GLMapping() {
         sourceGLCode: GLCodeRowData
     ) => {
         if (currentGLMap?.apc_partner_id === sourceGLCode.apc_part_id && currentGLMap?.apc_partner_id !=='') {
-            console.log(sourceGLCode.apc_part_id,'thepart')
+            
             setCurrentGLMap({
                 ...currentGLMap,
                 partner_account_number: '',

@@ -46,7 +46,7 @@ function handleTabChange(selected: number){
 
 function handleSubTabChange(selected: number){
   setCurrentSubTab(selected);
-  close();
+  
 };
 
   return (

@@ -218,9 +218,14 @@ export default function PartnerMapping() {
                                 <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Partner Library in Your AFE System</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div
-                                        hidden={(opAPCID === '' || sourcePartnerList.length < 1) ? false : true}
+                                        hidden={(opAPCID === '') ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
-                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">You haven't selected an Operator from the dropdown or the Partner Library from your source system has not been loaded for the Operator selected.</h2>
+                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">You haven't selected an Operator from the dropdown.</h2>
+                                    </div>
+                                    <div
+                                        hidden={(opAPCID !== '' && sourcePartnerList.length < 1) ? false : true}
+                                        className="mt-8 max-h-80 flex items-center justify-center">
+                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">Interesting...  Very interesting.  The Partner Library from your source system has not been loaded for the Operator selected.  Head back over there and upload the file, will ya?</h2>
                                     </div>
                                     <div
                                         hidden={(opAPCID !== '' && sourcePartnerList.length > 0) ? false : true}

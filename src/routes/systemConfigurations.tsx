@@ -14,32 +14,27 @@ const AuthButton = () => {
   const handleClick = async () => {
     if (!authToken) {
       setResponseError('');
-      console.log('Fetching new auth token...');
       const result = await fetchAuthToken(docId, key, urlPath, baseURL);
       if (result) {
         sessionStorage.setItem('authToken', result);
         setAuthToken(result);
-        console.log('Token stored:', result);
       } else {
-        console.error('Failed to retrieve auth token');
-        console.error('Response', result);
         setResponseError(result);
       }
     } else {
-      console.log('Using stored token:', authToken);
     }
   };
   const handleLogout = async () => {
     if (!authToken) {
-      console.log('Fetching new auth token to login and then logout');
+      
       fetchAuthToken(ID, Key, urlPath, baseURL)
         .then(resolvedValue => {
-          console.log(resolvedValue.AuthenticationToken);
+          
           sessionStorage.setItem('authToken', resolvedValue.AuthenticationToken);
           setAuthToken(resolvedValue.AuthenticationToken);
           executeLogout(resolvedValue.AuthenticationToken, urlPathLogout, baseURL)
             .then(resolvedValue => {
-              console.log(resolvedValue);
+              
               if (resolvedValue === 'Success') {
                 sessionStorage.setItem('authToken', '');
                 setAuthToken('');

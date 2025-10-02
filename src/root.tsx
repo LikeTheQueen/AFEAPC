@@ -12,7 +12,9 @@ import { SupabaseProvider } from "./types/SupabaseContext";
 import { isAuthApiError } from "@supabase/supabase-js";
 import { useSupabaseData } from "./types/SupabaseContext";
 import PageNotFound from "./routes/pageNotFound";
+//import {pdfjs} from 'react-pdf'
 
+//pdfjs.GlobalWorkerOptions.workerSrc='/pdf.worker.min.js' 
 
 
 export function Layout({ children }: { children: React.ReactNode }) {

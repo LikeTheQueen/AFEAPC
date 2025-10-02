@@ -20,9 +20,8 @@ export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID =
             try {
                 const data = await fetchPartnersLinkedOrUnlinkedToOperator();
                 if (isMounted) {
-                    console.log(data, 'THE RETURN')
+                    
                     const filterNull = data.filter(record => record.apc_op_id === "");
-                    console.log(filterNull, 'THE FILTER')
                     setPartnerListToOperator(filterNull ?? []);
                 }
             } finally {
@@ -79,8 +78,7 @@ export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID =
     async function updatePartnerWithOpIDChange() {
         await updatePartnerWithOpID(partnerListToLink)
     };
-console.log(partnerListToLink, 'THE LIST OF PARTNERS TO LINK')
-console.log(opId, 'THE OP ID IN THE GRID')
+    
 if (loading) return <LoadingPage/>
     return (
         <>

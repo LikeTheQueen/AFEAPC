@@ -14,7 +14,7 @@ export default [
     layout("./routes/loggedInUserSupabase.tsx",[
     route("/mainScreen", "./routes/mainScreen.tsx", [
     route("/mainScreen/afe", "./routes/afeDashboard/routes/afe.tsx"),
-    route("/mainScreen/afeArchived", "./routes/afeArchived.tsx"),
+    route("/mainScreen/afeArchived", "./routes/afeDashboard/routes/afeHistoricals.tsx"),
     route("/mainScreen/configurations", "./routes/configurations.tsx",[
         route("/mainScreen/configurations/systemConfigurations", "./routes/systemConfigurations.tsx"),
         route("/mainScreen/configurations/glmapping", "./routes/glConfigurations/routes/glMapping.tsx"),
@@ -26,7 +26,7 @@ export default [
         route("/mainScreen/configurations/partnerupload", "./routes/partnerConfigurations/routes/partnerFileUpload.tsx"),
     ]),
     route("/mainScreen/profile", "./routes/userProfile/routes/profile.tsx"),
-    route("/mainScreen/afeDetail/:afeID", "./routes/afeDetail.tsx"),
+    route("/mainScreen/afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
     route("/mainScreen/supporthistory", "./routes/supportHistory.tsx"),
     route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/editUserDashboard.tsx"),
     route("/mainScreen/manageUsers", "./routes/createEditUsers/routes/manageUserDashboard.tsx"),

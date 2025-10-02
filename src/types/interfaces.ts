@@ -300,6 +300,7 @@ export interface PartnerMappingDisplayRecord {
 export interface OperatorOrPartnerList {
   apc_id: string;
   apc_name: string;
+  apc_address: AddressType | null;
 };
 
 export interface GLCodeType extends GLCodeRowData{

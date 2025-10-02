@@ -99,8 +99,6 @@ export default async function fetchExecuteAFEData(authToken: string, operator: s
       const jsonResponse = await response.json();
       const afeList: ExecuteAFEDataType[] = transformExecuteAFEData(jsonResponse.Rows, operator);
       writeExecuteAFEtoSupabase('AFE_EXECUTE', afeList);
-      console.log("Step 2: Get the list of AFE Doc IDs AFTER writing to DB ", afeList);
-      console.log("But also return a list of Rows ", jsonResponse.Rows)
       return jsonResponse.Rows;
     }
   }

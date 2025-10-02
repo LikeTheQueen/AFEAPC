@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { type GLMappedRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { writeGLCodeMappingUpdate } from "provider/write";
+import { updateGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
@@ -74,7 +74,7 @@ export default function GLMapping() {
                 }
 
                 if (isMounted) {
-                    console.log(glCodeMapList.data,'THE RETURN')
+                    
                     const glCodeMapListFormatted = transformGLCodeCrosswalk(glCodeMapList.data);
                     setCumaltiveGLMap(glCodeMapListFormatted ?? []);
                     setRowsToShow(glCodeMapListFormatted ?? []);
@@ -113,14 +113,14 @@ export default function GLMapping() {
         });
 
         try {
-            const res = await writeGLCodeMappingUpdate(id, false, token);
+            const res = await updateGLCodeMapping(id, false, token);
             if (!res.ok) {
                 throw new Error((res as any).message ?? "Update failed");
             }
             notifyStandard(`GL Account Code pipeline shut in successfully.\n\n(TLDR: GL Account Code Mapping successfully deleted)`)
         } catch (err) {
             console.error("Failed to deactivate mapping:", err);
-            notifyStandard(`GL Account Code couldn't be delete.  Rig it down and try again.\n\n(TLDR: GL Account Code Mapping was NOT deleted)`)
+            notifyStandard(`GL Account Code Mapping couldn't be deleted.  Rig it down and try again.\n\n(TLDR: GL Account Code Mapping was NOT deleted)`)
             setCumaltiveGLMap(prevMap => {
                 if (prevMap.some((item) => item.id === id)) return prevMap;
                 const updatedMap = [...prevMap];
@@ -249,7 +249,7 @@ export default function GLMapping() {
                                                                 </p>
                                                                 <div className="m-2 size-6 pt-1 justify-self-end">
                                                                     <button
-                                                                        onClick={() => { removeMapping(glCode.id!), notifyStandard(`GL Account Code pipeline shut in successfully.\n\n(TLDR: GL Account Code Mapping successfully deleted)`) }}
+                                                                        onClick={() => { removeMapping(glCode.id!) }}
                                                                         className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                         <TrashIcon className="size-5" />
                                                                     </button>
@@ -274,7 +274,7 @@ export default function GLMapping() {
                                                         <td className="hidden xl:table-cell justify-self-center">
                                                             <div className="size-6 justify-self-center pt-1 mr-3">
                                                                 <button
-                                                                    onClick={() => { removeMapping(glCode.id!), notifyStandard(`GL Account Code pipeline shut in successfully.\n\n(TLDR: GL Account Code Mapping successfully deleted)`) }}
+                                                                    onClick={() => { removeMapping(glCode.id!) }}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
                                                                 </button>

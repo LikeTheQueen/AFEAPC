@@ -1,19 +1,17 @@
 import { ChatBubbleBottomCenterTextIcon, CommandLineIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from 'react';
-import type { AFEHistorySupabaseType, AFEType } from 'src/types/interfaces';
+import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
-import { addAFEHistorySupabase, fetchFromSupabaseMatchOnString } from 'provider/fetch';
-
-function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
-};
+import { insertAFEHistory } from 'provider/write'
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
  type AFEHistoryProps = {
    historyAFEs: AFEHistorySupabaseType[];
  };
 
 export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
-   
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
     const [commentVal, setCommentVal] = useState('');
    
@@ -26,15 +24,15 @@ export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
     
     const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setCommentVal(event.target.value);
-    }
+    };
     
     function handleComment() {
         setAFEHistoryMaxID(afeHistories);
         const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: historyAFEs[0].afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
         setHistory([...afeHistories, newComment]);
-        addAFEHistorySupabase(historyAFEs[0].afe_id, commentVal, 'comment');
+        insertAFEHistory(historyAFEs[0].afe_id, commentVal, 'comment', token);
         setCommentVal('');
-    }
+    };
 
     return (
         <>
@@ -47,28 +45,29 @@ export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
                     afeHistories?.map((afeHistory, afeHistoryIdx) => (
                         <li key={afeHistory.id} className="relative flex gap-x-4">
                             <div
-                                className={classNames(
-                                    afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6',
-                                    'absolute top-0 left-0 flex w-6 justify-center',
-                                )}
-                            >
+                            className={`${afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6'} absolute top-0 left-0 flex w-6 justify-center`}>
                                 <div className="w-px bg-gray-200" />
                             </div>
                             {afeHistory.type === 'action' ? (
                                 <>
                                     <CommandLineIcon aria-hidden="true" className="relative size-6 flex-none text-[var(--darkest-teal)]" />
-                                    <div className="flex-auto px-2">
+                                    <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--darkest-teal)] ">
                                         <div className="flex justify-between gap-x-4">
                                             <div className="text-sm/6 ">
                                                 <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
                                             </div>
-                                            <p className="flex-none text-sm/6 text-gray-500 custom-style-long-text">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-gray-500 custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
                                                 hour: 'numeric',
                                                 minute: 'numeric',
                                                 hour12: true,
+                                            })}</p>
+                                            <p className="2xl:hidden flex-none text-sm/6 text-gray-500 custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
                                             })}</p>
 
                                         </div>
@@ -84,18 +83,25 @@ export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
                                             <div className="size-1.5 rounded-full bg-gray-300 ring-1 ring-gray-400" />
                                         )}
                                     </div>
-                                    <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)] ">
+                                    <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)] truncate">
                                         <div className="flex justify-between gap-x-4">
                                             <div className=" text-sm/6 text-gray-500">
                                                 <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
                                             </div>
-                                            <p className="flex-none text-sm/6 text-gray-500 custom-style-long-text">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-gray-500 custom-style-long-text text-clip">
+                                            {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
                                                 hour: 'numeric',
                                                 minute: 'numeric',
                                                 hour12: true,
+                                            })}</p>
+                                            <p className="2xl:hidden flex-none text-sm/6 text-gray-500 custom-style-long-text text-clip">
+                                            {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
                                             })}</p>
 
                                         </div>
@@ -130,8 +136,11 @@ export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
                         </div>
                         <div className="absolute inset-x-0 bottom-0 flex justify-end py-2 pr-2 pl-3 ">
                             <button
+                                disabled={commentVal==='' ? true : false}
                                 type="submit"
-                                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-[var(--bright-pink)] hover:text-white"
+                                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset 
+                                hover:bg-[var(--bright-pink)] hover:text-white
+                                disabled:bg-gray-200 disabled:text-gray-400"
                                 onClick={handleComment}>
 
                                 Comment

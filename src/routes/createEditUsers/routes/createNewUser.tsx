@@ -5,7 +5,6 @@ import { fetchOperatorsForLoggedInUser, fetchRolesGeneric } from 'provider/fetch
 import { type UserProfileRecordSupabaseType, type OperatorType, type RoleEntryWrite, type RoleTypesGeneric, type OperatorPartnerAddressType } from 'src/types/interfaces';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
-import type { index } from '@react-router/dev/routes';
 
 
 export default function CreateNewUser() {
@@ -262,14 +261,18 @@ export default function CreateNewUser() {
                               </th>
                               <th
                                 scope="col"
-                                className="w-1/4 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 View Operated AFEs
                               </th>
                               <th scope="col"
-                                className="w-1/4 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Edit Operator Users
                               </th>
-                              <th scope="col" className="w-1/4 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
+                              <th scope="col"
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                Operator Library Manager
+                              </th>
+                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
                                 View Billing Details
                               </th>
                             </tr>
@@ -283,7 +286,7 @@ export default function CreateNewUser() {
                                     <br></br>{role.city}, {role.state}
                                     <br></br>{role.zip}</p>
                                 </td>
-                                {[2, 4, 7].map(roleVal => (
+                                {[2, 4, 8, 7].map(roleVal => (
                                   <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
                                     <div className="flex h-6 shrink-0 items-center justify-center">
                                       <div className="group grid size-4 grid-cols-1">
@@ -342,14 +345,18 @@ export default function CreateNewUser() {
                               </th>
                               <th
                                 scope="col"
-                                className="w-1/4 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 View Non-Op AFEs
                               </th>
                               <th scope="col"
-                                className="w-1/4 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Edit Non-Op Users
                               </th>
-                              <th scope="col" className="w-1/4 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
+                              <th scope="col"
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                Partner Library Manager
+                              </th>
+                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
                                 Approve or Reject Non-Op AFEs
                               </th>
                             </tr>
@@ -363,7 +370,7 @@ export default function CreateNewUser() {
                                     <br></br>{role.city}, {role.state}
                                     <br></br>{role.zip}</p>
                                 </td>
-                                {[3, 5, 6].map(roleVal => (
+                                {[3, 5, 9, 6].map(roleVal => (
                                   <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
                                     <div className="flex h-6 shrink-0 items-center justify-center">
                                       <div className="group grid size-4 grid-cols-1">
@@ -408,7 +415,7 @@ export default function CreateNewUser() {
               </div>
               <div className="flex items-center justify-end px-4 py-4 sm:px-8">
                 <button type="button"
-                disabled={false}
+                disabled={(newUser.firstName !=='' && newUser.lastName !=='' && newUser.email !=='') ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
                     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, makeSuperUser);
