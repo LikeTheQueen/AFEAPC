@@ -1,44 +1,74 @@
 import { useEffect, useState } from "react";
-import { fetchOpUsersForEdit } from "provider/fetch";
+import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
-import { apcIdsOfUserWithEditUserPriv } from "./helpers/helpers";
 import PermissionDashboard from "../../../routes/permissionGrid";
+import { transformRoleEntrySupabase } from "src/types/transform";
+import LoadingPage from "src/routes/loadingPage";
 
 export default function UserPermissionDashboard() {
-  const { loggedInUser, isSuperUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
   const [opUserRoleList, setOpUserRoleList] = useState<RoleEntryRead[] | []>([]);
   const [partnerUserRoleList, setPartnerUserRoleList] = useState<RoleEntryRead[] | []>([]);
+  const [userPermissionListLoading, setUserPermissionListLoading] = useState(true);
 
   useEffect(() => {
-    if (!loggedInUser?.operatorRoles || loggedInUser.operatorRoles.length < 1) return;
-    async function getUsersForEdit() {
-      if(isSuperUser) {
-      const returnedOpUsers = await fetchOpUsersForEdit('OPERATOR_USER_PERMISSIONS','OPERATOR_ADDRESS');
-      const returnedPartnerUsers = await fetchOpUsersForEdit('PARTNER_USER_PERMISSIONS','PARTNER_ADDRESS');
-      setOpUserRoleList(returnedOpUsers);
-      setPartnerUserRoleList(returnedPartnerUsers);
-      } else {
-      const operatorIDs = apcIdsOfUserWithEditUserPriv(loggedInUser!.operatorRoles,4);
-      const partnerIDs = apcIdsOfUserWithEditUserPriv(loggedInUser!.partnerRoles,5)
-      const returnedOpUsers = await fetchOpUsersForEdit('OPERATOR_USER_PERMISSIONS','OPERATOR_ADDRESS',operatorIDs);
-      const returnedPartnerUsers = await fetchOpUsersForEdit('PARTNER_USER_PERMISSIONS','PARTNER_ADDRESS',partnerIDs);
-      setOpUserRoleList(returnedOpUsers);
-      setPartnerUserRoleList(returnedPartnerUsers);
+    if(!token || !loggedInUser) {
+      setUserPermissionListLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    async function getUserPermissions() {
+      if(!loggedInUser) return;
+      setUserPermissionListLoading(true);
+      
+      try{
+        const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
+
+        if(!userPermissionsRaw.ok) {
+          throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
+        }
+        console.log(userPermissionsRaw.data);
+        const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
+        const opPermissions = userPermissionsTransformed.filter(permission => permission.is_op_permission);
+        const partnerPermissions = userPermissionsTransformed.filter(permission => permission.is_partner_permission);
+
+        if(isMounted) {
+          setOpUserRoleList(opPermissions);
+          setPartnerUserRoleList(partnerPermissions);
+          setUserPermissionListLoading(false);
+        }
       }
-    } getUsersForEdit();
-  }, [loggedInUser, isSuperUser]);
+      catch(e) {
+        console.error('Not able to get user permissions ',e);
+      }
+      finally{
+        return;
+      }
+    }
+    getUserPermissions();
+    return () => {
+      isMounted = false;
+    }
+  }, [token, loggedInUser])
 
-
+  
   return (
     <>
     
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
+    {userPermissionListLoading ? (
+      <LoadingPage></LoadingPage>
+    ) : (
     <PermissionDashboard 
     readOnly={false}
     operatorRoles={opUserRoleList}
-    partnerRoles={partnerUserRoleList}
-    ></PermissionDashboard>
+    partnerRoles={partnerUserRoleList}>
+    </PermissionDashboard>
+    )}
     </div>
       
     </>

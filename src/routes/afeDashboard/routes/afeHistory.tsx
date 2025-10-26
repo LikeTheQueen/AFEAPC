@@ -7,13 +7,15 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
 
  type AFEHistoryProps = {
    historyAFEs: AFEHistorySupabaseType[];
+   apc_afe_id:string;
  };
 
-export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
+export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) {
     const { session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
     const [commentVal, setCommentVal] = useState('');
+    
    
     useEffect(() => {
     setHistory(historyAFEs);    
@@ -28,9 +30,9 @@ export default function AFEHistory({ historyAFEs }: AFEHistoryProps) {
     
     function handleComment() {
         setAFEHistoryMaxID(afeHistories);
-        const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: historyAFEs[0].afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
+        const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: apc_afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
         setHistory([...afeHistories, newComment]);
-        insertAFEHistory(historyAFEs[0].afe_id, commentVal, 'comment', token);
+        insertAFEHistory(apc_afe_id, commentVal, 'comment', token);
         setCommentVal('');
     };
 

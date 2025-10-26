@@ -4,7 +4,7 @@ import  supabase  from './supabase';
 import type { UUID } from 'crypto';
 import type { GLCodeRowData, GLMappingRecord, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
-import { useSupabaseData } from 'src/types/SupabaseContext';
+
 
   export const addOperatorSupabase = async (name: string, source_system:number) => {
     const { data, error } = await supabase.from('OPERATORS').insert({name: name, source_system: source_system, active:true}).select();
@@ -70,16 +70,7 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
       return (user);
   };
 
-  export const reactivateUser = async(userID: string) => {
-    const { data: user, error } = await supabase.rpc('reactivateUser',{user_id: userID});
-    if (error) {
-        console.error(`Error Reactivating User`, error);
-        return null;
-      }
-      const { data } = await supabase.from('USER_PROFILE').update({'active': true}).eq('id',userID);
-      return (user);
-  };
-
+  
   export const createUserProfile = async(firstName: string, lastName: string, email: string, id:string, active: boolean) => {
     const { data, error } = await supabase.from('USER_PROFILE').insert({id: id, first_name: firstName, last_name:lastName, email: email, active:active});
     if (error) {
@@ -174,6 +165,18 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
       return data;
   };
 
+  export const updatePartnerProcessedMapValue = async(id: number[], mapValue: boolean) => {
+   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('id',id).select();
+    
+    if (error) {
+        console.error(`Error updating the Partners Processed Table`, error, data);
+        return null;
+      }
+      return data;
+  };
+
+  
+
   export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
    const {data, error} = await supabase.from('PARTNERS_CROSSWALK').update({'active': mapValue}).eq('id',partnerSourceID).select();
     
@@ -210,6 +213,38 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
     return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type }, token);
   };
 
+  export async function createNewUser(email: string, password: string, token: string) {
+    
+    type TogglePayload = { email:string; password: string; };
+    type ToggleResult  = { ok: true; data: string; } | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("create_New_User", { email, password }, token);
+  };
+
+  export async function createNewUserProfile(id: string, first_name: string, last_name: string, email: string, active: boolean, is_super_user: boolean, token: string) {
+    
+    type TogglePayload = { id: string; first_name: string; last_name: string; email: string; active: boolean; is_super_user: boolean; };
+    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("create_New_User_Profile", { id, first_name, last_name, email, active, is_super_user }, token);
+  };
+
+  export async function createUserRolesOperator(roles: RoleEntryWrite[], token: string) {
+    
+    type TogglePayload = { roles: RoleEntryWrite[]; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("create_Roles_Op_Permission", { roles }, token);
+  };
+
+  export async function createUserRolesPartner(roles: RoleEntryWrite[], token: string) {
+    
+    type TogglePayload = { roles: RoleEntryWrite[]; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("create_Roles_Partner_Permission", { roles }, token);
+  };
+
 
 //UPDATE DATA
   export async function updateGLCodeMapping(id: number, active: boolean, token: string) {
@@ -244,6 +279,20 @@ import { useSupabaseData } from 'src/types/SupabaseContext';
     return callEdge<TogglePayload, ToggleResult>("update_operator_archive_status_on_AFE", { id, status }, token);
   };
 
-  
 
+export async function updateUserActiveStatusToInactive(user_id: string, token: string) {
+    
+    type TogglePayload = { user_id: string; };
+    type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("deactivate_user", { user_id }, token);
+  };
+
+export async function updateUserActiveStatusToActive(user_id: string, token: string) {
+    
+    type TogglePayload = { user_id: string; };
+    type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("reactivate_user", { user_id }, token);
+  };
   

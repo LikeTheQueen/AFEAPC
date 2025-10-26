@@ -3,8 +3,6 @@ import { type RoleEntryWrite, type RoleEntryRead, type PartnerRoleEntryWrite } f
 import { checkedByRole, getRoleIndex } from "../routes/createEditUsers/routes/helpers/helpers";
 import { writeorUpadateUserRoles } from "provider/write";
 
-
-
 type apcrole = {
     apc_id: string;
     apc_address_id: number,
@@ -202,7 +200,8 @@ useEffect(() => {
  
   return (
     <>
-    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
+    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7"
+    hidden={groupByUserThenOperatorRole.length > 0 ? false : true}>
       <div className="md:col-span-2 ">
         <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Operated AFEs</h2>
           <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
@@ -319,7 +318,8 @@ useEffect(() => {
         
       </div>
       </div>
-    <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 pt-4">
+    <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 pt-4"
+    hidden={groupByUserThenPartnerRole.length >0 ? false : true }>
       <div className="md:col-span-2 ">
         <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
           <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>

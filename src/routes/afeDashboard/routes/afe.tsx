@@ -9,7 +9,7 @@ import { Button } from "@headlessui/react";
 import { activeTab } from "src/helpers/styleHelpers";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type AFEType } from "src/types/interfaces";
-import { fetchAFEEs } from "provider/fetch";
+import { fetchAFEs } from "provider/fetch";
 import { transformAFEs } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
 
@@ -41,7 +41,7 @@ export default function AFE() {
       async function getAFERecord() {
         setAFELoading(true);
         try{
-          const afes = await fetchAFEEs(token);
+          const afes = await fetchAFEs(token);
   
           if(!afes.ok) {
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
@@ -73,18 +73,18 @@ export default function AFE() {
   function sortAndFilterAFEs() {
   allAFEs.sort((a,b) => b.sortID - a.sortID)
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
-  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_operator_id) && afe.archived !==true);
-  setOperatedAFEs(opAFEs);
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true);
+
+  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
+  setOperatedAFEs(opAFEs);
+  
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   setNonOperatedAFEs(nonOpAFEs);    
 };
     sortAndFilterAFEs();
-  },[allAFEs])
-  
+  },[loggedInUser, allAFEs])
 
   return (
-    
     <>
     <div className="px-4 sm:px-10 sm:py-4">
       <div className="h-4 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>

@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { fetchFromSupabase, fetchIsUserSuperUser, fetchUserProfileRecordFromSupabase } from "../../provider/fetch";
+import { fetchFromSupabase, fetchUserProfileRecordFromSupabase } from "../../provider/fetch";
 import { transformAFEs } from "./transform";
 import type { AFEType, UserProfileRecordSupabaseType } from "./interfaces";
 import  supabase  from '../../provider/supabase';
@@ -24,7 +24,7 @@ export const SupabaseProvider = ({ children }: {children: React.ReactNode }) => 
     const [isSuperUser, setIsSuperUser] = useState(false);
 
     const fetchData = async () => {
-            const rawAFEs = await fetchFromSupabase("AFE_PROCESSED",'id,created_at,afe_type,afe_number,description,total_gross_estimate,version_string,supp_gross_estimate,operator_wi,apc_partner_id,apc_partner_name,partner_wi,partner_status,op_status,iapp_date,last_mod_date,legacy_chainID,legacy_afeid,chain_version, apc_operator_id(name, id), source_system_id, sortID, partner_status_date, archived, partner_archived');
+            const rawAFEs = await fetchFromSupabase("AFE_PROCESSED",'id,created_at,afe_type,afe_number,description,total_gross_estimate,version_string,supp_gross_estimate,operator_wi,apc_partner_id,apc_partner_name,partner_wi,partner_status,op_status,iapp_date,last_mod_date,legacy_chainID,legacy_afeid,chain_version, apc_op_id(name, id), source_system_id, sortID, partner_status_date, archived, partner_archived');
             const authUserFormatted = await fetchUserProfileRecordFromSupabase(session?.user.id!);
             setAFEs(transformAFEs(rawAFEs));
             setLoggedInUser(authUserFormatted);
@@ -32,7 +32,7 @@ export const SupabaseProvider = ({ children }: {children: React.ReactNode }) => 
             
         };
     const fetchSuperUserStatus = async () => {
-        const isSuperUserCheck = await fetchIsUserSuperUser(loggedInUser?.user_id);
+        const isSuperUserCheck = loggedInUser?.is_super_user? loggedInUser.is_super_user : false;
         setIsSuperUser(isSuperUserCheck);
     }
 

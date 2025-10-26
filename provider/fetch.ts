@@ -19,6 +19,7 @@ import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 
+
 export const fetchFromSupabase = async (table: string, select: string) => {
     const { data, error } = await supabase.from(table).select(select);
     if (error || !data) {
@@ -38,7 +39,7 @@ export const fetchUserFromSupabase = async (table: string, select: string, sessi
   };
 
 export const fetchUserProfileRecordFromSupabase = async(session: string) => {
-  const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name),apc_address_id(id, street, suite, city, state, zip, country)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name), apc_address_id(id, street, suite, city, state, zip, country)) ')
+  const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name),apc_address_id(id, street, suite, city, state, zip, country)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name), apc_address_id(id, street, suite, city, state, zip, country)),is_super_user ')
   .eq('id', session)
   .eq('PARTNER_USER_PERMISSIONS.active', true)
   .eq('OPERATOR_USER_PERMISSIONS.active', true)
@@ -120,7 +121,8 @@ export const fetchEstimatesFromSupabaseMatchOnAFEandPartner = async (afeID: stri
     return data;
   };
   */
-
+/*
+DELETE
 export const fetchOperatorsForLoggedInUser = async(loggedinUserId: string, superUser: boolean, table: string, addressTable: string, defaulTable: string) => {
     if(superUser === true) {
       const { data, error } = await supabase.from(defaulTable).select(`apc_id:id,name,address:${addressTable}!apc_id(id,street, suite, city, state, zip, country)`);
@@ -140,7 +142,7 @@ export const fetchOperatorsForLoggedInUser = async(loggedinUserId: string, super
     return transformOperatorPartnerAddress(data);
     }
   };
-
+*/
 export const fetchIsUserSuperUser = async(loggedInUserID: string | null | undefined) => {
     if(loggedInUserID === null || loggedInUserID === undefined) {
       return false;
@@ -164,6 +166,7 @@ export const fetchRolesGeneric = async() => {
   };
 
 export const fetchOpUsersForEdit = async(table: string, addressTable: string, apc_id?: string[], user_id?: string ) => {
+  
   let query = supabase.from(table)
     .select(`
       user_id(id, first_name, last_name, email, active),
@@ -186,8 +189,9 @@ export const fetchOpUsersForEdit = async(table: string, addressTable: string, ap
     
     return [];
   }
-
+console.log('THE DATA REUTN',data)
   const formattedRoles = transformRoleEntrySupabase(data);
+  console.log('HE DATA FORMAT', formattedRoles);
   return formattedRoles;
   };
 
@@ -215,7 +219,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
   if(apc_op_id==='') return;
-  const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('source_id, street, suite, city, state, zip, country, active, name')
+  const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('id, source_id, street, suite, city, state, zip, country, active, name')
   .eq('mapped',false)
   .eq('apc_op_id',apc_op_id);
   if (error || !data) {
@@ -336,6 +340,18 @@ export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:st
   } return [];
 };
 
+export const fetchAllOperatorsForAdmin = async() => {
+  const emptyArray: OperatorOrPartnerList[] = []
+  const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`apc_id(id,name), street`)
+      if (error || !data) {
+      console.error(`Error fetching Operators and Partners:`, error);
+      return emptyArray;
+      }
+      console.log(data, 'THE RETURN TO THE CALL')
+    //const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
+    return data; 
+};
+
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
     type TogglePayload = { apc_op_id: string; apc_part_id:string };
@@ -363,16 +379,16 @@ export async function fetchAFEHistory(afeID: string, token: string) {
     
   };
 
-export async function fetchAFEEstimates(afeID: string, partnerID: string, token: string) {
+export async function fetchAFEEstimates(afeID: string, partnerID: string, apc_op_id: string, token: string) {
     
-    type TogglePayload = { afeID: string; partnerID: string;};
+    type TogglePayload = { afeID: string; partnerID: string; apc_op_id:string; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_estimates", { afeID, partnerID }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_estimates", { afeID, partnerID, apc_op_id }, token);
     
   };
 
-export async function fetchAFEEs(token: string) {
+export async function fetchAFEs(token: string) {
     
     type TogglePayload = { };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
@@ -381,12 +397,55 @@ export async function fetchAFEEs(token: string) {
     
   };
 
-export async function fetchRelatedDocuments(apc_op_id: string, apc_partner_id: string, token: string) {
+export async function fetchRelatedDocuments(url: string, token: string) {
     type RelatedDoc = { uri: string; fileName?: string };
-    type TogglePayload = { apc_op_id: string; apc_partner_id: string; };
+    type TogglePayload = { url: string; };
     type ToggleResult  = { ok: true; data: RelatedDoc[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_related_documents", {apc_op_id, apc_partner_id }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_related_documents", {url }, token);
     
   };
 
+export async function fetchAFEDocs(afeID: string, apc_op_id:string, apc_partner_id:string, token: string) {
+    
+    type TogglePayload = { afeID: string; apc_op_id:string; apc_partner_id:string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_Docs", { afeID, apc_op_id, apc_partner_id }, token);
+    
+  };
+
+export async function fetchAFEAttachments(afeID: string, apc_op_id:string, token: string) {
+    
+    type TogglePayload = { afeID: string; apc_op_id:string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_attachments", { afeID, apc_op_id }, token);
+  };
+
+export async function fetchListOfOperatorsOrPartnersForUser(loggedinUserId: string, table: string, addressTable: string, token: string) {
+    
+    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable}, token);
+  };
+
+export async function fetchUsersForOperator(is_super_user: boolean, token: string) {
+    
+    type TogglePayload = { is_super_user: boolean; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_users_for_operator", { is_super_user }, token);
+  };
+
+export async function fetchUserPermissions(is_super_user: boolean, token: string) {
+    
+    type TogglePayload = { is_super_user: boolean; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_user_permissions", { is_super_user }, token);
+  };
+
+
+//transformOperatorPartnerAddress(data)

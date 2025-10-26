@@ -10,13 +10,13 @@ export default function PageNotFound({message, details, stack} : pageNotFoundPro
     return (
         <>
         <div className="bg-black h-full">
-        
+        whitaker
         <main className="pt-16 p-1 container mx-auto bg-black text-white">
           <FuzzyText 
   baseIntensity={0.3} 
   hoverIntensity={1} 
   enableHover={true}>
-  {message}
+  {message} i love corr
 </FuzzyText>
 <FuzzyText 
   baseIntensity={0.3} 

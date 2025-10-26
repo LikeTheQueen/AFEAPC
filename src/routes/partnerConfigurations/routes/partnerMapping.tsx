@@ -1,10 +1,10 @@
 import { fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
-import { type PartnerRowData, type OperatorPartnerAddressType } from "src/types/interfaces";
+import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerRowUpdate } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { updatePartnerMapping, writePartnerMappingsToDB } from "provider/write";
+import { updatePartnerMapping, updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
@@ -23,6 +23,7 @@ interface PartnerMapDisplay {
     source_partner_name?: string;
     source_partner_address?: string;
     source_partner_id?: string;
+    afe_partner_processed_id?: number | null;
 };
 
 export default function PartnerMapping() {
@@ -37,6 +38,7 @@ export default function PartnerMapping() {
     const [customPagination, setCustomPagination] = useState<number[] | []>([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
+    
     const nextPage = () => {
         const startIndex = rowsLimit * (currentPage + 1);
         const endIndex = startIndex + rowsLimit;
@@ -103,12 +105,14 @@ export default function PartnerMapping() {
                 ...currentPartnerMapDisplay,
                 source_partner_id: '',
                 source_partner_name: '',
-                source_partner_address: ''
+                source_partner_address: '',
+               
             })
 
         } else {
             setCurrentPartnerMapDisplay({
                 ...currentPartnerMapDisplay,
+                afe_partner_processed_id:sourcePartner.id!,
                 source_partner_id: sourcePartner.source_id,
                 source_partner_name: sourcePartner.name,
                 source_partner_address: sourcePartner.street.concat(' ',
@@ -129,7 +133,7 @@ export default function PartnerMapping() {
                 ...currentPartnerMapDisplay,
                 apc_partner_id: '',
                 apc_partner_address: '',
-                apc_partner_name: ''
+                apc_partner_name: ''            
             })
 
         } else {
@@ -160,11 +164,14 @@ export default function PartnerMapping() {
             return updatedMap;
         });
     };
+    console.log(cumaltivePartnerMapDisplay);
     const savePartnerMappingRecords = () => {
         if (cumaltivePartnerMapDisplay.length < 1) return;
         const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(({ apc_partner_id, source_partner_id }) => ({ partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id }))
-        const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(({ source_partner_id }) => (source_partner_id ?? ''));
-        updatePartnerMapping(mappedPartnerUpdate, true);
+        const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(({ 
+            afe_partner_processed_id,
+         }) => (afe_partner_processed_id!));
+        updatePartnerProcessedMapValue(mappedPartnerUpdate, true);
         writePartnerMappingsToDB(mappedData);
         setCumlativePartnerDisplay([]);
     };
@@ -189,6 +196,7 @@ export default function PartnerMapping() {
                                     <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
                                         <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
                                         <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
+                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
                                  </div>
                                  <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                         <div className="">

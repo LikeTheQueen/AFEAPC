@@ -5,18 +5,10 @@ import type { GLCodeRowData } from 'src/types/interfaces';
 import { writeGLAccountlistFromSourceToDB } from 'provider/write';
 import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
-import { OperatorDropdown } from 'src/routes/operatorDropdown';
-import { PartnerDropdown } from 'src/routes/partnerDropdown';
 import { OperatorDropdownMultiSelect } from 'src/routes/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/partnerDropdownMultiSelect';
 
-
 const expectedHeaders = ["account_number","account_group", "account_description"];
-const notificationMethods = [
-  { id: 'operator', title: 'Operator' },
-  { id: 'partner', title: 'Partner' },
-]
-
 
 export default function GLFileUpload() {
     const [data, setData] = useState<GLCodeRowData[]>([]);
@@ -26,18 +18,16 @@ export default function GLFileUpload() {
     const [customPagination, setCustomPagination] = useState<number[] | []>([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    const [opAPCID, setOpAPCID] = useState('');
-    const [partnerAPCID, setPartnerAPCID] = useState('');
-    const [entityStyle, setEntityStyle] = useState('');
     const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
     const [partnerAPCIDArray, setPartnerAPCIDArray]= useState<string[]>([]);
-
+    const [distinctAccountArray, setDistinctAccountArray] = useState<GLCodeRowData[]>([]);
+    const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
 
     const nextPage = () => {
     const startIndex = rowsLimit * (currentPage + 1);
     const endIndex = startIndex + rowsLimit;
-    const newArray = data.slice(startIndex, endIndex);
+    const newArray = distinctAccountArray.slice(startIndex, endIndex);
     
     setRowsToShow(newArray);
     setCurrentPage(currentPage + 1);
@@ -45,14 +35,14 @@ export default function GLFileUpload() {
     const changePage = (value: number) => {
     const startIndex = value * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = data.slice(startIndex, endIndex);
+    const newArray = distinctAccountArray.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     setCurrentPage(value);
     };
     const previousPage = () => {
     const startIndex = (currentPage - 1) * rowsLimit;
     const endIndex = startIndex + rowsLimit;
-    const newArray = data.slice(startIndex, endIndex);
+    const newArray = distinctAccountArray.slice(startIndex, endIndex);
     setRowsToShow(newArray);
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -62,12 +52,13 @@ export default function GLFileUpload() {
     };
     useMemo(() => {
     setCustomPagination(
-      Array(Math.ceil(data.length / rowsLimit)).fill(null)
+      Array(Math.ceil(distinctAccountArray.length / rowsLimit)).fill(null)
     );
     setTotalPage(
-        Math.ceil(data.length / rowsLimit)
+        Math.ceil(distinctAccountArray.length / rowsLimit)
     )
-    }, [data]);
+    }, [distinctAccountArray]);
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const file = e.target.files?.[0];
@@ -110,7 +101,7 @@ export default function GLFileUpload() {
         account_number: String(row[0] ?? ''),
         account_group: String(row[1] ?? ''),
         account_description: String(row[2] ?? ''),
-        apc_op_id: opAPCID==='',
+        apc_op_id: '',
         apc_part_id: '',
         };
 
@@ -120,14 +111,15 @@ export default function GLFileUpload() {
           apc_part_id: null
         }))
         
-        return looped
-      })
+        return looped;
+      });
+      
       const accountsToPartners: GLCodeRowData[] = dataRows.flatMap<GLCodeRowData>((row) => {
         const basic = {
         account_number: String(row[0] ?? ''),
         account_group: String(row[1] ?? ''),
         account_description: String(row[2] ?? ''),
-        apc_op_id: opAPCID==='',
+        apc_op_id: '',
         apc_part_id: '',
         };
 
@@ -137,31 +129,43 @@ export default function GLFileUpload() {
           apc_part_id: partner
         }))
         
-        return looped
-      })
+        return looped;
+      });
       
-      const mappedData: GLCodeRowData[] = dataRows.map((row) => ({
-        
-        account_number: String(row[0] ?? ''),
-        account_group: String(row[1] ?? ''),
-        account_description: String(row[2] ?? ''),
-        apc_op_id: opAPCID===''? null: String(opAPCID),
-        apc_part_id: partnerAPCID===''? null: String(partnerAPCID),
-
-      }))
-      const mergedArrays = [...accountsToPartners, ...accountsToPartners];
-      //console.log(mergedArrays,'MERGE', mappedData,'MAPPED', accountsToPartners,'ROW')
+      const mergedArrays = [...accountsToOperators, ...accountsToPartners];
+      const distinctItems = getDistinctItemsByProperties(mergedArrays, ["account_number","account_group", "account_description"]);
+      setDistinctAccountArray(distinctItems);
       setData(prevData => {
         const updatedData = [...prevData];
         const merged = [...updatedData, ...accountsToOperators, ...accountsToPartners]
         return merged;
       });
-      setFileName(e.target.value)
-      setRowsToShow(mergedArrays.slice(0,rowsLimit))
+
+      setFileName(e.target.value);
+      setIsDisabled(true);
+      setRowsToShow(distinctItems.slice(0,rowsLimit))
       e.target.value='';
     };
     reader.readAsArrayBuffer(file);
     };
+
+
+function getDistinctItemsByProperties(
+  arr: GLCodeRowData[],
+  props: Array<keyof GLCodeRowData>
+): GLCodeRowData[] {
+  const seen = new Set<string>();
+  const distinctItems: GLCodeRowData[] = [];
+
+  for (const item of arr) {
+    const identifier = props.map((p) => item[p]).join("|"); // Create unique identifier
+    if (!seen.has(identifier)) {
+      seen.add(identifier);
+      distinctItems.push(item);
+    }
+  }
+  return distinctItems;
+}
 
   return (
     <>
@@ -175,21 +179,25 @@ export default function GLFileUpload() {
              </div>
              
              <div className="col-span-2 grid grid-cols-1 gap-x-2 gap-y-0 ">
-               <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3 font-semibold">Select the Operator and Partner addresses the GL Account Codes are applicable for</h1>
+               <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-medium">Select the Operator and Partner addresses the GL Account Codes are applicable for</h1>
             
-              <div className="flex w-full">
-                
+              <div className="flex flex-col lg:flex-row">
+                <div className='grow m-4 '>
                     <OperatorDropdownMultiSelect 
                         onChange={(ids) => {setOpAPCIDArray(ids)} }
                         limitedList={true}
                         initialSelectedIds={[]}
+                        isDisabled={isDisabled}
                     />
-                    
+                    </div>
+                    <div className='grow m-4'>
                     <PartnerDropdownMultiSelect 
                         onChange={(ids) => {setPartnerAPCIDArray(ids)} }
                         limitedList={true}
                         initialSelectedIds={[]}
+                        isDisabled={isDisabled}
                     />
+                    </div>
               </div>
 
                     <div className="">
@@ -197,55 +205,16 @@ export default function GLFileUpload() {
                     <div className="mt-5">
                           <label
                             htmlFor="file-upload">
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCID===''}/>
+                            <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length===0}/>
                             <span className="cursor-pointer rounded-md bg-[var(--darkest-teal)] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-gray-300 peer-disabled:text-gray-500
                    peer-disabled:hover:bg-gray-300 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
                           </label>
                         </div>
                         <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
-                    </div>
-                    <div hidden={entityStyle !=='operator' ? true: false} className="">
-                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select an Operator to upload GL Account Codes For:</h1>
-                    <div className="">
-                    <OperatorDropdown 
-                        onChange={(id) => {setOpAPCID(id), setPartnerAPCID('')} }
-                        limitedList={true}
-                    />
-                    </div>
-                    <div className="mt-5">
-                          <label
-                            htmlFor="file-upload">
-                            <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCID===''}/>
-                            <span className="cursor-pointer rounded-md bg-[var(--darkest-teal)] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-gray-300 peer-disabled:text-gray-500
-                   peer-disabled:hover:bg-gray-300 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
-                          </label>
-                        </div>
-                        <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
-                    </div>
-                    <div hidden={entityStyle !=='partner' ? true: false} className="">
-                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-md">Select a Partner to upload GL Account Codes For:</h1>
-                    <div className="">
-                    <PartnerDropdown 
-                        onChange={(id) => {setPartnerAPCID(id), setOpAPCID('')} }
-                        limitedList={true}
-                    />
-                    </div>
-                    <div className="mt-5">
-                          <label
-                            htmlFor="file-upload-part">
-                            <input id="file-upload-part" name="file-upload-part" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={partnerAPCID===''}/>
-                            <span className="cursor-pointer rounded-md bg-[var(--darkest-teal)] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-gray-300 peer-disabled:text-gray-500
-                   peer-disabled:hover:bg-gray-300 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
-                          </label>
-                        </div>
-                        <p className="mt-4 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{fileName}</p>
-                    </div>
-                    
+                    </div> 
              </div>
-    
-    </div>
-          
-        </div>   
+    </div> 
+      </div>   
         <div className="mt-5">
                 <table className="table-auto min-w-full">
                     <thead>
@@ -263,7 +232,6 @@ export default function GLFileUpload() {
                         <td scope="col" className="text-start pl-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_group}</td>
                         <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_number}</td>
                         <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_description}</td>
-                        
                         </tr>
                        ))}
                     </tbody>
@@ -273,9 +241,9 @@ export default function GLFileUpload() {
           <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
             Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
             {currentPage == totalPage - 1
-              ? data?.length
+              ? distinctAccountArray?.length
               : (currentPage + 1) * rowsLimit}{" "}
-            of {data?.length} GL Account Codes
+            of {distinctAccountArray?.length} GL Account Codes
           </div>
           <div className="flex">
             <ul
@@ -320,13 +288,13 @@ export default function GLFileUpload() {
             <button
                     disabled={data.length>0 ? false : true}
                     className="w-full sm:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {setData([]),setRowsToShow([]),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`)}}>
+                    onClick={(e) => {setData([]),setRowsToShow([]),setIsDisabled(false),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`)}}>
                         Cancel
                     </button>
                     <button
                     disabled={data.length>0 ? false : true}
                     className="w-full sm:w-60 rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {writeGLAccountlistFromSourceToDB(data),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`), setData([])}}>
+                    onClick={(e) => {writeGLAccountlistFromSourceToDB(data),setIsDisabled(false),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`), setData([])}}>
                         Save GL Account Code List
                     </button>
             </div>     

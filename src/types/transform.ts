@@ -23,13 +23,15 @@ import type {
     OperatorOrPartnerList,
     GLCodeType,
     GLMappingRecord,
-    GLMappedRecord
+    GLMappedRecord,
+    AFEDocuments,
+    UserFullNameAndEmail
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
     return data.map(item => ({
         id: item.id,
-        operator: item.apc_operator_id.name,
+        operator: item.apc_op_id.name,
         created_at: new Date(item.created_at),
         afe_type: item.afe_type.toLowerCase() as Lowercase<string>,
         afe_number: item.afe_number,
@@ -51,16 +53,17 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         source_system_id: item.source_system_id,
         sortID: item.sortID,
         partner_status_date: item.partner_status_date,
-        apc_operator_id: item.apc_operator_id.id,
+        apc_op_id: item.apc_op_id.id,
         archived: item.archived,
         partner_archived: item.partner_archived,
+        apc_partner_id: item.apc_partner_id,
     }));
 };
 
 export const transformSingleAFE = (item: any): AFEType => {
     return {
         id: item.id,
-        operator: item.apc_operator_id.name,
+        operator: item.apc_op_id.name,
         created_at: new Date(item.created_at),
         afe_type: item.afe_type,
         afe_number: item.afe_number,
@@ -82,9 +85,10 @@ export const transformSingleAFE = (item: any): AFEType => {
         source_system_id: item.source_system_id,
         sortID: item.sortID,
         partner_status_date: item.partner_status_date,
-        apc_operator_id: item.apc_operator_id.id,
+        apc_op_id: item.apc_op_id.id,
         archived: item.archived,
         partner_archived: item.partner_archived,
+        apc_partner_id:item.apc_partner_id,
     };
 };
 
@@ -163,20 +167,6 @@ export const transformExecuteAFEEstimates = (data: any[], docID: string): Execut
     })
 };
 
-export const transformUserProfileSupabase = (data: any[]): UserProfileSupabaseType[] => {
-        return data.map(item => ({
-        firstName: item.first_name,
-        lastName: item.last_name,
-        opCompany: item.op_company.name,
-        email: item.email,
-        partnerCompany: item.partner_company.partner_name,
-        apc_operator_id: item.op_company.id,
-        apc_partner_id: item.partner_company.id,
-        user_id: item.user_id
-
-    }))
-};
-
 export const transformUserProfileSupabaseSingle = (item: any): UserProfileSupabaseType => (
     {
     firstName: item.first_name,
@@ -225,9 +215,10 @@ export const transformUserProfileRecordSupabase = (item: any): UserProfileRecord
         user_email: item.email, 
         user_active: item.active
     })),
-    operators: crosswalkOperator.map((c: any) => c.apc_id),
-    partners: crosswalkPartner.map((c: any) => c.apc_id),
+    //operators: crosswalkOperator.map((c: any) => c.apc_id),
+    //partners: crosswalkPartner.map((c: any) => c.apc_id),
     user_id:item.id,
+    is_super_user: item.is_super_user,
     };
 };
 
@@ -371,36 +362,56 @@ export const transformOperatorPartnerAddressSuperUser = (data: any[]): OperatorP
 export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
     return data 
     .map(item => ({
-    id: item.id, 
-    role:item.role, 
-    apc_id: item.apc_id.id, 
-    apc_name:item.apc_id.name, 
-    apc_address_id:item.address.id, 
-    active: item.active,
-    apc_address:item.address, 
-    user_id: item.user_id.id, 
-    user_firstname: item.user_id.first_name, 
-    user_lastName: item.user_id.last_name, 
-    user_email: item.user_id.email,
-    user_active: item.user_id.active,
+    id: item.role_id, 
+    role: item.role, 
+    active: item.role_active,
+
+    apc_id: item.apc_id, 
+    apc_name: item.apc_name, 
+    apc_address_id: item.apc_address_id, 
+    
+    apc_address:  {
+            street: item.street,
+            suite: item.suite,
+            city: item.city,
+            state: item.state,
+            zip: item.zip,
+            country: item.country,
+            id: item.apc_address_id
+        }, 
+
+    user_id: item.user_id, 
+    user_firstname: item.first_name, 
+    user_lastName: item.last_name, 
+    user_email: item.email,
+    user_active: item.user_active,
+
+    is_op_permission: item.is_op_permission,
+    is_partner_permission: item.is_partner_permission,
     }));
 };
 
 export const transformRoleEntryPartnerSupabase = (data: any[]): RoleEntryRead[] => {
     return data 
     .map(item => ({
-    role_id: item.id, 
-    role:item.role, 
-    apc_id: item.apc_partner_id.id, 
-    apc_name:item.apc_partner_id.partner_name, 
-    apc_address_id:item.address.id, 
-    active: item.active,
-    apc_address:item.address, 
-    user_id: item.user_id.id, 
-    user_firstname: item.user_id.first_name, 
-    user_lastName: item.user_id.last_name, 
-    user_email: item.user_id.email,
-    user_active: item.user_id.active
+    id: item.role_id, 
+    role: item.role, 
+    active: item.role_active,
+
+    apc_id: item.apc_id, 
+    apc_name: item.apc_name, 
+    apc_address_id: item.apc_address_id, 
+    
+    apc_address: null, 
+
+    user_id: item.user_id, 
+    user_firstname: item.first_name, 
+    user_lastName: item.last_name, 
+    user_email: item.email,
+    user_active: item.user_active,
+
+    is_op_permission: item.is_op_permission,
+    is_partner_permission: item.is_partner_permission,
     }));
 };
 
@@ -425,6 +436,7 @@ export const transformOperatorPartnerAddressWithOpName = (data: any[]): Operator
 
 export const transformPartnerSourceSystemAddress = (data: any[]) : PartnerRowData[] => {
     return data.map(item => ({
+        id: item.id,
         source_id: item.source_id,
         apc_op_id: item.apc_op_id,
         name: item.name,
@@ -488,6 +500,7 @@ export const transformGLCodes = (data: any[]) : GLCodeType[] => {
 export const transformGLCodeCrosswalk = (data: any[]) : GLMappedRecord[] => {
     return data.map(item => ({
         apc_operator_id: item.apc_operator_id,
+        apc_op_account_id:item.apc_op_account_id,
         operator_account_group: item.operator_account_group,
         operator_account_description: item.operator_account_description,
         operator_account_number: item.operator_account_number,
@@ -495,6 +508,26 @@ export const transformGLCodeCrosswalk = (data: any[]) : GLMappedRecord[] => {
         partner_account_group: item.partner_account_group,
         partner_account_description: item.partner_account_description,
         partner_account_number: item.partner_account_number,
+        apc_partner_account_id: item.apc_partner_account_id,
         id: item.id,
+    }))
+};
+
+export const transformAFEDocumentList = (data: any[]) : AFEDocuments[] => {
+    return data.map(item => ({
+        storage_path: item.storage_path,
+        filename_display: item.filename_display,
+        id: item.id,
+        mimeype: item.mimetype
+    }))
+};
+
+export const transformUserNameAndEmail = (data: any[]) : UserFullNameAndEmail[] => {
+    return data.map(item => ({
+        id: item.user_id,
+        firstname: item.first_name,
+        lastName: item.last_name,
+        email: item.email,
+        active: item.active
     }))
 }

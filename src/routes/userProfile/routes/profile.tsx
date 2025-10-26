@@ -4,24 +4,59 @@ import { useEffect, useState } from 'react'
 import { type RoleEntryRead } from "../../../types/interfaces";
 import { useSupabaseData } from "../../../types/SupabaseContext";
 import PermissionDashboard from "../../../routes/permissionGrid"
+import { fetchUserPermissions } from 'provider/fetch';
+import { transformRoleEntrySupabase } from 'src/types/transform';
+import LoadingPage from 'src/routes/loadingPage';
 
 
 export default function Profile() {
-    const { loggedInUser } = useSupabaseData();
+    const { loggedInUser, session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [opUserRoleList, setOpUserRoleList] = useState<RoleEntryRead[] | []>([]);
     const [partnerUserRoleList, setPartnerUserRoleList] = useState<RoleEntryRead[] | []>([]);
+    const [userPermissionListLoading, setUserPermissionListLoading] = useState(true);
 
     useEffect(() => {
-        if (loggedInUser === null) return;
-        async function getPermissionList() {
-            if(loggedInUser!.operatorRoles.length>0){
-                setOpUserRoleList(loggedInUser?.operatorRoles!)
-            } 
-            if (loggedInUser!.partnerRoles.length>0) {
-                setPartnerUserRoleList(loggedInUser?.partnerRoles!)
+        if(!token || !loggedInUser) {
+          setUserPermissionListLoading(false);
+          return;
+        }
+    
+        let isMounted = true;
+    
+        async function getUserPermissions() {
+          if(!loggedInUser) return;
+          setUserPermissionListLoading(true);
+          
+          try{
+            const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
+    
+            if(!userPermissionsRaw.ok) {
+              throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
             }
-        } getPermissionList();
-    }, [loggedInUser]);
+            console.log('thee should be',userPermissionsRaw);
+            const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
+            const opPermissions = userPermissionsTransformed.filter(permission => (permission.is_op_permission && permission.user_id===loggedInUser.user_id));
+            const partnerPermissions = userPermissionsTransformed.filter(permission => (permission.is_partner_permission && permission.user_id===loggedInUser.user_id));
+    console.log(opPermissions)
+            if(isMounted) {
+              setOpUserRoleList(opPermissions);
+              setPartnerUserRoleList(partnerPermissions);
+              setUserPermissionListLoading(false);
+            }
+          }
+          catch(e) {
+            console.error('Not able to get user permissions ',e);
+          }
+          finally{
+            return;
+          }
+        }
+        getUserPermissions();
+        return () => {
+          isMounted = false;
+        }
+      }, [token, loggedInUser])
 
     return (
     <>
@@ -35,7 +70,7 @@ export default function Profile() {
                                 <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Personal Information</h2>
                                 <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Contact Support to change your email or associated company.</p>
                             </div>
-                            <form className="md:col-span-2">
+                            <div className="md:col-span-2">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                                     <div className="col-span-full flex items-center gap-x-8">
                                         <img
@@ -81,9 +116,11 @@ export default function Profile() {
                                     </div>
                                 </div>
 
-                            </form>
+                            </div>
                         </div>
-
+                    {userPermissionListLoading ? (
+                        <LoadingPage></LoadingPage>
+                    ) : (
                         <div className="max-w-7xl py-4 pl-4 sm:pl-6 lg:pl-8 divide-y divide-gray-900/20 ">
                             <PermissionDashboard 
                             readOnly={true}
@@ -91,6 +128,7 @@ export default function Profile() {
                             partnerRoles={partnerUserRoleList}>
                             </PermissionDashboard>
                         </div>
+                        )}
                     </div>
                 </div>
     </div>

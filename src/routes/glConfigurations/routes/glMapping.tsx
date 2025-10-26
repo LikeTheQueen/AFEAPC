@@ -97,7 +97,8 @@ export default function GLMapping() {
                 operator_account_number: '',
                 operator_account_description: '',
                 operator_account_group: '',
-                apc_operator_id: ''
+                apc_operator_id: '',
+                apc_op_account_id: null
             })
 
         } else {
@@ -107,10 +108,12 @@ export default function GLMapping() {
                 operator_account_description: sourceGLCode.account_description ?? '',
                 operator_account_group: sourceGLCode.account_group ?? '',
                 apc_operator_id: opAPCID ?? '',
+                apc_op_account_id: sourceGLCode.id,
                 partner_account_number: currentGLMap?.partner_account_number ?? '',
                 partner_account_description: currentGLMap?.partner_account_description ?? '',
                 partner_account_group: currentGLMap?.partner_account_group ?? '',
                 apc_partner_id: currentGLMap?.apc_partner_id ?? '',
+                apc_partner_account_id: currentGLMap?.apc_partner_account_id!
             })
         }
 
@@ -125,7 +128,8 @@ export default function GLMapping() {
                 partner_account_number: '',
                 partner_account_description: '',
                 partner_account_group: '',
-                apc_partner_id: ''
+                apc_partner_id: '',
+                apc_partner_account_id:null
             })
 
         } else {
@@ -135,10 +139,12 @@ export default function GLMapping() {
                 partner_account_description: sourceGLCode.account_description ?? '',
                 partner_account_group: sourceGLCode.account_group ?? '',
                 apc_partner_id: partnerAPCID ?? '',
+                apc_op_account_id: currentGLMap?.apc_op_account_id!,
                 operator_account_number: currentGLMap?.operator_account_number ?? '',
                 operator_account_description: currentGLMap?.operator_account_description ?? '',
                 operator_account_group: currentGLMap?.operator_account_group ?? '',
                 apc_operator_id: currentGLMap?.apc_operator_id ?? '',
+                apc_partner_account_id: sourceGLCode.id
             })
         }
 

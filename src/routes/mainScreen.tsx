@@ -4,7 +4,6 @@ import supabase from "provider/supabase";
 import { useState, useEffect } from 'react';
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
-import type { UserProfileSupabaseType } from "../types/interfaces";
 import "../style.css";
 import {
   Dialog,
@@ -67,8 +66,6 @@ export default function MainScreen() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<UserProfileSupabaseType | null>(null);
-  const [open, setOpen] = useState(true)
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault()

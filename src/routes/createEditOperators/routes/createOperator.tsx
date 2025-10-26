@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase } from 'provider/write';
 import { disableCreateButton, disableSaveAndSaveAnother, isAddressListHidden } from './helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
+import { ToastContainer } from 'react-toastify';
+import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 
 
 
@@ -40,7 +42,7 @@ export default function CreateOperator() {
     const [operatorPartnerAddressSingle, setOpPartnerAddressSingle] = useState<AddressType>(opPartnerAddressBlank);
     const [operatorPartnerAddresses, setOpPartnerAddress] = useState<AddressType[] | []>([]);
     const [opPartnerID, setOpPartnerID] = useState<string | null>(null);
-    const [showSaved, setShowSaved] = useState<boolean>(true);
+    const [showSaved, setShowSaved] = useState<boolean>(false);
     
     
     const fetchData = async () => {
@@ -80,7 +82,7 @@ export default function CreateOperator() {
       
       if (operatorRecord) {
         setOperator(operatorRecord); 
-        setShowSaved(false);
+        setShowSaved(true);
         try {
         const operatorAddressRecord = await addOperatorAdressSupabase(operatorRecord.id!, 
         operatorBillingAddress?.street!,
@@ -136,6 +138,7 @@ export default function CreateOperator() {
   }
   
   return (
+    <>
     <div className="px-4 sm:px-10 sm:py-4 divide-y divide-gray-900/20">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
@@ -303,13 +306,14 @@ export default function CreateOperator() {
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickSaveOpName();
+                notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
                 
             }}
               className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               Save
             </button>
           </div>
-          <div hidden={showSaved}
+          <div hidden={!showSaved}
           className="border-t border-gray-900/20 p-1 text-m font-semibold text-[var(--darkest-teal)] custom-style text-center">
           Operator has been saved.</div>
         </form>
@@ -472,6 +476,7 @@ export default function CreateOperator() {
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickSaveAnother(); 
+                notifyStandard(`Operator partner address has been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator partner address IS saved)`);
             }}
               className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               Save 
@@ -480,5 +485,8 @@ export default function CreateOperator() {
         </form>
       </div>
     </div>
+    <ToastContainer />
+            {warnUnsavedChanges((operator.name !=='' && operator.id !=='' && !showSaved), "You have not saved the Operator")}
+    </>
   )
 }

@@ -25,9 +25,10 @@ export interface AFEType {
     source_system_id: string;
     sortID: number;
     partner_status_date: Date;
-    apc_operator_id: string;
+    apc_op_id: string;
     archived: boolean;
     partner_archived: boolean;
+    apc_partner_id: string;
   }
 
 //Interface for AFE IDs pulled from Execute
@@ -108,23 +109,24 @@ export interface AFEType {
   }
   
   export interface RoleEntryWrite{
-    user_id?: string;
-    role: number;
     id?: number;
+    role: number;
+    active: boolean;
+    user_id?: string;
     apc_id: string;
     apc_address_id: number;
-    active: boolean;
   }
   
   export interface RoleEntryRead extends RoleEntryWrite{
     apc_name: string;
     apc_address: AddressType | null;
-    active: boolean;
     user_id: string;
     user_firstname: string;
     user_lastName: string;
     user_email: string;
     user_active: boolean;
+    is_op_permission: boolean;
+    is_partner_permission: boolean;
   }
 
   export interface PartnerRoleEntryWrite{
@@ -150,9 +152,10 @@ export interface AFEType {
     active: boolean;
     operatorRoles: RoleEntryRead[];
     partnerRoles: RoleEntryRead[];
-    operators: string[];
-    partners: string[];
+    //operators: string[];
+    //partners: string[];
     user_id?: UUID | null;
+    is_super_user: boolean;
   }
 
 //Interface for User Roles pulled from Supabase
@@ -265,7 +268,12 @@ export interface AFEType {
     mapped: boolean;
   };
 
-export interface PartnerRowData {
+  export interface PartnerRowUpdate {
+    id:number;
+  };
+
+  export interface PartnerRowData {
+  id?: number;
   source_id: string;
   apc_op_id: string;
   name: string;
@@ -276,7 +284,7 @@ export interface PartnerRowData {
   zip: string;
   country: string;
   active: boolean;
-};
+  };
 
 export interface GLCodeRowData {
   account_number: string | null;
@@ -284,6 +292,7 @@ export interface GLCodeRowData {
   account_description: string | null;
   apc_op_id: string | null;
   apc_part_id: string | null;
+  id: number;
 };
 export interface PartnerMappingRecord {
   operator?: string | UUID;
@@ -303,12 +312,31 @@ export interface OperatorOrPartnerList {
   apc_address: AddressType | null;
 };
 
+export interface UserNameAndEmail {
+  name: string;
+  email: string;
+};
+
+export interface UserFullNameAndEmail {
+  id: string;
+  firstname: string;
+  lastName: string;
+  email: string;
+  active: boolean;
+}
+
+export interface OperaatorOrPartnerListAndUsers extends OperatorOrPartnerList {
+  users: UserNameAndEmail[] | [];
+  partnerAddresses: OperatorPartnerAddressType[] | [];
+}
+
 export interface GLCodeType extends GLCodeRowData{
   id: number;
 }
 
 export interface GLMappingRecord {
     apc_operator_id: string;
+    apc_op_account_id:number | null;
     operator_account_group: string;
     operator_account_description: string;
     operator_account_number: string;
@@ -316,8 +344,16 @@ export interface GLMappingRecord {
     partner_account_group: string;
     partner_account_description: string;
     partner_account_number: string;
+    apc_partner_account_id: number | null;
 };
 
 export interface GLMappedRecord extends GLMappingRecord {
    id: number | null;
+};
+
+export interface AFEDocuments {
+  storage_path: string;
+  filename_display: string;
+  id:number;
+  mimeype: string;
 }

@@ -6,9 +6,11 @@ import executeAFECall from "src/scripts/executeReadWritePromise";
 import React, { useEffect, useState } from 'react'
 import supabase from "provider/supabase";
 import { useSupabaseData } from "../types/SupabaseContext";
-import Image from 'react'
 import { fetchRelatedDocuments } from "provider/fetch";
 import DocumentBrowser from "./documentViewer";
+import { fetchAllOperatorsForAdmin } from "provider/fetch";
+
+
 const baseURL = '/api';
 const urlPath = "api/Authentication/ApiKey/Login";
 const docId = '6d2f6718-f745-421a-b8d9-0ae03f853b01';
@@ -46,7 +48,10 @@ export default function Avatar({
   const token = session?.access_token ?? "";
  
   
-  
+  useEffect(() => {
+    const result = fetchAllOperatorsForAdmin()
+    console.log('OP FETCH',result)
+  },[loggedInUser])
 
   useEffect(() => {
     async function downloadImage(path: string) {
@@ -124,13 +129,9 @@ export default function Avatar({
       </div>
 
       {token !=='' ? (
-    <DocumentBrowser
-    apc_op_id='a4367e56-14bf-4bd1-b0f1-fecc7d97b58c'
-    apc_partner_id='626390b5-6f63-4caa-a0aa-b333a15eaf59'
-    token={token}
-    >
-
-    </DocumentBrowser>) : (
+        <><div>I'M ABOVE THE CALL</div>
+    <div>AND I'M BELOW THE CALL</div>
+    </>) : (
       <div>You don't jave a token</div>
     )
 }

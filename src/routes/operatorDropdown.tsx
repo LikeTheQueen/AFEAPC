@@ -36,8 +36,8 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
         if (!loggedInUser) return [];
         
         const opList: OperatorOrPartnerList[] = (loggedInUser.operatorRoles ?? [])
-            .filter(operator => operator.role === 7)
-            .map(({ apc_id, apc_name }) => ({ apc_id, apc_name }));
+            .filter(operator => operator.role === 8)
+            .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
     
             setFilteredOperators(opList);
             return;

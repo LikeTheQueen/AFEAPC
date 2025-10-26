@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { addNewUser, deactivateUser, reactivateUser } from 'provider/write';
-import { fetchOperatorsForLoggedInUser, fetchRolesGeneric } from 'provider/fetch';
+import { addNewUser, deactivateUser,createNewUser } from 'provider/write';
+import { fetchRolesGeneric, fetchListOfOperatorsOrPartnersForUser } from 'provider/fetch';
 import { type UserProfileRecordSupabaseType, type OperatorType, type RoleEntryWrite, type RoleTypesGeneric, type OperatorPartnerAddressType } from 'src/types/interfaces';
+import { transformOperatorPartnerAddress } from '../../../types/transform';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
+import LoadingPage from 'src/routes/loadingPage';
 
 
 export default function CreateNewUser() {
@@ -14,14 +16,14 @@ export default function CreateNewUser() {
     lastName: '',
     email: '',
     active: false,
+    is_super_user:false,
     operatorRoles: [],
     partnerRoles: [],
-    operators: [],
-    partners: [],
     user_id: "00000000-0000-0000-0000-000000000000",
   };
 
-  const { loggedInUser, isSuperUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [newUser, setNewUser] = useState<UserProfileRecordSupabaseType>(userBlank);
   const [makeSuperUser, setMakeSuperUser] = useState(false);
   const [operatorsList, setOperatorsList] = useState<OperatorPartnerAddressType[] | []>([]);
@@ -29,17 +31,49 @@ export default function CreateNewUser() {
   const [roles, setRoles] = useState<RoleEntryWrite[] | []>([]);
   const [partnerRoles, setPartnerRoles] = useState<RoleEntryWrite[] | []>([]);
   const [rolesGeneric, setRolesGeneric] = useState<RoleTypesGeneric[] | []>([]);
+  const [loadingPermissions, setLoadingPermissions] = useState(true);
 
   useEffect(() => {
-    if (loggedInUser === null || isSuperUser === null) return;
-    async function getOperatorList() {
-      const opList = await fetchOperatorsForLoggedInUser(loggedInUser?.user_id!, isSuperUser, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS','OPERATORS');
-      setOperatorsList(opList);
-      const partnerList = await fetchOperatorsForLoggedInUser(loggedInUser?.user_id!, isSuperUser, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS','PARTNERS');
-      setPartnersList(partnerList);
-    } getOperatorList();
-  }, [loggedInUser, isSuperUser]);
+    if (!loggedInUser || token==='') {
+      setLoadingPermissions(false);
+      return;
+    }
 
+    let isMounted = true;
+    async function getOperatorList() {
+      if(!loggedInUser?.user_id) return;
+
+      setLoadingPermissions(true);
+    try{
+      const [opListResult, partnerListResult] = await Promise.all([
+        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS',token),
+        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', token)
+      ]);
+     
+      if(opListResult.ok) {
+      const opListTransformed = transformOperatorPartnerAddress(opListResult.data);
+      if(isMounted) {
+      setOperatorsList(opListTransformed);
+      }
+      }
+
+      if(partnerListResult.ok) {
+        const partnerListTransformed = transformOperatorPartnerAddress(partnerListResult.data);
+        if(isMounted) {
+        setPartnersList(partnerListTransformed);
+        }
+      }
+    } catch(e) {
+      console.error('Unable to get permissions',e);
+    } finally {
+      setLoadingPermissions(false);
+      return;
+    }
+    } getOperatorList();
+    return () => {
+      isMounted = false;
+    }
+  }, [loggedInUser]);
 
   useEffect(() => {
     async function getGenericRoles() {
@@ -50,7 +84,7 @@ export default function CreateNewUser() {
 
   useEffect(() => {
     console.count("CreateNewUser render");
-  });
+  }, [loggedInUser]);
 
   function handleUserChange(e: { target: { name: any; value: any; }; }) {
     setNewUser({
@@ -64,11 +98,13 @@ export default function CreateNewUser() {
       active: isChecked
     })
   };
-
   const handleSuperToggle = (makeSuper: boolean) => {
     setMakeSuperUser(makeSuper)
+    setNewUser({
+      ...newUser,
+      is_super_user: makeSuper
+    })
   };
-
   const handleCheckboxChange = (
     apc_id: string,
     apc_address_id: number,
@@ -117,6 +153,7 @@ export default function CreateNewUser() {
       return updatedRoles;
     });
   };
+
 
   return (
     <>
@@ -211,10 +248,10 @@ export default function CreateNewUser() {
                   </div>
                   <div className="sm:col-span-4">
                     <Field className={`flex items-end justify-start sm:col-span-4 mt-2 ${
-                            !isSuperUser ? 'invisible pointer-events-none' : ''
+                            !loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
                             }`}>
                     <Switch
-                      checked={makeSuperUser}
+                      checked={newUser.is_super_user}
                       onChange={handleSuperToggle}
                       className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
                       <span
@@ -245,7 +282,12 @@ export default function CreateNewUser() {
                   
                   </div>
                 </div>
-                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--dark-teal)] mt-10 pt-5">
+          {loadingPermissions ? (
+            <LoadingPage></LoadingPage>
+          ) : ( <>   
+                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--dark-teal)] mt-10 pt-5"
+                hidden={operatorsList.length >0 ? false : true}
+                >
                   <div>
                     <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Operated AFEs</h2>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
@@ -329,7 +371,8 @@ export default function CreateNewUser() {
                   </div>
 
                 </div>
-                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]">
+                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
+                hidden={partnersList.length >0 ? false : true}>
                   <div>
                     <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
@@ -412,16 +455,26 @@ export default function CreateNewUser() {
                     </div>
                   </div>
                 </div>
+              </>)}
               </div>
               <div className="flex items-center justify-end px-4 py-4 sm:px-8">
                 <button type="button"
                 disabled={(newUser.firstName !=='' && newUser.lastName !=='' && newUser.email !=='') ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
-                    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, makeSuperUser);
+                    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, newUser.is_super_user, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
                   Add New User
+                </button>
+                <button type="button"
+                hidden={loggedInUser?.is_super_user ? false : true }
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    handleNewUser('Rachel','Green','elizabeh.rider.shaw@gmail.com','topSecretPassword25!', false, roles, partnerRoles, false, token);
+                  }}
+                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
+                  TEST ADD USER
                 </button>
               </div>
             </form>

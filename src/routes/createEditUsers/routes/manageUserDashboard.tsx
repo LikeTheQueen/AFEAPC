@@ -1,43 +1,78 @@
 import { useEffect, useState } from "react";
-import { fetchOpUsersForEdit } from "provider/fetch";
+import { fetchUsersForOperator } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import type { RoleEntryRead } from "src/types/interfaces";
-import { apcIdsOfUserWithEditUserPriv } from "./helpers/helpers";
+import type { UserFullNameAndEmail } from "src/types/interfaces";
 import UserDashboard from "../../../routes/manageUserGrid";
+import { transformUserNameAndEmail } from "src/types/transform";
+import LoadingPage from "src/routes/loadingPage";
+
 
 export default function UserPermissionDashboard() {
-  const { loggedInUser, isSuperUser } = useSupabaseData();
-  const [opUserRoleList, setOpUserRoleList] = useState<RoleEntryRead[] | []>([]);
-  const [partnerUserRoleList, setPartnerUserRoleList] = useState<RoleEntryRead[] | []>([]);
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
+  const [userList, setUserList] = useState<UserFullNameAndEmail[] | []>([]);
+  const [userListLoading, setUserListLoading]=useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    if (!loggedInUser?.operatorRoles || loggedInUser.operatorRoles.length < 1) return;
-    async function getUsersForEdit() {
-      if(isSuperUser) {
-      const returnedOpUsers = await fetchOpUsersForEdit('OPERATOR_USER_PERMISSIONS','OPERATOR_ADDRESS');
-      const returnedPartnerUsers = await fetchOpUsersForEdit('PARTNER_USER_PERMISSIONS','PARTNER_ADDRESS');
-      setOpUserRoleList(returnedOpUsers);
-      setPartnerUserRoleList(returnedPartnerUsers);
-      } else {
-      const operatorIDs = apcIdsOfUserWithEditUserPriv(loggedInUser!.operatorRoles,4);
-      const partnerIDs = apcIdsOfUserWithEditUserPriv(loggedInUser!.partnerRoles,5)
-      const returnedOpUsers = await fetchOpUsersForEdit('OPERATOR_USER_PERMISSIONS','OPERATOR_ADDRESS',operatorIDs);
-      const returnedPartnerUsers = await fetchOpUsersForEdit('PARTNER_USER_PERMISSIONS','PARTNER_ADDRESS',partnerIDs);
-      setOpUserRoleList(returnedOpUsers);
-      setPartnerUserRoleList(returnedPartnerUsers);
-      }
-    } getUsersForEdit();
-  }, [loggedInUser, isSuperUser]);
 
+    if(!token || !loggedInUser) {
+        setUserListLoading(false);
+        return;
+      }
+
+    let isMounted = true;
+    
+    async function getUsersToEdit() {
+      if (!loggedInUser) return;
+        setUserListLoading(true);
+        setIsError(false);
+
+       try{
+        const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, token);
+      
+        if(!userListRaw.ok) {
+        throw new Error((userListRaw as any).message ?? 'Unable to fetch users');
+          
+        } 
+        const userListTransformed = transformUserNameAndEmail(userListRaw.data);
+
+        if(isMounted) {
+        setUserList(userListTransformed);
+        }
+      }
+      catch(e) {
+        console.error('Not able to get users ', e);
+        if(isMounted) {
+          setIsError(true);
+        }
+      }
+      finally {
+        if(isMounted) {
+        setUserListLoading(false);
+        }
+      }
+    }
+
+    getUsersToEdit();
+
+    return () => {
+      isMounted = false;
+    }
+
+  }, [token, loggedInUser])
 
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
+    {userListLoading ? (
+      <LoadingPage></LoadingPage>
+    ) : ( 
     <UserDashboard 
-    readOnly={false}
-    operatorRoles={opUserRoleList}
-    partnerRoles={partnerUserRoleList}>
+    userList={userList}
+    isError={isError}>
     </UserDashboard >
+    )}
     </div>
     </>
   )
