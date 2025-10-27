@@ -46,7 +46,7 @@ export default function CreateNewUser() {
       setLoadingPermissions(true);
     try{
       const [opListResult, partnerListResult] = await Promise.all([
-        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS',token),
+        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', token),
         fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', token)
       ]);
      

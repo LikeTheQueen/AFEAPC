@@ -103,6 +103,7 @@ export default function GLFileUpload() {
         account_description: String(row[2] ?? ''),
         apc_op_id: '',
         apc_part_id: '',
+        id: null
         };
 
         const looped = opAPCIDArray.map<GLCodeRowData>((operator) => ({
@@ -121,6 +122,7 @@ export default function GLFileUpload() {
         account_description: String(row[2] ?? ''),
         apc_op_id: '',
         apc_part_id: '',
+        id: null
         };
 
         const looped = partnerAPCIDArray.map<GLCodeRowData>((partner) => ({

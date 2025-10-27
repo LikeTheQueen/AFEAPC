@@ -31,7 +31,7 @@ export default function UserPermissionDashboard() {
         if(!userPermissionsRaw.ok) {
           throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
         }
-        console.log(userPermissionsRaw.data);
+        
         const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
         const opPermissions = userPermissionsTransformed.filter(permission => permission.is_op_permission);
         const partnerPermissions = userPermissionsTransformed.filter(permission => permission.is_partner_permission);

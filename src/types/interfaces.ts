@@ -232,6 +232,10 @@ export interface AFEType {
     apc_op_name?: string;
   }
 
+  export interface OperatorPartnerRecord extends OperatorPartnerAddressType {
+    active: boolean;
+  }
+
   export interface PartnerRecordToUpdate {
     id: string;
     apc_op_id: string | null; 
@@ -292,7 +296,7 @@ export interface GLCodeRowData {
   account_description: string | null;
   apc_op_id: string | null;
   apc_part_id: string | null;
-  id: number;
+  id: number | null;
 };
 export interface PartnerMappingRecord {
   operator?: string | UUID;

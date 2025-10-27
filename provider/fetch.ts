@@ -428,7 +428,7 @@ export async function fetchListOfOperatorsOrPartnersForUser(loggedinUserId: stri
     type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable}, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable }, token);
   };
 
 export async function fetchUsersForOperator(is_super_user: boolean, token: string) {
@@ -445,6 +445,14 @@ export async function fetchUserPermissions(is_super_user: boolean, token: string
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
     return callEdge<TogglePayload, ToggleResult>("fetch_user_permissions", { is_super_user }, token);
+  };
+
+export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, token: string) {
+    
+    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable }, token);
   };
 
 

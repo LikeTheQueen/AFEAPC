@@ -25,7 +25,8 @@ import type {
     GLMappingRecord,
     GLMappedRecord,
     AFEDocuments,
-    UserFullNameAndEmail
+    UserFullNameAndEmail,
+    OperatorPartnerRecord
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -313,6 +314,24 @@ export const transformOperatorPartnerAddress = (data: any[]): OperatorPartnerAdd
     .map(item => ({
         apc_id: item.apc_id.id,
         name: item.apc_id.name,
+        apc_address_id:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country
+        
+    }));
+};
+
+export const transformOperatorPartnerRecord = (data: any[]): OperatorPartnerRecord[] => {
+    return data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
+    .map(item => ({
+        apc_id: item.apc_id.id,
+        name: item.apc_id.name,
+        active: item.apc_id.active,
         apc_address_id:item.address.id,
         street: item.address.street,
         suite: (item.address.suite === null ? '' : item.address.suite),
