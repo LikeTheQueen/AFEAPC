@@ -295,7 +295,8 @@ export const transformAddressSupabase = (data: any[]): AddressType[] => {
         city: item.city,
         state: item.state,
         zip: item.zip,
-        country: item.country
+        country: item.country,
+        address_active: item.active
     }))
 };
 
@@ -320,8 +321,8 @@ export const transformOperatorPartnerAddress = (data: any[]): OperatorPartnerAdd
         city: item.address.city,
         state: item.address.state,
         zip: item.address.zip,
-        country: item.address.country
-        
+        country: item.address.country,
+        address_active: item.address.active
     }));
 };
 
@@ -338,7 +339,10 @@ export const transformOperatorPartnerRecord = (data: any[]): OperatorPartnerReco
         city: item.address.city,
         state: item.address.state,
         zip: item.address.zip,
-        country: item.address.country
+        country: item.address.country,
+        apc_op_id: item.apc_id.apc_op_id ? item.apc_id.apc_op_id.id : null,
+        apc_op_name: item.apc_id.apc_op_id ? item.apc_id.apc_op_id.name : null,
+        address_active: item.address.active
         
     }));
 };
@@ -396,7 +400,8 @@ export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
             state: item.state,
             zip: item.zip,
             country: item.country,
-            id: item.apc_address_id
+            id: item.apc_address_id,
+            active: item.active
         }, 
 
     user_id: item.user_id, 
@@ -501,7 +506,8 @@ export const transformPartnerMapRecordForDisplay = (data: any[]) : PartnerMappin
 export const transformOperatorForDropDown = (data: any[]) : OperatorOrPartnerList[] => {
     return data.map(item => ({
         apc_id: item.apc_id.id,
-        apc_name:item.apc_id.name
+        apc_name:item.apc_id.name,
+
     }))
 };
 

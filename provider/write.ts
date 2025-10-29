@@ -2,7 +2,7 @@
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
 import type { UUID } from 'crypto';
-import type { GLCodeRowData, GLMappingRecord, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { AddressType, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 
@@ -294,5 +294,37 @@ export async function updateUserActiveStatusToActive(user_id: string, token: str
     type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("reactivate_user", { user_id }, token);
+  };
+
+export async function updateOperatorNameAndStatus(operator: OperatorType, token: string) {
+    
+    type TogglePayload = { operator: OperatorType; };
+    type ToggleResult  = { ok: true; data: { id: string; active: boolean; name: string; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operator }, token);
+  };
+
+export async function updateOperatorAddress(operatorAddress: AddressType, token: string) {
+    
+    type TogglePayload = { operatorAddress: AddressType; };
+    type ToggleResult  = { ok: true; data: { id: string; active: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_Operator_Address", { operatorAddress }, token);
+  };
+
+export async function updatePartnerAddress(partnerAddress: OperatorPartnerRecord, token: string) {
+    
+    type TogglePayload = { partnerAddress: OperatorPartnerRecord; };
+    type ToggleResult  = { ok: true; data: { id: string; active: boolean; } } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_Partner_Address", { partnerAddress }, token);
+  };
+
+export async function updatePartnerNameAndStatus(partnerRecord: OperatorPartnerRecord, token: string) {
+    
+    type TogglePayload = { partnerRecord: OperatorPartnerRecord; };
+    type ToggleResult  = { ok: true; data: { id: string; active: boolean; name: string;} } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_Partner_Name_and_Status", { partnerRecord }, token);
   };
   

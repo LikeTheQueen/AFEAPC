@@ -31,6 +31,7 @@ export default [
     route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/editUserDashboard.tsx"),
     route("/mainScreen/manageUsers", "./routes/createEditUsers/routes/manageUserDashboard.tsx"),
     route("/mainScreen/createOperator", "./routes/createEditOperators/routes/createOperator.tsx"),
+    route("/mainScreen/editOperator", "./routes/createEditOperators/routes/manageOperatorAndPartner.tsx"),
     route("/mainScreen/createUser", "./routes/createEditUsers/routes/createNewUser.tsx"),
     route("/mainScreen/notifications", "./routes/notifications.tsx"),]),
     route("/contactsupport", "./routes/contactSupport.tsx"),

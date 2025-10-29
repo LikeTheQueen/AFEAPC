@@ -204,6 +204,7 @@ export interface AFEType {
     state: string | undefined;
     zip: string | undefined;
     country: string | undefined;
+    address_active: boolean;
   }
 
 //Interface for Roles and names pulled from Supabase
@@ -225,6 +226,7 @@ export interface AFEType {
     state?: string | undefined;
     zip?: string | undefined;
     country?: string | undefined;
+    address_active: boolean;
   }
 
   export interface OperatorPartnerAddressWithOpNameType extends OperatorPartnerAddressType {
@@ -233,6 +235,8 @@ export interface AFEType {
   }
 
   export interface OperatorPartnerRecord extends OperatorPartnerAddressType {
+    apc_op_id?: string | null;
+    apc_op_name?: string;
     active: boolean;
   }
 

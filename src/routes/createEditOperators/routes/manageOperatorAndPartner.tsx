@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive } from 'provider/write';
-import { type OperatorPartnerAddressType, type OperatorPartnerRecord, type UserFullNameAndEmail } from "src/types/interfaces";
+import { useEffect, useState } from "react";
+import { type OperatorPartnerAddressType, type OperatorPartnerRecord } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { transformOperatorPartnerAddress, transformOperatorPartnerRecord } from "src/types/transform";
-import { fetchListOfOperatorsOrPartnersForUser, fetchOperatorsOrPartnersToEdit } from "provider/fetch";
-import EditOperator from "./createEditOperators/routes/editOperator";
+import { transformOperatorPartnerRecord } from "src/types/transform";
+import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
+import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -76,8 +75,9 @@ export default function OperatorViewAndEdit () {
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-gray-300">
                 <div className="">
                     <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Operator Profiles</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt</p>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Another admin for your organization will need to deactivate your profile or contact AFE Partner Connections directly.</p>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for AFEs.</p>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review.  Sorta like the USPS, but better.</p>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                 </div>
                 <div className="-mx-4 mt-8 sm:-mx-0 md:col-span-2 ">
                     <table className="min-w-full divide-y divide-gray-400">
@@ -190,7 +190,7 @@ export default function OperatorViewAndEdit () {
                   <div className="px-4 sm:px-6">
                     <div className="flex items-start justify-between">
                       <DialogTitle className="">
-                        <p className="custom-style font-semibold text-[var(--darkest-teal)]">Edit Operator</p>
+                        <p className="custom-style font-semibold text-[var(--darkest-teal)]">Edit the Operator Billing Address</p>
                       </DialogTitle>
                       <div className="ml-3 flex items-center">
                         <button

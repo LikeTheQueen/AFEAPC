@@ -24,7 +24,8 @@ export default function CreateOperator() {
         city: '',
         state: '',
         zip: '',
-        country: ''
+        country: '',
+        address_active: true,
     }; 
     let opPartnerAddressBlank : AddressType = {
         id:0,
@@ -33,7 +34,8 @@ export default function CreateOperator() {
         city: '',
         state: '',
         zip: '',
-        country: ''
+        country: '',
+        address_active: true
     };  
     
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);

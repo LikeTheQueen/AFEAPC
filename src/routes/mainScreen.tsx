@@ -45,7 +45,8 @@ const help = [
 const settings = [
   { id: 1, name: 'Manage Permissions', href: "/mainscreen/managePermissions", initial: 'P' },
   { id: 2, name: 'Manage Users', href: "/mainscreen/manageUsers", initial: 'U' },
-  { id: 3, name: 'Configurations', href: "/mainScreen/configurations", initial: 'C' }
+  { id: 3, name: 'Manage Operator Addresses', href: "/mainScreen/editOperator", initial: 'O' },
+  { id: 4, name: 'Configurations', href: "/mainScreen/configurations", initial: 'C' }
 ]
 const onboarding = [
   { id: 1, name: 'Create Operator', href: "/mainscreen/createOperator", initial: 'O' },
@@ -55,10 +56,6 @@ const userNavigation = [
   { name: 'Your profile', href: '/mainScreen/profile' },
   { name: 'Sign out' },
 ]
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
 
 
 export default function MainScreen() {
