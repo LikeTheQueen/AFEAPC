@@ -19,28 +19,11 @@ type EditOperatorProps = {
 
 export default function EditOperator({operatorToEdit, partnerRecords, onClose, token} : EditOperatorProps) {
     
-    let operatorBlank : OperatorType = {
-      name:'',
-      source_system:0
-    }; 
-    let opAddressBlank : AddressType = {
-        id:0,
-        street: '',
-        suite: '',
-        city: '',
-        state: '',
-        zip: '',
-        country: '',
-        address_active: true
-    }; 
-      
-    
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     
-    const [operator, setOperator] = useState<OperatorType>(operatorBlank);
-    const [operatorBillingAddress, setOpBillAddress] = useState<AddressType>(opAddressBlank);
     const [saveOpNameChange, setSaveOpNameChange] = useState(false);
     const [saveOpAddressChange, setSaveOpAddressChange] = useState(false);
+    const [operatorRecord, setOperatorRecord] = useState<OperatorPartnerRecord>(operatorToEdit);
 
     const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);
     const [partnerAddressUpdate, setPartnerAddressUpdate] = useState<boolean[] | []>([]);
@@ -50,25 +33,11 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
         if(!operatorToEdit) return;
 
         async function setOperatorAndPartners() {
-            setOperator({
-                id: operatorToEdit.apc_id,
-                name: operatorToEdit.name,
-                active: operatorToEdit.active
-            }
-            );
-            setOpBillAddress({
-                id: operatorToEdit.apc_address_id!,
-                street: operatorToEdit.street,
-                suite: operatorToEdit.suite,
-                city: operatorToEdit.city,
-                state: operatorToEdit.state,
-                zip: operatorToEdit.zip,
-                country: operatorToEdit.country,
-                address_active: operatorToEdit.address_active
-
-            });
-
+            
             if(!operatorToEdit || !partnerRecords) return;
+
+            setOperatorRecord(operatorToEdit);
+
             const filteredPartners = partnerRecords.filter(item => item.apc_op_id === operatorToEdit.apc_id);
             setPartnerList(filteredPartners);
             const falseArray = new Array(partnerList.length).fill(false);
@@ -79,15 +48,15 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
     },[operatorToEdit, partnerRecords])
   
   function handleOperatorAddressChange(e: { target: { name: any; value: any; }; }) {
-    setOpBillAddress({
-      ...operatorBillingAddress,
+    setOperatorRecord({
+      ...operatorRecord,
       [e.target.name]: e.target.value!
     });
     setSaveOpAddressChange(true);
   }
   function handleOperatorNameChange(e: { target: { name: any; value: any; }; }) {
-    setOperator({
-      ...operator,
+    setOperatorRecord({
+      ...operatorRecord,
       [e.target.name]: e.target.value
     });
     setSaveOpNameChange(true);
@@ -124,7 +93,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
   }
   async function handleClickSaveOpName() {
     try {
-      const operatorToEdit = await updateOperatorNameAndStatus(operator, token);
+      const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord, token);
       
       if(!operatorToEdit.ok) {
         throw new Error(operatorToEdit.message as any).message
@@ -136,7 +105,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
   }
   async function handleClickSaveOpAddress() {
     try {
-      const operatorAddress = await updateOperatorAddress(operatorBillingAddress, token);
+      const operatorAddress = await updateOperatorAddress(operatorRecord, token);
       
       if(!operatorAddress.ok) {
         throw new Error(operatorAddress.message as any).message
@@ -147,22 +116,18 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
     }
   }
   async function handleClickActivateOrDeactivateOperator() {
-    if(!operator.id) return;
+    if(!operatorRecord.apc_id || !operatorRecord.apc_address_id) return;
 
-    setOperator({
-      ...operator,
-      active: !operator.active
-    })
-
-    setOpBillAddress({
-        ...operatorBillingAddress,
-        address_active: !operatorBillingAddress.address_active
+    setOperatorRecord({
+        ...operatorRecord,
+        active: !operatorRecord.active,
+        address_active: !operatorToEdit.address_active
     })
 
     try {
         const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
-            updateOperatorNameAndStatus(operator, token),
-            updateOperatorAddress(operatorBillingAddress, token)
+            updateOperatorNameAndStatus(operatorRecord, token),
+            updateOperatorAddress(operatorRecord, token)
         ])
 
       if(!operatorStatusChange.ok) {
@@ -186,7 +151,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
       setPartnerNameUpdate(prevPartnerNameUpdate =>
         prevPartnerNameUpdate.map((item, index) =>
         index === partnerIdx
-            ? true : item
+            ? false : item
         )
     );
     
@@ -204,7 +169,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
       setPartnerAddressUpdate(prevPartnerAddressUpdate =>
         prevPartnerAddressUpdate.map((item, index) =>
         index === partnerIdx
-            ? true : item
+            ? false : item
         )
     );
     
@@ -251,7 +216,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
     {!operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl">
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
-    <div className="divide-y divide-gray-900/20">
+    <div className="">
       
         <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
           <div className="px-4 py-2">
@@ -268,12 +233,12 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                       type="text"
                       placeholder="Nav Oil Inc."
                       autoComplete="off"
-                      value={operator.name}
+                      value={operatorRecord.name}
                       onChange={handleOperatorNameChange}
                       autoFocus={true}
                       className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                     />
-                    {/* //onChange={handleOperatorNameChange} */}
+                    
                   </div>
                 </div>
               </div>
@@ -287,7 +252,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     name="street"
                     type="text"
                     autoComplete="off"
-                    value={operatorBillingAddress.street}
+                    value={operatorToEdit.street}
                     onChange={handleOperatorAddressChange}
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   />
@@ -303,7 +268,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     name="suite"
                     type="text"
                     autoComplete="off"
-                    value={operatorBillingAddress.suite}
+                    value={operatorToEdit.suite}
                     onChange={handleOperatorAddressChange}
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   />
@@ -319,7 +284,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     name="city"
                     type="text"
                     autoComplete="off"
-                    value={operatorBillingAddress.city}
+                    value={operatorToEdit.city}
                     onChange={handleOperatorAddressChange}
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   />
@@ -335,7 +300,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     name="state"
                     type="text"
                     autoComplete="off"
-                    value={operatorBillingAddress.state}
+                    value={operatorToEdit.state}
                     onChange={handleOperatorAddressChange}
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   />
@@ -351,7 +316,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     name="zip"
                     type="text"
                     autoComplete="off"
-                    value={operatorBillingAddress.zip}
+                    value={operatorToEdit.zip}
                     onChange={handleOperatorAddressChange}
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   />
@@ -366,7 +331,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                     id="country"
                     name="country"
                     autoComplete="off"
-                    value={operatorBillingAddress.country}
+                    value={operatorToEdit.country}
                     onChange={handleOperatorAddressChange}
                     className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
                   > <option></option>
@@ -382,17 +347,22 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
               </div>
               <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
             <button
-              disabled={(!operator.id && operatorBillingAddress.id === 0) ? true : false}
+              disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) ? true : false}
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickActivateOrDeactivateOperator();
-                notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
+                notifyStandard(`Operator name and billing address have been ${operatorRecord.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operatorRecord.active ? 'deactivated' : 'activated'}.)`);
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
-              {operator.active ? 'Deactivate' : 'Activate'}
+              className={
+                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                        ${!operatorRecord.active 
+                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
+                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                        }>
+              {operatorRecord.active ? 'Deactivate' : 'Activate'}
             </button>
             <button
-              disabled={(!operator.id && operatorBillingAddress.id === 0) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
+              disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
               onClick={async(e: any) => { 
                 e.preventDefault();
                 {saveOpNameChange ? handleClickSaveOpName() : null};
@@ -408,7 +378,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
             </div>
           </div>
         </form>
-        <p className="custom-style font-semibold text-[var(--darkest-teal)]">Edit the Operator Addresses for Non-Op AFEs.</p>
+        <p className="custom-style font-semibold text-[var(--darkest-teal)] mb-2">Edit the Operator Addresses for Non-Op AFEs.</p>
         {partnerList.map((partner, partnerIdx) => (
         <form key={partner.apc_id} className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
           <div className="px-4 py-2">
@@ -542,9 +512,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickActivateOrDeactivatePartner(partnerIdx);
-                notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
-            }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+                notifyStandard(`Operator's Partner name and address have been ${partner.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.active ? 'deactive' : 'active'})`);}}
+              //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className={
+                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                        ${!partner.active 
+                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
+                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                        }>
               {partner.active ? 'Deactivate' : 'Activate'}
                 </button>
                 <button
@@ -556,7 +531,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
                 {partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null}
                 notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>

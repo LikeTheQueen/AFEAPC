@@ -6,6 +6,9 @@ import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { updateOperatorAddress, updateOperatorNameAndStatus } from "provider/write";
+import { ToastContainer } from "react-toastify";
+import { notifyStandard } from "src/helpers/helpers";
 
 
 function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
@@ -16,7 +19,7 @@ function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
                     `${operatorOrPartnerRecord.zip === undefined ? '' : operatorOrPartnerRecord.zip.concat(' ')}`,
                     `${operatorOrPartnerRecord.country === undefined ? '' : operatorOrPartnerRecord.country}`)
     return operatorOrPartnerAddress;
-}
+};
 
 export default function OperatorViewAndEdit () {
     const { loggedInUser, session } = useSupabaseData();
@@ -68,14 +71,49 @@ export default function OperatorViewAndEdit () {
           isMounted = false;
         }
       }, [loggedInUser, open]);
+    async function handleClickActivateOrDeactivateOperator(operatorIdx: number) {
 
+    const operatorToUpdate = operatorsList[operatorIdx];
+
+    if(!operatorToUpdate.apc_id || !operatorToUpdate.apc_address_id) return;
+
+    const updatedOperator = {
+        ...operatorToUpdate,
+        active: !operatorToUpdate.active,
+        address_active: !operatorToUpdate.address_active
+    }
+    setOperatorsList(prevOperatorsList => 
+        prevOperatorsList.map((operator, index) =>  
+        index === operatorIdx 
+            ? updatedOperator
+            : operator
+        )
+    );
+
+    try {
+        const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
+            updateOperatorNameAndStatus(updatedOperator, token),
+            updateOperatorAddress(updatedOperator, token)
+        ])
+
+      if(!operatorStatusChange.ok) {
+        throw new Error(operatorStatusChange.message as any).message
+      }
+      if(!operatorAddressStatusChange.ok) {
+        throw new Error(operatorAddressStatusChange.message as any).message
+      }
+      
+    } catch (error) {
+      console.error("Failed to change Operator status:", error);
+    }
+    }
     return (
         <>
         <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
             <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-gray-300">
                 <div className="">
                     <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Operator Profiles</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for AFEs.</p>
+                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review.  Sorta like the USPS, but better.</p>
                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                 </div>
@@ -98,7 +136,7 @@ export default function OperatorViewAndEdit () {
                 </thead>
                 <tbody className="divide-y divide-gray-300 bg-white">
 
-                    {operatorsList.map(operator => (
+                    {operatorsList.map((operator, operatorIdx) => (
                         <tr key={operator.apc_id}>
                             <td className="text-start align-middle max-w-0 py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 ">
                                 {operator.name} 
@@ -118,20 +156,19 @@ export default function OperatorViewAndEdit () {
                                     Inactive
                                 </span>
                                 <button
-                                    type="button"
-                                    hidden={operator.active}
-                                    disabled={operator.active}
-                                    //onClick={(e: any) => handleReactivate(user.id)}
-                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
-                                    Activate Op125
-                                </button>
-                                <button
-                                    type="button"
-                                    hidden={!operator.active}
-                                    disabled={!operator.active}
-                                    //onClick={(e: any) => handleDeactivate(user.id)}
-                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
-                                    Deactivate Op125
+                                    disabled={(!operator.apc_id && !operator.apc_address_id) ? true : false}
+                                    onClick={async (e: any) => {
+                                        e.preventDefault();
+                                        handleClickActivateOrDeactivateOperator(operatorIdx);
+                                        notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
+                                    }}
+                                    className={
+                                        `sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                                                        ${!operator.active
+                                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
+                                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1 -outline-offset-1'}`
+                                    }>
+                                    {operator.active ? 'Deactivate' : 'Activate'}
                                 </button>
                                 </dd>
                             </dl>
@@ -140,8 +177,6 @@ export default function OperatorViewAndEdit () {
                             <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
                                 <button
                                     type="button"
-                                    //hidden={operator.active}
-                                    //disabled={operator.active}
                                     onClick={(e: any) => {setOperatorToEdit(operator), setOpen(true)}}
                                     className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Edit
@@ -149,24 +184,21 @@ export default function OperatorViewAndEdit () {
 
                             </td>
                             <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
-                                
                                 <button
-                                    type="button"
-                                    hidden={operator.active}
-                                    disabled={operator.active}
-                                    //onClick={(e: any) => handleReactivate(user.id)}
-                                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
-                                    Activate
+                                    disabled={(!operator.apc_id && !operator.apc_address_id) ? true : false}
+                                    onClick={async (e: any) => {
+                                        e.preventDefault();
+                                        handleClickActivateOrDeactivateOperator(operatorIdx);
+                                        notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
+                                    }}
+                                    className={
+                                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                                                        ${!operator.active
+                                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
+                                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                                    }>
+                                    {operator.active ? 'Deactivate' : 'Activate'}
                                 </button>
-                                <button
-                                    type="button"
-                                    hidden={!operator.active}
-                                    disabled={!operator.active}
-                                    //onClick={(e: any) => handleDeactivate(user.id)}
-                                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
-                                    Deactivate
-                                </button>
-                                
                             </td>
                         </tr>
                     ))}
@@ -219,6 +251,7 @@ export default function OperatorViewAndEdit () {
         </div>
       </Dialog>
         </div>
+         <ToastContainer />
         </>
     )
 }

@@ -296,17 +296,17 @@ export async function updateUserActiveStatusToActive(user_id: string, token: str
     return callEdge<TogglePayload, ToggleResult>("reactivate_user", { user_id }, token);
   };
 
-export async function updateOperatorNameAndStatus(operator: OperatorType, token: string) {
+export async function updateOperatorNameAndStatus(operator: OperatorPartnerRecord, token: string) {
     
-    type TogglePayload = { operator: OperatorType; };
+    type TogglePayload = { operator: OperatorPartnerRecord; };
     type ToggleResult  = { ok: true; data: { id: string; active: boolean; name: string; } } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operator }, token);
   };
 
-export async function updateOperatorAddress(operatorAddress: AddressType, token: string) {
+export async function updateOperatorAddress(operatorAddress: OperatorPartnerRecord, token: string) {
     
-    type TogglePayload = { operatorAddress: AddressType; };
+    type TogglePayload = { operatorAddress: OperatorPartnerRecord; };
     type ToggleResult  = { ok: true; data: { id: string; active: boolean; } } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Address", { operatorAddress }, token);
