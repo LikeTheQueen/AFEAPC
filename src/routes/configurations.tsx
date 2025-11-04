@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router";
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
@@ -9,26 +9,26 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 const tabs = [
   { id:1, name: 'Partner Library', href: "/mainScreen/configurations/", current: false, 
   sublist: [
-  {id:1, name:"Upload Partner List", current: true, href:"/mainScreen/configurations/partnerupload"},
-  {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping"},
-  {id:3, name:"View & Manage Partner Mappings", current: false, href:"/mainScreen/configurations/partnermappingview"},
+  {id:1, name:"Upload Partner List", current: false, href:"/mainScreen/configurations/partnerupload", mobile: false},
+  {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
+  {id:3, name:"View & Manage Partner Mappings", current: false, href:"/mainScreen/configurations/partnermappingview", mobile: true},
 ]},
   { id:2, name: 'GL Library', href: "/mainScreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload"},
-  {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping"},
-  {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview"},
+  {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload", mobile: false},
+  {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping", mobile: false},
+  {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview", mobile: true},
     ]
    },
   { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Upload Export Templates", current: true, href:"/mainScreen/configurations/partnerupload"},
-  {id:2, name:"Export Data", current: false, href:"/mainScreen/configurations/partnermapping"},
+  {id:1, name:"Upload Export Templates", current: true, href:"/mainScreen/configurations/partnerupload", mobile: false},
+  {id:2, name:"Export Data", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
     ] },
   { id:4, name: 'System Connections', href: "/mainScreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations"},
-  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/partnermapping"},
+  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
+  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/partnermapping", mobile: true},
     ] },
 ];
 
@@ -36,47 +36,101 @@ export default function Configurations() {
   const navigate = useNavigate();
   const [tabList, setTabList] = useState(tabs);
   const [currentTab, setCurrentTab] = useState(1);
-  const [currentSubTab, setCurrentSubTab] = useState(1);
+  const [currentSubTab, setCurrentSubTab] = useState(0);
+  const [mobileSubTab, setMobileSubtab] = useState(tabs[0]?.sublist || []);
 
-function handleTabChange(selected: number){
+function handleParentTabChange(selected: number){
     const updateCurrentTab = activeTab(tabs, selected);
     setCurrentTab(updateCurrentTab.selectedTabId);
     setTabList(updateCurrentTab.updatedTabs);
   };
 
-function handleSubTabChange(selected: number){
-  setCurrentSubTab(selected);
-  
-};
+function handleParentTabChangeMobile(selected: number) {
+  const updateCurrentTab = activeTab(tabs, selected);
+    setCurrentTab(updateCurrentTab.selectedTabId);
+    setTabList(updateCurrentTab.updatedTabs);
 
+  const selectedParentTabMobile = tabList.find(tab => tab.id === selected);
+  if(selectedParentTabMobile?.href) {
+    navigate(selectedParentTabMobile?.href)
+  }
+  
+}
+function handleSubTabChange(selected: number){
+  const updateCurrentSubTab = activeTab(mobileSubTab, selected);
+  setCurrentSubTab(updateCurrentSubTab.selectedTabId);
+  };
+
+function handleSubTabChangeMobile(selected: number) {
+  const updateCurrentSubTab = activeTab(mobileSubTab, selected);
+  setCurrentSubTab(updateCurrentSubTab.selectedTabId);
+  setMobileSubtab(updateCurrentSubTab.updatedTabs);
+
+  const selectedMobileTab = mobileSubTab.find(tab => tab.id === selected);
+  if(selectedMobileTab?.href) {
+    navigate(selectedMobileTab.href)
+  }
+  };
+
+useEffect(() => {
+  const sublist = tabs.find(item => item.id === currentTab)?.sublist || [];
+  const withBlankOption = [
+    { id: 0, name: '', current: true, href: "" , mobile: true},
+    ...sublist.map(item => ({ ...item, current: false }))
+  ];
+  setMobileSubtab(withBlankOption);
+  setCurrentSubTab(0);
+  
+},[currentTab])
+const test = mobileSubTab.find((tab) => tab.current)?.id || '';
+console.log('THE TEST', test);
+console.log(currentTab,'THE CURRENT TAB');
+console.log(mobileSubTab,'THE MOBILE')
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
     <div className="px-4 sm:px-10 ">
       <div className="h-16 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
+
       <div className="grid grid-cols-1 sm:hidden">
-        {}
-        <select
-          onChange={e => handleTabChange(Number(e.target.value))}
-          aria-label="Select a tab"
-          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
-          {tabs.map((tab) => (
-            <option key={tab.id} value={tab.id}>{tab.name}</option>
-          ))}
-        </select>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 gap-x-8 mr-2 size-5 self-center justify-self-end fill-[var(--darkest-teal)]"
-        />
+              {}
+              <select
+                value={tabList.find((tab) => tab.current)?.id || ''}
+                onChange={e => {handleParentTabChangeMobile(parseInt(e.target.value, 10))}}
+                aria-label="Select a tab"
+                className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
+                {tabs.map((tab) => (
+                  <option key={tab.id} value={tab.id}>{tab.name}</option>
+                ))}
+              </select>
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="pointer-events-none col-start-1 row-start-1 gap-x-8 mr-2 size-5 self-center justify-self-end fill-[var(--darkest-teal)]"
+              />
+      </div>
+      <div className="grid grid-cols-1 mt-2 sm:hidden">
+              {}
+              <select
+                value={mobileSubTab.find((tab) => tab.current)?.id || ''}
+                onChange={e => {handleSubTabChangeMobile(parseInt(e.target.value, 10))}}
+                aria-label="Select a tab"
+                className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
+                {mobileSubTab.map((tab) => (
+                  <option key={tab.id} value={tab.id} hidden={!tab.mobile}>{tab.name}</option>
+                ))}
+              </select>
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="pointer-events-none col-start-1 row-start-1 gap-x-8 mr-2 size-5 self-center justify-self-end fill-[var(--darkest-teal)]"
+              />
       </div>
       <div className="hidden sm:flex sm:sticky z-11 sm:top-32 ">
-              <div className="pb-0 flex flex-1 rounded-t-md border border-[var(--darkest-teal)]">
+        <div className="pb-0 flex flex-1 rounded-t-md border border-[var(--darkest-teal)]">
         {tabList.map((item, index) => (
           <div key={item.id} className="relative isolate z-50 flex w-full">    
-      <Popover className="relative isolate z-50 flex w-full">
+        <Popover className="relative isolate z-50 flex w-full">
           <PopoverButton
           as={NavLink}
           to={item.href}
-              onClick={e => handleTabChange(item.id)}
+              onClick={e => handleParentTabChange(item.id)}
               className={`inline-flex flex-1 justify-center xl:justify-center items-center px-0 pl-2 py-3 custom-style transition-colors ease-in-out duration-200 text-xs xl:text-lg
             ${item.current
                   ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
@@ -121,23 +175,6 @@ function handleSubTabChange(selected: number){
     <div className="py-8">
     <Outlet></Outlet>
     </div>
-    {/* 
-            <div hidden={currentTab !==1}>
-            <PartnerLibrary
-             selectedSubTab={currentSubTab}>
-            </PartnerLibrary>
-            </div>
-            <div hidden={currentTab !==2}>
-            <GLLibrary/>
-            </div>
-            <div hidden={currentTab !==3}>
-            <DataExport/>
-            </div>
-            <div hidden={currentTab !==4}>
-            <AuthButton/>
-            </div>
-            */}
     </div>
-    </form>
   )
 }

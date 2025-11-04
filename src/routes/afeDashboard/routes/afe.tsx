@@ -66,8 +66,6 @@ export default function AFE() {
           };
     }, [token])
 
-
-console.log('AFE', allAFEs);
   useEffect(() => {
   function sortAndFilterAFEs() {
   allAFEs.sort((a,b) => b.sortID - a.sortID)
