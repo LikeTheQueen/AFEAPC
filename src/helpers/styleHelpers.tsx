@@ -56,7 +56,7 @@ export function formatDate(date: Date | null | string) {
 
 export function doesLoggedInUserHaveCorrectRole(roles: RoleEntryRead[], roleVal: number, apc_id: string) {
     
-    const rolemapfilter = roles.filter(role => (role.role === roleVal && role.active === true && role.apc_id === apc_id));
+    const rolemapfilter = roles.filter(role => ((role.role === roleVal || role.role === 1) && role.active === true && role.apc_id === apc_id));
     const isChecked = rolemapfilter.length===1 ? true : false;
 
     return isChecked;

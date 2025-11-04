@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllOperators } from "provider/fetch";
-import type { OperatorOrPartnerList } from "src/types/interfaces";
+import { fetchAllOperators, fetchOperatorsOrPartnersToEdit } from "provider/fetch";
+import type { OperatorOrPartnerList, OperatorPartnerRecord } from "src/types/interfaces";
+import { transformOperatorPartnerRecord } from "src/types/transform";
 
 type Props = {
   onChange?: (id: string[]) => void;
@@ -11,9 +12,11 @@ type Props = {
 };
 
 export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSelectedIds = [], isDisabled }: Props) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
   const [opAPCIDMulti, setOpAPCIDMulti] = useState<string[]>(initialSelectedIds);
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
+  const [operatorsList, setOperatorsList] = useState<OperatorPartnerRecord[] | []>([]);
   
   function handleCheckboxChange(apcId: string, isChecked: boolean) {
     const updatedIds = isChecked
@@ -24,52 +27,34 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
     onChange?.(updatedIds);  
     };
 
-    async function filterOpsList() {
-        if(limitedList!==true) {
-            async function getOperators() {
-            const opList: OperatorOrPartnerList[] = await fetchAllOperators();
-            setFilteredOperators(opList);
-            return;
-             };
-       getOperators();
-        } else {
-        if (!loggedInUser) {
-        setFilteredOperators([]);
-        return;
-      }
-        
-        const opList: OperatorOrPartnerList[] = (loggedInUser.operatorRoles ?? [])
-            .filter(operator => operator.role === 8)
-            .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
-    
-            setFilteredOperators(opList);
-            return;
-        }
-        };
-  
-  
   useEffect(() => {
-          if (!loggedInUser) return;
-          filterOpsList();
-          if (filteredOperators.length === 1) {
-              
-              setOpAPCIDMulti(prevOpAPCID => {
-            const updatedOpAPCID = [...prevOpAPCID];
-            const existingIndex = updatedOpAPCID.findIndex(
-                entry => entry === filteredOperators[0].apc_id
-            );
-            if(existingIndex > -1) {
-                updatedOpAPCID.splice(existingIndex,1);
-            } else {
-                updatedOpAPCID.push(filteredOperators[0].apc_id);
+          if (!loggedInUser || token==='') return;
+          let isMounted = true;
+          async function populateOperatorList() {
+            if(!loggedInUser?.user_id) return;
+
+            try{
+              const opListResult = await fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1,8,9], token);
+
+              if(opListResult.ok) {
+                const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
+
+                if(isMounted) {
+                  setOperatorsList(opListTransformed);
+                }
+              }
+
+            } catch(e) {
+          console.error('Unable to get Operators or Permissions',e);
+           } finally {
+                return;
             }
-            return updatedOpAPCID;
-        })
           }
+          populateOperatorList();
       }, [loggedInUser])
 
-      function selectAll() {
-    const all = filteredOperators.map((o) => o.apc_id);
+    function selectAll() {
+    const all = operatorsList.map((o) => o.apc_id!);
     setOpAPCIDMulti(all);
     onChange?.(all);
   }
@@ -82,7 +67,8 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
     <>
   <div className="border rounded-md max-h-50 min-h-50 overflow-y-auto shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 ">
   <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">Operator(s):</h1>
-  {filteredOperators.map((option) => (
+  
+  {operatorsList.map((option) => (
     <label 
       key={option.apc_id}
       className="flex items-start gap-2 p-2 hover:bg-[var(--darkest-teal)]/20 cursor-pointer">
@@ -93,8 +79,8 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
                 type="checkbox"
                 disabled={isDisabled}
                 value={option.apc_id}
-                checked={opAPCIDMulti.includes(option.apc_id)}
-                onChange={(e) => handleCheckboxChange(option.apc_id, e.target.checked)}
+                checked={opAPCIDMulti.includes(option.apc_id!)}
+                onChange={(e) => handleCheckboxChange(option.apc_id!, e.target.checked)}
                 className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] indeterminate:border-[var(--bright-pink)] indeterminate:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100"
               />
               <svg
@@ -121,16 +107,17 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
           </div>
           <div className="text-sm/6">
             <label htmlFor="operator" className="text-sm font-medium text-[var(--dark-teal)] custom-style">
-              {option.apc_name}
+              {option.name}
             </label>
             <p id="operator-address" className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
-             {option.apc_address?.street} {option.apc_address?.suite} {option.apc_address?.city}, {option.apc_address?.state} {option.apc_address?.zip}
+             {option.street} {option.suite} {option.city}, {option.state} {option.zip}
             </p>
           </div>
         </div>
     </label>
   ))}
-      </div>
+  </div>
+  
     </>
   );
 }

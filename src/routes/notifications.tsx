@@ -208,7 +208,7 @@ export default function OperatorViewAndEdit () {
                     <EditOperator
                         operatorToEdit={operatorToEdit!}
                         partnerRecords={partnersList}
-                        onClose={() => setOperatorToEdit(null)}
+                        //onClose={() => setOperatorToEdit(null)}
                         token={token}
                         ></EditOperator>
                     </div>

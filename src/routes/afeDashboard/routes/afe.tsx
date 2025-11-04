@@ -36,7 +36,6 @@ export default function AFE() {
 
   useEffect(() => {
     if(!token || token==='') return;
-
       let cancelled = false;
       async function getAFERecord() {
         setAFELoading(true);
@@ -68,7 +67,7 @@ export default function AFE() {
     }, [token])
 
 
-
+console.log('AFE', allAFEs);
   useEffect(() => {
   function sortAndFilterAFEs() {
   allAFEs.sort((a,b) => b.sortID - a.sortID)
@@ -152,7 +151,7 @@ export default function AFE() {
                 </span>
               </div>
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Approved by Operator: </span>{formatDate(afe.iapp_date)}</p>
-              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{formatDate(afe.iapp_date)}</p>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
               <div className="flex flex-row items-center justify-between space-x-3">
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
               <p className="mt-1 truncate text-sm font-bold text-[var(--darkest-teal)]/70">AFE Number: {afe.afe_number} {afe.version_string}</p>
@@ -235,7 +234,7 @@ export default function AFE() {
               {formatDate(afe.partner_status_date)}
                             
               </p>
-              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{formatDate(afe.iapp_date)}</p>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
               <div className="flex flex-row items-center justify-between space-x-3">
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
               <p className="mt-1 truncate text-sm font-bold text-[var(--darkest-teal)]/70">AFE Number: {afe.afe_number} {afe.version_string}</p>

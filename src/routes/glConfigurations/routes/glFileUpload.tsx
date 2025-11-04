@@ -168,7 +168,7 @@ function getDistinctItemsByProperties(
   }
   return distinctItems;
 }
-
+console.log('the arry', opAPCIDArray);
   return (
     <>
     <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4">

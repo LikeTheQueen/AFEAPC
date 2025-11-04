@@ -43,8 +43,8 @@ export default function OperatorViewAndEdit () {
           setLoadingOperators(true);
         try{
           const [opListResult, partnerListResult] = await Promise.all([
-            fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', token),
-            fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', token)
+            fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1,4,5], token),
+            fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1,4,5], token)
           ]);
          
           if(opListResult.ok) {
@@ -178,7 +178,7 @@ export default function OperatorViewAndEdit () {
                                 <button
                                     type="button"
                                     onClick={(e: any) => {setOperatorToEdit(operator), setOpen(true)}}
-                                    className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Edit
                                 </button>
 
@@ -240,7 +240,6 @@ export default function OperatorViewAndEdit () {
                     <EditOperator
                         operatorToEdit={operatorToEdit!}
                         partnerRecords={partnersList}
-                        onClose={() => setOperatorToEdit(null)}
                         token={token}
                         ></EditOperator>
                     </div>

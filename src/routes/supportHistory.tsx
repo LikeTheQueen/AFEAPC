@@ -6,10 +6,7 @@ import executeAFECall from "src/scripts/executeReadWritePromise";
 import React, { useEffect, useState } from 'react'
 import supabase from "provider/supabase";
 import { useSupabaseData } from "../types/SupabaseContext";
-import { fetchRelatedDocuments } from "provider/fetch";
-import DocumentBrowser from "./documentViewer";
-import { fetchAllOperatorsForAdmin } from "provider/fetch";
-
+import { testExecuteConnection } from "provider/fetch";
 
 const baseURL = '/api';
 const urlPath = "api/Authentication/ApiKey/Login";
@@ -48,11 +45,7 @@ export default function Avatar({
   const token = session?.access_token ?? "";
  
   
-  useEffect(() => {
-    const result = fetchAllOperatorsForAdmin()
-    console.log('OP FETCH',result)
-  },[loggedInUser])
-
+  
   useEffect(() => {
     async function downloadImage(path: string) {
       try {
@@ -131,6 +124,9 @@ export default function Avatar({
       {token !=='' ? (
         <><div>I'M ABOVE THE CALL</div>
     <div>AND I'M BELOW THE CALL</div>
+    <button
+    onClick={(e: any) => {testExecuteConnection('a4367e56-14bf-4bd1-b0f1-fecc7d97b58c')}}
+    >TEST THE CONNECTION</button>
     </>) : (
       <div>You don't jave a token</div>
     )

@@ -12,13 +12,14 @@ export default async function fetchAuthToken(ID: string, Key: string, urlPath: s
 
     if (response.ok) {
       const jsonResponse = await response.json();
-      return jsonResponse.AuthenticationToken;
+      return {ok: true, data: jsonResponse.AuthenticationToken};
     }
-
-    throw new Error('Request Failed and could not login');
+    console.log(response)
+    
+    throw new Error(`Not able to connect: ${response.status} ${response.statusText}`)
 
   }
   catch (e) {
-    return new Error('Request Failed and could not login');
+    return {ok: false, data: e};
   }
 };

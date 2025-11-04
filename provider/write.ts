@@ -245,6 +245,14 @@ import { callEdge } from 'src/edge';
     return callEdge<TogglePayload, ToggleResult>("create_Roles_Partner_Permission", { roles }, token);
   };
 
+  export async function insertPartnerRecord(partnerRecord: OperatorPartnerRecord, token: string) {
+    
+    type TogglePayload = { partnerRecord: OperatorPartnerRecord; };
+    type ToggleResult  = { ok: true; id: string; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_Partner_Record", { partnerRecord }, token);
+  };
+
 
 //UPDATE DATA
   export async function updateGLCodeMapping(id: number, active: boolean, token: string) {

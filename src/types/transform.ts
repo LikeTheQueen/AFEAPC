@@ -58,6 +58,7 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         archived: item.archived,
         partner_archived: item.partner_archived,
         apc_partner_id: item.apc_partner_id,
+        well_name: item.well_name,
     }));
 };
 
@@ -90,6 +91,7 @@ export const transformSingleAFE = (item: any): AFEType => {
         archived: item.archived,
         partner_archived: item.partner_archived,
         apc_partner_id:item.apc_partner_id,
+        well_name: item.well_name
     };
 };
 
@@ -359,7 +361,8 @@ export const transformOperatorasPartnerAddress = (data: any[]): OperatorPartnerA
         city: item.address.city,
         state: item.address.state,
         zip: item.address.zip,
-        country: item.address.country
+        country: item.address.country,
+        address_active: item.address.address_active
         
     }));
 };
@@ -377,7 +380,8 @@ export const transformOperatorPartnerAddressSuperUser = (data: any[]): OperatorP
         city: item.address.city,
         state: item.address.state,
         zip: item.address.zip,
-        country: item.address.country
+        country: item.address.country,
+        address_active: item.address.address_active
         
     })); 
 };
@@ -401,7 +405,7 @@ export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
             zip: item.zip,
             country: item.country,
             id: item.apc_address_id,
-            active: item.active
+            address_active: item.active
         }, 
 
     user_id: item.user_id, 
@@ -454,6 +458,7 @@ export const transformOperatorPartnerAddressWithOpName = (data: any[]): Operator
         country: item.address.country,
         apc_op_id: (item.apc_op_id === null ? '' : item.apc_op_id.id),
         apc_op_name: (item.apc_op_id === null ? '' : item.apc_op_id.name),
+        address_active: item.address.address_active
         
     }));
 };
@@ -486,7 +491,8 @@ export const transformPartnerMapRecordForDisplay = (data: any[]) : PartnerMappin
         city: item.apc_partner.address.city,
         state: item.apc_partner.address.state,
         zip: item.apc_partner.address.zip,
-        country: item.apc_partner.address.country
+        country: item.apc_partner.address.country,
+        address_active: item.apc_partner.address.active
         },
         source_partner: {
         apc_op_id: item.source_partner.apc_op_id,
@@ -507,6 +513,16 @@ export const transformOperatorForDropDown = (data: any[]) : OperatorOrPartnerLis
     return data.map(item => ({
         apc_id: item.apc_id.id,
         apc_name:item.apc_id.name,
+        apc_address:  {
+            street: item.street,
+            suite: item.suite,
+            city: item.city,
+            state: item.state,
+            zip: item.zip,
+            country: item.country,
+            id: item.apc_address_id,
+            address_active: item.active
+        }, 
 
     }))
 };

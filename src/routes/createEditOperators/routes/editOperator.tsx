@@ -1,9 +1,8 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { type OperatorType, type AFESourceSystemType, type AddressType, type OperatorPartnerRecord } from 'src/types/interfaces';
-import { sourceSystemList, writeOperatorToSupabase } from 'src/helpers/helpers';
+import { type AFESourceSystemType, type OperatorPartnerRecord } from 'src/types/interfaces';
+import { sourceSystemList } from 'src/helpers/helpers';
 import { useEffect, useState } from 'react';
-import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus } from 'provider/write';
-import { disableCreateButton, disableSaveAndSaveAnother, isAddressListHidden } from './helpers/helpers';
+import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
@@ -14,10 +13,9 @@ type EditOperatorProps = {
     operatorToEdit: OperatorPartnerRecord;
     partnerRecords: OperatorPartnerRecord[];
     token: string;
-    onClose: () => void;
 };
 
-export default function EditOperator({operatorToEdit, partnerRecords, onClose, token} : EditOperatorProps) {
+export default function EditOperator({operatorToEdit, partnerRecords, token} : EditOperatorProps) {
     
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     
@@ -28,6 +26,9 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
     const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);
     const [partnerAddressUpdate, setPartnerAddressUpdate] = useState<boolean[] | []>([]);
     const [partnerNameUpdate, setPartnerNameUpdate] = useState<boolean[] | []>([]);
+
+    const [newPartnerAddress, setNewPartnerAddress] = useState<OperatorPartnerRecord | null>(null);
+    const [saveNewPartnerAddress, setSaveNewPartnerAddress] = useState(false);
     
     useEffect(() => {
         if(!operatorToEdit) return;
@@ -209,6 +210,17 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
   } catch (error) {
       console.error("Failed to change Operator status:", error);
     }
+  }
+  function handleNewAddressChange(e: { target: { name: any; value: any; }; }) {
+    setNewPartnerAddress({
+      ...newPartnerAddress,
+      active: true,
+      name: newPartnerAddress?.name ?? operatorRecord.name,
+      address_active: true,
+      apc_op_id: operatorRecord.apc_id,
+      [e.target.name]: e.target.value!
+    });
+    setSaveNewPartnerAddress(true);
   }
 
   return (
@@ -559,6 +571,149 @@ export default function EditOperator({operatorToEdit, partnerRecords, onClose, t
         </form>
         
       </div>
+      <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
+          <div className="px-4 py-2">
+            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  Name
+                </label>
+                <div className="mt-2">
+                  <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      placeholder="Nav Oil Inc."
+                      autoComplete="off"
+                      value={newPartnerAddress?.name || ''}
+                      onChange={handleNewAddressChange}
+                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="sm:col-span-4 sm:col-start-1">
+                <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  Street Address
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="street"
+                    name="street"
+                    type="text"
+                    autoComplete="off"
+                    value={newPartnerAddress?.street || ''}
+                    onChange={handleNewAddressChange}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  Suite
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="suite"
+                    name="suite"
+                    type="text"
+                    autoComplete="off"
+                    value={newPartnerAddress?.suite || ''}
+                    onChange={handleNewAddressChange}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2 sm:col-start-1">
+                <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  City
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="city"
+                    name="city"
+                    type="text"
+                    autoComplete="off"
+                    value={newPartnerAddress?.city || ''}
+                    onChange={handleNewAddressChange}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  State / Province
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="state"
+                    name="state"
+                    type="text"
+                    autoComplete="off"
+                    value={newPartnerAddress?.state || ''}
+                    onChange={handleNewAddressChange}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  ZIP / Postal Code
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="zip"
+                    name="zip"
+                    type="text"
+                    autoComplete="off"
+                    value={newPartnerAddress?.zip || ''}
+                    onChange={handleNewAddressChange}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-4 pb-2 sm:col-start-1">
+                <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                  Country
+                </label>
+                <div className="mt-2 grid grid-cols-1 ">
+                  <select
+                    id="country"
+                    name="country"
+                    autoComplete="off"
+                    value={newPartnerAddress?.country || ''}
+                    onChange={handleNewAddressChange}
+                    className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                  > <option></option>
+                    <option>United States</option>
+                    <option>Canada</option>
+                    <option>Mexico</option>
+                  </select>
+                  <ChevronDownIcon
+                    aria-hidden="true"
+                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
+                <button
+              disabled={!saveNewPartnerAddress}
+              onClick={async(e: any) => { 
+                e.preventDefault();
+                if(!newPartnerAddress) return;
+                insertPartnerRecord(newPartnerAddress, token);
+                setSaveNewPartnerAddress(false);
+                notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
+            }}
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
+              Save
+                </button>
+              </div>
+              
+            </div>
+          </div>
+        </form>
       
     </div>
     )}

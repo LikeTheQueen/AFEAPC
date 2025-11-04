@@ -153,7 +153,7 @@ export default function AFEHistorical() {
                 </span>
               </div>
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Approved by Operator: </span>{formatDate(afe.iapp_date)}</p>
-              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{formatDate(afe.iapp_date)}</p>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
               <div className="flex flex-row items-center justify-between space-x-3">
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
               <p className="mt-1 truncate text-sm font-bold text-[var(--darkest-teal)]/70">AFE Number: {afe.afe_number} {afe.version_string}</p>
@@ -236,7 +236,7 @@ export default function AFEHistorical() {
               {formatDate(afe.partner_status_date)}
                             
               </p>
-              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{formatDate(afe.iapp_date)}</p>
+              <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
               <div className="flex flex-row items-center justify-between space-x-3">
               <p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
               <p className="mt-1 truncate text-sm font-bold text-[var(--darkest-teal)]/70">AFE Number: {afe.afe_number} {afe.version_string}</p>

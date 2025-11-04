@@ -10,21 +10,15 @@ export default async function executeLogout(authToken: string, urlPath: string, 
   try {
     const response = await fetch(baseURL + urlPath, requestOptions);
 
-    if (!response.ok) {
-      console.error('Request failed with status:', response.status);
-      const errorText = await response.text();
-      console.error('Response body:', errorText);
-      return null;
-    }
-
     if (response.ok) {
-      await response.json();
-
-      return "Success";
+      const jsonResponse = await response.json();
+      return {ok: true, data: jsonResponse};
     }
+
+    throw new Error('Unable to log out:')
+    
   }
-  catch (error) {
-    console.log(error);
-    return null;
+  catch (e) {
+    return {ok: false, data: e};
   }
 };

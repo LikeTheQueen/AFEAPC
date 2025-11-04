@@ -29,6 +29,7 @@ export interface AFEType {
     archived: boolean;
     partner_archived: boolean;
     apc_partner_id: string;
+    well_name: string;
   }
 
 //Interface for AFE IDs pulled from Execute

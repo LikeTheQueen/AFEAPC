@@ -9,9 +9,6 @@ import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 
-
-
-
 export default function CreateOperator() {
     let operatorBlank : OperatorType = {
       name:'',

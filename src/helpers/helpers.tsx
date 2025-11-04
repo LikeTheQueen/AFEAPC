@@ -157,3 +157,51 @@ export const notifyStandard = (message:string) => toast(StandardNotifcation, {
       }
     },
   });
+export function FailureNotifcation({
+  closeToast,
+  data, 
+}: ToastContentProps<string>) {
+  return (
+    <div className="w-full custom-style rounded-lg shadow-3xl ring-1 ring-[var(--bright-pink)] p-5">
+      <h3 className="text-white text-sm font-normal whitespace-pre-line">{data}</h3>
+        <div className="flex items-center">
+                  <div className="flex w-0 flex-1 justify-end">
+                    
+                    <button
+                      type="button"
+                      onClick={() => closeToast("confirmed")}
+                      className="px-3 py-2 shrink-0 rounded-md bg-[var(--bright-pink)] text-sm font-medium text-white hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-white ">
+                      Understood.
+                    </button>
+                  </div>
+                  <div className="ml-4 flex shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeToast("reply")
+                      }}
+                      className="inline-flex rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-indigo-500"
+                    >
+                      <span className="sr-only">Close</span>
+                      
+                    </button>
+                  </div>
+        </div>  
+    </div>
+  );
+}
+export const notifyFailure = (message:string) => toast(FailureNotifcation, {
+    data: message,
+    closeButton: false,
+    position: "top-center",
+    autoClose: 4000,
+    transition: Bounce,
+    ariaLabel: "Notification",
+    onClose: (reason) => {
+      if (reason === "reply") {
+        // user clicked Reply
+      } else if (reason === "ignore") {
+        // user clicked Ignore
+      }
+    },
+  });

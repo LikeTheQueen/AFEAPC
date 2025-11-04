@@ -46,7 +46,7 @@ export const fetchUserProfileRecordFromSupabase = async(session: string) => {
   .limit(1).single();
 
   if (error || !data) {
-      console.error(`Error fetching user anf:`, error);
+      console.error(`Error fetching user profile:`, error);
       return null;
     }
     return transformUserProfileRecordSupabase(data);
@@ -189,9 +189,8 @@ export const fetchOpUsersForEdit = async(table: string, addressTable: string, ap
     
     return [];
   }
-console.log('THE DATA REUTN',data)
+
   const formattedRoles = transformRoleEntrySupabase(data);
-  console.log('HE DATA FORMAT', formattedRoles);
   return formattedRoles;
   };
 
@@ -257,7 +256,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 
  export const fetchAllOperators = async() => {
   const emptyArray: OperatorOrPartnerList[] = []
-  const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`apc_id(id,name)`)
+  const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`*,apc_id(id,name)`)
       if (error || !data) {
       console.error(`Error fetching Operators and Partners:`, error);
       return emptyArray;
@@ -340,17 +339,6 @@ export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:st
   } return [];
 };
 
-export const fetchAllOperatorsForAdmin = async() => {
-  const emptyArray: OperatorOrPartnerList[] = []
-  const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`apc_id(id,name), street`)
-      if (error || !data) {
-      console.error(`Error fetching Operators and Partners:`, error);
-      return emptyArray;
-      }
-      console.log(data, 'THE RETURN TO THE CALL')
-    //const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
-    return data; 
-};
 
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
@@ -423,12 +411,12 @@ export async function fetchAFEAttachments(afeID: string, apc_op_id:string, token
     return callEdge<TogglePayload, ToggleResult>("fetch_AFE_attachments", { afeID, apc_op_id }, token);
   };
 
-export async function fetchListOfOperatorsOrPartnersForUser(loggedinUserId: string, table: string, addressTable: string, token: string) {
+export async function fetchListOfOperatorsOrPartnersForUser(loggedinUserId: string, table: string, addressTable: string, roles: number[], token: string) {
     
-    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; };
+    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; roles: number[]; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable, roles }, token);
   };
 
 export async function fetchUsersForOperator(is_super_user: boolean, token: string) {
@@ -447,12 +435,24 @@ export async function fetchUserPermissions(is_super_user: boolean, token: string
     return callEdge<TogglePayload, ToggleResult>("fetch_user_permissions", { is_super_user }, token);
   };
 
-export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, token: string) {
+export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, roles: number[], token: string) {
     
-    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; };
+    type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; roles: number[]; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable, roles }, token);
+  };
+
+export async function testExecuteConnection(apc_op_id: string) {
+    
+  const { data, error } = await supabase.functions.invoke('execute_test_connection', {
+    body: { apc_op_id: apc_op_id},
+  })
+  
+  if(!data || error) {
+    return {ok: false, message: error}
+  }
+  return {ok: true, message: 'Success'}
   };
 
 

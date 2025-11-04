@@ -40,6 +40,7 @@ export default function AFEDetailURL() {
   const [doesUserHaveOperatorViewAFERole, setUserOperatorViewAFERole] = useState(false);
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
   const { refreshData } = useSupabaseData();
+  
   const [paginationData, setPaginationData] = useState<{
   pageNumber: number;
   numPages: number;
@@ -84,7 +85,7 @@ export default function AFEDetailURL() {
     async function fetchAllRelatedData() {
       if(!afeID || token==='' ) return;
       // Fetch history
-      setAFEHistoryLoading(true)
+      setAFEHistoryLoading(true);
       try{
         const historyResponse = await fetchAFEHistory(afeID, token);
 
@@ -106,6 +107,7 @@ export default function AFEDetailURL() {
 
       if(!afeID || token==='' || !afeRecord || !afeRecord.apc_op_id || !afeRecord.apc_partner_id) return;
       //fetch document list
+      setAFEDocumentLoading(true);
       try{
         const documentResponse = await fetchAFEDocs(afeID, afeRecord.apc_op_id, afeRecord.apc_partner_id, token);
         const attachmentResponse = await fetchAFEAttachments(afeID, afeRecord.apc_op_id, token);
@@ -127,7 +129,7 @@ export default function AFEDetailURL() {
       
       if(!afeRecord || !afeRecord.source_system_id || !afeRecord.apc_partner_id) return;
        // Fetch estimates
-       setAFEEstimatesLoading(true)
+       setAFEEstimatesLoading(true);
        try {
         const estimatesResponse = await fetchAFEEstimates(afeRecord.source_system_id, afeRecord.apc_partner_id, afeRecord.apc_op_id, token);
 
@@ -342,41 +344,44 @@ console.log(file)
                 <>
                {/* AFE Header 1 */}
               <div className="m-0 sm:flex justify-between">
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
                 <div>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">Operator Approval Date<span className="font-normal pl-2">{afeRecord?.iapp_date}</span></h2>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
+                </div>
+                <div>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
+                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">{afeRecord?.operator} WI<span className="font-normal pl-2">{afeRecord?.operator_wi.toFixed(6)}%</span></h2>
                 </div>
               </div>
               {/* AFE Header 2 */}
-              <div className="mt-2 border-t border-t-2 border-[var(--darkest-teal)] border-b border-b-4 border-double border-[var(--darkest-teal)]">
-                <dl className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-4">
-                  <div className="sm:pr-4 text-left">
+              <div className="mt-4 border-t border-t-2 border-[var(--darkest-teal)] border-b border-b-4 border-double border-[var(--darkest-teal)]">
+                <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
+                  <div className="sm:pr-4 text-left col-span-3">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.afe_number}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left border ">
+                  <div className="sm:pr-4 text-left col-span-3">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.version_string}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left">
+                  <div className="sm:pr-4 text-left col-span-3">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left">
+                  <div className="sm:pr-4 sm:text-right col-span-6">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
-                      {afeRecord?.afe_type}
+                      {afeRecord?.well_name}
                     </dd>
                   </div>
-                  
-                  <div className="sm:pr-4 text-left">
+
+                  <div className="sm:pr-4 text-left sm:col-start-1 col-span-6">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
                       ${ afeRecord?.supp_gross_estimate! > 0 ?
@@ -385,7 +390,7 @@ console.log(file)
                       }
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left">
+                  <div className="sm:pr-4 text-left col-span-3">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Net Total</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
                       { afeRecord?.supp_gross_estimate! > 0 ?
@@ -394,13 +399,14 @@ console.log(file)
                       }
                     </dd>
                   </div>
-                  <div className="sm:pr-4 col-span-2 text-left">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] capitalize truncate">{afeRecord?.partner_name.toLowerCase()} WI</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] text-right pl-2">
-                      {afeRecord?.partner_wi.toFixed(6)}%
+                  <div className="sm:pr-4 col-span-6 sm:text-right">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">{afeRecord?.operator} Approved</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                      {afeRecord?.iapp_date}
                     </dd>
                   </div>
-                </dl>
+                  
+                </div>
               </div>
               </>
                )}

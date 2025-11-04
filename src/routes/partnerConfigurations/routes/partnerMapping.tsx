@@ -1,7 +1,6 @@
 import { fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
 import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerRowUpdate } from "src/types/interfaces";
-import { useSupabaseData } from "src/types/SupabaseContext";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerMapping, updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
@@ -164,7 +163,6 @@ export default function PartnerMapping() {
             return updatedMap;
         });
     };
-    console.log(cumaltivePartnerMapDisplay);
     const savePartnerMappingRecords = () => {
         if (cumaltivePartnerMapDisplay.length < 1) return;
         const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(({ apc_partner_id, source_partner_id }) => ({ partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id }))
