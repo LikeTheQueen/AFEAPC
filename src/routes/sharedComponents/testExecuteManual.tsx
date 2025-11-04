@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import fetchAuthToken from '../../scripts/executeFetchAuthToken'; 
 import executeLogout from '../../scripts/executeLogout';
 import {EyeIcon, EyeSlashIcon, XMarkIcon} from '@heroicons/react/20/solid';
+import { ToastContainer } from 'react-toastify';
+import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 
 const baseURL = '/api';
 const urlPath = "api/Authentication/ApiKey/Login";
@@ -28,11 +30,15 @@ export default function TestExecuteManual() {
     if(!executeResult.ok) {
       setHideWarning(false);
       setResponseError(executeResult.data);
-    }
+      notifyFailure(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
+    return;
+    } 
     setExecuteAuthToken(executeResult.data);
-    setHideSuccess(true);
+    setHideSuccess(false);
+    notifyStandard(`API Integration passed.  This integration just struck oil.\n\n(TLDR: Successful connection)`);
     await executeLogout(executeAuthToken, 'api/Authentication/Logout', baseURL);
-  };
+    
+};
 
   const handleLogout = async () => {
     if(executeAuthToken === '') return;
@@ -66,7 +72,7 @@ export default function TestExecuteManual() {
   
  
   return (
-
+    <>
     <div className="mt-10">
 
       <div className="grid grid-cols-1 gap-x-30 gap-y-10 border-b-4 border-gray-900/20 pb-12 md:grid-cols-5">
@@ -189,7 +195,8 @@ export default function TestExecuteManual() {
         </div>
       </div>
     </div>
-
+    <ToastContainer />
+</>
   );
 };
 

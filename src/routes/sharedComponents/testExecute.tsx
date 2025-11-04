@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { XMarkIcon} from '@heroicons/react/20/solid';
 import { OperatorDropdown } from '../operatorDropdown';
 import { testExecuteConnection } from 'provider/fetch';
-import { notifyStandard } from 'src/helpers/helpers';
+import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 
 export default function TestExecuteEstablishedConnection() {
@@ -18,7 +18,7 @@ export default function TestExecuteEstablishedConnection() {
       
       if(!textConnectionResult.ok) {
         setHideWarning(false);
-        notifyStandard(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
+        notifyFailure(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
       }
       setHideSuccess(false);
        notifyStandard(`API Integration passed.  This integration just struck oil.\n\n(TLDR: Successful connection)`);
