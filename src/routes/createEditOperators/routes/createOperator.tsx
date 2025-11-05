@@ -138,15 +138,15 @@ export default function CreateOperator() {
   
   return (
     <>
-    <div className="px-4 sm:px-10 sm:py-4 divide-y divide-gray-900/20">
+    <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
-          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
+          <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             Create the Operator with the billing address.  Below add additional addresses to be used as Partner addresses
           </p>
         </div>
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
+        <form className="bg-white shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -319,13 +319,13 @@ export default function CreateOperator() {
       </div>
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
-          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
+          <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
           </p>
         </div>
 
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
+        <form className="bg-white shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
             singleOpID={true}
@@ -337,8 +337,8 @@ export default function CreateOperator() {
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
-          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
+          <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             Add Addresses to be used when the Operator is a Partner.  Add the billing address (again) if applicable.
           </p>
           

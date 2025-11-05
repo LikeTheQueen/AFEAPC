@@ -85,6 +85,7 @@ export default function AFE() {
     <>
     <div className="px-4 sm:px-10 sm:py-4">
       <div className="h-4 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
+      
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select
@@ -104,7 +105,7 @@ export default function AFE() {
       </div>
       <div className="hidden sm:flex ">
         <div className="pb-1 w-full">
-          <nav aria-label="Tabs" className="-mb-px flex  rounded-t-md border border-[var(--darkest-teal)]">
+          <nav aria-label="Tabs" className="-mb-px flex rounded-t-md border border-[var(--darkest-teal)]">
             {tabList.map((item, index) => (
                 <Button
                 key={item.id}
@@ -113,15 +114,13 @@ export default function AFE() {
       
       ${item.current
           ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium shadow-sm z-10'
-          : 'bg-white text-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal'}
+          : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal'}
           ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
-        ${index === 0 ? 'rounded-tl-md' : ''}
-        ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
-          
+          ${index === 0 ? 'rounded-tl-md' : ''}
+          ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
           `}>
-                  <span className="">{item.name}</span>
+                <span className="">{item.name}</span>
                 </Button>
-              
             ))}
           </nav>
         </div>
@@ -131,14 +130,14 @@ export default function AFE() {
     
     {/* Non-Operated AFEs */}
     <div hidden = {currentTab ===2} className="py-4 px-4 sm:px-8">
-      <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Non-Operated AFEs</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
+      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Non-Operated AFEs</h2>
+        <p className="mt-1 text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? false : true} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="NonOperatedAFElist">
       {nonOperatedAFEs?.map((afe) => (
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
         onClick={ (e:any) =>{handlePartnerStatusChange(`${afe.id}`, `${afe.partner_status}`,afe.partner_status === 'New' ? 'Viewed' : `${afe.partner_status}`, 'The Partner Status on the AFE changed from New to Viewed','action', token)}}
-        className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+        className="col-span-1 divide-y divide-[var(--darkest-teal)]/70 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
        
           <div className="flex w-full items-center justify-between space-x-6 p-6">
             <div className="flex-1 truncate">
@@ -191,12 +190,12 @@ export default function AFE() {
       ))}
     </ul>
     <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? true : false} className="overflow-hidden bg-white sm:rounded-lg flex justify-center items-center" data-testid="NoNonOperatedAFElist">
-    <div className="relative w-2/3 h-20 ">
+    <div className="relative w-full sm:w-9/10 h-20">
       <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
-        <div className="w-full border-t border-[var(--dark-teal)]" />
+        <div className="w-full border-t border-[var(--darkest-teal)]" />
       </div>
       <div className="relative flex justify-center items-center h-20">
-        <span className="bg-white text-xs sm:px-3 sm:text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Non-Operated AFEs to view</span>
+        <span className="bg-white text-sm/6 sm:px-3 sm:text-base/7 font-semibold custom-style text-[var(--darkest-teal)]">There are no Non-Operated AFEs to view</span>
       </div>
     </div>
         
@@ -204,14 +203,14 @@ export default function AFE() {
     </div>
        {/* Operated AFEs */}
     <div hidden = {currentTab ===1} className="py-4 px-4 sm:px-8">
-    <h2 className="custom-style text-lg font-semibold text-[var(--darkest-teal)]">Operated AFEs</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-info">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
+    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operated AFEs</h2>
+      <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <ul role="list" hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? false : true} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="OperatedAFElist">
       {operatedAFEs?.map((afe) => (
         
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
-        className="col-span-1 divide-y divide-[var(--darkest-teal)] rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+        className="col-span-1 divide-y divide-[var(--darkest-teal)]/70 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
           
           <div className="flex w-full items-center justify-between p-6 pt-3">
             <div className="flex-1 truncate ">
@@ -275,12 +274,12 @@ export default function AFE() {
       ))}
     </ul>
     <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false} className="overflow-hidden bg-white shadow-md sm:rounded-lg flex justify-center items-center" data-testid="NoOperatedAFElist">
-    <div className="relative w-2/3 h-20 ">
+    <div className="relative w-full sm:w-9/10 h-20">
       <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
-        <div className="w-full border-t border-[var(--dark-teal)]" />
+        <div className="w-full border-t border-[var(--darkest-teal)]" />
       </div>
       <div className="relative flex justify-center items-center h-20">
-        <span className="bg-white text-xs sm:px-3 sm:text-base font-semibold custom-style text-[var(--darkest-teal)]">There are no Operated AFEs to view </span>
+        <span className="bg-white text-sm/6 sm:px-3 sm:text-base/7 font-semibold custom-style text-[var(--darkest-teal)]">There are no Operated AFEs to view </span>
       </div>
     </div>
         

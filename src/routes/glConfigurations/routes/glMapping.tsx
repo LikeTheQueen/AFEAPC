@@ -189,8 +189,8 @@ export default function GLMapping() {
                 <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
                 <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
         <div className="">
-            <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map GL Account Codes for Non-Op AFEs</h2>
-                <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to map GL Account Codes</p><br></br>
+            <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Map GL Account Codes for Non-Op AFEs</h2>
+                <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to map GL Account Codes</p><br></br>
          </div>
          
          <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
@@ -229,7 +229,7 @@ export default function GLMapping() {
                                             (opAPCID === '' && partnerAPCID !== '') ? false : true}
                     className="bg-white shadow-xl ring-1 ring-gray-900/20 sm:rounded-xl ">
                                 <div className="my-8 max-h-80 flex items-center justify-center">
-                                    <h2 className="sm:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to show both account lists for mapping.</h2>
+                                    <h2 className="sm:w-3/4 text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Select both an Operator and Your Company as a Partner from the dropdowns to show both account lists for mapping.</h2>
                                 </div>
                                 
                     
@@ -241,12 +241,12 @@ export default function GLMapping() {
                     className="divide-y divide-gray-900/20">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                             <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Operator Account Codes</h2>
+                                <h2 className="2xl:w-3/4 text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Account Codes</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div
                                         hidden={(partnerAPCID !== '' && opAPCID !=='' && operatorAccountCodes.length < 1) ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
-                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style py-2 text-sm xl:text-base">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded you can reach out to the Operator to let them know.{<br></br>}{<br></br>}Or send us a message on the Contact Support Tab and we'll reach out.</h2>
+                                        <h2 className="sm:w-3/4 text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded you can reach out to the Operator to let them know.{<br></br>}{<br></br>}Or send us a message on the Contact Support Tab and we'll reach out.</h2>
                                     </div>
                                     <div
                                         hidden={(opAPCID !== '' && operatorAccountCodes.length > 0) ? false : true}
@@ -331,7 +331,7 @@ export default function GLMapping() {
                                 </div>
                             </div>
                             <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="truncate 2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Your Account Codes</h2>
+                                <h2 className="truncate 2xl:w-3/4 text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Your Account Codes</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div
                                         hidden={(partnerAPCID !== '' && opAPCID !=='' && partnerAccountCodes.length < 1) ? false : true}

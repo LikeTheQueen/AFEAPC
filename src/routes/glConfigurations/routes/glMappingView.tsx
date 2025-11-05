@@ -141,14 +141,14 @@ export default function GLMapping() {
         <>
 
             <div >
-                <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
+                <div className="shadow-lg rounded-sm sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                         <div className="">
                             <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage you GL Account Code Mappings</h2>
                             <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to view the GL Account Code Mappings</p><br></br>
                         </div>
 
-                        <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                        <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
                             <div className="">
                                 <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Operator of Non-Op AFEs:</h1>
                                 <div className="">
@@ -180,23 +180,23 @@ export default function GLMapping() {
                     <>
                         <div
                             hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                (opAPCID !== '' && partnerAPCID === '') ||
-                                (opAPCID === '' && partnerAPCID !== '') ? false : true}
-                            className="bg-white shadow-xl ring-1 ring-gray-900/20 sm:rounded-xl ">
+                                    (opAPCID !== '' && partnerAPCID === '') ||
+                                    (opAPCID === '' && partnerAPCID !== '') ? false : true}
+                            className="bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/30 rounded-sm sm:rounded-xl ">
                             <div className="my-8 max-h-80 flex items-center justify-center">
-                                <h2 className="sm:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style py-2 text-sm xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
+                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style py-2 px-2 text-sm xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
                             </div>
 
                         </div>
                         <div
                             hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                (opAPCID !== '' && partnerAPCID === '') ||
-                                (opAPCID === '' && partnerAPCID !== '') ? true : false}
+                                    (opAPCID !== '' && partnerAPCID === '') ||
+                                    (opAPCID === '' && partnerAPCID !== '') ? true : false}
                             className="divide-y divide-gray-900/20">
 
                             <div hidden={cumaltiveGLMap.length > 0 ? false : true} className="">
                                 <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">GL Account Code Mappings</h1>
-                                <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl flow-root overflow-hidden">
+                                <div className="bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/30 rounded-sm sm:rounded-xl flow-root overflow-hidden">
 
                                     <div className="py-2 mx-auto max-w-7xl">
                                         <table className="w-full table-fixed">

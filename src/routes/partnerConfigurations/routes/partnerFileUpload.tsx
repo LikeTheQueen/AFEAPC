@@ -170,7 +170,7 @@ export default function PartnerFileUpload() {
 
   return (
     <>
-    <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
+    <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                 <div className="">
                     <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload Partner Library from Your AFE System</h2>

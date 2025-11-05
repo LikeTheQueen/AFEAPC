@@ -61,40 +61,41 @@ export default function UserDashboard({ userList =[], isError=false }: {  userLi
    
     return (
         <>
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-gray-300">
-                <div className="">
-                    <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">User Profiles</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt</p>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Another admin for your organization will need to deactivate your profile or contact AFE Partner Connections directly.</p>
+        <div className="py-4 sm:py-0">
+            <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 ">
+                <div className="md:col-span-2">
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">User Profiles</h2>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt</p>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Another admin for your organization will need to deactivate your profile or contact AFE Partner Connections directly.</p>
                 </div>
-                <div className="-mx-4 mt-8 sm:-mx-0 md:col-span-2 ">
+                <div className="md:col-span-5 ">
 
-                    <table className="min-w-full divide-y divide-gray-400">
+                <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                 <thead>
-                    <tr>
+                    <tr className="bg-white text-white ">
                         <th scope="col" 
-                            className="hidden py-3.5 pr-3 pl-4 text-left font-semibold text-[var(--darkest-teal)] custom-style sm:pl-0 sm:table-cell">
+                            className="hidden rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             Name
                         </th>
                         <th
                             scope="col"
-                            className="hidden px-3 py-3.5 text-center custom-style font-semibold text-[var(--darkest-teal)] sm:table-cell">
+                            className="hidden w-2/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             Email
                         </th>
                         <th scope="col" 
-                            className="hidden px-3 py-3.5 text-center custom-style font-semibold text-[var(--darkest-teal)] sm:table-cell">
+                            className="hidden w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             Status
                         </th>
-                        <th scope="col" className="hidden py-3.5 pr-4 pl-3 sm:pr-0">
+                        <th scope="col" className="hidden rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             <span className="sr-only">Edit</span>
                         </th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-300 bg-white">
+                <tbody className="divide-y divide-[var(--darkest-teal)]/20 bg-white">
 
                     {users.map(user => (
                         <tr key={user.id}>
-                            <td className="text-start align-middle max-w-0 py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 ">
+                            <td className="text-start align-middle max-w-0 py-4 pr-1 pl-2 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none ">
                                 {user.firstname} {user.lastName}
                                 <dl className="font-normal lg:hidden">
                                 <dt className="sr-only">Email</dt>
@@ -130,13 +131,8 @@ export default function UserDashboard({ userList =[], isError=false }: {  userLi
                                 </dd>
                             </dl>
                             </td>
-                            <td className="hidden flex justify-center items-center px-3 py-4 text-[var(--darkest-teal)] custom-style lg:whitespace-nowrap lg:table-cell">
-                                <input
-                                    className="w-full rounded-md bg-white px-3 py-1.5 custom-style text-[var(--dark-teal)] outline outline-1 -outline-offset-1 outline-[var(--darkest-teal)] h-9 sm:text-sm"
-                                    type="text"
-                                    defaultValue={user.email}
-                                    id={user.email}
-                                />
+                            <td className="hidden text-center px-3 py-4 text-[var(--darkest-teal)] custom-style-long-text lg:whitespace-nowrap lg:table-cell">
+                                {user.email}
                             </td>
 
                             <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
@@ -178,7 +174,7 @@ export default function UserDashboard({ userList =[], isError=false }: {  userLi
                 </div>
 
             </div>
-            
+        </div>
         </>
     )
 }

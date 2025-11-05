@@ -109,16 +109,16 @@ export default function OperatorViewAndEdit () {
     }
     return (
         <>
-        <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-gray-300">
+        <div className="px-4 sm:px-10 sm:py-16 divide-y divide-[var(--darkest-teal)]/40 ">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-[var(--darkest-teal)]/40">
                 <div className="">
-                    <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Operator Profiles</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review.  Sorta like the USPS, but better.</p>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
+                    <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review.  Sorta like the USPS, but better.</p>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                 </div>
                 <div className="-mx-4 mt-8 sm:-mx-0 md:col-span-2 ">
-                    <table className="min-w-full divide-y divide-gray-400">
+                    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30">
                 <thead>
                     <tr>
                         <th scope="col" 

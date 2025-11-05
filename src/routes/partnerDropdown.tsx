@@ -33,7 +33,7 @@ export function PartnerDropdown({ onChange, limitedList }: Props) {
         
         const partnerList: OperatorOrPartnerList[] = (loggedInUser.partnerRoles ?? [])
             .filter(partner => partner.role === 3)
-            .map(({ apc_id, apc_name }) => ({ apc_id, apc_name }));
+            .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
     
             setFilteredPartners(partnerList);
             return;
@@ -51,10 +51,10 @@ export function PartnerDropdown({ onChange, limitedList }: Props) {
   
   return (
     <>
-          <div className="w-1/2 grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
           <select
-              id="operatorMapID"
-              name="operatorMapID"
+              id="partnerMapID"
+              name="partnerMapID"
               autoComplete="off"
               value={partnerAPCID}
               onChange={handleChange}

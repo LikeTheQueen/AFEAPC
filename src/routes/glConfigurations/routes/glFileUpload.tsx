@@ -174,10 +174,10 @@ console.log('the arry', opAPCIDArray);
     <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4">
     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
             <div className="">
-                <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload GL Account Codes from the AFE System</h2>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the GL Account Codes on <span className="font-bold">YOUR</span> AFEs, as the Operator and/or the GL Account Codes you will <span className="font-bold">MAP</span> an Operator's GL Account Codes to for Non-Op AFEs, when you are the Partner.</p><br></br>
-                    <p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">You do not have to upload GL Account Codes for your Partner Addresses unless you will be mapping them.  A single file can be used to upload the GL Account Codes for all the selected Operator or Partner addresses. </p><br></br>
-                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span></p>
+                <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Upload GL Account Codes from the AFE System</h2>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the GL Account Codes on <span className="font-bold">YOUR</span> AFEs, as the Operator and/or the GL Account Codes you will <span className="font-bold">MAP</span> an Operator's GL Account Codes to for Non-Op AFEs, when you are the Partner.</p><br></br>
+                    <p className="text-md/6 text-[var(--darkest-teal)] custom-style-long-text px-3">You do not have to upload GL Account Codes for your Partner Addresses unless you will be mapping them.  A single file can be used to upload the GL Account Codes for all the selected Operator or Partner addresses. </p><br></br>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span></p>
              </div>
              
              <div className="col-span-2 grid grid-cols-1 gap-x-2 gap-y-0 ">

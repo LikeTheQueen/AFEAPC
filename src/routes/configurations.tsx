@@ -82,13 +82,10 @@ useEffect(() => {
   setCurrentSubTab(0);
   
 },[currentTab])
-const test = mobileSubTab.find((tab) => tab.current)?.id || '';
-console.log('THE TEST', test);
-console.log(currentTab,'THE CURRENT TAB');
-console.log(mobileSubTab,'THE MOBILE')
+
   return (
-    <div className="px-4 sm:px-10 ">
-      <div className="h-16 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
+    <div className="px-4 sm:px-10 sm:py-4">
+      <div className="h-4 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
 
       <div className="grid grid-cols-1 sm:hidden">
               {}
@@ -122,7 +119,7 @@ console.log(mobileSubTab,'THE MOBILE')
                 className="pointer-events-none col-start-1 row-start-1 gap-x-8 mr-2 size-5 self-center justify-self-end fill-[var(--darkest-teal)]"
               />
       </div>
-      <div className="hidden sm:flex sm:sticky z-11 sm:top-32 ">
+      <div className="hidden sm:flex ">
         <div className="pb-0 flex flex-1 rounded-t-md border border-[var(--darkest-teal)]">
         {tabList.map((item, index) => (
           <div key={item.id} className="relative isolate z-50 flex w-full">    
@@ -130,14 +127,14 @@ console.log(mobileSubTab,'THE MOBILE')
           <PopoverButton
           as={NavLink}
           to={item.href}
-              onClick={e => handleParentTabChange(item.id)}
-              className={`inline-flex flex-1 justify-center xl:justify-center items-center px-0 pl-2 py-3 custom-style transition-colors ease-in-out duration-200 text-xs xl:text-lg
+          onClick={e => handleParentTabChange(item.id)}
+          className={`inline-flex flex-1 justify-center items-center px-4 py-3 custom-style transition-colors ease-in-out duration-300 
             ${item.current
                   ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
                   : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--darkest-teal)] hover:text-white hover:font-semibold font-normal hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-[var(--bright-pink)]'}
-              ${index !== 0 ? 'border-l border-l-1 border-[var(--darkest-teal)]' : ''}
-        ${index === 0 ? 'rounded-tl-md' : ''}
-        ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
+              ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
+              ${index === 0 ? 'rounded-tl-md' : ''}
+              ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
               `}>
               <span className="">{item.name}</span>
               <span ><ChevronDownIcon aria-hidden="true" className="size-5" /></span>
@@ -145,13 +142,13 @@ console.log(mobileSubTab,'THE MOBILE')
             {item.sublist.length > 0 && (
       <PopoverPanel 
       transition
-      className="absolute inset-x-0 top-16 w-full bg-[var(--darkest-teal)] text-white data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in ">
+      className="absolute inset-x-0 top-16 rounded-b-md w-full bg-[var(--darkest-teal)] text-white data-closed:-translate-y-0 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-in data-leave:duration-150 data-leave:ease-out ">
         <div
           aria-hidden="true"
-          className="absolute inset-0 top-1/2 shadow-lg ring-1 ring-gray-900/30"
+          className="absolute inset-0 shadow-xl "
         />
         <div className="relative">
-          <div className="mx-auto flex flex-col px-2 py-1 lg:px-2 xl:gap-x-8 ">
+          <div className=" flex flex-col ">
           {item.sublist.map((sub) => (
             <PopoverButton key={sub.id}
             as={NavLink}

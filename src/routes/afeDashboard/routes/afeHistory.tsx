@@ -40,7 +40,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
         <>
             <div className="lg:col-start-3">
                 {/* History feed */}
-                <h2 className="font-semibold custom-style text-[var(--darkest-teal)]">AFE History</h2>
+                <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">AFE History</h2>
                 <ul role="list" className="mt-6 space-y-6">
                     {
                      

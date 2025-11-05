@@ -457,8 +457,8 @@ console.log(file)
             <div className="xl:col-start-3">
               <div hidden={afeDocs.length> 0 ? false : true }>
               <h2 className="font-semibold custom-style text-[var(--darkest-teal)]">AFE Documents </h2>
-              <div className="mb-6 mt-2 shadow-lg ring-3 ring-[var(--darkest-teal)]/9 sm:mx-0 sm:rounded-lg px-5 py-3">
-              <ul role="list" className="divide-y divide-gray-100">
+              <div className="mb-6 mt-2 shadow-lg ring-3 ring-[var(--darkest-teal)]/10 sm:mx-0 sm:rounded-lg px-5 py-3">
+              <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
               {afeDocs?.map((afeDoc) => (
                 <li key={afeDoc.id}>
                   <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">

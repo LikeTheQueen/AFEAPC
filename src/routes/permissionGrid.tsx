@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { type RoleEntryWrite, type RoleEntryRead, type PartnerRoleEntryWrite } from "src/types/interfaces";
 import { checkedByRole, getRoleIndex } from "../routes/createEditUsers/routes/helpers/helpers";
 import { writeorUpadateUserRoles } from "provider/write";
+import React from "react";
 
 type apcrole = {
     apc_id: string;
@@ -197,15 +198,17 @@ useEffect(() => {
     return updatedRoles;
   });
 };
- 
+ console.log(groupByUserThenOperatorRole,'THE OOP ROLES')
+ console.log(groupByUserThenPartnerRole,'theprt group')
   return (
     <>
-    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7"
+    <div className="py-4 sm:py-0">
+    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 " 
     hidden={groupByUserThenOperatorRole.length > 0 ? false : true}>
-      <div className="md:col-span-2 ">
-        <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
-          <p hidden ={!readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
+      <div className="md:col-span-2">
+        <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
      
@@ -214,10 +217,18 @@ useEffect(() => {
             <ul role="list" className="">
                {groupByUserThenOperatorRole.map(user => (
             <li key={user.user_id}>
-    <table className="min-w-full divide-y divide-gray-900/30 mb-4 shadow-2xl">
+    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 shadow-2xl mb-10 sm:mb-4">
           <thead>
+            <tr hidden={readOnly} className="bg-white text-white">
+              <th colSpan={5} scope="col" className="sm:hidden sm:pl-0 text-[var(--darkest-teal)] bg-[var(--darkest-teal)]/20 rounded-tl-xl rounded-tr-xl table-cell">
+                 <h2 className="font-semibold custom-style text-center py-1"
+                 hidden={readOnly}>
+                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                  </h2>
+              </th>
+            </tr>
             <tr className="bg-white text-white ">
-              <th scope="col" className="sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl">
+              <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl sm:table-cell">
                  <h2  className="font-semibold custom-style text-center py-1"
                  hidden={readOnly}>
                   {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
@@ -225,7 +236,7 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Operated AFEs
               </th>
               <th scope="col" 
@@ -236,16 +247,24 @@ useEffect(() => {
                   className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Manage Libraries
               </th>
-              <th scope="col" className="rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Billing Details
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-              
-              {user.apcrole.map(operator => (
-        <tr key={operator.apc_id}>
-          <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <tbody className="sm:divide-y divide-[var(--darkest-teal)]/20 bg-white">
+          
+          {user.apcrole.map(operator => (
+            <React.Fragment key={operator.apc_id}>
+        <tr>
+          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+            {operator.apc_name} <span className="font-normal justify-end text-end mt-1 w-full text-xs">
+              <br></br>{operator.apc_street} {operator.apc_suite} {operator.apc_city}, {operator.apc_state} {operator.apc_zip}</span>  
+          </td>
+         
+        </tr>
+        <tr className="border-b border-b-[var(--darkest-teal)]  sm:border-none">
+          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             
             {operator.apc_name}
             <p className="font-normal justify-end text-end mt-1 w-full text-xs">{operator.apc_street} {operator.apc_suite}
@@ -255,7 +274,7 @@ useEffect(() => {
             
           </td>
           {[2, 4, 8, 7].map(roleVal => (
-        <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
           <div className="flex shrink-0 items-center justify-center">
             <div className="group grid size-4 grid-cols-1">  
               
@@ -295,8 +314,8 @@ useEffect(() => {
         </td>
       ))}
         </tr>
+        </React.Fragment>
         ))}
-        
           </tbody>
           </table>
     
@@ -321,21 +340,29 @@ useEffect(() => {
     <div className="grid max-w-10xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 pt-4"
     hidden={groupByUserThenPartnerRole.length >0 ? false : true }>
       <div className="md:col-span-2 ">
-        <h2 className="custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
-          <p hidden ={!readOnly} className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
+        <h2 className="text-base/7 custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
       
         <div className="">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-            <ul role="list" className="divide-y divide-gray-100">
+            <ul role="list" className="">
                {groupByUserThenPartnerRole.map(user => (
             <li key={user.user_id}>
-    <table className="min-w-full divide-y divide-gray-900/30 mb-4 shadow-2xl">
+    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 shadow-2xl mb-10 sm:mb-4">
           <thead>
+            <tr hidden={readOnly} className="bg-white text-white">
+              <th colSpan={5} scope="col" className="sm:hidden sm:pl-0 text-[var(--darkest-teal)] bg-[var(--darkest-teal)]/20 rounded-tl-xl rounded-tr-xl table-cell">
+                 <h2 className="font-semibold custom-style text-center py-1"
+                 hidden={readOnly}>
+                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                  </h2>
+              </th>
+            </tr>
             <tr className="bg-white text-white ">
-              <th scope="col" className="sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl">
+              <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl sm:table-cell">
                  <h2  className="font-semibold custom-style text-center py-1"
                  hidden={readOnly}>
                   {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
@@ -343,7 +370,7 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Non-Op AFEs
               </th>
               <th scope="col" 
@@ -354,16 +381,24 @@ useEffect(() => {
                   className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Manage Libraries
               </th>
-              <th scope="col" className="rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Accept/Reject Non-Op AFEs
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-              
-              {user.apcrole.map(operator => (
-        <tr key={operator.apc_id}>
-          <td className="w-full max-w-0 py-4 pr-3 pl-4 text-sm font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <tbody className="sm:divide-y divide-[var(--darkest-teal)]/20 bg-white">
+          
+          {user.apcrole.map(operator => (
+           <React.Fragment key={operator.apc_id}>
+        <tr >
+          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+            {operator.apc_name} <span className="font-normal justify-end text-end mt-1 w-full text-xs">
+              <br></br>{operator.apc_street} {operator.apc_suite} {operator.apc_city}, {operator.apc_state} {operator.apc_zip}</span>  
+          </td>
+         
+        </tr>
+        <tr className="border-b border-b-[var(--darkest-teal)]  sm:border-none">
+          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             
             {operator.apc_name}
             <p className="font-normal justify-end text-end mt-1 w-full text-xs">{operator.apc_street} {operator.apc_suite}
@@ -373,10 +408,10 @@ useEffect(() => {
             
           </td>
           {[3, 5, 9, 6].map(roleVal => (
-        <td key={roleVal} className="px-3 py-4 text-sm text-[var(--dark-teal)] lg:table-cell">
-          <div className="flex h-6 shrink-0 items-center justify-center">
-            <div className="group grid size-4 grid-cols-1">
-            
+        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+          <div className="flex shrink-0 items-center justify-center">
+            <div className="group grid size-4 grid-cols-1">  
+              
   <input
     type="checkbox"
     defaultChecked={checkedByRole(operator.roles, roleVal)}
@@ -390,37 +425,31 @@ useEffect(() => {
                                           e.target.checked)}
     aria-describedby="comments-description"
     className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] 
-    group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..."
-  />
+    group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..."/>
               <svg
                 fill="none"
                 viewBox="0 0 14 14"
-                className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-              >
+                className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
                 <path
                   d="M3 8L6 11L11 3.5"
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-0 group-has-checked:opacity-100"
-                />
+                  className="opacity-0 group-has-checked:opacity-100"/>
                 <path
                   d="M3 7H11"
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-0 group-has-indeterminate:opacity-100"
-                />
+                  className="opacity-0 group-has-indeterminate:opacity-100"/>
               </svg>
-
-
             </div>
           </div>
         </td>
       ))}
         </tr>
+        </React.Fragment>
         ))}
-        
           </tbody>
           </table>
     
@@ -438,6 +467,7 @@ useEffect(() => {
         </button>
     </div>
         </div>
+      </div>
       </div>
       </div>
     </>

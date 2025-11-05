@@ -142,7 +142,7 @@ export default function AFEHistorical() {
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
         onClick={ (e:any) =>{handlePartnerStatusChange(`${afe.id}`, `${afe.partner_status}`,afe.partner_status === 'New' ? 'Viewed' : `${afe.partner_status}`, 'The Partner Status on the AFE changed from New to Viewed','action', token)}}
-        className="col-span-1 divide-y divide-[var(--darkest-teal)]/80 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+        className="col-span-1 divide-y divide-[var(--darkest-teal)]/70 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
        
           <div className="flex w-full items-center justify-between space-x-6 p-6">
             <div className="flex-1 truncate">
@@ -215,7 +215,7 @@ export default function AFEHistorical() {
         
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
-        className="col-span-1 divide-y divide-[var(--darkest-teal)] rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
+        className="col-span-1 divide-y divide-[var(--darkest-teal)]/70 rounded-lg bg-white shadow-md hover:shadow-[#F61067] custom-style border border-[var(--dark-teal)]/30">
           
           <div className="flex w-full items-center justify-between p-6 pt-3">
             <div className="flex-1 truncate ">
