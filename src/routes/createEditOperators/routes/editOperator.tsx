@@ -366,7 +366,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 notifyStandard(`Operator name and billing address have been ${operatorRecord.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operatorRecord.active ? 'deactivated' : 'activated'}.)`);
             }}
               className={
-                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
                         ${!operatorRecord.active 
                             ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
                             : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
@@ -383,7 +383,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 setSaveOpNameChange(false);
                 notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>
@@ -527,7 +527,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 notifyStandard(`Operator's Partner name and address have been ${partner.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.active ? 'deactive' : 'active'})`);}}
               //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               className={
-                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
                         ${!partner.active 
                             ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
                             : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
@@ -543,7 +543,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 {partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null}
                 notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>
@@ -706,7 +706,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 setSaveNewPartnerAddress(false);
                 notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>

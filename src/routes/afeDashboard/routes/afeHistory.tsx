@@ -140,7 +140,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                             <button
                                 disabled={commentVal==='' ? true : false}
                                 type="submit"
-                                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset 
+                                className="rounded-md bg-white px-2.5 py-1.5 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset 
                                 hover:bg-[var(--bright-pink)] hover:text-white
                                 disabled:bg-gray-200 disabled:text-gray-400"
                                 onClick={handleComment}>

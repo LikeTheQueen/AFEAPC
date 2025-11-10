@@ -465,12 +465,12 @@ export default function AFE() {
           &lt;div className="flex w-full items-center justify-between space-x-6 p-6"&gt;
             &lt;div className="flex-1 truncate"&gt;
               &lt;div className="flex items-center justify-between space-x-3"&gt;
-                &lt;h3 className="truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Partner&lt;/span&gt;{afe.partner_name}&lt;/h3&gt;
-                &lt;span className={`inline-flex shrink-0 items-center border-r rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}&gt;
+                &lt;h3 className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Partner&lt;/span&gt;{afe.partner_name}&lt;/h3&gt;
+                &lt;span className={`inline-flex shrink-0 items-center border-r rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm/6 font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}&gt;
                   {afe.partner_status}
                 &lt;/span&gt;
               &lt;/div&gt;
-              &lt;p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Approved by Partner: &lt;/span&gt;
+              &lt;p className="mt-1 truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Approved by Partner: &lt;/span&gt;
               
               {new Date(afe.partner_status_date).toLocaleDateString('en-us', {
                               year: 'numeric',
@@ -482,7 +482,7 @@ export default function AFE() {
                             })}
                             
               &lt;/p&gt;
-              &lt;p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;AFE Type: &lt;/span&gt;{afe.afe_type}&lt;/p&gt;
+              &lt;p className="mt-1 truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;AFE Type: &lt;/span&gt;{afe.afe_type}&lt;/p&gt;
             &lt;/div&gt;
             
           &lt;/div&gt;
@@ -490,21 +490,21 @@ export default function AFE() {
             &lt;div className="-mt-px flex divide-x divide-gray-300"&gt;
               &lt;div className="flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)}
                 &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;ArrowTrendingUpIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   WI: {afe.partner_wi.toFixed(6)}%
                 &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="-ml-px flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)}
                 &lt;/div&gt;
@@ -550,13 +550,13 @@ export default function AFE() {
           &lt;div className="flex w-full items-center justify-between space-x-6 p-6"&gt;
             &lt;div className="flex-1 truncate"&gt;
               &lt;div className="flex items-center justify-between space-x-3"&gt;
-                &lt;h3 className="truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Operator: &lt;/span&gt;{afe.operator}&lt;/h3&gt;
-                &lt;span className={`inline-flex shrink-0 items-center border-r rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}&gt;
+                &lt;h3 className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Operator: &lt;/span&gt;{afe.operator}&lt;/h3&gt;
+                &lt;span className={`inline-flex shrink-0 items-center border-r rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm/6 font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}&gt;
                   {afe.partner_status}
                 &lt;/span&gt;
               &lt;/div&gt;
-              &lt;p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Approved by Operator: &lt;/span&gt;{afe.created_at}&lt;/p&gt;
-              &lt;p className="mt-1 truncate text-sm font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;AFE Type: &lt;/span&gt;{afe.afe_type}&lt;/p&gt;
+              &lt;p className="mt-1 truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;Approved by Operator: &lt;/span&gt;{afe.created_at}&lt;/p&gt;
+              &lt;p className="mt-1 truncate text-sm/6 font-medium text-[var(--darkest-teal)]/70"&gt;&lt;span className="font-semibold"&gt;AFE Type: &lt;/span&gt;{afe.afe_type}&lt;/p&gt;
             &lt;/div&gt;
             
           &lt;/div&gt;
@@ -564,21 +564,21 @@ export default function AFE() {
             &lt;div className="-mt-px flex divide-x divide-gray-300"&gt;
               &lt;div className="flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)}
                 &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;ArrowTrendingUpIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   WI: {afe.partner_wi.toFixed(6)}%
                 &lt;/div&gt;
               &lt;/div&gt;
               &lt;div className="-ml-px flex w-0 flex-1"&gt;
                 &lt;div
-                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"&gt;
+                  className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm/6 font-semibold text-gray-900"&gt;
                   &lt;CurrencyDollarIcon aria-hidden="true" className="size-5 text-gray-400" /&gt;
                   {Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)}
                 &lt;/div&gt;

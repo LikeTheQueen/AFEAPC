@@ -144,13 +144,13 @@ export default function GLMapping() {
                 <div className="shadow-lg rounded-sm sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                         <div className="">
-                            <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage you GL Account Code Mappings</h2>
+                            <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage you GL Account Code Mappings</h2>
                             <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to view the GL Account Code Mappings</p><br></br>
                         </div>
 
                         <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
                             <div className="">
-                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Operator of Non-Op AFEs:</h1>
+                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 6 6 xl:text-base">Operator of Non-Op AFEs:</h1>
                                 <div className="">
                                     <OperatorDropdown
                                         onChange={(id) => { setOpAPCID(id) }}
@@ -159,7 +159,7 @@ export default function GLMapping() {
                                 </div>
                             </div>
                             <div className="">
-                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
+                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 6 xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
                                 <div className="">
                                     <PartnerDropdown
                                         onChange={(id) => { setPartnerAPCID(id) }}
@@ -184,7 +184,7 @@ export default function GLMapping() {
                                     (opAPCID === '' && partnerAPCID !== '') ? false : true}
                             className="bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/30 rounded-sm sm:rounded-xl ">
                             <div className="my-8 max-h-80 flex items-center justify-center">
-                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style py-2 px-2 text-sm xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
+                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style py-2 px-2 text-sm/6 xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
                             </div>
 
                         </div>

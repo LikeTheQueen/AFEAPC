@@ -115,14 +115,14 @@ export function StandardNotifcation({
 }: ToastContentProps<string>) {
   return (
     <div className="w-full custom-style rounded-lg shadow-3xl ring-1 ring-[var(--bright-pink)] p-5">
-      <h3 className="text-white text-sm font-normal whitespace-pre-line">{data}</h3>
+      <h3 className="text-white text-sm/6 font-normal whitespace-pre-line">{data}</h3>
         <div className="flex items-center">
                   <div className="flex w-0 flex-1 justify-end">
                     
                     <button
                       type="button"
                       onClick={() => closeToast("confirmed")}
-                      className="px-3 py-2 shrink-0 rounded-md bg-[var(--bright-pink)] text-sm font-medium text-white hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-white ">
+                      className="px-3 py-2 shrink-0 rounded-md bg-[var(--bright-pink)] text-sm/6 font-medium text-white hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-white ">
                       Okay, cool!
                     </button>
                   </div>
@@ -163,14 +163,14 @@ export function FailureNotifcation({
 }: ToastContentProps<string>) {
   return (
     <div className="w-full custom-style rounded-lg shadow-3xl ring-1 ring-[var(--bright-pink)] p-5">
-      <h3 className="text-white text-sm font-normal whitespace-pre-line">{data}</h3>
+      <h3 className="text-white text-sm/6 font-normal whitespace-pre-line">{data}</h3>
         <div className="flex items-center">
                   <div className="flex w-0 flex-1 justify-end">
                     
                     <button
                       type="button"
                       onClick={() => closeToast("confirmed")}
-                      className="px-3 py-2 shrink-0 rounded-md bg-[var(--bright-pink)] text-sm font-medium text-white hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-white ">
+                      className="px-3 py-2 shrink-0 rounded-md bg-[var(--bright-pink)] text-sm/6 font-medium text-white hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-white ">
                       Understood.
                     </button>
                   </div>

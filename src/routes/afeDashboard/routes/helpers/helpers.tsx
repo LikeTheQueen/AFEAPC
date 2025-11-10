@@ -26,12 +26,13 @@ export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | nul
     return user?.operatorRoles
       .filter(role => role.role === 2 || role.role === 1)
       .map(role => role.apc_id);
-  };
+};
 
 export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | null) {
     if (!user) return;
     return user?.partnerRoles
       .filter(role => role.role === 3 || role.role === 1)
       .map(role => role.apc_id);
-  };
+};
+
 

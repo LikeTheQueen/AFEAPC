@@ -303,18 +303,18 @@ export default function CreateNewUser() {
                               </th>
                               <th
                                 scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 View Operated AFEs
                               </th>
                               <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Edit Operator Users
                               </th>
                               <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Operator Library Manager
                               </th>
-                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
+                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
                                 View Billing Details
                               </th>
                             </tr>
@@ -322,14 +322,14 @@ export default function CreateNewUser() {
                           <tbody className="divide-y divide-gray-200 bg-white">
                             {operatorsList.map((role) => (
                               <tr key={role.apc_id}>
-                                <td className="w-full max-w-0 py-2 pr-1 text-sm font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
+                                <td className="w-full max-w-0 py-2 pr-1 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
                                   {role.name}
                                   <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
                                     <br></br>{role.city}, {role.state}
                                     <br></br>{role.zip}</p>
                                 </td>
                                 {[2, 4, 8, 7].map(roleVal => (
-                                  <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+                                  <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
                                     <div className="flex h-6 shrink-0 items-center justify-center">
                                       <div className="group grid size-4 grid-cols-1">
                                         <input
@@ -388,18 +388,18 @@ export default function CreateNewUser() {
                               </th>
                               <th
                                 scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 View Non-Op AFEs
                               </th>
                               <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Edit Non-Op Users
                               </th>
                               <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
                                 Partner Library Manager
                               </th>
-                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
+                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
                                 Approve or Reject Non-Op AFEs
                               </th>
                             </tr>
@@ -407,14 +407,14 @@ export default function CreateNewUser() {
                           <tbody className="divide-y divide-gray-200 bg-white">
                             {partnersList?.map((role) => (
                               <tr key={role.apc_id}>
-                                <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
+                                <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
                                   {role.name}
                                   <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
                                     <br></br>{role.city}, {role.state}
                                     <br></br>{role.zip}</p>
                                 </td>
                                 {[3, 5, 9, 6].map(roleVal => (
-                                  <td key={roleVal} className="px-3 py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+                                  <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
                                     <div className="flex h-6 shrink-0 items-center justify-center">
                                       <div className="group grid size-4 grid-cols-1">
                                         <input
@@ -464,7 +464,7 @@ export default function CreateNewUser() {
                     e.preventDefault();
                     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, newUser.is_super_user, token);
                   }}
-                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
+                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
                   Add New User
                 </button>
                 <button type="button"
@@ -473,7 +473,7 @@ export default function CreateNewUser() {
                     e.preventDefault();
                     handleNewUser('Rachel','Green','elizabeh.rider.shaw@gmail.com','topSecretPassword25!', false, roles, partnerRoles, false, token);
                   }}
-                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
+                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
                   TEST ADD USER
                 </button>
               </div>

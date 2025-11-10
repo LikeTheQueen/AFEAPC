@@ -141,12 +141,12 @@ export default function CreateOperator() {
     <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
+          <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
           <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             Create the Operator with the billing address.  Below add additional addresses to be used as Partner addresses
           </p>
         </div>
-        <form className="bg-white shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
+        <form className="bg-white shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -308,7 +308,7 @@ export default function CreateOperator() {
                 notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
                 
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               Save
             </button>
           </div>
@@ -319,13 +319,13 @@ export default function CreateOperator() {
       </div>
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
+          <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
           <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
           </p>
         </div>
 
-        <form className="bg-white shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
+        <form className="bg-white shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
             singleOpID={true}
@@ -337,7 +337,7 @@ export default function CreateOperator() {
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
-          <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
+          <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
           <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
             Add Addresses to be used when the Operator is a Partner.  Add the billing address (again) if applicable.
           </p>
@@ -348,7 +348,7 @@ export default function CreateOperator() {
           className="mt-6 border-t border-gray-900/20 p-1 text-m font-semibold text-[var(--darkest-teal)] custom-style ">
           The addresses below have been saved</div>
             {operatorPartnerAddresses?.map((address) => (
-              <ol key={address.id} className="p-1 text-sm font-normal text-[var(--darkest-teal)] custom-style ">
+              <ol key={address.id} className="p-1 text-sm/6 font-normal text-[var(--darkest-teal)] custom-style ">
                 {address.street} {address.suite} {address.city} {address.state} {address.zip}
                 </ol>
             ))}
@@ -356,7 +356,7 @@ export default function CreateOperator() {
           </ul>
         </div>
 
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
+        <form className="bg-white shadow-2xl ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               
@@ -477,7 +477,7 @@ export default function CreateOperator() {
                 handleClickSaveAnother(); 
                 notifyStandard(`Operator partner address has been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator partner address IS saved)`);
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
               Save 
             </button>
           </div>

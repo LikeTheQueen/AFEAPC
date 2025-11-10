@@ -121,7 +121,7 @@ useEffect(() => {
           <button
             type="button"
             onClick={handleLogin}
-            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-md/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-gray-300 disabled:text-gray-500" disabled={isLoading || email === ''}>
+            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-md/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || email === ''}>
             {isLoading ? 'Sending Verification Code...' : 'Get Verification Code'}
           </button>
         </div>

@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type OperatorPartnerAddressType, type OperatorPartnerRecord } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformOperatorPartnerRecord } from "src/types/transform";
 import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { updateOperatorAddress, updateOperatorNameAndStatus } from "provider/write";
 import { ToastContainer } from "react-toastify";
 import { notifyStandard } from "src/helpers/helpers";
@@ -30,6 +30,47 @@ export default function OperatorViewAndEdit () {
     const [operatorToEdit, setOperatorToEdit] = useState<OperatorPartnerRecord | null>(null);
     const [open, setOpen] = useState(false)
 
+    const [rowsLimit] = useState(5);
+    const [rowsToShow, setRowsToShow] = useState<OperatorPartnerRecord[]>([]);
+    const [customPagination, setCustomPagination] = useState<number[] | []>([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+
+    const nextPage = () => {
+        const startIndex = rowsLimit * (currentPage + 1);
+        const endIndex = startIndex + rowsLimit;
+        const newArray = operatorsList.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        setCurrentPage(currentPage + 1);
+    };
+    const changePage = (value: number) => {
+        const startIndex = value * rowsLimit;
+        const endIndex = startIndex + rowsLimit;
+        const newArray = operatorsList.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        setCurrentPage(value);
+    };
+    const previousPage = () => {
+        const startIndex = (currentPage - 1) * rowsLimit;
+        const endIndex = startIndex + rowsLimit;
+        const newArray = operatorsList.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        } else {
+            setCurrentPage(0);
+        }
+    };
+
+    useMemo(() => {
+            setCustomPagination(
+                Array(Math.ceil(operatorsList.length / rowsLimit)).fill(null)
+            );
+            setTotalPage(
+                Math.ceil(operatorsList.length / rowsLimit)
+            )
+        }, [operatorsList]);
+
     useEffect(() => {
         if (!loggedInUser || token==='') {
           setLoadingOperators(false);
@@ -51,6 +92,7 @@ export default function OperatorViewAndEdit () {
           const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
           if(isMounted) {
           setOperatorsList(opListTransformed);
+          setRowsToShow(opListTransformed ? opListTransformed.slice(0,rowsLimit) : []);
           }
           }
     
@@ -109,50 +151,52 @@ export default function OperatorViewAndEdit () {
     }
     return (
         <>
-        <div className="px-4 sm:px-10 sm:py-16 divide-y divide-[var(--darkest-teal)]/40 ">
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 divide-x divide-[var(--darkest-teal)]/40">
-                <div className="">
-                    <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
+        <div className="px-4 sm:px-10 sm:py-16">
+        <div className="py-4 sm:py-0"> 
+            <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
+                <div className="md:col-span-2">
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
                     <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs.  The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
                     <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review.  Sorta like the USPS, but better.</p>
                     <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                 </div>
-                <div className="-mx-4 mt-8 sm:-mx-0 md:col-span-2 ">
-                    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30">
+                <div className="md:col-span-5 ">
+                    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-xl">
                 <thead>
-                    <tr>
+                    <tr className="bg-white text-white ">
                         <th scope="col" 
-                            className="hidden py-3.5 pr-3 pl-4 text-left font-semibold text-[var(--darkest-teal)] custom-style sm:pl-0 sm:table-cell">
+                            className="hidden rounded-tl-xl w-3/5 px-4 py-3.5 text-left text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             Company Name
                         </th>
-                        <th scope="col" 
-                            className="hidden px-3 py-3.5 text-center custom-style font-semibold text-[var(--darkest-teal)] sm:table-cell">
+                        <th
+                            scope="col"
+                            className="hidden w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             <span className="sr-only">Edit</span>
                         </th>
-                        <th scope="col" className="hidden py-3.5 pr-4 pl-3 sm:pr-0">
+                        <th scope="col" className="hidden rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             <span className="sr-only">Activate or Deactivate</span>
                         </th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-300 bg-white">
+                <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
 
-                    {operatorsList.map((operator, operatorIdx) => (
+                    {rowsToShow.map((operator, operatorIdx) => (
                         <tr key={operator.apc_id}>
-                            <td className="text-start align-middle max-w-0 py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 ">
+                            <td className="text-base/7 text-start align-middle max-w-0 py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none">
                                 {operator.name} 
                                 <dl className="font-normal">
                                 <dt className="sr-only">Address</dt>
                                 <dd className="mt-1 truncate text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{addressDisplay(operator)}</dd> 
                                 <dt className="sr-only ">Status</dt>
-                                <dd className="mt-1 truncate text-gray-500 flex justify-between">
+                                <dd className="mt-1 flex justify-between">
                                     <span
                                     hidden={!operator.active}
-                                    className="inline-flex items-center rounded-md bg-[var(--bright-pink)] px-3 py-2 text-sm font-semibold text-white custom-style shadow-xl">
+                                    className="inline-flex items-center rounded-full bg-[var(--bright-pink)] px-3 py-2 text-sm/6 font-semibold text-white custom-style">
                                     Active
                                 </span>
                                 <span
                                     hidden={operator.active}
-                                    className="inline-flex items-center rounded-md bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
+                                    className="inline-flex items-center rounded-full bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
                                     Inactive
                                 </span>
                                 <button
@@ -163,10 +207,10 @@ export default function OperatorViewAndEdit () {
                                         notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                     }}
                                     className={
-                                        `sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                                        `sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] 
                                                         ${!operator.active
                                             ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1 -outline-offset-1'}`
+                                            : 'bg-white text-[var(--darkest-teal)] outline-[var(--darkest-teal)] outline-1 -outline-offset-1'}`
                                     }>
                                     {operator.active ? 'Deactivate' : 'Activate'}
                                 </button>
@@ -174,16 +218,15 @@ export default function OperatorViewAndEdit () {
                             </dl>
                             
                             </td>
-                            <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
+                            <td className="hidden px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center align-middle sm:table-cell">
                                 <button
                                     type="button"
                                     onClick={(e: any) => {setOperatorToEdit(operator), setOpen(true)}}
-                                    className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]">
                                     Edit
                                 </button>
-
                             </td>
-                            <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
+                            <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
                                 <button
                                     disabled={(!operator.apc_id && !operator.apc_address_id) ? true : false}
                                     onClick={async (e: any) => {
@@ -192,10 +235,10 @@ export default function OperatorViewAndEdit () {
                                         notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                     }}
                                     className={
-                                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-gray-300 px-3 py-2 text-sm font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                                        `cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]
                                                         ${!operator.active
                                             ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                                            : 'bg-white text-[var(--darkest-teal)] outline-[var(--darkest-teal)] outline-1'}`
                                     }>
                                     {operator.active ? 'Deactivate' : 'Activate'}
                                 </button>
@@ -204,6 +247,50 @@ export default function OperatorViewAndEdit () {
                     ))}
                 </tbody>
                     </table>
+                    <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
+                                                        <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                                                            Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
+                                                            {currentPage == totalPage - 1
+                                                                ? operatorsList?.length
+                                                                : (currentPage + 1) * rowsLimit}{" "}
+                                                            of {operatorsList?.length} Operator
+                                                        </div>
+                                                        <div className="flex">
+                                                            <ul
+                                                                className="flex justify-center items-center align-center gap-x-2 z-30"
+                                                                role="navigation"
+                                                                aria-label="Pagination">
+                                                                <li
+                                                                    className={`flex items-center justify-center w-6 rounded-sm h-6 border-1 border-solid disabled] ${currentPage == 0
+                                                                            ? "bg-white border-[var(--darkest-teal)]/40 text-[var(--darkest-teal)]/50 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                                                                        }`}
+                                                                    onClick={previousPage}>
+                                                                    <ChevronLeftIcon></ChevronLeftIcon>
+                                                                </li>
+                                                                {customPagination?.map((data, index) => (
+                                                                    <li
+                                                                        className={`flex items-center justify-center w-7 rounded-sm h-7 border-1 border-solid bg-white cursor-pointer ${currentPage == index
+                                                                                ? "bg-white border-[var(--bright-pink)]"
+                                                                                : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-1"
+                                                                            }`}
+                                                                        onClick={() => changePage(index)}
+                                                                        key={index}
+                                                                    >
+                                                                        {index + 1}
+                                                                    </li>
+                                                                ))}
+                                                                <li
+                                                                    className={`flex items-center justify-center w-6 rounded-sm h-6 border-1 border-solid disabled] ${currentPage == totalPage - 1
+                                                                            ? "bg-white border-[var(--darkest-teal)]/40 text-[var(--darkest-teal)]/50 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-1"
+                                                                        }`}
+                                                                    onClick={nextPage}>
+                                                                    <ChevronRightIcon></ChevronRightIcon>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
 
                 </div>
             </div>
@@ -249,6 +336,7 @@ export default function OperatorViewAndEdit () {
           </div>
         </div>
       </Dialog>
+        </div>
         </div>
          <ToastContainer />
         </>

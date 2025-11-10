@@ -188,17 +188,17 @@ export default function PartnerMapping() {
     return (
         <>
             <div>
-                <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
+                <div className="shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                                 <div className="">
-                                    <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
+                                    <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
                                         <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
                                         <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
                                         <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
                                  </div>
                                  <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                         <div className="">
-                                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-base">Select an Operator to Create Mappings For:</h1>
+                                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to Create Mappings For:</h1>
                                         <div className="">
                                         <OperatorDropdown 
                                             onChange={(id) => {setOpAPCID(id)} }
@@ -218,24 +218,25 @@ export default function PartnerMapping() {
                         <LoadingPage></LoadingPage>
                     </div>
                 ) : (
-                    <div className="divide-y divide-gray-900/20">
+                    <div className="divide-y divide-gray-900/20 
+                    ">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                             <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Partner Library in Your AFE System</h2>
+                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm/6 xl:text-base">Partner Library in Your AFE System</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div
                                         hidden={(opAPCID === '') ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
-                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">You haven't selected an Operator from the dropdown.</h2>
+                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base">You haven't selected an Operator from the dropdown.</h2>
                                     </div>
                                     <div
                                         hidden={(opAPCID !== '' && sourcePartnerList.length < 1) ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
-                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">Interesting...  Very interesting.  The Partner Library from your source system has not been loaded for the Operator selected.  Head back over there and upload the file, will ya?</h2>
+                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base">Interesting...  Very interesting.  The Partner Library from your source system has not been loaded for the Operator selected.  Head back over there and upload the file, will ya?</h2>
                                     </div>
                                     <div
                                         hidden={(opAPCID !== '' && sourcePartnerList.length > 0) ? false : true}
-                                        className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
+                                        className="bg-white mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                                             <div className="inline-block min-w-full py-2 align-middle">
                                                 <table className="min-w-full">
@@ -243,7 +244,7 @@ export default function PartnerMapping() {
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
+                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
                                                                 Partner Name and Address
                                                             </th>
 
@@ -320,7 +321,7 @@ export default function PartnerMapping() {
                                 </div>
                             </div>
                             <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="truncate 2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm xl:text-base">Partner Library in AFE Partner Connections</h2>
+                                <h2 className="truncate 2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm/6 xl:text-base">Partner Library in AFE Partner Connections</h2>
                                 <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
                                     <div className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
@@ -330,7 +331,7 @@ export default function PartnerMapping() {
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
+                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
                                                                 Partner Name and Address
                                                             </th>
                                                             <th
@@ -403,20 +404,20 @@ export default function PartnerMapping() {
 
                             <button
                                 disabled={(currentPartnerMapDisplay?.apc_partner_id && currentPartnerMapDisplay.source_partner_id) ? false : true}
-                                className="cursor-pointer disabled:cursor-not-allowed w-full lg:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end "
+                                className="cursor-pointer disabled:cursor-not-allowed w-full lg:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end "
                                 onClick={(e) => { savePartnerMapping() }}>
                                 Create Mapping
                             </button>
                             <div className="w-full sm:w-125 flex flex-col lg:flex-row gap-5 justify-end items-center ">
                                 <button
                                     disabled={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                                     onClick={(e) => { setCumlativePartnerDisplay([]), notifyStandard(`Partner Mappings cleared.  No leaks, no flare, just fresh pipe.\n\n(TLDR: Partner Mappings reset without saving)`) }}>
                                     Clear Mappings
                                 </button>
                                 <button
                                     disabled={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                                     onClick={(e) => { savePartnerMappingRecords(), notifyStandard(`Partner Mappings have been saved.  Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`) }}>
                                     Save Mappings
                                 </button>

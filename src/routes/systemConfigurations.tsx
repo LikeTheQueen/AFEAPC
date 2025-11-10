@@ -11,7 +11,7 @@ export default function TestExecuteConnections() {
  
   return (
 
-    <div className="mt-10">
+    <div className="bg-white">
       <TestExecuteEstablishedConnection></TestExecuteEstablishedConnection>
       <TestExecuteManual></TestExecuteManual>
     </div>

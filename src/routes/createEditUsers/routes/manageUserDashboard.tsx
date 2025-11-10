@@ -64,7 +64,7 @@ export default function UserPermissionDashboard() {
 
   return (
     <>
-    <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
+    <div className="px-4 sm:px-10 sm:py-16"> 
     {userListLoading ? (
       <LoadingPage></LoadingPage>
     ) : ( 

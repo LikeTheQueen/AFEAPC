@@ -109,12 +109,12 @@ export default function OperatorViewAndEdit () {
                                 <dd className="mt-1 truncate text-gray-500 flex justify-between">
                                     <span
                                     hidden={!operator.active}
-                                    className="inline-flex items-center rounded-md bg-[var(--bright-pink)] px-3 py-2 text-sm font-semibold text-white custom-style shadow-xl">
+                                    className="inline-flex items-center rounded-md bg-[var(--bright-pink)] px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-xl">
                                     Active
                                 </span>
                                 <span
                                     hidden={operator.active}
-                                    className="inline-flex items-center rounded-md bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
+                                    className="inline-flex items-center rounded-md bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
                                     Inactive
                                 </span>
                                 <button
@@ -122,7 +122,7 @@ export default function OperatorViewAndEdit () {
                                     hidden={operator.active}
                                     disabled={operator.active}
                                     //onClick={(e: any) => handleReactivate(user.id)}
-                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm/6 font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Activate Op125
                                 </button>
                                 <button
@@ -130,32 +130,32 @@ export default function OperatorViewAndEdit () {
                                     hidden={!operator.active}
                                     disabled={!operator.active}
                                     //onClick={(e: any) => handleDeactivate(user.id)}
-                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="sm:hidden rounded-md bg-white px-3 py-2 text-sm/6 font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Deactivate Op125
                                 </button>
                                 </dd>
                             </dl>
                             
                             </td>
-                            <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
+                            <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
                                 <button
                                     type="button"
                                     //hidden={operator.active}
                                     //disabled={operator.active}
                                     onClick={(e: any) => {setOperatorToEdit(operator), setOpen(true)}}
-                                    className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Edit
                                 </button>
 
                             </td>
-                            <td className="hidden align-middle px-3 py-4 text-sm lg:whitespace-nowrap text-center sm:table-cell">
+                            <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
                                 
                                 <button
                                     type="button"
                                     hidden={operator.active}
                                     disabled={operator.active}
                                     //onClick={(e: any) => handleReactivate(user.id)}
-                                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="rounded-md bg-white px-3 py-2 text-sm/6 font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Activate
                                 </button>
                                 <button
@@ -163,7 +163,7 @@ export default function OperatorViewAndEdit () {
                                     hidden={!operator.active}
                                     disabled={!operator.active}
                                     //onClick={(e: any) => handleDeactivate(user.id)}
-                                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
+                                    className="rounded-md bg-white px-3 py-2 text-sm/6 font-semibold text-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 shadow-md hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] transition-colors ease-in-out duration-200 custom-style disabled:bg-gray-300 disabled:text-gray-500">
                                     Deactivate
                                 </button>
                                 

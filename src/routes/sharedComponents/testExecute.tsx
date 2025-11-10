@@ -29,25 +29,24 @@ export default function TestExecuteEstablishedConnection() {
     
   return (
     <>
-    <div className="mt-10">
-      <div className="grid grid-cols-1 gap-x-30 gap-y-10 border-b-4 border-gray-900/20 pb-12 md:grid-cols-5">
-        <div className="w-full md:col-span-2">
-          <h2 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Test the Current Execute Connection</h2>
-          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
-            Select an Operator and we'll poke the integration to make sure it's working.  If the test fails AFEs will <span className="font-bold text-[var(--darkest-teal)] custom-style">not</span> sync to AFE Partner Connections.
-          </p>
-          
-        </div>
-        <div className="w-2/3 col-span-3 grid grid-cols-1 gap-x-8 gap-y-6 ">
+    <div className="shadow-xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-6 mb-5">
+    <div className="">
+            <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 ">
+                <div className="md:col-span-3">
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Test the Current Execute Connection</h2>
+                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Select an Operator and we'll poke the integration to make sure it's working.  If the test fails AFEs will <span className="font-bold text-[var(--darkest-teal)] custom-style">not</span> sync to AFE Partner Connections.</p>
+                </div>
+                <div className="sm:w-3/4 bg-white shadow-md sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-6 md:col-span-4">
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-6 ">
           <div className="">
-            <h1 className="mb-1 custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Select an Operator to Test the Connection For:</h1>
+            <h1 className="mb-1 custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to Test the Connection For:</h1>
             <OperatorDropdown
               onChange={(id) => { setOpAPCID(id) }}
               limitedList={true}
             />
             <div className="flex justify-end mt-6">
               <button
-                className="cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] w-35"
                 disabled={opAPCID === '' ? true : false}
                 onClick={(e: any) => { handleTestConnection() }}
               >Run Test</button>
@@ -94,7 +93,10 @@ export default function TestExecuteEstablishedConnection() {
                 </div>
             </div>
         </div>
-      </div>
+
+                </div>
+            </div>
+    </div>
     </div>
     <ToastContainer />
     </>

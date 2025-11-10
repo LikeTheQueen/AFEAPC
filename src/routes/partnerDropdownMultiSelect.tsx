@@ -121,7 +121,7 @@ export function PartnerDropdownMultiSelect({ onChange, limitedList, initialSelec
             </div>
           </div>
           <div className="text-sm/6">
-            <label htmlFor="partner" className="text-sm font-medium text-[var(--dark-teal)] custom-style">
+            <label htmlFor="partner" className="text-sm/6 font-medium text-[var(--dark-teal)] custom-style">
               {option.apc_name}
             </label>
             <p id="partner-address" className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">

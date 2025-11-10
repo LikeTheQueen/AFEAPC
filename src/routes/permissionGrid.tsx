@@ -207,8 +207,10 @@ useEffect(() => {
     hidden={groupByUserThenOperatorRole.length > 0 ? false : true}>
       <div className="md:col-span-2">
         <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
      
@@ -236,18 +238,18 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Operated AFEs
               </th>
               <th scope="col" 
-                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Edit Operator Users
               </th>
               <th scope="col" 
-                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Manage Libraries
               </th>
-              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Billing Details
               </th>
             </tr>
@@ -257,14 +259,14 @@ useEffect(() => {
           {user.apcrole.map(operator => (
             <React.Fragment key={operator.apc_id}>
         <tr>
-          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             {operator.apc_name} <span className="font-normal justify-end text-end mt-1 w-full text-xs">
               <br></br>{operator.apc_street} {operator.apc_suite} {operator.apc_city}, {operator.apc_state} {operator.apc_zip}</span>  
           </td>
          
         </tr>
         <tr className="border-b border-b-[var(--darkest-teal)]  sm:border-none">
-          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             
             {operator.apc_name}
             <p className="font-normal justify-end text-end mt-1 w-full text-xs">{operator.apc_street} {operator.apc_suite}
@@ -274,7 +276,7 @@ useEffect(() => {
             
           </td>
           {[2, 4, 8, 7].map(roleVal => (
-        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
           <div className="flex shrink-0 items-center justify-center">
             <div className="group grid size-4 grid-cols-1">  
               
@@ -328,7 +330,7 @@ useEffect(() => {
         <button
         disabled={opRolesWrite.length>0 ? false : true}
         hidden={readOnly}
-        className="w-60 rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
+        className="w-60 cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
         onClick={(e) => {writeorUpadateUserRoles(opRolesWrite,'OPERATOR_USER_PERMISSIONS'), setOpRolesWrite([])}}>
             Save Operated Permissions
         </button>
@@ -341,8 +343,10 @@ useEffect(() => {
     hidden={groupByUserThenPartnerRole.length >0 ? false : true }>
       <div className="md:col-span-2 ">
         <h2 className="text-base/7 custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.  You must have edit rights to make changes.</p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user.  For changes please contact your administrator.  Changes must be made from the Manage Users Screen.</p>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
+          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
+          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
       
@@ -370,18 +374,18 @@ useEffect(() => {
               </th>
               <th
                 scope="col"
-                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                className="sm:rounded-tl-xl w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 View Non-Op AFEs
               </th>
               <th scope="col" 
-                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Edit Partner Users
               </th>
               <th scope="col" 
-                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                  className="w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Manage Libraries
               </th>
-              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+              <th scope="col" className="sm:rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-sm/6 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                 Accept/Reject Non-Op AFEs
               </th>
             </tr>
@@ -391,14 +395,14 @@ useEffect(() => {
           {user.apcrole.map(operator => (
            <React.Fragment key={operator.apc_id}>
         <tr >
-          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <td colSpan={5} className="sm:hidden table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             {operator.apc_name} <span className="font-normal justify-end text-end mt-1 w-full text-xs">
               <br></br>{operator.apc_street} {operator.apc_suite} {operator.apc_city}, {operator.apc_state} {operator.apc_zip}</span>  
           </td>
          
         </tr>
         <tr className="border-b border-b-[var(--darkest-teal)]  sm:border-none">
-          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
+          <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             
             {operator.apc_name}
             <p className="font-normal justify-end text-end mt-1 w-full text-xs">{operator.apc_street} {operator.apc_suite}
@@ -408,7 +412,7 @@ useEffect(() => {
             
           </td>
           {[3, 5, 9, 6].map(roleVal => (
-        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm text-[var(--dark-teal)] lg:table-cell">
+        <td key={roleVal} className="px-3 py-3 sm:py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
           <div className="flex shrink-0 items-center justify-center">
             <div className="group grid size-4 grid-cols-1">  
               
@@ -461,7 +465,7 @@ useEffect(() => {
         <button
         disabled={partnerRolesWrite.length>0 ? false : true}
         hidden={readOnly}
-        className="w-60 rounded-md bg-[var(--dark-teal)] disabled:bg-gray-300 disabled:text-gray-500 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
+        className="w-60 cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
         onClick={(e) => {writeorUpadateUserRoles(partnerRolesWrite, 'PARTNER_USER_PERMISSIONS'), setPartnerRolesWrite([])}}>
             Save Non-Op Permissions
         </button>

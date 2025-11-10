@@ -113,13 +113,13 @@ export default function PartnerMappingView() {
             <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
                                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                                             <div className="">
-                                                <h2 className="custom-style text-sm sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage your Partner Mappings</h2>
+                                                <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage your Partner Mappings</h2>
                                                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
                                                     <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
                                              </div>
                                              <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                                     <div className="">
-                                                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm xl:text-base">Select an Operator to View Mappings For:</h1>
+                                                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to View Mappings For:</h1>
                                                     <div className="">
                                                     <OperatorDropdown 
                                                         onChange={(id) => {setOpAPCID(id)} }

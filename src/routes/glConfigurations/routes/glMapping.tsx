@@ -195,7 +195,7 @@ export default function GLMapping() {
          
          <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                 <div className="">
-                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Operator of Non-Op AFEs:</h1>
+                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 xl:text-base">Operator of Non-Op AFEs:</h1>
                 <div className="">
                 <OperatorDropdown 
                     onChange={(id) => {setOpAPCID(id)} }
@@ -204,7 +204,7 @@ export default function GLMapping() {
                 </div>
                 </div>
                 <div className="">
-                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
+                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
                 <div className="">
                 <PartnerDropdown 
                     onChange={(id) => {setPartnerAPCID(id)} }
@@ -258,7 +258,7 @@ export default function GLMapping() {
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
+                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
                                                                 Account Group, Number and Description
                                                             </th>
                                                             <th
@@ -336,7 +336,7 @@ export default function GLMapping() {
                                     <div
                                         hidden={(partnerAPCID !== '' && opAPCID !=='' && partnerAccountCodes.length < 1) ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
-                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm xl:text-base">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded head back to the upload screen to get those accounts in the system.{<br></br>}{<br></br>}If account codes were uploaded they may take a few minutes to process.</h2>
+                                        <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded head back to the upload screen to get those accounts in the system.{<br></br>}{<br></br>}If account codes were uploaded they may take a few minutes to process.</h2>
                                     </div>
                                     <div 
                                     hidden={(partnerAPCID !== '' && partnerAccountCodes.length > 0) ? false : true}
@@ -348,7 +348,7 @@ export default function GLMapping() {
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
+                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
                                                                 Account Group, Number and Description
                                                             </th>
                                                             <th
@@ -425,20 +425,20 @@ export default function GLMapping() {
 
                             <button
                                 disabled={(currentGLMap?.apc_operator_id && currentGLMap.apc_partner_id && currentGLMap.operator_account_number && currentGLMap.partner_account_number) ? false : true}
-                                className="cursor-pointer disabled:cursor-not-allowed w-full lg:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end "
+                                className="cursor-pointer disabled:cursor-not-allowed w-full lg:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end "
                                 onClick={(e) => { saveGLMapping() }}>
                                 Create Mapping
                             </button>
                             <div className="w-full sm:w-125 flex flex-col lg:flex-row gap-5 justify-end items-center ">
                                 <button
                                     disabled={(cumaltiveGLMap.length > 0 ) ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                                     onClick={(e) => { setCumaltiveGLMap([]), setRowsToShow([]),notifyStandard(`GL Account Code Mappings cleared.  No leaks, no flare, just fresh pipe.\n\n(TLDR: GL Account Code Mappings reset without saving)`) }}>
                                     Clear Mappings
                                 </button>
                                 <button
                                     disabled={(cumaltiveGLMap.length > 0 ) ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-gray-300 disabled:text-gray-500 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                                    className="cursor-pointer disabled:cursor-not-allowed w-full xl:w-60 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                                     onClick={(e) => { saveGLMappingRecords(), notifyStandard(`GL Account Code Mappings have been saved.  Let's call it a clean tie-in.\n\n(TLDR: GL Account Code Mappings ARE saved)`) }}>
                                     Save Mappings
                                 </button>

@@ -85,9 +85,9 @@ if (loading) return <LoadingPage/>
     <div className="px-4 py-6 sm:p-8">
       <ul role="list" className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2">
         {gridData.map((partner) => (
-          <li key={partner.apc_id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
+          <li key={partner.apc_id} className="col-span-1 flex rounded-md shadow-lg ">
             <div
-              className={`${partner.apc_op_name ? "bg-[var(--bright-pink)]" : "bg-gray-200"} flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white`}>
+              className={`${partner.apc_op_name ? "bg-[var(--bright-pink)]" : "bg-gray-200"} flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm/6 font-medium text-white`}>
               <div className="group grid size-6 grid-cols-1">          
                 <input
                   type="checkbox"
@@ -142,7 +142,7 @@ if (loading) return <LoadingPage/>
                 e.preventDefault();
                 updatePartnerWithOpIDChange();
                 }}
-                  className="rounded-md bg-[var(--darkest-teal)] disabled:bg-gray-300 px-3 py-2 text-sm font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+                  className="rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-lg hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                     Save 
                   </button>
     </div>

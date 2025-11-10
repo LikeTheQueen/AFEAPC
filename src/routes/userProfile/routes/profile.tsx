@@ -81,7 +81,7 @@ export default function Profile() {
                                         <div>
                                             <button
                                                 type="button"
-                                                className="rounded-md bg-[var(--darkest-teal)] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style">
+                                                className="rounded-md bg-[var(--darkest-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-xs hover:bg-[var(--bright-pink)] custom-style">
                                                 Change avatar
                                             </button>
                                             <p className="mt-2 text-xs/5 text-[var(--darkest-teal)] custom-style-long-text">JPG, GIF or PNG. 1MB max.</p>

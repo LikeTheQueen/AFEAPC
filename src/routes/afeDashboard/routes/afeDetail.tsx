@@ -275,7 +275,7 @@ console.log(file)
                   <div className="flex gap-x-4 sm:gap-x-6">
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Approved', 'The partner marked the AFE as approved', 'action', token),
                         setButtonDisabled(true),
@@ -291,7 +291,7 @@ console.log(file)
                     </button>
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="rounded-md bg-white disabled:bg-gray-200 disabled:text-gray-400 disabled:outline-none px-3 py-2 text-sm font-semibold custom-style text-[var(--darkest-teal)] shadow-xs transition-colors ease-in-out duration-300 hover:bg-red-800 hover:text-white outline-2 -outline-offset-2 outline-[var(--dark-teal)] hover:outline-red-800"
+                      className="rounded-md bg-white disabled:bg-gray-200 disabled:text-gray-400 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs transition-colors ease-in-out duration-300 hover:bg-red-800 hover:text-white outline-2 -outline-offset-2 outline-[var(--dark-teal)] hover:outline-red-800"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Rejected', 'The partner marked the AFE as rejected', 'action', token),
                         setButtonDisabled(true),
@@ -311,7 +311,7 @@ console.log(file)
                   <div className="flex items-center gap-x-4 sm:gap-x-6">
                     <button
                       hidden={doesUserHavePartnerViewAFERole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         
                         handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action', token),
@@ -323,7 +323,7 @@ console.log(file)
                     
                     <button
                       hidden={doesUserHaveOperatorViewAFERole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
                         setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));

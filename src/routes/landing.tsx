@@ -119,7 +119,7 @@ return <div>
                             </div>
                         </div>
                         <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0">
-                            <button type="submit" className="inline-flex items-center justify-center w-full px-12 py-1 text-sm font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:bg-[var(--bright-pink)]/80 hover:text-white">Let's Talk</button>
+                            <button type="submit" className="inline-flex items-center justify-center w-full px-12 py-1 text-sm/6 font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:bg-[var(--bright-pink)]/80 hover:text-white">Let's Talk</button>
                         </div>
                     </div>
 
