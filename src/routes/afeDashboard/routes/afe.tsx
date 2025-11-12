@@ -92,7 +92,7 @@ export default function AFE() {
   const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
   setOperatedAFEs(opAFEs);
   
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true );
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
   setNonOperatedAFEs(nonOpAFEs);    
 };
@@ -135,7 +135,6 @@ export default function AFE() {
     <>
     <div className="px-4 sm:px-10 sm:py-4">
       <div className="h-4 backdrop-blur-xs sm:sticky z-11 sm:top-16"></div>
-      
       <div className="grid grid-cols-1 sm:hidden">
         {}
         <select
@@ -215,9 +214,9 @@ export default function AFE() {
     </div>
       </div>
       </div>
-      <div hidden ={(filteredNonOperatedAFEs.length>0 ) ? true : false}>
+      <div hidden ={(filteredNonOperatedAFEs.length > 0 || nonOperatedAFEs.length < 1) ? true : false}>
       {
-      noAFEsToView('There are no Non-Operated AFEs to view')
+      noAFEsToView('There are nonoioj Non-Operated AFEs to view')
       }
       </div>
       <ul role="list" hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? false : true} className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" data-testid="NonOperatedAFElist">
@@ -315,7 +314,7 @@ export default function AFE() {
     </div>
       </div>
       </div>
-      <div hidden ={(filteredOperatedAFEs.length>0 ) ? true : false}>
+      <div hidden ={(filteredOperatedAFEs.length>0 || operatedAFEs.length < 1) ? true : false}>
       {
       noAFEsToView('There are no Operated AFEs to view')
       }

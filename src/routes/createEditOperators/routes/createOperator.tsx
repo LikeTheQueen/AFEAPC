@@ -143,17 +143,17 @@ export default function CreateOperator() {
         <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
           <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
-            Create the Operator with the billing address.  Below add additional addresses to be used as Partner addresses
+            Create Operator with the billing address.  Below add additional addresses to be used as Partner addresses
           </p>
         </div>
-        <form className="bg-white shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
-            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Operator Name
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
                     <input
                       id="name"
@@ -164,7 +164,7 @@ export default function CreateOperator() {
                       value={operator.name}
                       onChange={handleOperatorNameChange}
                       autoFocus={true}
-                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-[var(--dark-teal)] placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                     />
                   </div>
                 </div>
@@ -173,7 +173,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="street"
                     name="street"
@@ -189,7 +189,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="suite"
                     name="suite"
@@ -205,7 +205,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="city"
                     name="city"
@@ -221,7 +221,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="state"
                     name="state"
@@ -237,7 +237,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="zip"
                     name="zip"
@@ -253,7 +253,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="grid grid-cols-1 ">
                   <select
                     id="country"
                     name="country"
@@ -276,7 +276,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Source System for AFEs
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="grid grid-cols-1 ">
                   <select
                     id="source_system"
                     name="source_system"
@@ -308,7 +308,7 @@ export default function CreateOperator() {
                 notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
                 
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save
             </button>
           </div>
@@ -325,7 +325,7 @@ export default function CreateOperator() {
           </p>
         </div>
 
-        <form className="bg-white shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-1 mb-5 md:col-span-5">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
             singleOpID={true}
@@ -356,7 +356,7 @@ export default function CreateOperator() {
           </ul>
         </div>
 
-        <form className="bg-white shadow-2xl ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-5">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-5">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               
@@ -364,7 +364,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="street"
                     name="street"
@@ -380,7 +380,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="suite"
                     name="suite"
@@ -397,7 +397,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="city"
                     name="city"
@@ -414,7 +414,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="state"
                     name="state"
@@ -431,7 +431,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     id="zip"
                     name="zip"
@@ -448,7 +448,7 @@ export default function CreateOperator() {
                 <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="grid grid-cols-1 ">
                   <select
                     id="country"
                     name="country"
@@ -477,7 +477,7 @@ export default function CreateOperator() {
                 handleClickSaveAnother(); 
                 notifyStandard(`Operator partner address has been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator partner address IS saved)`);
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save 
             </button>
           </div>
