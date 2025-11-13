@@ -170,19 +170,19 @@ export default function PartnerFileUpload() {
 
   return (
     <>
-    <div className="shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+    <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                 <div className="">
-                    <h2 className="custom-style text-sm/6 6 6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Upload Partner Library from Your AFE System</h2>
-                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p><br></br>
-                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span>
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Upload Partner Library from Your AFE System</h2>
+                        <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p><br></br>
+                        <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span>
                         <br></br><br></br>Do <span className="font-semibold">NOT</span> include your own addresses.  Only Partner Addresses should be uploaded.</p>
                  </div>
                  <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                         <div className="">
-                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to upload Partners For:</h1>
+                        <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to upload Partners For:</h1>
                         <div className="flex flex-col lg:flex-row w-1/2">
-                                        <div className='grow m-4 '>
+                                        <div className='grow m-3 '>
                                             <OperatorDropdownMultiSelect 
                                                 onChange={(ids) => {setOpAPCIDArray(ids)} }
                                                 limitedList={true}
@@ -191,11 +191,11 @@ export default function PartnerFileUpload() {
                                             />
                                             </div>
                                       </div>
-                        <div className="mt-5">
+                        <div className="mt-4">
                               <label
                                 htmlFor="file-upload">
                                 <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length===0}/>
-                                <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-4 py-3 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
+                                <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
                        peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
                               </label>
                             </div>
@@ -209,7 +209,7 @@ export default function PartnerFileUpload() {
     </div>
     
         <div className="bg-white">
-                <table className="table-auto min-w-full ring-1 ring-[var(--darkest-teal)]/30">
+                <table className="table-auto min-w-full ring-1 ring-[var(--darkest-teal)]/70 rounded-t-md">
                     <thead>
                     <tr>
                         {expectedHeaders.map((header, headerIdx) => (
@@ -252,24 +252,24 @@ export default function PartnerFileUpload() {
           </div>
           <div className="flex">
             <ul
-              className="flex justify-center items-center align-center gap-x-[10px] z-30"
+              className="flex justify-center items-center align-center gap-x-2 z-30"
               role="navigation"
               aria-label="Pagination">
               <li
-                className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
+                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
                   currentPage == 0
-                    ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                    : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                 }`}
                 onClick={previousPage}>
                 <ChevronLeftIcon></ChevronLeftIcon>
               </li>
               {customPagination?.map((data, index) => (
                 <li
-                  className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[2px] border-solid bg-white cursor-pointer ${
+                  className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${
                     currentPage == index
-                      ? "border-[var(--bright-pink)] pointer-events-none"
-                      : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
+                      ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                      : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                   }`}
                   onClick={() => changePage(index)}
                   key={index}
@@ -278,10 +278,10 @@ export default function PartnerFileUpload() {
                 </li>
               ))}
               <li
-                className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
+                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
                   currentPage == totalPage - 1
-                    ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                    : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                 }`}
                 onClick={nextPage}>
                 <ChevronRightIcon></ChevronRightIcon>
@@ -292,13 +292,13 @@ export default function PartnerFileUpload() {
         <div className="w-full flex justify-end sm:justify-end flex-col sm:flex-row gap-5 mt-5 pt-5 items-center border-t">
             <button
                     disabled={data.length>0 ? false : true}
-                    className="w-full sm:w-60 rounded-md bg-white outline-[var(--darkest-teal)] outline-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
+                    className="w-full sm:w-60 cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                     onClick={(e) => {setData([]),setRowsToShow([]),setIsDisabled(false),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: Partners were NOT saved)`)}}>
                         Cancel
                     </button>
                     <button
                     disabled={data.length>0 ? false : true}
-                    className="w-full sm:w-60 rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end"
+                    className="w-full sm:w-60 cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                     onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`)}}>
                         Save Partner List
                     </button>

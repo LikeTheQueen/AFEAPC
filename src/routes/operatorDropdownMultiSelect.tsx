@@ -65,7 +65,7 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
   
   return (
     <>
-  <div className="border rounded-md max-h-50 min-h-50 overflow-y-auto shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 ">
+  <div className="border rounded-lg max-h-50 min-h-50 overflow-y-auto shadow-xl ring-1 ring-[var(--darkest-teal)]/50 p-2 ">
   <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">Operator(s):</h1>
   
   {operatorsList.map((option) => (
@@ -106,7 +106,7 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
             </div>
           </div>
           <div className="text-sm/6">
-            <label htmlFor="operator" className="text-sm/6 font-medium text-[var(--dark-teal)] custom-style">
+            <label htmlFor="operator" className="text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
               {option.name}
             </label>
             <p id="operator-address" className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">

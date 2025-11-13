@@ -128,7 +128,7 @@ useEffect(() => {
           as={NavLink}
           to={item.href}
           onClick={e => handleParentTabChange(item.id)}
-          className={`inline-flex flex-1 justify-center items-center px-4 py-3 custom-style transition-colors ease-in-out duration-300 
+          className={`inline-flex flex-1 justify-center items-center px-4 py-3 custom-style transition-colors ease-in-out duration-300 text-base/7
             ${item.current
                   ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
                   : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--darkest-teal)] hover:text-white hover:font-semibold font-normal hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-[var(--bright-pink)]'}

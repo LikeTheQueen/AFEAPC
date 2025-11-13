@@ -5,7 +5,8 @@ import { transformOperatorPartnerRecord } from "src/types/transform";
 import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { updateOperatorAddress, updateOperatorNameAndStatus } from "provider/write";
 import { ToastContainer } from "react-toastify";
 import { notifyStandard } from "src/helpers/helpers";
@@ -91,8 +92,8 @@ export default function OperatorViewAndEdit () {
           if(opListResult.ok) {
           const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
           if(isMounted) {
-          setOperatorsList(opListTransformed);
-          setRowsToShow(opListTransformed ? opListTransformed.slice(0,rowsLimit) : []);
+          setOperatorsList(opListTransformed.sort((a,b) => a.name.localeCompare(b.name)));
+          setRowsToShow(opListTransformed ? opListTransformed.sort((a,b) => a.name.localeCompare(b.name)).slice(0,rowsLimit) : []);
           }
           }
     
@@ -261,18 +262,18 @@ export default function OperatorViewAndEdit () {
                                                                 role="navigation"
                                                                 aria-label="Pagination">
                                                                 <li
-                                                                    className={`flex items-center justify-center w-6 rounded-sm h-6 border-1 border-solid disabled] ${currentPage == 0
-                                                                            ? "bg-white border-[var(--darkest-teal)]/40 text-[var(--darkest-teal)]/50 pointer-events-none"
-                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
+                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                                         }`}
                                                                     onClick={previousPage}>
                                                                     <ChevronLeftIcon></ChevronLeftIcon>
                                                                 </li>
                                                                 {customPagination?.map((data, index) => (
                                                                     <li
-                                                                        className={`flex items-center justify-center w-7 rounded-sm h-7 border-1 border-solid bg-white cursor-pointer ${currentPage == index
-                                                                                ? "bg-white border-[var(--bright-pink)]"
-                                                                                : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-1"
+                                                                        className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
+                                                                                ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                                                                                : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                                             }`}
                                                                         onClick={() => changePage(index)}
                                                                         key={index}
@@ -281,9 +282,9 @@ export default function OperatorViewAndEdit () {
                                                                     </li>
                                                                 ))}
                                                                 <li
-                                                                    className={`flex items-center justify-center w-6 rounded-sm h-6 border-1 border-solid disabled] ${currentPage == totalPage - 1
-                                                                            ? "bg-white border-[var(--darkest-teal)]/40 text-[var(--darkest-teal)]/50 pointer-events-none"
-                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-1"
+                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
+                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                                         }`}
                                                                     onClick={nextPage}>
                                                                     <ChevronRightIcon></ChevronRightIcon>
@@ -308,14 +309,14 @@ export default function OperatorViewAndEdit () {
                 <div className="relative flex h-full flex-col overflow-y-auto bg-white py-1 shadow-xl">
                   <div className="px-4 sm:px-6">
                     <div className="flex items-start justify-between">
-                      <DialogTitle className="">
+                      <DialogTitle className="mt-6">
                         <p className="custom-style font-semibold text-[var(--darkest-teal)]">Edit the Operator Billing Address</p>
                       </DialogTitle>
-                      <div className="ml-3 flex items-center">
+                      <div className="ml-3 mt-4 flex items-center">
                         <button
                           type="button"
                           onClick={() => {setOpen(false), setOperatorToEdit(null)}}
-                          className="relative rounded-md text-gray-400 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+                          className="relative rounded-md text-[var(--darkest-teal)]/70 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                           <span className="absolute -inset-2.5" />
                           <span className="sr-only">Close panel</span>
                           <XMarkIcon aria-hidden="true" className="size-6" />

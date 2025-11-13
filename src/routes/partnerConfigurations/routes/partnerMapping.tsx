@@ -188,17 +188,17 @@ export default function PartnerMapping() {
     return (
         <>
             <div>
-                <div className="shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+                <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                                 <div className="">
-                                    <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
-                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
-                                        <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
+                                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
+                                        <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                                        <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
+                                        <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
                                  </div>
-                                 <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                                 <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                         <div className="">
-                                        <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to Create Mappings For:</h1>
+                                        <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to Create Mappings For:</h1>
                                         <div className="">
                                         <OperatorDropdown 
                                             onChange={(id) => {setOpAPCID(id)} }
@@ -218,12 +218,11 @@ export default function PartnerMapping() {
                         <LoadingPage></LoadingPage>
                     </div>
                 ) : (
-                    <div className="divide-y divide-gray-900/20 
-                    ">
+                    <div className="divide-y divide-[var(--darkest-teal)]/40 mt-10">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
-                            <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm/6 xl:text-base">Partner Library in Your AFE System</h2>
-                                <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
+                            <div className="divide-y divide-[var(--darkest-teal)]/40 ">
+                                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Partner Library in Your AFE System</h2>
+                                <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 ">
                                     <div
                                         hidden={(opAPCID === '') ? false : true}
                                         className="mt-8 max-h-80 flex items-center justify-center">
@@ -320,9 +319,9 @@ export default function PartnerMapping() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="divide-y divide-gray-900/20 ">
-                                <h2 className="truncate 2xl:w-3/4 font-semibold text-[var(--darkest-teal)] custom-style text-sm/6 xl:text-base">Partner Library in AFE Partner Connections</h2>
-                                <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl ">
+                            <div className="divide-y divide-[var(--darkest-teal)]/40 ">
+                                <h2 className="truncate text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Partner Library in AFE Partner Connections</h2>
+                                <div className="bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl ">
                                     <div className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                                             <div className="inline-block min-w-full py-2 items-center">
@@ -331,7 +330,7 @@ export default function PartnerMapping() {
                                                         <tr>
                                                             <th
                                                                 scope="col"
-                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
+                                                                className="sticky top-0 z-10 border-b border-gray-900 bg-white/45 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter sm:pl-10 lg:pl-10">
                                                                 Partner Name and Address
                                                             </th>
                                                             <th
@@ -517,52 +516,52 @@ export default function PartnerMapping() {
                                     
                             </div>
                             <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                  <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                    Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                    {currentPage == totalPage - 1
-                                      ? cumaltivePartnerMapDisplay?.length
-                                      : (currentPage + 1) * rowsLimit}{" "}
-                                    of {cumaltivePartnerMapDisplay?.length} Partners
-                                  </div>
-                                  <div className="flex">
-                                    <ul
-                                      className="flex justify-center items-center align-center gap-x-[10px] z-30"
-                                      role="navigation"
-                                      aria-label="Pagination">
-                                      <li
-                                        className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
-                                          currentPage == 0
-                                            ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                            : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
-                                        }`}
-                                        onClick={previousPage}>
-                                        <ChevronLeftIcon></ChevronLeftIcon>
-                                      </li>
-                                      {customPagination?.map((data, index) => (
-                                        <li
-                                          className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[2px] border-solid bg-white cursor-pointer ${
-                                            currentPage == index
-                                              ? "border-[var(--bright-pink)]"
-                                              : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
-                                          }`}
-                                          onClick={() => changePage(index)}
-                                          key={index}
-                                        >
-                                          {index + 1}
-                                        </li>
-                                      ))}
-                                      <li
-                                        className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
-                                          currentPage == totalPage - 1
-                                            ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                            : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
-                                        }`}
-                                        onClick={nextPage}>
-                                        <ChevronRightIcon></ChevronRightIcon>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                    </div>
+          <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+            Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
+            {currentPage == totalPage - 1
+              ? cumaltivePartnerMapDisplay?.length
+              : (currentPage + 1) * rowsLimit}{" "}
+            of {cumaltivePartnerMapDisplay?.length} Partners
+          </div>
+          <div className="flex">
+            <ul
+              className="flex justify-center items-center align-center gap-x-2 z-30"
+              role="navigation"
+              aria-label="Pagination">
+              <li
+                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
+                  currentPage == 0
+                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                }`}
+                onClick={previousPage}>
+                <ChevronLeftIcon></ChevronLeftIcon>
+              </li>
+              {customPagination?.map((data, index) => (
+                <li
+                  className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${
+                    currentPage == index
+                      ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                      : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                  }`}
+                  onClick={() => changePage(index)}
+                  key={index}
+                >
+                  {index + 1}
+                </li>
+              ))}
+              <li
+                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
+                  currentPage == totalPage - 1
+                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                }`}
+                onClick={nextPage}>
+                <ChevronRightIcon></ChevronRightIcon>
+              </li>
+            </ul>
+          </div>
+        </div>
                         </div>
                     </div>
                 )}

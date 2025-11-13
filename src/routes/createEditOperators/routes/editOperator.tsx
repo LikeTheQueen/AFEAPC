@@ -229,16 +229,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
     <div className="">
-      
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
           <div className="px-4 py-2">
             <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-3 sm:col-start-1">
                 <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Operator Name
                 </label>
-                <div className="mt-2">
-                  <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                <div className="mt-1">
                     <input
                       id="name"
                       name="name"
@@ -248,17 +246,15 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                       value={operatorRecord.name}
                       onChange={handleOperatorNameChange}
                       autoFocus={true}
-                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
-                    
-                  </div>
                 </div>
               </div>
               <div className="sm:col-span-4 sm:col-start-1">
                 <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="street"
                     name="street"
@@ -266,7 +262,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={operatorToEdit.street}
                     onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -274,7 +270,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="suite"
                     name="suite"
@@ -282,7 +278,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={operatorToEdit.suite}
                     onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -290,7 +286,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="city"
                     name="city"
@@ -298,7 +294,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={operatorToEdit.city}
                     onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -306,7 +302,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="state"
                     name="state"
@@ -314,7 +310,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={operatorToEdit.state}
                     onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -322,7 +318,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="zip"
                     name="zip"
@@ -330,7 +326,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={operatorToEdit.zip}
                     onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -338,14 +334,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="mt-1 grid grid-cols-1">
                   <select
                     id="country"
                     name="country"
                     autoComplete="off"
                     value={operatorToEdit.country}
                     onChange={handleOperatorAddressChange}
-                    className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   > <option></option>
                     <option>United States</option>
                     <option>Canada</option>
@@ -353,7 +349,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                   </select>
                   <ChevronDownIcon
                     aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
                   />
                 </div>
               </div>
@@ -383,24 +379,23 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 setSaveOpNameChange(false);
                 notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
             }}
-              className="rounded-md bg-[var(--darkest-teal)] disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white custom-style shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>
             </div>
           </div>
         </form>
-        <p className="custom-style font-semibold text-[var(--darkest-teal)] mb-2">Edit the Operator Addresses for Non-Op AFEs.</p>
+        <p className="custom-style font-semibold text-[var(--darkest-teal)] mb-1">Edit the Operator Addresses for Non-Op AFEs.</p>
         {partnerList.map((partner, partnerIdx) => (
-        <form key={partner.apc_id} className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
+        <form key={partner.apc_id} className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
           <div className="px-4 py-2">
             <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Name
                 </label>
-                <div className="mt-2">
-                  <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                <div className="mt-1">
                     <input
                       id="name"
                       name="name"
@@ -409,16 +404,15 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                       autoComplete="off"
                       value={partner.name}
                       onChange={(e) => handlePartnerNameChange(e, partnerIdx)}
-                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
-                  </div>
                 </div>
               </div>
               <div className="sm:col-span-4 sm:col-start-1">
                 <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="street"
                     name="street"
@@ -426,7 +420,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={partner.street}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -434,7 +428,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="suite"
                     name="suite"
@@ -442,7 +436,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={partner.suite}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -450,7 +444,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="city"
                     name="city"
@@ -458,7 +452,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={partner.city}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -466,7 +460,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="state"
                     name="state"
@@ -474,7 +468,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={partner.state}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -482,7 +476,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="zip"
                     name="zip"
@@ -490,7 +484,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={partner.zip}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -498,14 +492,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="mt-1 grid grid-cols-1 ">
                   <select
                     id="country"
                     name="country"
                     autoComplete="off"
                     value={partner.country}
                     onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   > <option></option>
                     <option>United States</option>
                     <option>Canada</option>
@@ -513,7 +507,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                   </select>
                   <ChevronDownIcon
                     aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
                   />
                 </div>
               </div>
@@ -543,7 +537,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 {partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null}
                 notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>
@@ -553,7 +547,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
         </form>
       ))}
       
-      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 sm:grid-cols-6">
+      <div className="grid grid-cols-1 gap-x-8 gap-y-2 py-10 sm:grid-cols-6">
         <div className="px-4 sm:px-0 sm:col-span-6">
           <p className="font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</p>
           <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
@@ -561,7 +555,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
           </p>
         </div>
 
-        <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:col-span-6">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:col-span-6">
           <div >
             <PartnerToOperatorGrid
             singleOpID={true}
@@ -571,15 +565,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
         </form>
         
       </div>
-      <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl sm:grid-cols-6 mb-6">
+      <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
           <div className="px-4 py-2">
             <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Name
                 </label>
-                <div className="mt-2">
-                  <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                <div className="mt-1">
                     <input
                       id="name"
                       name="name"
@@ -588,16 +581,15 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                       autoComplete="off"
                       value={newPartnerAddress?.name || ''}
                       onChange={handleNewAddressChange}
-                      className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
-                  </div>
                 </div>
               </div>
               <div className="sm:col-span-4 sm:col-start-1">
                 <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="street"
                     name="street"
@@ -605,7 +597,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={newPartnerAddress?.street || ''}
                     onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -613,7 +605,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="suite"
                     name="suite"
@@ -621,7 +613,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={newPartnerAddress?.suite || ''}
                     onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -629,7 +621,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="city"
                     name="city"
@@ -637,7 +629,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={newPartnerAddress?.city || ''}
                     onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -645,7 +637,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="state"
                     name="state"
@@ -653,7 +645,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={newPartnerAddress?.state || ''}
                     onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -661,7 +653,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <input
                     id="zip"
                     name="zip"
@@ -669,7 +661,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                     autoComplete="off"
                     value={newPartnerAddress?.zip || ''}
                     onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   />
                 </div>
               </div>
@@ -677,14 +669,14 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
-                <div className="mt-2 grid grid-cols-1 ">
+                <div className="mt-1 grid grid-cols-1 ">
                   <select
                     id="country"
                     name="country"
                     autoComplete="off"
                     value={newPartnerAddress?.country || ''}
                     onChange={handleNewAddressChange}
-                    className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                   > <option></option>
                     <option>United States</option>
                     <option>Canada</option>
@@ -692,7 +684,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                   </select>
                   <ChevronDownIcon
                     aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
                   />
                 </div>
               </div>
@@ -706,7 +698,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
                 setSaveNewPartnerAddress(false);
                 notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
             }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold text-white bg-[var(--darkest-teal)]  custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)]">
+              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save
                 </button>
               </div>
