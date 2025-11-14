@@ -435,6 +435,14 @@ export async function fetchUserPermissions(is_super_user: boolean, token: string
     return callEdge<TogglePayload, ToggleResult>("fetch_user_permissions", { is_super_user }, token);
   };
 
+export async function fetchAFEWells(source_system_id: string, apc_op_id:string, token: string) {
+    
+    type TogglePayload = { source_system_id: string; apc_op_id:string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_wells", { source_system_id, apc_op_id }, token);
+  };
+
 export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, roles: number[], token: string) {
     
     type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; roles: number[]; };

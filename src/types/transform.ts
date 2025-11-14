@@ -26,7 +26,8 @@ import type {
     GLMappedRecord,
     AFEDocuments,
     UserFullNameAndEmail,
-    OperatorPartnerRecord
+    OperatorPartnerRecord,
+    AFEWells
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -571,4 +572,13 @@ export const transformUserNameAndEmail = (data: any[]) : UserFullNameAndEmail[] 
         email: item.email,
         active: item.active
     }))
-}
+};
+
+export const transformAFEWells = (data: any[]) : AFEWells[] => {
+    return data.map(item => ({
+        is_primary: item.is_primary,
+        well_name: item.well_name,
+        well_number: item.well_number,
+        description: item.description
+    }))
+};

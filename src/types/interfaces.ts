@@ -365,4 +365,11 @@ export interface AFEDocuments {
   filename_display: string;
   id:number;
   mimeype: string;
-}
+};
+
+export interface AFEWells {
+  is_primary: boolean;
+  well_name: string;
+  description: string;
+  well_number: string;
+};

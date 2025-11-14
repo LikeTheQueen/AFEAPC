@@ -1,12 +1,12 @@
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory } from "provider/fetch";
+import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory, fetchAFEWells } from "provider/fetch";
 import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable } from "src/helpers/helpers";
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
-import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type EstimatesSupabaseType } from "../../../types/interfaces";
-import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList } from "src/types/transform";
+import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
+import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
 import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, handlePartnerStatusChange } from "./helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
@@ -31,6 +31,7 @@ export default function AFEDetailURL() {
   const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | []>([]);
   const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
   const [afeDocs, setDocs] = useState<AFEDocuments[] | []>([]);
+  const [afeWells, setWells] = useState<AFEWells[] | []>([]);
   const [docToView, setDocToView] = useState<string>('');
   const [afePartnerStatus, setAFEPartnerStatus] = useState('');
   const [statusButtonDisabled, setButtonDisabled] = useState(true);
@@ -153,6 +154,24 @@ export default function AFEDetailURL() {
                     setAFEEstimatesLoading(false);
                 }
       };
+
+      if(!afeRecord || !afeRecord.apc_op_id || !afeRecord.source_system_id) return;
+      //Fetch Wells
+      try {
+        const wellResponse = await fetchAFEWells(afeRecord.source_system_id, afeRecord.apc_op_id, token);
+
+        if(!wellResponse.ok) {
+          throw new Error((wellResponse as any).message ?? "Cannot find Wells");
+        }
+
+        if(isMounted) {
+          console.log(wellResponse.data,'the well rsponse')
+          const wellTransformed = transformAFEWells(wellResponse.data);
+          setWells(wellTransformed);
+        }
+
+      }
+      finally {};
       
       // Set status and UI-related states
       if(!afeRecord || !afeRecord.partner_status) return;
@@ -292,7 +311,9 @@ console.log(file)
             setCurrentPage(0);
         }
   };
-  
+  console.log(afeWells,'the well')
+  console.log(afeRecord?.source_system_id)
+  console.log(afeRecord?.apc_op_id)
   
   return (
     <>
@@ -482,12 +503,30 @@ console.log(file)
               </div>
               </>
                )}
-               <h2 className="mt-2 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
-               <div>
-                <table>
-                  
-                </table>
-               </div>
+               <div className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
+
+               
+               <h2 className="pt-1 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm/6 custom-style-long-text text-[var(--dark-teal)] capitalize">
+                {afeWells.map((item, wellIdx) => (
+                  <div key={wellIdx} className="p-2">
+                    {item.well_name}
+                    {item.well_number !== null && (
+                      <>
+                        <br />
+                        {item.well_number}
+                      </>
+                    )}
+                    {item.description !== null && (
+                      <>
+                        <br />
+                        {item.description}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+              </div>
                {afeEstimatesLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                 
