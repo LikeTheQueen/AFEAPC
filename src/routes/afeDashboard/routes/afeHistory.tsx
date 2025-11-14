@@ -4,13 +4,15 @@ import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
 import { insertAFEHistory } from 'provider/write'
 import { useSupabaseData } from 'src/types/SupabaseContext';
+import { A } from 'build/client/assets/chunk-KNED5TY2-DkGxNDtY';
 
  type AFEHistoryProps = {
    historyAFEs: AFEHistorySupabaseType[];
    apc_afe_id:string;
+   userName?: string;
  };
 
-export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) {
+export default function AFEHistory({ historyAFEs, apc_afe_id, userName}: AFEHistoryProps) {
     const { session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
@@ -18,7 +20,8 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
     
    
     useEffect(() => {
-    setHistory(historyAFEs);    
+    const orderAFEHistory = historyAFEs.sort((a,b) => a.id - b.id)
+    setHistory(orderAFEHistory);    
    }, [historyAFEs]);
 
 
@@ -40,15 +43,15 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
         <>
             <div className="lg:col-start-3">
                 {/* History feed */}
-                <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">AFE History</h2>
-                <ul role="list" className="mt-6 space-y-6">
+                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">AFE History</h2>
+                <ul role="list" className="mt-2 space-y-6">
                     {
                      
                     afeHistories?.map((afeHistory, afeHistoryIdx) => (
                         <li key={afeHistory.id} className="relative flex gap-x-4">
                             <div
                             className={`${afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6'} absolute top-0 left-0 flex w-6 justify-center`}>
-                                <div className="w-px bg-gray-200" />
+                                <div className="w-px bg-[var(--darkest-teal)]/40" />
                             </div>
                             {afeHistory.type === 'action' ? (
                                 <>
@@ -58,7 +61,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                             <div className="text-sm/6 ">
                                                 <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
                                             </div>
-                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-gray-500 custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-[var(--darkest-teal)] custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
@@ -66,14 +69,14 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                                 minute: 'numeric',
                                                 hour12: true,
                                             })}</p>
-                                            <p className="2xl:hidden flex-none text-sm/6 text-gray-500 custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
+                                            <p className="2xl:hidden flex-none text-sm/6 text-[var(--darkest-teal)] custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
                                             })}</p>
 
                                         </div>
-                                        <p className="text-sm/6 text-gray-500 custom-style-long-text">{afeHistory.description}</p>
+                                        <p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text italic">{afeHistory.description}</p>
                                     </div>
                                 </>
                             ) : (
@@ -87,10 +90,10 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                     </div>
                                     <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)] truncate">
                                         <div className="flex justify-between gap-x-4">
-                                            <div className=" text-sm/6 text-gray-500">
+                                            <div className=" text-sm/6 text-[var(--darkest-teal)]">
                                                 <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
                                             </div>
-                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-gray-500 custom-style-long-text text-clip">
+                                            <p className="sr-only 2xl:not-sr-only flex-none text-sm/6 text-[var(--darkest-teal)] custom-style-long-text text-clip">
                                             {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -99,7 +102,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                                 minute: 'numeric',
                                                 hour12: true,
                                             })}</p>
-                                            <p className="2xl:hidden flex-none text-sm/6 text-gray-500 custom-style-long-text text-clip">
+                                            <p className="2xl:hidden flex-none text-sm/6 text-[var(--darkest-teal)] custom-style-long-text text-clip">
                                             {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -107,7 +110,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                             })}</p>
 
                                         </div>
-                                        <p className="text-sm/6 text-gray-500 custom-style-long-text">{afeHistory.description}</p>
+                                        <p className="text-sm/6 font-normal text-[var(--darkest-teal)] custom-style-long-text italic">{afeHistory.description}</p>
                                     </div>
                                 </>
                             )}
@@ -118,11 +121,11 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                 </ul>
                 {/* New comment form */}
                 <div className="mt-6 flex gap-x-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-[1rem] font-medium text-white ">
-
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-sm font-medium text-white ">
+                   {userName?.charAt(0)}
                     </span>
                     <div className="relative flex-auto">
-                        <div className="overflow-hidden rounded-lg pb-12 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+                        <div className="overflow-hidden rounded-lg pb-12 outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 bg-white shadow-2xl focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
                             <label htmlFor="comment" className="sr-only">
                                 Add your comment
                             </label>
@@ -131,7 +134,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                                 name="comment"
                                 rows={2}
                                 placeholder="Add your comment..."
-                                className="block w-full resize-none bg-transparent px-3 py-1.5 text-base text-[var(--darkest-teal)] placeholder:text-gray-400 focus:outline-none sm:text-sm/6 custom-style"
+                                className="block w-full resize-none bg-transparent px-3 py-1.5 text-sm/6 text-[var(--darkest-teal)] placeholder:text-[var(--darkest-teal)]/70 focus:outline-none custom-style"
                                 value={commentVal}
                                 onChange={handleCommentChange}
                             />
@@ -140,11 +143,8 @@ export default function AFEHistory({ historyAFEs, apc_afe_id}: AFEHistoryProps) 
                             <button
                                 disabled={commentVal==='' ? true : false}
                                 type="submit"
-                                className="rounded-md bg-white px-2.5 py-1.5 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs ring-1 ring-gray-300 ring-inset 
-                                hover:bg-[var(--bright-pink)] hover:text-white
-                                disabled:bg-gray-200 disabled:text-gray-400"
+                                className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                                 onClick={handleComment}>
-
                                 Comment
                             </button>
                         </div>

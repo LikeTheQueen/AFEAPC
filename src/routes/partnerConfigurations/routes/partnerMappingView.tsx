@@ -110,17 +110,17 @@ export default function PartnerMappingView() {
     return (
         <>
         <div>
-            <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-4 mb-5">
+            <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
                                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
                                             <div className="">
-                                                <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage your Partner Mappings</h2>
-                                                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                                                    <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
+                                                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
+                                                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                                                    <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
                                              </div>
                                              <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                                     <div className="">
-                                                    <h1 className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">Select an Operator to View Mappings For:</h1>
-                                                    <div className="">
+                                                    <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
+                                                    <div className="w-1/2">
                                                     <OperatorDropdown 
                                                         onChange={(id) => {setOpAPCID(id)} }
                                                         limitedList={true}
@@ -143,11 +143,11 @@ export default function PartnerMappingView() {
                                 <>
                                 <div 
                                 hidden={(opAPCID === '' || partnerMapRecord.length < 1) ? false : true}
-                                className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl flow-root overflow-hidden">
+                                className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 flow-root overflow-hidden">
                                 <h1 className="custom-style text-[var(--darkest-teal)] font-semibold justify-self-center p-2">There are no Partners mapped to the AFE Partner Connections Library or you have not selected an Operator from the dropdown to view Partner Mappings for.</h1> 
                                 </div>
                                 <div hidden={(opAPCID !== '' && partnerMapRecord.length > 0 ? false : true)} className="divide-y divide-gray-900/20 ">
-                                    <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl flow-root overflow-hidden">
+                                    <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 flow-root overflow-hidden">
                                         <div className="py-2 mx-auto max-w-7xl">
                                             <table className="w-full table-fixed">
                                                 

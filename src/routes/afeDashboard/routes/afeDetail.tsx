@@ -4,15 +4,17 @@ import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusBu
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList } from "src/types/transform";
 import AFEHistory from "./afeHistory";
 import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, handlePartnerStatusChange } from "./helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon} from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import DocumentBrowser from '../../documentViewer';
+import * as XLSX from 'xlsx';
 
 export default function AFEDetailURL() {
   const { afeID } = useParams<{ afeID: string }>();
@@ -26,7 +28,7 @@ export default function AFEDetailURL() {
   const [afeDocumentLoading, setAFEDocumentLoading] = useState(false);
 
   const [afeRecord, setAFERecord] = useState<AFEType | null>(null);
-  const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | null>(null);
+  const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | []>([]);
   const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
   const [afeDocs, setDocs] = useState<AFEDocuments[] | []>([]);
   const [docToView, setDocToView] = useState<string>('');
@@ -40,6 +42,12 @@ export default function AFEDetailURL() {
   const [doesUserHaveOperatorViewAFERole, setUserOperatorViewAFERole] = useState(false);
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
   const { refreshData } = useSupabaseData();
+
+  const [rowsLimit] = useState(8);
+  const [rowsToShow, setRowsToShow] = useState<EstimatesSupabaseType[]>([]);
+  const [customPagination, setCustomPagination] = useState<number[] | []>([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   
   const [paginationData, setPaginationData] = useState<{
   pageNumber: number;
@@ -49,7 +57,6 @@ export default function AFEDetailURL() {
   previousPage: () => void;
 } | null>(null);
 
- 
   useEffect(() => {
     let isMounted = true;
     async function getAFERecord() {
@@ -172,10 +179,27 @@ export default function AFEDetailURL() {
     setUserAcceptRejectRole(userAcceptRejectRole);
     setUserPartnerViewAFERole(userPartnerViewRole);
     setUserOperatorViewAFERole(userOperatorViewRole);
-  },[loggedInUser, afeRecord])
+  },[loggedInUser, afeRecord]);
+
+  useEffect(() => {
+  if (afeEstimates.length > 0) {
+    const startIndex = currentPage * rowsLimit;
+    const endIndex = startIndex + rowsLimit;
+    setRowsToShow(afeEstimates.slice(startIndex, endIndex));
+  }
+}, [afeEstimates, currentPage, rowsLimit]);
+
+  useMemo(() => {
+    setCustomPagination(
+      Array(Math.ceil(afeEstimates.length / rowsLimit)).fill(null)
+    );
+      setTotalPage(
+      Math.ceil(afeEstimates.length / rowsLimit)
+    )
+      }, [afeEstimates]);
+
+  const groupedAccounts = groupByAccountGroup(rowsToShow);
   
-  const groupedAccounts = groupByAccountGroup(afeEstimates);
- 
   function handleStatusComment(status: string) {
     setAFEHistoryMaxID(afeHistories);
     const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: afeID!, user: 'You', description: `AFE has been marked as ${status}`, type: "action", created_at: new Date() };
@@ -221,6 +245,53 @@ console.log(file)
 
   };
 
+  const handleExport = async () => {
+      
+      const estimatesExport = () => {
+        if(afeEstimates===null) return [];
+        return afeEstimates.map(item => ({
+          operator_Account_Description: item.operator_account_description,
+          operator_Account_Group: item.operator_account_group,
+          operator_Account_Number: item.operator_account_number,
+          account_Description: item.partner_account_description,
+          account_Group: item.partner_account_group,
+          account_Number: item.partner_account_number,
+          gross_amount: item.amount_gross,
+          net_amount: item.partner_net_amount
+        }))
+      };
+        const ws = XLSX.utils.json_to_sheet(estimatesExport());
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Export");
+        XLSX.writeFile(wb, "export.xlsx");
+      
+  };
+  
+  const nextPage = () => {
+        const startIndex = rowsLimit * (currentPage + 1);
+        const endIndex = startIndex + rowsLimit;
+        const newArray = afeEstimates.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        setCurrentPage(currentPage + 1);
+  };
+  const changePage = (value: number) => {
+        const startIndex = value * rowsLimit;
+        const endIndex = startIndex + rowsLimit;
+        const newArray = afeEstimates.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        setCurrentPage(value);
+  };
+  const previousPage = () => {
+        const startIndex = (currentPage - 1) * rowsLimit;
+        const endIndex = startIndex + rowsLimit;
+        const newArray = afeEstimates.slice(startIndex, endIndex);
+        setRowsToShow(newArray);
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        } else {
+            setCurrentPage(0);
+        }
+  };
   
   
   return (
@@ -269,13 +340,14 @@ console.log(file)
     </div>
         <div className="pt-16 px-4 sm:px-16 ">
           <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 xl:mx-0 xl:max-w-none xl:grid-cols-3"> 
-            <div className="xl:col-start-3 xl:row-end-1 h-15 shadow-lg ring-3 ring-[var(--darkest-teal)]/9 sm:mx-0 sm:rounded-lg px-3 py-3">
+            {/* Archive Accept Reject Buttons */}
+            <div className="xl:col-start-3 xl:row-end-1 h-15 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3">
               <div className="max-w-7xl">
                 <div className="flex justify-between max-w-2xl gap-x-1 xl:mx-0 xl:max-w-none">
                   <div className="flex gap-x-4 sm:gap-x-6">
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Approved', 'The partner marked the AFE as approved', 'action', token),
                         setButtonDisabled(true),
@@ -291,7 +363,7 @@ console.log(file)
                     </button>
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="rounded-md bg-white disabled:bg-gray-200 disabled:text-gray-400 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] shadow-xs transition-colors ease-in-out duration-300 hover:bg-red-800 hover:text-white outline-2 -outline-offset-2 outline-[var(--dark-teal)] hover:outline-red-800"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Rejected', 'The partner marked the AFE as rejected', 'action', token),
                         setButtonDisabled(true),
@@ -311,7 +383,7 @@ console.log(file)
                   <div className="flex items-center gap-x-4 sm:gap-x-6">
                     <button
                       hidden={doesUserHavePartnerViewAFERole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         
                         handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action', token),
@@ -323,7 +395,7 @@ console.log(file)
                     
                     <button
                       hidden={doesUserHaveOperatorViewAFERole ? false : true}
-                      className="rounded-md bg-[var(--dark-teal)] disabled:bg-gray-200 disabled:text-gray-400 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
                         setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));
@@ -338,12 +410,12 @@ console.log(file)
                 </div>
               </div>
             </div>
-           
-            <div className="-mx-4 px-4 py-8 shadow-lg ring-3 ring-[var(--darkest-teal)]/9 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
+           {/* AFE Details */}
+            <div className="sm:-mx-4 px-2 py-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
                {afeLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                {/* AFE Header 1 */}
-              <div className="m-0 sm:flex justify-between">
+              <div className="m-0 max-w-2xl sm:w-full sm:flex justify-between">
                 <div>
                 <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
                 <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
@@ -354,7 +426,7 @@ console.log(file)
                 </div>
               </div>
               {/* AFE Header 2 */}
-              <div className="mt-4 border-t border-t-2 border-[var(--darkest-teal)] border-b border-b-4 border-double border-[var(--darkest-teal)]">
+              <div className="mt-4 sm:w-full border-t border-t-1 border-b border-b-4 border-double border-[var(--darkest-teal)]/70">
                 <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
                   <div className="sm:pr-4 text-left col-span-3">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
@@ -410,17 +482,24 @@ console.log(file)
               </div>
               </>
                )}
+               <h2 className="mt-2 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
+               <div>
+                <table>
+                  
+                </table>
+               </div>
                {afeEstimatesLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                 
                {/* AFE Estimates */}
-               <div className="w-full">
-              <table className="mt-6 text-left text-sm/6 2xl:whitespace-nowrap table-fixed">
+               <div className="sm:w-full">
+                
+              <table className="text-left text-xs/6 2xl:whitespace-nowrap table-fixed">
 
                 {groupedAccounts && Array.from(groupedAccounts).map(([accountGroup, accounts]) => (
                   <tbody key={accountGroup}>
 
-                    <tr className="border-t border-b border-[var(--darkest-teal)] text-[var(--darkest-teal)] font-semibold custom-style h-10">
+                    <tr className="border-t border-b border-[var(--darkest-teal)]/70 text-[var(--darkest-teal)] font-semibold custom-style h-10">
                       <td className="hidden w-1/5 table-cell pl-2">{accountGroup}</td>
                       <td className="hidden px-0 py-0 text-right w-1/5 table-cell">Operator Account#</td>
                       <td className="px-0 py-0 text-right w-1/5 table-cell">Account#</td>
@@ -428,7 +507,7 @@ console.log(file)
                       <td className="px-0 py-0 pr-2 text-right w-1/5 table-cell">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
-                      <tr key={item.id} className="border-b border-gray-300 text-gray-700 custom-style-long-text tabular-nums ">
+                      <tr key={item.id} className="border-b border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
                         <td className="hidden px-0 py-3 text-left w-1/5 sm:table-cell">
                           {item.operator_account_description}
                         </td>
@@ -450,14 +529,74 @@ console.log(file)
                   </tbody>
                 ))}
               </table>
+              <div className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 px-1 items-center pt-4">
+                  <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                    Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
+                    {currentPage == totalPage - 1
+                      ? afeEstimates?.length
+                      : (currentPage + 1) * rowsLimit}{" "}
+                      of {afeEstimates?.length} Line Items
+                    </div>
+                                                        <div className="flex">
+                                                            <ul
+                                                                className="flex justify-center items-center align-center gap-x-2 z-30"
+                                                                role="navigation"
+                                                                aria-label="Pagination">
+                                                                <li
+                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
+                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                                        }`}
+                                                                    onClick={previousPage}>
+                                                                    <ChevronLeftIcon></ChevronLeftIcon>
+                                                                </li>
+                                                                {customPagination?.map((data, index) => (
+                                                                    <li
+                                                                        className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
+                                                                                ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                                                                                : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                                            }`}
+                                                                        onClick={() => changePage(index)}
+                                                                        key={index}
+                                                                    >
+                                                                        {index + 1}
+                                                                    </li>
+                                                                ))}
+                                                                <li
+                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
+                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                                        }`}
+                                                                    onClick={nextPage}>
+                                                                    <ChevronRightIcon></ChevronRightIcon>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
               </div>
+              
+              </div>
+              
               </>
                )}
+            <div className="mt-4 -mb-8 flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
+                              <button
+                            onClick={async(e: any) => { 
+                              e.preventDefault();
+                              handleExport();
+                              
+                          }}
+                            className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                            Export Line Items to Excel
+                              </button>
+                            </div>
+            
             </div>
+            
+            {/* AFE DOCS and AFE History*/}
             <div className="xl:col-start-3">
               <div hidden={afeDocs.length> 0 ? false : true }>
-              <h2 className="font-semibold custom-style text-[var(--darkest-teal)]">AFE Documents </h2>
-              <div className="mb-6 mt-2 shadow-lg ring-3 ring-[var(--darkest-teal)]/10 sm:mx-0 sm:rounded-lg px-5 py-3">
+              <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">AFE Documents </h2>
+              <div className="mb-6 mt-2 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-lg px-5 py-3">
               <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
               {afeDocs?.map((afeDoc) => (
                 <li key={afeDoc.id}>
@@ -486,7 +625,9 @@ console.log(file)
             </div>
             </div>
             <AFEHistory historyAFEs={afeHistories}
-            apc_afe_id={afeID!} />
+            apc_afe_id={afeID!}
+            userName={loggedInUser?.firstName}
+            />
             </div>
           </div>
         </div>

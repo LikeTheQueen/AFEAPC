@@ -12,8 +12,8 @@ export function setAFEHistoryMaxID(afeHistories: AFEHistorySupabaseType[] | []) 
   return afeHistories.length;
 };
 
-export function groupByAccountGroup(account: EstimatesSupabaseType[] | null): Map<string, EstimatesSupabaseType[]> | null {
-  if (account !== null) {
+export function groupByAccountGroup(account: EstimatesSupabaseType[] | []): Map<string, EstimatesSupabaseType[]> | null {
+  if (account !== null && account.length > 0 ) {
     return account.reduce((map, accountItem) => {
       const accountGroup = accountItem.operator_account_group;
       if (!map.has(accountGroup)) {

@@ -399,7 +399,7 @@ export default function PartnerMapping() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex flex-col lg:flex-row gap-5 justify-between py-4 divide-y divide-gray-900/20 items-center">
+                        <div className="w-full flex flex-col lg:flex-row gap-5 justify-between py-4 divide-y divide-[var(--darkest-teal)]/70 items-center">
 
                             <button
                                 disabled={(currentPartnerMapDisplay?.apc_partner_id && currentPartnerMapDisplay.source_partner_id) ? false : true}
@@ -424,11 +424,11 @@ export default function PartnerMapping() {
                         </div>
                         <div hidden={cumaltivePartnerMapDisplay.length > 0 ? false : true} className="">
                             <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">Pending Mappings</h1>
-                            <div className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl flow-root overflow-hidden">
+                            <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 flow-root overflow-hidden">
                                 
                                         <div className="py-2 mx-auto max-w-7xl">
                                             <table className="w-full table-fixed">
-                                                <thead className="w-full border-b-2 border-b border-gray-900 ">
+                                                <thead className="w-full border-b-2 border-b border-[var(--darkest-teal)] ">
                                                     <tr>
                                                         <th
                                                             scope="col"

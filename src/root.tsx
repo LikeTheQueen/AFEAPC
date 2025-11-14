@@ -9,8 +9,6 @@ import {
 import type { Route } from "./+types/root";
 import LoadingPage from "./routes/loadingPage";
 import { SupabaseProvider } from "./types/SupabaseContext"; 
-import { isAuthApiError } from "@supabase/supabase-js";
-import { useSupabaseData } from "./types/SupabaseContext";
 import PageNotFound from "./routes/pageNotFound";
 //import {pdfjs} from 'react-pdf'
 

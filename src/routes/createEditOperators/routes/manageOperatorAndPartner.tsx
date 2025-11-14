@@ -291,7 +291,7 @@ export default function OperatorViewAndEdit () {
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                    </div>
+                    </div>
 
                 </div>
             </div>

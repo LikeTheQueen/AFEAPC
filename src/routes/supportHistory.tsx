@@ -4,7 +4,7 @@
 import executeAFECall from "src/scripts/executeReadWritePromise";
 
 import React, { useEffect, useState } from 'react'
-import supabase from "provider/supabase";
+import supabase from "provider/supabase";a
 import { useSupabaseData } from "../types/SupabaseContext";
 import { testExecuteConnection } from "provider/fetch";
 
@@ -14,16 +14,7 @@ const docId = '6d2f6718-f745-421a-b8d9-0ae03f853b01';
 const key = 'KjOVeS5N24jQtMPxfLR9Fr3d6fpWCGNCgoYXizfcBqjuHuMtKlBcjjQjh5xOF35G';
 const operator ='a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
 //executeAFECall(baseURL,urlPath,docId,key,operator);
-const { data, error } = await supabase.storage.from('Operators')
-.createSignedUrl('a4367e56-14bf-4bd1-b0f1-fecc7d97b58c/forms/626390b5-6f63-4caa-a0aa-b333a15eaf59.pdf', 3600)
 
-
-if(data) {
-//console.log(data.publicUrl)
-console.log(data) 
-} else {
-    console.log(error)
-}
 
 
 const filePath = 'https://oeagaklwuryrkhjajklx.supabase.co/storage/v1/object/public/Operators/a4367e56-14bf-4bd1-b0f1-fecc7d97b58c/forms/626390b5-6f63-4caa-a0aa-b333a15eaf59.pdf'

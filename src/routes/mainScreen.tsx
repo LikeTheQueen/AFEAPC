@@ -1,5 +1,4 @@
 
-'use client'
 import supabase from "provider/supabase";
 import { useState, useEffect } from 'react';
 import { Outlet } from "react-router";

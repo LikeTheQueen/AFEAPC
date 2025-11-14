@@ -186,15 +186,15 @@ export default function GLMapping() {
         <>
         
             <div >
-                <div className="shadow-lg sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/20 p-4 mb-5">
-                <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+                <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+                <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
         <div className="">
             <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Map GL Account Codes for Non-Op AFEs</h2>
                 <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to map GL Account Codes</p><br></br>
          </div>
          
          <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
-                <div className="">
+                <div className="w-1/2">
                 <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 xl:text-base">Operator of Non-Op AFEs:</h1>
                 <div className="">
                 <OperatorDropdown 
@@ -203,7 +203,7 @@ export default function GLMapping() {
                 />
                 </div>
                 </div>
-                <div className="">
+                <div className="w-1/2">
                 <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
                 <div className="">
                 <PartnerDropdown 
@@ -227,7 +227,7 @@ export default function GLMapping() {
                     hidden={(opAPCID === '' && partnerAPCID === '') ||
                                             (opAPCID !== '' && partnerAPCID === '') || 
                                             (opAPCID === '' && partnerAPCID !== '') ? false : true}
-                    className="bg-white shadow-xl ring-1 ring-gray-900/20 sm:rounded-xl ">
+                    className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 py-1">
                                 <div className="my-8 max-h-80 flex items-center justify-center">
                                     <h2 className="sm:w-3/4 text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Select both an Operator and Your Company as a Partner from the dropdowns to show both account lists for mapping.</h2>
                                 </div>
