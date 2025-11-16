@@ -449,7 +449,7 @@ console.log(file)
               {/* AFE Header 2 */}
               <div className="mt-4 sm:w-full border-t border-t-1 border-b border-b-4 border-double border-[var(--darkest-teal)]/70">
                 <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
-                  <div className="sm:pr-4 text-left col-span-3">
+                  <div className="sm:pr-4 text-left col-span-4">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.afe_number}
@@ -461,20 +461,20 @@ console.log(file)
                       {afeRecord?.version_string}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left col-span-3">
+                  <div className="sm:pr-4 text-left col-span-4">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 sm:text-right col-span-6">
+                  <div className="sm:pr-4 sm:text-right col-span-4">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.well_name}
                     </dd>
                   </div>
 
-                  <div className="sm:pr-4 text-left sm:col-start-1 col-span-6">
+                  <div className="sm:pr-4 text-left sm:col-start-1 col-span-4">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
                       ${ afeRecord?.supp_gross_estimate! > 0 ?
@@ -492,7 +492,7 @@ console.log(file)
                       }
                     </dd>
                   </div>
-                  <div className="sm:pr-4 col-span-6 sm:text-right">
+                  <div className="sm:pr-4 col-span-8 sm:text-right shrink">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">{afeRecord?.operator} Approved</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
                       {afeRecord?.iapp_date}
@@ -503,7 +503,9 @@ console.log(file)
               </div>
               </>
                )}
-               <div className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
+               <div 
+               hidden={afeWells.length === 0 ? true : false}
+               className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
 
                
                <h2 className="pt-1 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>

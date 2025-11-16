@@ -162,7 +162,7 @@ export default function OperatorViewAndEdit () {
                     <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                 </div>
                 <div className="md:col-span-5 ">
-                    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-xl">
+                    <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                 <thead>
                     <tr className="bg-white text-white ">
                         <th scope="col" 
