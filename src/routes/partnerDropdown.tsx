@@ -45,7 +45,8 @@ export function PartnerDropdown({ onChange, limitedList }: Props) {
           if (!loggedInUser) return;
           filterOpsList();
           if (filteredPartners.length === 1) {
-              setPartnerAPCID(filteredPartners[0].apc_id)
+              setPartnerAPCID(filteredPartners[0].apc_id);
+              onChange?.(filteredPartners[0].apc_id);
           }
       }, [loggedInUser])
   

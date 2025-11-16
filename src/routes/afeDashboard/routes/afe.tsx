@@ -239,7 +239,7 @@ export default function AFE() {
       </PartnerStatusDropdown>
     </div>
     <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter when Operator Approved the AFE</h2>
+      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Op Approval Date</h2>
       <OperatorApprovalDropdown
       onChange={setOperatorApprovedDaysAgo}>
       </OperatorApprovalDropdown>
@@ -353,7 +353,7 @@ export default function AFE() {
       </PartnerStatusDropdown>
     </div>
     <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Status Change</h2>
+      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Status Change</h2>
       <OperatorApprovalDropdown
       onChange={setPartnerStatusDaysAgo}>
       </OperatorApprovalDropdown>

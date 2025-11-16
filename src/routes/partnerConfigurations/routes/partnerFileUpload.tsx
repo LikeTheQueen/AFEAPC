@@ -174,9 +174,9 @@ export default function PartnerFileUpload() {
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                 <div className="">
                     <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Upload Partner Library from Your AFE System</h2>
-                        <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p><br></br>
-                        <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span>
-                        <br></br><br></br>Do <span className="font-semibold">NOT</span> include your own addresses.  Only Partner Addresses should be uploaded.</p>
+                        <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                        <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Upload an Excel file with the following headers:<span className="font-semibold"> {expectedHeaders.map(header => header.concat(' '))}</span></p>
+                        <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Do <span className="font-semibold">NOT</span> include your own addresses.  Only your Partner Addresses should be uploaded.</p>
                  </div>
                  <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
                         <div className="">
@@ -292,14 +292,14 @@ export default function PartnerFileUpload() {
         <div className="w-full flex justify-end sm:justify-end flex-col sm:flex-row gap-5 mt-5 pt-5 items-center border-t">
             <button
                     disabled={data.length>0 ? false : true}
-                    className="w-full sm:w-60 cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
                     onClick={(e) => {setData([]),setRowsToShow([]),setIsDisabled(false),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: Partners were NOT saved)`)}}>
                         Cancel
                     </button>
                     <button
                     disabled={data.length>0 ? false : true}
-                    className="w-full sm:w-60 cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`)}}>
+                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+                    onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`), setData([])}}>
                         Save Partner List
                     </button>
             </div>     

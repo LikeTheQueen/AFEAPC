@@ -108,29 +108,26 @@ export default function PartnerMappingView() {
         deletePartnerRecord();
     };
     return (
-        <>
+        <> 
         <div>
             <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
-                                    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+                                    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                                             <div className="">
                                                 <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
-                                                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                                                    <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
+                                                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                                                <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
                                              </div>
-                                             <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                                             <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
                                                     <div className="">
                                                     <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
-                                                    <div className="w-1/2">
+                                                    <div className="">
                                                     <OperatorDropdown 
                                                         onChange={(id) => {setOpAPCID(id)} }
                                                         limitedList={true}
                                                     />
                                                     </div>
-                                                    
-                                                    </div>
-                                                    
-                                             </div>
-                                    
+                                            </div>        
+                                        </div>
                                     </div>
                                           
                             </div>
@@ -141,33 +138,42 @@ export default function PartnerMappingView() {
                                 </div>
                             ) : (
                                 <>
-                                <div 
-                                hidden={(opAPCID === '' || partnerMapRecord.length < 1) ? false : true}
-                                className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 flow-root overflow-hidden">
-                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold justify-self-center p-2">There are no Partners mapped to the AFE Partner Connections Library or you have not selected an Operator from the dropdown to view Partner Mappings for.</h1> 
+                            <div
+                                hidden={(opAPCID === '') ? false : true}
+                                className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
+                                <div className="my-0 max-h-80 flex items-center justify-center">
+                                    <h2 className="font-normal text-[var(--darkest-teal)] custom-style-long-text p-2 text-sm/6 xl:text-base/7">Select an Operator from the dropdown to view Partner Mappings for.</h2>
                                 </div>
-                                <div hidden={(opAPCID !== '' && partnerMapRecord.length > 0 ? false : true)} className="divide-y divide-gray-900/20 ">
-                                    <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 flow-root overflow-hidden">
+                            </div>
+                            <div
+                                hidden={(opAPCID !== '' && partnerMapRecord.length < 1) ? false : true}
+                                className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
+                                <div className="my-0 max-h-80 flex items-center justify-center">
+                                    <h2 className="font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base/7">This Operator has not mapped thier Partners to the AFE Partner Connection Library.</h2>
+                                </div>
+                            </div>
+                                <div hidden={(opAPCID !== '' && partnerMapRecord.length > 0 ? false : true)} className="">
+                                    <div className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
                                         <div className="py-2 mx-auto max-w-7xl">
                                             <table className="w-full table-fixed">
                                                 
-                                                <thead className="w-full border-b-2 border-b border-gray-900 ">
+                                                <thead className="w-full border-b-2 border-b border-[var(--darkest-teal)]/40 ">
                                                     <tr>
                                                         <th
                                                             scope="col"
-                                                            className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
+                                                            className="sticky xl:w-1/2 xl:table-cell sticky top-0 z-10 border-b border-[var(--darkest-teal)] bg-white/75 py-3.5 pr-3 pl-2 text-center xl:text-left text-sm/6 xl:text-base/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
                                                             <div>Partner Address in your AFE System</div>
-                                                            <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-md">mapped to the</div>
+                                                            <div className="xl:hidden custom-style-long-text font-normal text-sm">mapped to the</div>
                                                             <div className="xl:hidden">Partner Address in AFE Partner Connections</div>
                                                         </th>
                                                         <th
                                                             scope="col"
-                                                            className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+                                                            className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 border-b border-[var(--darkest-teal)] bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
                                                         
                                                         </th>
                                                         <th
                                                             scope="col"
-                                                            className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+                                                            className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 border-b border-[var(--darkest-teal)] bg-white/75 py-3.5 pr-3 pl-10 text-left text-sm/6 xl:text-base/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
                                                         <div>Partner Address in AFE Partner Connections</div>
                                                         </th>
                                                         
@@ -178,14 +184,14 @@ export default function PartnerMappingView() {
                                                 </thead>
                                                 <tbody className="">
                                                     {rowsToShow.map((partner, partnerIdx) => (
-                                                        <tr key={partnerIdx} className={`${partnerIdx !== rowsToShow.length - 1 ? 'border-b border-gray-900 xl:border-gray-300' : ''} items-center`}>
+                                                        <tr key={partnerIdx} className={`${partnerIdx !== rowsToShow.length - 1 ? 'border-b border-[var(--darkest-teal)]/40' : ''} items-center`}>
                                                             <td>
                                                                 {/* Partner Source Address.  Stays put no matter the screen size.  Truncates when small*/}
                                                                 <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--dark-teal)]">
+                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
                                                                     {partner.source_partner.name}
                                                                 </p>
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-gray-500">
+                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
                                                                     {partner.source_partner.street.concat(' ',
                                                                     `${partner.source_partner.suite === undefined ? '':partner.source_partner.suite.concat(' ')}`,
                                                                     `${partner.source_partner.city === undefined ? '':partner.source_partner.city.concat(', ')}`,
@@ -197,10 +203,10 @@ export default function PartnerMappingView() {
                                                                 </div>
                                                                 {/* Partner APC Address.  Only shows when screen is not xl*/}
                                                                 <div className="-mt-5 pl-3 pr-5 text-sm/6 xl:pr-3 xl:hidden">
-                                                                <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--dark-teal)] ">
+                                                                <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--darkest-teal)] ">
                                                                     {partner.apc_partner.name}
                                                                 </p>
-                                                                <p className="max-w-full flex-1 truncate custom-style-long-text text-gray-500">
+                                                                <p className="max-w-full flex-1 truncate custom-style-long-text text-[var(--dark-teal)]">
                                                                     {partner.apc_partner.street!.concat(' ',
                                                                     `${partner.apc_partner.suite === undefined ? '':partner.apc_partner.suite.concat(' ')}`,
                                                                     `${partner.apc_partner.city === undefined ? '':partner.apc_partner.city.concat(', ')}`,
@@ -225,10 +231,10 @@ export default function PartnerMappingView() {
                                                             </td>
                                                             {/* Partner APC Address.  Only shows when screen is xl  Padding matches header column*/}
                                                             <td className="hidden xl:table-cell ">
-                                                                <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--dark-teal)]">
+                                                                <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
                                                                     {partner.apc_partner.name}
                                                                 </p>
-                                                                <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-gray-500">
+                                                                <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
                                                                     {partner.apc_partner.street!.concat(' ',
                                                                     `${partner.apc_partner.suite === undefined ? '':partner.apc_partner.suite.concat(' ')}`,
                                                                     `${partner.apc_partner.city === undefined ? '':partner.apc_partner.city.concat(', ')}`,
@@ -253,53 +259,52 @@ export default function PartnerMappingView() {
 
                                         </div>
                                     </div>
+
+                                    {/* Paging */}
                                     <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                  <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                    Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                    {currentPage == totalPage - 1
-                                      ? partnerMapRecord?.length
-                                      : (currentPage + 1) * rowsLimit}{" "}
-                                    of {partnerMapRecord?.length} Partners
-                                  </div>
-                                  <div className="flex">
-                                    <ul
-                                      className="flex justify-center items-center align-center gap-x-[10px] z-30"
-                                      role="navigation"
-                                      aria-label="Pagination">
-                                      <li
-                                        className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
-                                          currentPage == 0
-                                            ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                            : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
-                                        }`}
-                                        onClick={previousPage}>
-                                        <ChevronLeftIcon></ChevronLeftIcon>
-                                      </li>
-                                      {customPagination?.map((data, index) => (
-                                        <li
-                                          className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[2px] border-solid bg-white cursor-pointer ${
-                                            currentPage == index
-                                              ? "border-[var(--bright-pink)]"
-                                              : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
-                                          }`}
-                                          onClick={() => changePage(index)}
-                                          key={index}
-                                        >
-                                          {index + 1}
-                                        </li>
-                                      ))}
-                                      <li
-                                        className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${
-                                          currentPage == totalPage - 1
-                                            ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                            : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
-                                        }`}
-                                        onClick={nextPage}>
-                                        <ChevronRightIcon></ChevronRightIcon>
-                                      </li>
-                                    </ul>
-                                  </div>
+                                    <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                                        Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
+                                        {currentPage == totalPage - 1
+                                            ? partnerMapRecord?.length
+                                            : (currentPage + 1) * rowsLimit}{" "}
+                                        of {partnerMapRecord?.length} Mapped Partners
                                     </div>
+                                    <div className="flex">
+                                        <ul
+                                            className="flex justify-center items-center align-center gap-x-2 z-30"
+                                            role="navigation"
+                                            aria-label="Pagination">
+                                            <li
+                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
+                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                    }`}
+                                                onClick={previousPage}>
+                                                <ChevronLeftIcon></ChevronLeftIcon>
+                                            </li>
+                                            {customPagination?.map((data, index) => (
+                                                <li
+                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
+                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                        }`}
+                                                    onClick={() => changePage(index)}
+                                                    key={index}
+                                                >
+                                                    {index + 1}
+                                                </li>
+                                            ))}
+                                            <li
+                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
+                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
+                                                    }`}
+                                                onClick={nextPage}>
+                                                <ChevronRightIcon></ChevronRightIcon>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                                 </div>
                                 </>
                                 

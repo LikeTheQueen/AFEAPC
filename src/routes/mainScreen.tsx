@@ -398,7 +398,7 @@ export default function MainScreen() {
                 <div aria-hidden="true" className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" />
 
                 {/* Profile dropdown */}
-                <Menu as="div" className="relative custom-style">
+                <Menu as="div" className="relative custom-style z-51">
                   <MenuButton className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
                     <img

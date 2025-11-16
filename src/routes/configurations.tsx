@@ -122,7 +122,7 @@ useEffect(() => {
       <div className="hidden sm:flex ">
         <div className="pb-0 flex flex-1 rounded-t-md border border-[var(--darkest-teal)]">
         {tabList.map((item, index) => (
-          <div key={item.id} className="relative isolate z-50 flex w-full">    
+          <div key={item.id} className="relative isolate flex w-full">    
         <Popover className="relative isolate z-50 flex w-full">
           <PopoverButton
           as={NavLink}

@@ -48,7 +48,8 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
           if (!loggedInUser) return;
           filterOpsList();
           if (filteredOperators.length === 1) {
-              setOpAPCID(filteredOperators[0].apc_id)
+              setOpAPCID(filteredOperators[0].apc_id);
+              onChange?.(filteredOperators[0].apc_id);
           }
       }, [loggedInUser])
 

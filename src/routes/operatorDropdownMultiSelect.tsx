@@ -53,7 +53,7 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
           populateOperatorList();
       }, [loggedInUser])
 
-    function selectAll() {
+  function selectAll() {
     const all = operatorsList.map((o) => o.apc_id!);
     setOpAPCIDMulti(all);
     onChange?.(all);
@@ -65,13 +65,13 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
   
   return (
     <>
-  <div className="border rounded-lg max-h-50 min-h-50 overflow-y-auto shadow-xl ring-1 ring-[var(--darkest-teal)]/50 p-2 ">
+  <div className="rounded-lg max-h-50 min-h-50 overflow-y-auto shadow-xl outline-1 -outline-offset-1 outline-[var(--dark-teal)] p-2 ">
   <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">Operator(s):</h1>
   
   {operatorsList.map((option) => (
     <label 
       key={option.apc_id}
-      className="flex items-start gap-2 p-2 hover:bg-[var(--darkest-teal)]/20 cursor-pointer">
+      className="flex items-start gap-2 p-2 hover:bg-[var(--darkest-teal)]/20 ">
         <div className="flex gap-3">
           <div className="flex h-6 shrink-0 items-center">
             <div className="group grid size-4 grid-cols-1">
@@ -81,7 +81,7 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
                 value={option.apc_id}
                 checked={opAPCIDMulti.includes(option.apc_id!)}
                 onChange={(e) => handleCheckboxChange(option.apc_id!, e.target.checked)}
-                className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] indeterminate:border-[var(--bright-pink)] indeterminate:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100"
+                className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] indeterminate:border-[var(--bright-pink)] indeterminate:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:border-[var(--darkest-teal)]/40 disabled:bg-[var(--darkest-teal)]/20 disabled:checked:bg-[var(--darkest-teal)]/40 cursor-pointer"
               />
               <svg
                 fill="none"

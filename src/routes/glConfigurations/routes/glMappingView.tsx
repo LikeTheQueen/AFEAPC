@@ -139,180 +139,178 @@ export default function GLMapping() {
 
     return (
         <>
+            <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+                <div className="grid grid-cols-1 gap-x-8 sm:gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
+                    <div className="">
+                        <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage you GL Account Code Mappings</h2>
+                        <p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to view the GL Account Code Mappings</p><br></br>
+                    </div>
 
-            <div >
-                <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
-                    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-gray-300">
+                    <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-6 sm:gap-y-10 ">
                         <div className="">
-                            <h2 className="custom-style text-sm/6 sm:text-md xl:text-lg font-medium text-[var(--darkest-teal)]">View and Manage you GL Account Code Mappings</h2>
-                            <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select an Operator you receive Non-Op AFEs from and your company as the Partner to view the GL Account Code Mappings</p><br></br>
-                        </div>
-
-                        <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                            <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Operator of Non-Op AFEs:</h1>
                             <div className="">
-                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 6 6 xl:text-base">Operator of Non-Op AFEs:</h1>
-                                <div className="">
-                                    <OperatorDropdown
-                                        onChange={(id) => { setOpAPCID(id) }}
-                                        limitedList={false}
-                                    />
-                                </div>
-                            </div>
-                            <div className="">
-                                <h1 className="custom-style text-[var(--darkest-teal)] font-semibold text-sm/6 6 xl:text-base">Your company as a Partner on Non-Op AFEs:</h1>
-                                <div className="">
-                                    <PartnerDropdown
-                                        onChange={(id) => { setPartnerAPCID(id) }}
-                                        limitedList={true}
-                                    />
-                                </div>
+                                <OperatorDropdown
+                                    onChange={(id) => { setOpAPCID(id) }}
+                                    limitedList={false}
+                                />
                             </div>
                         </div>
-
+                        <div className="">
+                            <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Your company as a Partner on Non-Op AFEs:</h1>
+                            <div className="">
+                                <PartnerDropdown
+                                    onChange={(id) => { setPartnerAPCID(id) }}
+                                    limitedList={true}
+                                />
+                            </div>
+                        </div>
                     </div>
+
                 </div>
+            </div>
 
-                {loading ? (
-                    <div className="mt-60">
-                        <LoadingPage></LoadingPage>
-                    </div>
-                ) : (
-                    <>
-                        <div
-                            hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                    (opAPCID !== '' && partnerAPCID === '') ||
-                                    (opAPCID === '' && partnerAPCID !== '') ? false : true}
-                            className="bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/30 rounded-sm sm:rounded-xl ">
-                            <div className="my-8 max-h-80 flex items-center justify-center">
-                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style py-2 px-2 text-sm/6 xl:text-base">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
-                            </div>
-
+            {loading ? (
+                <div className="mt-60">
+                    <LoadingPage></LoadingPage>
+                </div>
+            ) : (
+                <>
+                    <div
+                        hidden={(opAPCID === '' && partnerAPCID === '') ||
+                                (opAPCID !== '' && partnerAPCID === '') ||
+                                (opAPCID === '' && partnerAPCID !== '') ? false : true}
+                        className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
+                        <div className="my-8 max-h-80 flex items-center justify-center">
+                            <h2 className="font-normal text-[var(--darkest-teal)] custom-style-long-text p-2 text-sm/6 xl:text-base/7">Select both an Operator and Your Company as a Partner from the dropdowns to view the GL Account Code Mappings.</h2>
                         </div>
-                        <div
-                            hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                    (opAPCID !== '' && partnerAPCID === '') ||
-                                    (opAPCID === '' && partnerAPCID !== '') ? true : false}
-                            className="divide-y divide-gray-900/20">
 
-                            <div hidden={cumaltiveGLMap.length > 0 ? false : true} className="">
-                                <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">GL Account Code Mappings</h1>
-                                <div className="bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/30 rounded-sm sm:rounded-xl flow-root overflow-hidden">
+                    </div>
+                    <div
+                        hidden={(opAPCID === '' && partnerAPCID === '') ||
+                                (opAPCID !== '' && partnerAPCID === '') ||
+                                (opAPCID === '' && partnerAPCID !== '') ? true : false}
+                        className="divide-y divide-[var(--darkest-teal)]/90">
 
-                                    <div className="py-2 mx-auto max-w-7xl">
-                                        <table className="w-full table-fixed">
-                                            <thead className="w-full border-b-2 border-b border-gray-900 ">
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
-                                                        <div>Operator GL Account Code</div>
-                                                        <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-md">to be mapped to </div>
-                                                        <div className="xl:hidden">Your GL Account Code</div>
-                                                    </th>
-                                                    <th
-                                                        scope="col"
-                                                        className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+                        <div hidden={cumaltiveGLMap.length > 0 ? false : true} className="">
+                            <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">GL Account Code Mappings</h1>
+                            <div className="mt-2 rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
 
-                                                    </th>
-                                                    <th
-                                                        scope="col"
-                                                        className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
-                                                        <div>Your GL Account Code</div>
-                                                    </th>
+                                <div className="py-2 mx-auto max-w-7xl">
+                                    <table className="w-full table-fixed">
+                                        <thead className="w-full border-b-2 border-b border-[var(--darkest-teal)] ">
+                                            <tr>
+                                                <th
+                                                    scope="col"
+                                                    className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
+                                                    <div>Operator GL Account Code</div>
+                                                    <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-md">mapped to </div>
+                                                    <div className="xl:hidden">Your GL Account Code</div>
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
 
-                                                    <th scope="col" className="hidden xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
-                                                        <span className="sr-only">Delete</span>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {rowsToShow.map((glCode, glCodeIdx) => (
-                                                    <tr key={glCodeIdx} className={`${glCodeIdx !== cumaltiveGLMap.length - 1 ? 'border-b border-gray-900 xl:border-gray-300' : ''} items-center`}>
-                                                        <td>
-                                                            {/* Operator GL Code.  Stays put no matter the screen size.  Truncates when small*/}
-                                                            <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--dark-teal)]">
-                                                                    {glCode.operator_account_group}
-                                                                </p>
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-gray-500">
-                                                                    {glCode.operator_account_number} | {glCode.operator_account_description}
-                                                                    <ArrowTurnDownLeftIcon className="xl:hidden size-7 stroke-2 text-[var(--(darkest-teal))] justify-self-end mr-2"></ArrowTurnDownLeftIcon>
-                                                                </p>
-                                                            </div>
-                                                            {/* User's GL Code  Only shows when screen is not xl*/}
-                                                            <div className="-mt-5 pl-3 pr-5 text-sm/6 xl:pr-3 xl:hidden">
-                                                                <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--dark-teal)] ">
-                                                                    {glCode.partner_account_group}
-                                                                </p>
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-gray-500">
-                                                                    {glCode.partner_account_number} | {glCode.partner_account_description}
-                                                                </p>
-                                                                <div className="m-2 size-6 pt-1 justify-self-end">
-                                                                    <button
-                                                                        onClick={() => { removeMapping(glCode.id!) }}
-                                                                        className="text-red-500 hover:text-red-900 cursor-pointer ">
-                                                                        <TrashIcon className="size-5" />
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+                                                    <div>Your GL Account Code</div>
+                                                </th>
 
-                                                        <td className="hidden xl:table-cell">
-                                                            <div className="size-6 justify-self-center">
-                                                                <ArrowRightIcon></ArrowRightIcon>
-                                                            </div>
-                                                        </td>
-                                                        {/* Partner APC Address.  Only shows when screen is xl  Padding matches header column*/}
-                                                        <td className="hidden xl:table-cell ">
-                                                            <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--dark-teal)]">
+                                                <th scope="col" className="hidden xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
+                                                    <span className="sr-only">Delete</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {rowsToShow.map((glCode, glCodeIdx) => (
+                                                <tr key={glCodeIdx} className={`${glCodeIdx !== cumaltiveGLMap.length - 1 ? 'border-b border-[var(--darkest-teal)]/40 ' : ''} items-center`}>
+                                                    <td>
+                                                        {/* Operator GL Code.  Stays put no matter the screen size.  Truncates when small*/}
+                                                        <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
+                                                            <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
+                                                                {glCode.operator_account_group}
+                                                            </p>
+                                                            <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
+                                                                {glCode.operator_account_number} | {glCode.operator_account_description}
+                                                                <ArrowTurnDownLeftIcon className="xl:hidden size-7 stroke-2 text-[var(--(darkest-teal))] justify-self-end mr-2"></ArrowTurnDownLeftIcon>
+                                                            </p>
+                                                        </div>
+                                                        {/* User's GL Code  Only shows when screen is not xl*/}
+                                                        <div className="-mt-5 pl-3 pr-5 text-sm/6 xl:pr-3 xl:hidden">
+                                                            <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--darkest-teal)] ">
                                                                 {glCode.partner_account_group}
                                                             </p>
-                                                            <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-gray-500">
+                                                            <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
                                                                 {glCode.partner_account_number} | {glCode.partner_account_description}
                                                             </p>
-                                                        </td>
-                                                        <td className="hidden xl:table-cell justify-self-center">
-                                                            <div className="size-6 justify-self-center pt-1 mr-3">
+                                                            <div className="m-2 size-6 pt-1 justify-self-end">
                                                                 <button
                                                                     onClick={() => { removeMapping(glCode.id!) }}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
                                                                 </button>
                                                             </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                        </div>
+                                                    </td>
 
+                                                    <td className="hidden xl:table-cell">
+                                                        <div className="size-6 justify-self-center">
+                                                            <ArrowRightIcon></ArrowRightIcon>
+                                                        </div>
+                                                    </td>
+                                                    {/* Partner APC Address.  Only shows when screen is xl  Padding matches header column*/}
+                                                    <td className="hidden xl:table-cell ">
+                                                        <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
+                                                            {glCode.partner_account_group}
+                                                        </p>
+                                                        <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
+                                                            {glCode.partner_account_number} | {glCode.partner_account_description}
+                                                        </p>
+                                                    </td>
+                                                    <td className="hidden xl:table-cell justify-self-center">
+                                                        <div className="size-6 justify-self-center pt-1 mr-3">
+                                                            <button
+                                                                onClick={() => { removeMapping(glCode.id!) }}
+                                                                className="text-red-500 hover:text-red-900 cursor-pointer ">
+                                                                <TrashIcon className="size-5" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
+
+                            </div>
+                            <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
                                     <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
                                         Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
                                         {currentPage == totalPage - 1
                                             ? cumaltiveGLMap?.length
                                             : (currentPage + 1) * rowsLimit}{" "}
-                                        of {cumaltiveGLMap?.length} GL Account Code Mappings
+                                        of {cumaltiveGLMap?.length} Mapped GL Codes
                                     </div>
                                     <div className="flex">
                                         <ul
-                                            className="flex justify-center items-center align-center gap-x-[10px] z-30"
+                                            className="flex justify-center items-center align-center gap-x-2 z-30"
                                             role="navigation"
                                             aria-label="Pagination">
                                             <li
-                                                className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${currentPage == 0
-                                                        ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
+                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                     }`}
                                                 onClick={previousPage}>
                                                 <ChevronLeftIcon></ChevronLeftIcon>
                                             </li>
                                             {customPagination?.map((data, index) => (
                                                 <li
-                                                    className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[2px] border-solid bg-white cursor-pointer ${currentPage == index
-                                                            ? "border-[var(--bright-pink)]"
-                                                            : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
+                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
+                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
+                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                         }`}
                                                     onClick={() => changePage(index)}
                                                     key={index}
@@ -321,9 +319,9 @@ export default function GLMapping() {
                                                 </li>
                                             ))}
                                             <li
-                                                className={`flex items-center justify-center w-[32px] rounded-[6px] h-[32px] border-[1px] border-solid disabled] ${currentPage == totalPage - 1
-                                                        ? "border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "cursor-pointer border-[var(--darkest-teal)]/30 hover:border-[var(--bright-pink)] hover:border-[2px]"
+                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
+                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                                     }`}
                                                 onClick={nextPage}>
                                                 <ChevronRightIcon></ChevronRightIcon>
@@ -331,13 +329,11 @@ export default function GLMapping() {
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
                         </div>
-                    </>
-                )}
-            </div>
+                    </div>
+                </>
+            )}
             <ToastContainer />
-
         </>
     )
 }
