@@ -221,7 +221,7 @@ export default function OperatorViewAndEdit() {
                             
                             <UniversalPagination
                                 data={operatorsList}
-                                rowsPerPage={3}
+                                rowsPerPage={5}
                                 listOfType="Operators"
                                 onPageChange={handlePageChange}
                             />

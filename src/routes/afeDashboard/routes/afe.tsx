@@ -100,7 +100,7 @@ export default function AFE() {
   const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
   setOperatedAFEs(opAFEs);
   
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true );
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
   setNonOperatedAFEs(nonOpAFEs);    
 };

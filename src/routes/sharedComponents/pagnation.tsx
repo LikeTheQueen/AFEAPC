@@ -18,14 +18,14 @@ export default function UniversalPagination<T>({
     const [totalPages, setTotalPages] = useState(0);
     const [paginationArray, setPaginationArray] = useState<number[]>([]);
 
-    // Calculate total pages and pagination array when data changes
+    // Calculate total pages and pagnation array when data changes
     useMemo(() => {
         const pages = Math.ceil(data.length / rowsPerPage);
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
     }, [data.length, rowsPerPage]);
 
-    // Update paginated data whenever page or data changes
+    // Update paginated rows whenever page or data changes
     useEffect(() => {
         const startIndex = currentPage * rowsPerPage;
         const endIndex = startIndex + rowsPerPage;
@@ -58,6 +58,7 @@ export default function UniversalPagination<T>({
         : (currentPage + 1) * rowsPerPage;
 
     return (
+        <>
         <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
             <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
                 Showing {startItem} to {endItem} of {data.length} {listOfType}
@@ -96,6 +97,10 @@ export default function UniversalPagination<T>({
                     </li>
                 </ul>
             </div>
+            
         </div>
+       
+        </>
     );
+
 }
