@@ -24,20 +24,23 @@ export default function TestExecuteManual() {
   
   const handleClick = async () => {
     //if(executeAuthToken !=='') return;
-
-    const executeResult = await fetchAuthToken(executeDocID, executeKey, '/api/Authentication/ApiKey/Login', baseURL);
+    try {
+      const executeResult = await fetchAuthToken(executeDocID, executeKey, '/api/Authentication/ApiKey/Login', baseURL);
     
-    if(!executeResult.ok) {
-      setHideWarning(false);
-      setResponseError(executeResult.data);
-      notifyFailure(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
-    return;
-    } 
-    setExecuteAuthToken(executeResult.data);
-    setHideSuccess(false);
-    notifyStandard(`API Integration passed.  This integration just struck oil.\n\n(TLDR: Successful connection)`);
-    await executeLogout(executeAuthToken, 'api/Authentication/Logout', baseURL);
-    
+      if(!executeResult.ok) {
+        setHideWarning(false);
+        setResponseError(executeResult.data);
+        notifyStandard(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
+      } else {
+        setExecuteAuthToken(executeResult.data);
+        setHideSuccess(false);
+        notifyStandard(`API Integration passed.  This integration just struck oil.\n\n(TLDR: Successful connection)`);
+        //await executeLogout(executeAuthToken, 'api/Authentication/Logout', baseURL);
+      }
+  
+    } catch (error) {
+      notifyFailure('An error occurred while testing the connection');
+    }
 };
 
   const handleLogout = async () => {
@@ -63,34 +66,34 @@ export default function TestExecuteManual() {
   }
   
   const isTestButtonDisabled = (
-       !executeKey 
-    || !executeDocID) 
+    !executeKey 
+    || !executeDocID 
     || !executeBaseURL 
     || executeKey==='' 
     || executeDocID===''
-    || executeBaseURL==='' ? true : false;
+    || executeBaseURL==='' ? true : false);
   
  
   return (
     <>
     <div className="">
-    <div className="shadow-2xl sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-6 mb-5">
+    <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
         <div className="">
-                <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 ">
-                    <div className="md:col-span-3">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-5 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
+            <div className="col-span-2">
                         <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Test with an Execute API Key</h2>
-                        <p className="mt-2 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">You will need to create an API Key in your Execute Environment.  Once generated you will <span className="font-bold text-gray-900 custom-style">not</span> be able to view this key again.  When generated, store this key where it will be accessible in the future.</p>
-                        <p className="mt-2 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Create a Key by going to Tools {">"} Configuration {">"} View API Keys {">"} Click 'Create New API Key' in the toolbar.<span className="font-bold text-gray-900 custom-style">not</span> be able to view this key again.  When generated, store this key where it will be accessible in the future.</p>
-                        <li className="mt-2 ml-3 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text italic">If you do not see this option contact Quorum Support</li>
-                        <p className="mt-2 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">You will also need the Document ID which can be found when viewing the list of API Keys.</p>
-                    </div>
-                    <div className="sm:w-3/4 bg-white shadow-md sm:rounded-lg ring-1 ring-[var(--darkest-teal)]/30 p-6 md:col-span-4">
-                      <div className="col-span-full">
-            
-            <label htmlFor={'executeKey'} className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">
+                        <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">You will need to create an API Key in your Execute Environment.  Once generated you will <span className="font-bold text-gray-900 custom-style">not</span> be able to view this key again.  When generated, store this key where it will be accessible in the future.</p>
+                        <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Create a Key by going to Tools {">"} Configuration {">"} View API Keys {">"} Click 'Create New API Key' in the toolbar.<span className="font-bold text-gray-900 custom-style">not</span> be able to view this key again.  When generated, store this key where it will be accessible in the future.</p>
+                        <br></br><li className="ml-3 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3 italic">If you do not see this option contact Quorum Support</li>
+                        <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">You will also need the Document ID which can be found when viewing the list of API Keys.</p>
+            </div>
+            <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-0">
+                      
+            <div>
+            <label htmlFor={'executeKey'} className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">
               Execute API Key
             </label>
-            <div className="mt-1 mb-2 grid grid-cols-1">
+            <div className="grid grid-cols-1">
               <input
                 disabled={executeAuthToken==='' ? false : true}
                 id={'executeKey'}
@@ -99,7 +102,7 @@ export default function TestExecuteManual() {
                 value={executeKey}
                 placeholder={'The API Key is roughly 64 characters'}
                 onChange={handleKeyChange}
-                className="col-start-1 row-start-1 block w-full rounded-md bg-white px-3 py-1.5 text-sm/6 text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/80 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] custom-style-long-text"
+                className="col-start-1 row-start-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
               />
               <span className="col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-[var(--dark-teal)] sm:size-4" onClick={toggleMode}>
                   {
@@ -108,10 +111,13 @@ export default function TestExecuteManual() {
               </span>
               
             </div>
-            <label htmlFor={'executeDocID'} className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">
+            </div>
+
+            <div>
+            <label htmlFor={'executeDocID'} className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">
               Execute Document ID 
             </label>
-            <div className="mt-1 mb-2 ">
+            <div className="">
               <input
                 disabled={executeAuthToken==='' ? false : true}
                 id={'executeDocID'}
@@ -120,13 +126,16 @@ export default function TestExecuteManual() {
                 value={executeDocID}
                 onChange={handleDocIDChange}
                 autoComplete="off"
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-sm/6 text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/80 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] custom-style-long-text"
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
               />
             </div>
-            <label htmlFor={'executeBaseURL'} className="custom-style text-[var(--darkest-teal)] font-medium text-sm/6 xl:text-base">
+            </div>
+
+            <div>
+            <label htmlFor={'executeBaseURL'} className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">
               Execute Base URL
             </label>
-            <div className="mt-1 mb-2 ">
+            <div className="">
               <input
                 disabled={executeAuthToken==='' ? false : true}
                 id={'executeBaseURL'}
@@ -136,16 +145,20 @@ export default function TestExecuteManual() {
                 onChange={handleURLChange}
                 placeholder={'https://quorumexecute.company.com'}
                 autoComplete="off"
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-sm/6 text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/80 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] custom-style-long-text"
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
               />
             </div>
-            <div className="flex justify-end mt-6">
+            </div>
+
+            <div className="text-right ">
               <button
-                className="cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                 className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                 disabled={isTestButtonDisabled}
-                onClick={(e: any) => { handleClick() }}
+                onClick={(e: any) =>  handleClick()}
               >Run Test</button>
             </div>
+            
+            
             <div 
             hidden={hideWarning}
             className="bg-red-100 border border-red-400 text-red-700 custom-style px-4 py-3 rounded-md relative">
@@ -189,11 +202,11 @@ export default function TestExecuteManual() {
           </div>
     
                     </div>
-                </div>
         </div>
         </div>
         </div>
-    <ToastContainer />
+        
+    
 </>
   );
 };

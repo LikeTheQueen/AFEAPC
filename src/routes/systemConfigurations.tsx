@@ -1,4 +1,5 @@
 
+import { ToastContainer } from 'react-toastify';
 import TestExecuteEstablishedConnection from './sharedComponents/testExecute';
 import TestExecuteManual from './sharedComponents/testExecuteManual';
 const baseURL = '/api';
@@ -14,6 +15,7 @@ export default function TestExecuteConnections() {
     <div className="bg-white">
       <TestExecuteEstablishedConnection></TestExecuteEstablishedConnection>
       <TestExecuteManual></TestExecuteManual>
+      <ToastContainer></ToastContainer>
     </div>
 
   );
