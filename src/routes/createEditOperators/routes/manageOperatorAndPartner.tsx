@@ -33,6 +33,7 @@ export default function OperatorViewAndEdit() {
     // State for paginated data
     const [rowsToShow, setRowsToShow] = useState<OperatorPartnerRecord[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const maxRowsToShow = (5);
 
     useEffect(() => {
         if (!loggedInUser || token === '') {
@@ -47,8 +48,8 @@ export default function OperatorViewAndEdit() {
             setLoadingOperators(true);
             try {
                 const [opListResult, partnerListResult] = await Promise.all([
-                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 4, 5], token),
-                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 4, 5], token)
+                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 8, 9], token),
+                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 8, 9], token)
                 ]);
 
                 if (opListResult.ok) {
@@ -79,7 +80,7 @@ export default function OperatorViewAndEdit() {
 
     async function handleClickActivateOrDeactivateOperator(operatorIdx: number) {
         // Calculate the actual index in the full list based on current page
-        const actualIndex = currentPage * 5 + operatorIdx;
+        const actualIndex = currentPage * maxRowsToShow + operatorIdx;
         const operatorToUpdate = operatorsList[actualIndex];
 
         if (!operatorToUpdate.apc_id || !operatorToUpdate.apc_address_id) return;
@@ -128,9 +129,9 @@ export default function OperatorViewAndEdit() {
                     <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
                         <div className="md:col-span-2">
                             <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
-                            <p className="text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs. The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
-                            <br></br><p className="text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
-                            <br></br><p className="text-md/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
+                            <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs. The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
+                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
+                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                         </div>
                         <div className="md:col-span-5 ">
                             <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
@@ -221,7 +222,7 @@ export default function OperatorViewAndEdit() {
                             
                             <UniversalPagination
                                 data={operatorsList}
-                                rowsPerPage={5}
+                                rowsPerPage={maxRowsToShow}
                                 listOfType="Operators"
                                 onPageChange={handlePageChange}
                             />

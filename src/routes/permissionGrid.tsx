@@ -3,6 +3,7 @@ import { type RoleEntryWrite, type RoleEntryRead, type PartnerRoleEntryWrite } f
 import { checkedByRole, getRoleIndex } from "../routes/createEditUsers/routes/helpers/helpers";
 import { writeorUpadateUserRoles } from "provider/write";
 import React from "react";
+import { useSupabaseData } from "src/types/SupabaseContext";
 
 type apcrole = {
     apc_id: string;
@@ -24,6 +25,7 @@ type GroupedData = {
 };
 
 export default function PermissionDashboard({ readOnly = false, operatorRoles = [], partnerRoles = [] }:{ readOnly?: boolean; operatorRoles: RoleEntryRead[]; partnerRoles: RoleEntryRead[]; }) {
+  const { loggedInUser } = useSupabaseData();
   const [opRoles, setOpRoles] = useState(operatorRoles);
   const [opRolesWrite, setOpRolesWrite] = useState<RoleEntryWrite[] | []>([]);
   const [partRoles, setPartnerRoles] = useState(partnerRoles);
@@ -198,8 +200,20 @@ useEffect(() => {
     return updatedRoles;
   });
 };
+  const isPartnerRowDisabled = (apc_id: string) => {
+    const userPartnerRole = loggedInUser?.partnerRoles.find(pr => pr.apc_id === apc_id && pr.role === 5);
+
+    return !userPartnerRole;
+};
+const isOperatorRowDisabled = (apc_id: string) => {
+    const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === 4);
+
+    return !userOperatorRole;
+};
  console.log(groupByUserThenOperatorRole,'THE OOP ROLES')
  console.log(groupByUserThenPartnerRole,'theprt group')
+ console.log(loggedInUser?.partnerRoles,'the partner role')
+ console.log(loggedInUser?.operatorRoles,'the op role')
   return (
     <>
     <div className="py-4 sm:py-0">
@@ -207,10 +221,10 @@ useEffect(() => {
     hidden={groupByUserThenOperatorRole.length > 0 ? false : true}>
       <div className="md:col-span-2">
         <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
+          <p hidden ={readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
+          <p hidden ={readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
+          <p hidden ={!readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
+          <p hidden ={!readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
      
@@ -283,7 +297,7 @@ useEffect(() => {
   <input
     type="checkbox"
     defaultChecked={checkedByRole(operator.roles, roleVal)}
-    disabled={readOnly}
+    disabled={readOnly || isOperatorRowDisabled(operator.apc_id)}
     value={getRoleIndex(operator.roles,roleVal,operator.apc_id,operator.apc_address_id,user.user_id)}
     onChange={(e) => handleCheckboxChangeOp(operator.apc_id,
                                           operator.apc_address_id,
@@ -343,10 +357,10 @@ useEffect(() => {
     hidden={groupByUserThenPartnerRole.length >0 ? false : true }>
       <div className="md:col-span-2 ">
         <h2 className="text-base/7 custom-style font-semibold text-[var(--darkest-teal)]">Permissions for Non-Operated AFEs</h2>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
-          <p hidden ={readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
-          <p hidden ={!readOnly} className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
+          <p hidden ={readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
+          <p hidden ={readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
+          <p hidden ={!readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
+          <p hidden ={!readOnly} className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
         </div>
       <div className="md:col-span-5">
       
@@ -419,7 +433,7 @@ useEffect(() => {
   <input
     type="checkbox"
     defaultChecked={checkedByRole(operator.roles, roleVal)}
-    disabled={readOnly}
+    disabled={readOnly || isPartnerRowDisabled(operator.apc_id)}
     value={getRoleIndex(operator.roles,roleVal,operator.apc_id,operator.apc_address_id,user.user_id)}
     onChange={(e) => handleCheckboxChangeNonOp(operator.apc_id,
                                           operator.apc_address_id,

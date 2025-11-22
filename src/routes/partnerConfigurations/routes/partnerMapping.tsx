@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { OperatorDropdown } from 'src/routes/operatorDropdown';
+import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 interface PartnerMappingRecord {
     operator?: string;
@@ -37,42 +38,12 @@ export default function PartnerMapping() {
     const [customPagination, setCustomPagination] = useState<number[] | []>([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    
-    const nextPage = () => {
-        const startIndex = rowsLimit * (currentPage + 1);
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltivePartnerMapDisplay.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(currentPage + 1);
-        };
-    const changePage = (value: number) => {
-        const startIndex = value * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltivePartnerMapDisplay.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(value);
-        };
-    const previousPage = () => {
-        const startIndex = (currentPage - 1) * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltivePartnerMapDisplay.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        } else {
-          setCurrentPage(0);
-        }
-        };
-    
-    useMemo(() => {
-            setCustomPagination(
-              Array(Math.ceil(cumaltivePartnerMapDisplay.length / rowsLimit)).fill(null)
-            );
-            setTotalPage(
-                Math.ceil(cumaltivePartnerMapDisplay.length / rowsLimit)
-            )
-            }, [cumaltivePartnerMapDisplay]);
 
+    const handlePageChange = (paginatedData: PartnerMapDisplay[], page: number) => {
+                  setRowsToShow(paginatedData);
+                  setCurrentPage(page);
+    };
+    
     useEffect(() => {
         let isMounted = true;
         async function getPartnerLists() {
@@ -419,7 +390,7 @@ export default function PartnerMapping() {
                         <div className="w-full flex flex-col lg:flex-row gap-5 justify-between py-4 items-center border-t border-t-[var(--darkest-teal)]/70">
                             <button
                                 disabled={(currentPartnerMapDisplay?.apc_partner_id && currentPartnerMapDisplay.source_partner_id) ? false : true}
-                                className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                 onClick={(e) => { savePartnerMapping() }}>
                                 Create Mapping
                             </button>
@@ -427,157 +398,118 @@ export default function PartnerMapping() {
                                 <button
                                     hidden={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
                                     disabled={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                     onClick={(e) => { setCumlativePartnerDisplay([]), notifyStandard(`Partner Mappings cleared.  No leaks, no flare, just fresh pipe.\n\n(TLDR: Partner Mappings reset without saving)`) }}>
                                     Clear Mappings
                                 </button>
                                 <button
                                     hidden={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
                                     disabled={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                     onClick={(e) => { savePartnerMappingRecords(), notifyStandard(`Partner Mappings have been saved.  Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`) }}>
                                     Save Mappings
                                 </button>
                             </div>
                         </div>
-                        <div hidden={cumaltivePartnerMapDisplay.length > 0 ? false : true} className="">
-                            <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">Pending Mappings</h1>
-                            <div className="mt-2 rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
-                                
-                                        <div className="py-2 mx-auto max-w-7xl">
-                                            <table className="w-full table-fixed">
-                                                <thead className="w-full border-b-2 border-b border-[var(--darkest-teal)] ">
-                                                    <tr>
-                                                        <th
-                                                            scope="col"
-                                                            className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
-                                                            <div>Partner Address in your AFE System</div>
-                                                            <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-base/7">to be mapped to the</div>
-                                                            <div className="xl:hidden">Partner Address in AFE Partner Connections</div>
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
-                                                        
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
-                                                        <div>Partner Address in AFE Partner Connections</div>
-                                                        </th>
-                                                        
-                                                        <th scope="col" className="hidden xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
-                                                            <span className="sr-only">Delete</span>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {rowsToShow.map((partner, partnerIdx) => (
-                                                        <tr key={partnerIdx} className={`${partnerIdx !== cumaltivePartnerMapDisplay.length - 1 ? 'border-b border-[var(--darkest-teal)]/70' : ''} items-center`}>
-                                                            <td>
-                                                                {/* Partner Source Address.  Stays put no matter the screen size.  Truncates when small*/}
-                                                                <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
-                                                                    {partner.source_partner_name}
-                                                                </p>
-                                                                <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
-                                                                    {partner.source_partner_address}
+                            <div hidden={cumaltivePartnerMapDisplay.length > 0 ? false : true} className="">
+                                <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">Pending Mappings</h1>
+                                <div className="bg-white">
+                                    <table className="table-auto min-w-full outline-1 outline-offset-1 outline-[var(--darkest-teal)]/70 rounded-lg shadow-2xl">
+                                        <thead className="border-b-2 border-b border-[var(--darkest-teal)] ">
+                                            <tr>
+                                                <th
+                                                    scope="col"
+                                                    className="sticky  rounded-t-lg xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
+                                                    <div>Partner Address in your AFE System</div>
+                                                    <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-base/7">to be mapped to the</div>
+                                                    <div className="xl:hidden">Partner Address in AFE Partner Connections</div>
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="hidden xl:w-1/20 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
+                                                    <div>Partner Address in AFE Partner Connections</div>
+                                                </th>
+
+                                                <th scope="col" className="hidden rounded-tr-lg xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
+                                                    <span className="sr-only">Delete</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {rowsToShow.map((partner, partnerIdx) => (
+                                                <tr key={partnerIdx} className={`${partnerIdx !== cumaltivePartnerMapDisplay.length - 1 ? '' : ''} items-center`}>
+                                                    <td>
+                                                        {/* Partner Source Address.  Stays put no matter the screen size.  Truncates when small*/}
+                                                        <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
+                                                            <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
+                                                                {partner.source_partner_name}
+                                                            </p>
+                                                            <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
+                                                                {partner.source_partner_address}
                                                                 <ArrowTurnDownLeftIcon className="xl:hidden size-7 stroke-2 text-[var(--(darkest-teal))] justify-self-end mr-2"></ArrowTurnDownLeftIcon>
-                                                                </p>
-                                                                </div>
-                                                                {/* Partner APC Address.  Only shows when screen is not xl*/}
-                                                                <div className="-mt-5 pl-3 pr-5 text-sm/6 xl:pr-3 xl:hidden">
-                                                                <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--dark-teal)] ">
-                                                                    {partner.apc_partner_name}
-                                                                </p>
-                                                                <p className="max-w-full flex-1 truncate custom-style-long-text text-[var(--dark-teal)]">
-                                                                    {partner.apc_partner_address}
-                                                                </p>
-                                                                <div className="m-2 size-6 pt-1 justify-self-end">
-                                                                            <button
+                                                            </p>
+                                                        </div>
+                                                        {/* Partner APC Address.  Only shows when screen is not xl*/}
+                                                        <div className="-mt-5 pl-3 pr-5 text-sm/6 xl:pr-3 xl:hidden">
+                                                            <p className="max-w-full flex-1 truncate custom-style font-medium text-[var(--dark-teal)] ">
+                                                                {partner.apc_partner_name}
+                                                            </p>
+                                                            <p className="max-w-full flex-1 truncate custom-style-long-text text-[var(--dark-teal)]">
+                                                                {partner.apc_partner_address}
+                                                            </p>
+                                                            <div className="m-2 size-6 pt-1 justify-self-end">
+                                                                <button
                                                                     onClick={() => removeMapping(partnerIdx)}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
                                                                 </button>
-                                                                </div>
-                                                                </div>
-                                                            </td>
-                                                            
-                                                            <td className="hidden xl:table-cell">
-                                                                <div className="size-6 justify-self-center">
-                                                                            <ArrowRightIcon></ArrowRightIcon>
-                                                                </div>
-                                                            </td>
-                                                            {/* Partner APC Address.  Only shows when screen is xl  Padding matches header column*/}
-                                                            <td className="hidden xl:table-cell ">
-                                                                <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
-                                                                    {partner.apc_partner_name}
-                                                                </p>
-                                                                <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
-                                                                    {partner.apc_partner_address}
-                                                                </p>
-                                                            </td>
-                                                            <td className="hidden xl:table-cell justify-self-center">
-                                                                <div className="size-6 justify-self-center pt-1 mr-3">
-                                                                            <button
-                                                                    onClick={() => removeMapping(partnerIdx)}
-                                                                    className="text-red-500 hover:text-red-900 cursor-pointer ">
-                                                                    <TrashIcon className="size-5" />
-                                                                </button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    
-                            </div>
-                                <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                    <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                        Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                        {currentPage == totalPage - 1
-                                            ? cumaltivePartnerMapDisplay?.length
-                                            : (currentPage + 1) * rowsLimit}{" "}
-                                        of {cumaltivePartnerMapDisplay?.length} Pending Mapped Partners
-                                    </div>
-                                    <div className="flex">
-                                        <ul
-                                            className="flex justify-center items-center align-center gap-x-2 z-30"
-                                            role="navigation"
-                                            aria-label="Pagination">
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={previousPage}>
-                                                <ChevronLeftIcon></ChevronLeftIcon>
-                                            </li>
-                                            {customPagination?.map((data, index) => (
-                                                <li
-                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
-                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                        }`}
-                                                    onClick={() => changePage(index)}
-                                                    key={index}
-                                                >
-                                                    {index + 1}
-                                                </li>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td className="hidden xl:table-cell">
+                                                        <div className="size-6 justify-self-center">
+                                                            <ArrowRightIcon></ArrowRightIcon>
+                                                        </div>
+                                                    </td>
+                                                    {/* Partner APC Address.  Only shows when screen is xl  Padding matches header column*/}
+                                                    <td className="hidden xl:table-cell ">
+                                                        <p className="pt-4 xl:pr-3 xl:pl-10 text-sm/6 custom-style font-medium text-[var(--darkest-teal)]">
+                                                            {partner.apc_partner_name}
+                                                        </p>
+                                                        <p className="mt-1 xl:pr-3 xl:pl-10 text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
+                                                            {partner.apc_partner_address}
+                                                        </p>
+                                                    </td>
+                                                    <td className="hidden xl:table-cell justify-self-center">
+                                                        <div className="size-6 justify-self-center pt-1 mr-3">
+                                                            <button
+                                                                onClick={() => removeMapping(partnerIdx)}
+                                                                className="text-red-500 hover:text-red-900 cursor-pointer ">
+                                                                <TrashIcon className="size-5" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             ))}
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={nextPage}>
-                                                <ChevronRightIcon></ChevronRightIcon>
-                                            </li>
-                                        </ul>
+                                        </tbody>
+                                    </table>
+                                    <div
+                                        hidden={cumaltivePartnerMapDisplay.length === 0 ? true : false}>
+                                        <UniversalPagination
+                                            data={cumaltivePartnerMapDisplay}
+                                            rowsPerPage={rowsLimit}
+                                            listOfType="Pending Mapped Partners"
+                                            onPageChange={handlePageChange}
+                                        />
                                     </div>
                                 </div>
-                        </div>
+                            </div>
                     </div>
                 )}
             </div>

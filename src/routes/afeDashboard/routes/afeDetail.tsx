@@ -15,6 +15,7 @@ import { XMarkIcon} from '@heroicons/react/24/outline';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import DocumentBrowser from '../../documentViewer';
 import * as XLSX from 'xlsx';
+import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 export default function AFEDetailURL() {
   const { afeID } = useParams<{ afeID: string }>();
@@ -44,20 +45,10 @@ export default function AFEDetailURL() {
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
   const { refreshData } = useSupabaseData();
 
-  const [rowsLimit] = useState(8);
+  
   const [rowsToShow, setRowsToShow] = useState<EstimatesSupabaseType[]>([]);
-  const [customPagination, setCustomPagination] = useState<number[] | []>([]);
-  const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   
-  const [paginationData, setPaginationData] = useState<{
-  pageNumber: number;
-  numPages: number;
-  setPageNumber: (page: number) => void;
-  nextPage: () => void;
-  previousPage: () => void;
-} | null>(null);
-
   useEffect(() => {
     let isMounted = true;
     async function getAFERecord() {
@@ -146,7 +137,7 @@ export default function AFEDetailURL() {
         }
         if(isMounted) {
           const estimatesTransformed = transformEstimatesSupabase(estimatesResponse.data);
-          setEstimates(estimatesTransformed);
+          setEstimates(estimatesTransformed.sort((a, b) => a.operator_account_group.localeCompare(b.operator_account_group)));
         }
        }
        finally {
@@ -200,23 +191,11 @@ export default function AFEDetailURL() {
     setUserOperatorViewAFERole(userOperatorViewRole);
   },[loggedInUser, afeRecord]);
 
-  useEffect(() => {
-  if (afeEstimates.length > 0) {
-    const startIndex = currentPage * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    setRowsToShow(afeEstimates.slice(startIndex, endIndex));
-  }
-}, [afeEstimates, currentPage, rowsLimit]);
-
-  useMemo(() => {
-    setCustomPagination(
-      Array(Math.ceil(afeEstimates.length / rowsLimit)).fill(null)
-    );
-      setTotalPage(
-      Math.ceil(afeEstimates.length / rowsLimit)
-    )
-      }, [afeEstimates]);
-
+  const handlePageChange = (paginatedData: EstimatesSupabaseType[], page: number) => {
+    setRowsToShow(paginatedData);
+    setCurrentPage(page);
+  };
+  
   const groupedAccounts = groupByAccountGroup(rowsToShow);
   
   function handleStatusComment(status: string) {
@@ -286,34 +265,7 @@ console.log(file)
       
   };
   
-  const nextPage = () => {
-        const startIndex = rowsLimit * (currentPage + 1);
-        const endIndex = startIndex + rowsLimit;
-        const newArray = afeEstimates.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(currentPage + 1);
-  };
-  const changePage = (value: number) => {
-        const startIndex = value * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = afeEstimates.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(value);
-  };
-  const previousPage = () => {
-        const startIndex = (currentPage - 1) * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = afeEstimates.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        } else {
-            setCurrentPage(0);
-        }
-  };
-  console.log(afeWells,'the well')
-  console.log(afeRecord?.source_system_id)
-  console.log(afeRecord?.apc_op_id)
+  
   
   return (
     <>
@@ -455,7 +407,7 @@ console.log(file)
                       {afeRecord?.afe_number}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left col-span-3">
+                  <div className="sm:pr-4 text-left col-span-2">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.version_string}
@@ -467,7 +419,7 @@ console.log(file)
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 sm:text-right col-span-4">
+                  <div className="sm:pr-4 sm:text-right col-span-5">
                     <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
                       {afeRecord?.well_name}
@@ -506,8 +458,6 @@ console.log(file)
                <div 
                hidden={afeWells.length === 0 ? true : false}
                className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
-
-               
                <h2 className="pt-1 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm/6 custom-style-long-text text-[var(--dark-teal)] capitalize">
                 {afeWells.map((item, wellIdx) => (
@@ -533,23 +483,23 @@ console.log(file)
                 <>
                 
                {/* AFE Estimates */}
-               <div className="sm:w-full">
+               <div className="">
                 
-              <table className="text-left text-xs/6 2xl:whitespace-nowrap table-fixed">
+              <table className="w-full text-left text-sm/6 2xl:whitespace-nowrap table-fixed">
 
                 {groupedAccounts && Array.from(groupedAccounts).map(([accountGroup, accounts]) => (
-                  <tbody key={accountGroup}>
+                  <tbody key={accountGroup} >
 
-                    <tr className="border-t border-b border-[var(--darkest-teal)]/70 text-[var(--darkest-teal)] font-semibold custom-style h-10">
-                      <td className="hidden w-1/5 table-cell pl-2">{accountGroup}</td>
+                    <tr className="border-t border-[var(--darkest-teal)]/90 text-[var(--darkest-teal)] font-semibold custom-style h-10">
+                      <td className="hidden w-1/5 table-cell pl-2">{accountGroup.toUpperCase()}</td>
                       <td className="hidden px-0 py-0 text-right w-1/5 table-cell">Operator Account#</td>
                       <td className="px-0 py-0 text-right w-1/5 table-cell">Account#</td>
                       <td className="hidden px-0 py-0 text-right w-1/5 table-cell">Gross Amount</td>
                       <td className="px-0 py-0 pr-2 text-right w-1/5 table-cell">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
-                      <tr key={item.id} className="border-b border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
-                        <td className="hidden px-0 py-3 text-left w-1/5 sm:table-cell">
+                      <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
+                        <td className="hidden px-0 py-3 text-left w-2/5 sm:table-cell">
                           {item.operator_account_description}
                         </td>
                         <td className="hidden px-0 py-3 text-right w-1/5 sm:table-cell">
@@ -570,66 +520,30 @@ console.log(file)
                   </tbody>
                 ))}
               </table>
-              <div className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 px-1 items-center pt-4">
-                  <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                    Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                    {currentPage == totalPage - 1
-                      ? afeEstimates?.length
-                      : (currentPage + 1) * rowsLimit}{" "}
-                      of {afeEstimates?.length} Line Items
-                    </div>
-                                                        <div className="flex">
-                                                            <ul
-                                                                className="flex justify-center items-center align-center gap-x-2 z-30"
-                                                                role="navigation"
-                                                                aria-label="Pagination">
-                                                                <li
-                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
-                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                                        }`}
-                                                                    onClick={previousPage}>
-                                                                    <ChevronLeftIcon></ChevronLeftIcon>
-                                                                </li>
-                                                                {customPagination?.map((data, index) => (
-                                                                    <li
-                                                                        className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
-                                                                                ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                                                                                : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                                            }`}
-                                                                        onClick={() => changePage(index)}
-                                                                        key={index}
-                                                                    >
-                                                                        {index + 1}
-                                                                    </li>
-                                                                ))}
-                                                                <li
-                                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
-                                                                            ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                                            : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                                        }`}
-                                                                    onClick={nextPage}>
-                                                                    <ChevronRightIcon></ChevronRightIcon>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+              <div hidden={afeEstimates.length > 0 ? false : true}
+              className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 px-1 items-center pt-2">
+                <UniversalPagination
+                  data={afeEstimates}
+                  rowsPerPage={8}
+                  listOfType="Line Items"
+                  onPageChange={handlePageChange}
+                />
               </div>
-              
-              </div>
-              
-              </>
+            </div>    
+          </>
                )}
-            <div className="mt-4 -mb-8 flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
-                              <button
-                            onClick={async(e: any) => { 
-                              e.preventDefault();
-                              handleExport();
-                              
-                          }}
-                            className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-                            Export Line Items to Excel
-                              </button>
-                            </div>
+              <div hidden={afeEstimates.length > 0 ? false : true} 
+              className="mt-4 -mb-8 flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
+                <button
+                  onClick={async (e: any) => {
+                    e.preventDefault();
+                    handleExport();
+
+                  }}
+                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                  Export Line Items to Excel
+                </button>
+              </div>
             
             </div>
             

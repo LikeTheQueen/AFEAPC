@@ -128,9 +128,9 @@ export default function OperatorViewAndEdit() {
                     <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
                         <div className="md:col-span-2">
                             <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
-                            <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs. The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
-                            <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
-                            <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
+                            <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs. The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
+                            <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
+                            <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                         </div>
                         <div className="md:col-span-5 ">
                             <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">

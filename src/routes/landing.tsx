@@ -39,7 +39,7 @@ return <div>
           </div>
           <div className="hidden lg:flex lg:gap-x-12 justify-center w-3/5">
             {navigation.map((item) => (
-              <NavLink key={item.name} to={item.href} className="text-md/6 text-center px-6 py-2 font-normal text-white custom-style rounded-full inset-px hover:bg-[var(--bright-pink)]">
+              <NavLink key={item.name} to={item.href} className="text-base/6 text-center px-6 py-2 font-normal text-white custom-style rounded-full inset-px hover:bg-[var(--bright-pink)]">
                 {item.name}
               </NavLink>
             ))}

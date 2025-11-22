@@ -16,7 +16,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
   const [opAPCID, setOpAPCID] = useState<string>('');
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
   const [operatorsList, setOperatorsList] = useState<OperatorPartnerRecord[] | []>([]);
-  
+  console.log(limitedList,'limite list')
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value;
         setOpAPCID(id);
@@ -27,7 +27,8 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
         if(limitedList!==true) {
             async function getOperators() {
             const opList: OperatorOrPartnerList[] = await fetchAllOperators();
-            setFilteredOperators(opList);
+            setFilteredOperators(opList.map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address })));
+            console.log(opList, filteredOperators)
             return;
              };
        getOperators();
@@ -43,7 +44,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
         }
         };
   
-  
+  console.log(filteredOperators)
     useEffect(() => {
           if (!loggedInUser) return;
           filterOpsList();
@@ -78,7 +79,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
           }
           populateOperatorList();
       }, [loggedInUser])
-  
+  console.log(filteredOperators)
   return (
     <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
@@ -90,9 +91,9 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
               onChange={handleChange}
               className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
               <option></option>
-              {operatorsList.map((option) => (
+              {filteredOperators.map((option) => (
                   <option key={option.apc_id} value={option.apc_id}>
-                      {option.name}
+                      {option.apc_name}
                   </option>
               ))}
           </select>

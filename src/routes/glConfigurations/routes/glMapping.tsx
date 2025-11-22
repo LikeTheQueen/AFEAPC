@@ -10,6 +10,8 @@ import LoadingPage from "src/routes/loadingPage";
 import { OperatorDropdown } from 'src/routes/operatorDropdown';
 import { PartnerDropdown } from "src/routes/partnerDropdown";
 import { type GLMappingRecord } from 'src/types/interfaces';
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 export default function GLMapping() {
 
@@ -21,47 +23,15 @@ export default function GLMapping() {
 
     const [opAPCID, setOpAPCID] = useState('');
     const [partnerAPCID, setPartnerAPCID] = useState('');
-
-    const [rowsLimit] = useState(10);
+    
     const [rowsToShow, setRowsToShow] = useState<GLMappingRecord[]>([]);
-    const [customPagination, setCustomPagination] = useState<number[] | []>([]);
-    const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    const nextPage = () => {
-        const startIndex = rowsLimit * (currentPage + 1);
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(currentPage + 1);
-    };
-    const changePage = (value: number) => {
-        const startIndex = value * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(value);
-    };
-    const previousPage = () => {
-        const startIndex = (currentPage - 1) * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        } else {
-            setCurrentPage(0);
-        }
-    };
-
-    useMemo(() => {
-        setCustomPagination(
-            Array(Math.ceil(cumaltiveGLMap.length / rowsLimit)).fill(null)
-        );
-        setTotalPage(
-            Math.ceil(cumaltiveGLMap.length / rowsLimit)
-        )
-    }, [cumaltiveGLMap]);
-
+    
+    const handlePageChange = (paginatedData: GLMappingRecord[], page: number) => {
+              setRowsToShow(paginatedData);
+              setCurrentPage(page);
+      };
+   
     useEffect(() => {
         let isMounted = true;
         async function getAccountCodes() {
@@ -87,8 +57,6 @@ export default function GLMapping() {
             isMounted = false;
         };
     }, [opAPCID, partnerAPCID]);
-
-
 
     const toggleOperatorGLCode = (
         sourceGLCode: GLCodeRowData
@@ -246,32 +214,38 @@ export default function GLMapping() {
                         {/* Default display for screen loading.  Assuming the Operator and Partner have not been selected */}
                         <div
                             hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                (opAPCID !== '' && partnerAPCID === '') ||
-                                (opAPCID === '' && partnerAPCID !== '') ? false : true}
-                            className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
-                            <div className="my-0 max-h-60 flex items-center justify-center">
-                                <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base/7">Select both an Operator and Your Company as a Partner from the dropdowns to show both account lists for mapping.</h2>
-                            </div>
-
+                                    (opAPCID !== '' && partnerAPCID === '') ||
+                                    (opAPCID === '' && partnerAPCID !== '') ? false : true}>
+                            <NoSelectionOrEmptyArrayMessage
+                                    message={'Select both an Operator and Your Company as a Partner from the dropdowns to show both account lists for mapping.'}>      
+                            </NoSelectionOrEmptyArrayMessage>
                         </div>
+                        {/* If an Operator and Partner have been selected show warnings when there are no accounts for one or both */}
                         <div
                             hidden={(opAPCID === '' && partnerAPCID === '') ||
-                                (opAPCID !== '' && partnerAPCID === '') ||
-                                (opAPCID === '' && partnerAPCID !== '') ? true : false}
+                                    (opAPCID !== '' && partnerAPCID === '') ||
+                                    (opAPCID === '' && partnerAPCID !== '') ? true : false}
                             className="mt-10">
                             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                                 <div className="divide-y divide-[var(--darkest-teal)]/40 ">
                                     <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Account Codes</h2>
                                     {/* Warning if there are no Account Codes loaded by the Operator */}
-                                    <div className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
-                                        <div
-                                            hidden={(partnerAPCID !== '' && opAPCID !== '' && operatorAccountCodes.length < 1) ? false : true}
-                                            className="mt-8 max-h-80 flex items-center justify-center">
-                                            <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base/7">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded you can reach out to the Operator to let them know.{<br></br>}{<br></br>}Or send us a message on the Contact Support Tab and we'll reach out.</h2>
-                                        </div>
-                                        <div
-                                            hidden={(opAPCID !== '' && operatorAccountCodes.length > 0) ? false : true}
-                                            className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
+                                    <div className="mt-8 border-b-0" hidden={operatorAccountCodes.length < 1 ? false : true}>
+                                            <NoSelectionOrEmptyArrayMessage
+                                                message={
+                                                    <>
+                                                        There are no account codes to show. Maybe they haven't been uploaded yet?
+                                                        <br /><br />
+                                                        If they haven't been uploaded you can reach out to the Operator to let them know.
+                                                        <br /><br />
+                                                        Or send us a message on the Contact Support Tab and we'll reach out.
+                                                    </>
+                                                }
+                                            />
+                                    </div>
+                                    <div hidden={(opAPCID !== '' && operatorAccountCodes.length > 0) ? false : true} 
+                                    className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)]">
+                                        <div className="mt-8 flow-root h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                             <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                                                 <div className="inline-block min-w-full py-2 align-middle">
                                                     <table className="min-w-full">
@@ -292,9 +266,7 @@ export default function GLMapping() {
                                                         <tbody>
                                                             {operatorAccountCodes.map((account, accountIdx) => (
                                                                 <tr key={accountIdx}>
-
-                                                                    <td
-                                                                        className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''}
+                                                                    <td className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''}
                                                                 ${cumaltiveGLMap.find(list => list.operator_account_number === account.account_number) ? 'bg-[var(--darkest-teal)]/20' : ''}
                                                                 max-w-xs overflow-hidden text-ellipsis`}>
                                                                         <p className="pt-4 pr-3 pl-10 text-sm/6 custom-style font-medium whitespace-wrap text-[var(--dark-teal)]">
@@ -305,8 +277,7 @@ export default function GLMapping() {
                                                                             <span className="font-medium">{account.account_description}</span>
                                                                         </p>
                                                                     </td>
-                                                                    <td
-                                                                        className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''} pt-2 pr-10 pl-2 whitespace-nowrap
+                                                                    <td className={`${accountIdx !== operatorAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''} pt-2 pr-10 pl-2 whitespace-nowrap
                                                                 ${cumaltiveGLMap.find(list => list.operator_account_number === account.account_number) ? 'bg-[var(--darkest-teal)]/20 border-none' : ''}
                                                                 `}>
                                                                         <div className="flex shrink-0 items-center justify-center">
@@ -350,17 +321,25 @@ export default function GLMapping() {
                                 </div>
                                 <div className="divide-y divide-[var(--darkest-teal)]/40 ">
                                     <h2 className="truncate text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Your Account Codes</h2>
-                                    <div className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
-                                        <div
-                                            hidden={(partnerAPCID !== '' && opAPCID !== '' && partnerAccountCodes.length < 1) ? false : true}
-                                            className="mt-8 max-h-80 flex items-center justify-center">
-                                            <h2 className="sm:w-3/4 font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base/7">There are no account codes to show.  Maybe they haven't been uploaded yet? {<br></br>}{<br></br>}If they haven't been uploaded head back to the upload screen to get those accounts in the system.{<br></br>}{<br></br>}If account codes were uploaded they may take a few minutes to process.</h2>
-                                        </div>
-                                        <div
-                                            hidden={(partnerAPCID !== '' && partnerAccountCodes.length > 0) ? false : true}
-                                            className="mt-8 flow-root max-h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
+                                    {/* Warning if there are no Account Codes loaded by the Partner */}
+                                    <div className="mt-8 border-b-0" hidden={partnerAccountCodes.length < 1 ? false : true}>
+                                            <NoSelectionOrEmptyArrayMessage
+                                                message={
+                                                    <>
+                                                        There are no account codes to show.  Maybe they haven't been uploaded yet?
+                                                        <br /><br />
+                                                        If they haven't been uploaded head back to the upload screen to get those accounts in the system.
+                                                        <br /><br />
+                                                        If account codes were uploaded they may take a few minutes to process.
+                                                    </>
+                                                }
+                                            />
+                                    </div>
+                                    <div hidden={(partnerAPCID !== '' && partnerAccountCodes.length > 0) ? false : true} 
+                                    className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
+                                        <div className="mt-8 flow-root h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                             <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-                                                <div className="inline-block min-w-full py-2 items-center">
+                                                <div className="inline-block min-w-full py-2 align-middle">
                                                     <table className="min-w-full">
                                                         <thead>
                                                             <tr>
@@ -379,9 +358,7 @@ export default function GLMapping() {
                                                         <tbody>
                                                             {partnerAccountCodes.map((account, accountIdx) => (
                                                                 <tr key={accountIdx}>
-
-                                                                    <td
-                                                                        className={`${accountIdx !== partnerAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''}
+                                                                    <td className={`${accountIdx !== partnerAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''}
                                                                 ${cumaltiveGLMap.find(list => list.partner_account_number === account.account_number) ? 'bg-[var(--darkest-teal)]/20' : ''}
                                                                 max-w-xs overflow-hidden text-ellipsis`}>
                                                                         <p className="pt-4 pr-3 pl-10 text-sm/6 custom-style font-medium whitespace-wrap text-[var(--dark-teal)]">
@@ -395,9 +372,8 @@ export default function GLMapping() {
 
                                                                         </p>
                                                                     </td>
-                                                                    <td
-                                                                        className={`${accountIdx !== partnerAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''} pt-2 pr-10 pl-2 whitespace-nowrap
-                                                                ${cumaltiveGLMap.find(list => list.partner_account_number === account.account_number) ? 'bg-[var(--darkest-teal)]/20' : ''}
+                                                                    <td className={`${accountIdx !== partnerAccountCodes.length - 1 ? 'border-b border-[var(--darkest-teal)]/30' : ''} pt-2 pr-10 pl-2 whitespace-nowrap
+                                                                ${cumaltiveGLMap.find(list => list.partner_account_number === account.account_number) ? 'bg-[var(--darkest-teal)]/20 border-none' : ''}
                                                                 `}>
                                                                         <div className="flex shrink-0 items-center justify-center">
                                                                             <div className="group grid size-4 grid-cols-1">
@@ -440,10 +416,9 @@ export default function GLMapping() {
                                 </div>
                             </div>
                             <div className="w-full flex flex-col lg:flex-row gap-5 justify-between py-4 items-center border-t border-t-[var(--darkest-teal)]/70">
-
                                 <button
                                     disabled={(currentGLMap?.apc_operator_id && currentGLMap.apc_partner_id && currentGLMap.operator_account_number && currentGLMap.partner_account_number) ? false : true}
-                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                    className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                     onClick={(e) => { saveGLMapping() }}>
                                     Create Mapping
                                 </button>
@@ -451,14 +426,14 @@ export default function GLMapping() {
                                     <button
                                         hidden={(cumaltiveGLMap.length > 0) ? false : true}
                                         disabled={(cumaltiveGLMap.length > 0) ? false : true}
-                                        className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                        className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                         onClick={(e) => { setCurrentGLMap(null), setCumaltiveGLMap([]), setRowsToShow([]), notifyStandard(`GL Account Code Mappings cleared.  No leaks, no flare, just fresh pipe.\n\n(TLDR: GL Account Code Mappings reset without saving)`) }}>
                                         Clear Mappings
                                     </button>
                                     <button
                                         hidden={(cumaltiveGLMap.length > 0) ? false : true}
                                         disabled={(cumaltiveGLMap.length > 0) ? false : true}
-                                        className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                                        className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-40"
                                         onClick={(e) => { setCurrentGLMap(null), saveGLMappingRecords(), notifyStandard(`GL Account Code Mappings have been saved.  Let's call it a clean tie-in.\n\n(TLDR: GL Account Code Mappings ARE saved)`) }}>
                                         Save Mappings
                                     </button>
@@ -466,15 +441,13 @@ export default function GLMapping() {
                             </div>
                             <div hidden={cumaltiveGLMap.length > 0 ? false : true} className="">
                                 <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">Pending Mappings</h1>
-                                <div className="mt-2 rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
-
-                                    <div className="py-2 mx-auto max-w-7xl">
-                                        <table className="w-full table-fixed">
-                                            <thead className="w-full border-b-2 border-b border-[var(--darkest-teal)]">
+                                <div className="bg-white">
+                                    <table className="table-auto min-w-full outline-1 outline-offset-1 outline-[var(--darkest-teal)]/70 rounded-lg shadow-2xl">
+                                            <thead className="border-b-2 border-b border-[var(--darkest-teal)]">
                                                 <tr>
                                                     <th
                                                         scope="col"
-                                                        className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
+                                                        className="sticky rounded-t-lg xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 pl-2 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter ">
                                                         <div>Operator GL Account Code</div>
                                                         <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-base/7">to be mapped to </div>
                                                         <div className="xl:hidden">Your GL Account Code</div>
@@ -489,15 +462,14 @@ export default function GLMapping() {
                                                         className="hidden xl:w-1/2 xl:table-cell xl:pr-3 xl:pl-10 sticky top-0 z-10 bg-white/75 py-3.5 pr-3 text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter">
                                                         <div>Your GL Account Code</div>
                                                     </th>
-
-                                                    <th scope="col" className="hidden xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
+                                                    <th scope="col" className="hidden rounded-tr-lg xl:w-1/30 xl:table-cell sticky top-0 z-10 bg-white/75 py-3.5 pr-4 backdrop-blur-xs backdrop-filter sm:pr-6 lg:pr-8">
                                                         <span className="sr-only">Delete</span>
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {rowsToShow.map((glCode, glCodeIdx) => (
-                                                    <tr key={glCodeIdx} className={`${glCodeIdx !== cumaltiveGLMap.length - 1 ? 'border-b border-[var(--darkest-teal)]/70' : ''} items-center`}>
+                                                    <tr key={glCodeIdx} className={`${glCodeIdx !== cumaltiveGLMap.length - 1 ? '' : ''} items-center`}>
                                                         <td>
                                                             {/* Operator GL Code.  Stays put no matter the screen size.  Truncates when small*/}
                                                             <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
@@ -554,53 +526,17 @@ export default function GLMapping() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                    </div>
-
+                                            <div
+                                                hidden={cumaltiveGLMap.length === 0 ? true : false}>
+                                                <UniversalPagination
+                                                    data={cumaltiveGLMap}
+                                                    rowsPerPage={10}
+                                                    listOfType="Pending Mapped GL Codes"
+                                                    onPageChange={handlePageChange}
+                                                />
+                                            </div>
                                 </div>
-                                <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                    <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                        Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                        {currentPage == totalPage - 1
-                                            ? cumaltiveGLMap?.length
-                                            : (currentPage + 1) * rowsLimit}{" "}
-                                        of {cumaltiveGLMap?.length} Pending Mapped GL Codes
-                                    </div>
-                                    <div className="flex">
-                                        <ul
-                                            className="flex justify-center items-center align-center gap-x-2 z-30"
-                                            role="navigation"
-                                            aria-label="Pagination">
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={previousPage}>
-                                                <ChevronLeftIcon></ChevronLeftIcon>
-                                            </li>
-                                            {customPagination?.map((data, index) => (
-                                                <li
-                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
-                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                        }`}
-                                                    onClick={() => changePage(index)}
-                                                    key={index}
-                                                >
-                                                    {index + 1}
-                                                </li>
-                                            ))}
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={nextPage}>
-                                                <ChevronRightIcon></ChevronRightIcon>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                     </>

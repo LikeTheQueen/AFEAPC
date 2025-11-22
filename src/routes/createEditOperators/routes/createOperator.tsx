@@ -42,8 +42,7 @@ export default function CreateOperator() {
     const [operatorPartnerAddresses, setOpPartnerAddress] = useState<AddressType[] | []>([]);
     const [opPartnerID, setOpPartnerID] = useState<string | null>(null);
     const [showSaved, setShowSaved] = useState<boolean>(false);
-    
-    
+
     const fetchData = async () => {
     const afeSystemList = await sourceSystemList();
     const blankOption: AFESourceSystemType = {
@@ -52,7 +51,7 @@ export default function CreateOperator() {
   };
     const extendedList = [blankOption, ...afeSystemList];
     setSourceSystems(extendedList);
-  }
+    };
     useEffect(() => {
         fetchData();
     },[]);
@@ -142,15 +141,15 @@ export default function CreateOperator() {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Information</h2>
-          <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">
             Create Operator with the billing address.  Below add additional addresses to be used as Partner addresses
           </p>
         </div>
-        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
-          <div className="px-4 py-6 sm:p-8">
-            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-5">
+          <div className="px-4 py-2 mb-4">
+            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-3">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Operator Name
                 </label>
                 <div className="mt-1">
@@ -168,7 +167,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-4 sm:col-start-1">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
                 <div className="mt-1">
@@ -184,7 +183,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
                 <div className="mt-1">
@@ -200,7 +199,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-2 sm:col-start-1">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
                 <div className="mt-1">
@@ -216,7 +215,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
                 <div className="mt-1">
@@ -232,7 +231,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
                 <div className="mt-1">
@@ -247,8 +246,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-              <div className="sm:col-span-4">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+              <div className="sm:col-span-2 sm:col-start-1">
+                <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
                 <div className="grid grid-cols-1 mt-1">
@@ -270,8 +269,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-                <div className="sm:col-span-4">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <div className="sm:col-span-2 sm:col-start-4">
+                <label htmlFor="sourceSystem" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Source System for AFEs
                 </label>
                 <div className="grid grid-cols-1 mt-1">
@@ -296,29 +295,27 @@ export default function CreateOperator() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-[var(--darkest-teal)]/30 px-4 py-4 sm:px-8">
+          <div className="flex items-center justify-end border-t border-t-[var(--darkest-teal)]/30 px-4 py-4 sm:px-8">
             <button
               //type="submit"
               disabled={disableCreateButton(operator,operatorBillingAddress)}
               onClick={async(e: any) => { 
                 e.preventDefault();
                 handleClickSaveOpName();
-                notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
-                
-            }}
+                notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);}}
               className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
               Save
             </button>
           </div>
           <div hidden={!showSaved}
-          className="border-t border-gray-900/20 p-1 text-m font-semibold text-[var(--darkest-teal)] custom-style text-center">
+          className="border-t border-t-[var(--darkest-teal)]/30 p-1 text-base/7 font-semibold text-[var(--darkest-teal)] custom-style text-center">
           Operator has been saved.</div>
         </form>
       </div>
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
-          <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">
             From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
           </p>
         </div>
@@ -336,7 +333,7 @@ export default function CreateOperator() {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-7">
         <div className="px-4 sm:px-0 md:col-span-2">
           <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Addresses as a Partner</h2>
-          <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
+          <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">
             Add Addresses to be used when the Operator is a Partner.  Add the billing address (again) if applicable.
           </p>
           
@@ -355,11 +352,11 @@ export default function CreateOperator() {
         </div>
 
         <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-5">
-          <div className="px-4 py-6 sm:p-8">
-            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="px-4 py-2 mb-4">
+            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               
               <div className="sm:col-span-4 sm:col-start-1">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="additionalStreet" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Street Address
                 </label>
                 <div className="mt-1">
@@ -375,7 +372,7 @@ export default function CreateOperator() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="additionalSuite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Suite
                 </label>
                 <div className="mt-1">
@@ -390,9 +387,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2 sm:col-start-1">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="additionalCity" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   City
                 </label>
                 <div className="mt-1">
@@ -407,9 +403,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="additionalState" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   State / Province
                 </label>
                 <div className="mt-1">
@@ -424,9 +419,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-
               <div className="sm:col-span-2">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="additionalZip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   ZIP / Postal Code
                 </label>
                 <div className="mt-1">
@@ -441,9 +435,8 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-
-              <div className="sm:col-span-3">
-                <label htmlFor="operatorName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+              <div className="sm:col-span-2 sm:col-start-1">
+                <label htmlFor="additionalCountry" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Country
                 </label>
                 <div className="grid grid-cols-1 mt-1">
@@ -467,7 +460,7 @@ export default function CreateOperator() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/20 px-4 py-4 sm:px-8">
+          <div className="flex items-center justify-end border-t border-t-[var(--darkest-teal)]/30 px-4 py-4 sm:px-8">
             <button
               disabled={disableSaveAndSaveAnother(operator.id,operatorPartnerAddressSingle)}
               onClick={async(e: any) => { 

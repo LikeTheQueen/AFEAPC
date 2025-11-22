@@ -161,14 +161,11 @@ export default function CreateNewUser() {
         <div className="divide-y divide-[var(--darkest-teal)]/40">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-4 ">
             <div className="px-4 sm:px-0 md:col-span-1">
-              <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">User Information</h2>
-              <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">Create a user and assign privileges to that user for <span className="font-bold italic">each Operator or Non-Op address.</span>
-                <br></br>
-                <br></br>You are <span className="font-bold italic">NOT</span> giving privileges to your Partners.  You are giving privileges to a user in your organization for AFEs associated to your Non-Op AFEs via the address.
-                <br></br>
-                <br></br><span className="font-semibold text-[var(--darkest-teal)] custom-style">Active users with a valid email will be to login with a magic link sent to their email each time they sign-on.</span>
-                <br></br>
-                <br></br><span className="font-medium italic text-[var(--darkest-teal)] custom-style">Definitions for privileges are below.</span>
+              <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">User Information</h2>
+              <p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Create a user and assign privileges to that user for <span className="font-bold italic">each Operator or Non-Op address.</span></p>
+                <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"> You are <span className="font-bold italic">NOT</span> giving privileges to your Partners.  You are giving privileges to a user in your organization for AFEs associated to your Non-Op AFEs via the address.</p>
+                <br></br><p className="text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Active users with a valid email will be to login with a magic link sent to their email each time they sign-on.</p>
+                <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"><span className="font-medium italic">Definitions for privileges are below.</span>
               </p>
 
               <ol role="list" className="flex flex-1 flex-col gap-y-7 mt-3 border-t border-gray-900/30">
@@ -176,10 +173,10 @@ export default function CreateNewUser() {
                   <ul role="list" className="mx-1 space-y-8 mt-5">
                     {rolesGeneric.map((role) => (
                       <li key={role.id}>
-                        <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">
+                        <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">
                           {role.title}
                         </h2>
-                        <p className="text-md/6 text-[var(--darkest-teal)] custom-style-long-text">
+                        <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
                           {role.description}
                         </p>
                       </li>
@@ -289,8 +286,8 @@ export default function CreateNewUser() {
                 hidden={operatorsList.length >0 ? false : true}
                 >
                   <div>
-                    <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
-                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
+                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
 
                   </div>
                   <div className="">
@@ -374,8 +371,8 @@ export default function CreateNewUser() {
                 <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
                 hidden={partnersList.length >0 ? false : true}>
                   <div>
-                    <h2 className="text-md/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
-                    <p className="mt-1 text-md/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
+                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
 
                   </div>
                   <div className="">

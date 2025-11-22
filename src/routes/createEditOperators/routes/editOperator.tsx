@@ -222,492 +222,494 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
     });
     setSaveNewPartnerAddress(true);
   }
-
+console.log(newPartnerAddress,'new partner address')
   return (
     <>
-    {!operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl">
+    {!operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
-    <div className="">
-        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
-          <div className="px-4 py-2">
-            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-              <div className="sm:col-span-3 sm:col-start-1">
-                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Operator Name
-                </label>
-                <div className="mt-1">
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Nav Oil Inc."
-                      autoComplete="off"
-                      value={operatorRecord.name}
-                      onChange={handleOperatorNameChange}
-                      autoFocus={true}
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                    />
-                </div>
-              </div>
-              <div className="sm:col-span-4 sm:col-start-1">
-                <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Street Address
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="street"
-                    name="street"
-                    type="text"
-                    autoComplete="off"
-                    value={operatorToEdit.street}
-                    onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Suite
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="suite"
-                    name="suite"
-                    type="text"
-                    autoComplete="off"
-                    value={operatorToEdit.suite}
-                    onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  City
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="city"
-                    name="city"
-                    type="text"
-                    autoComplete="off"
-                    value={operatorToEdit.city}
-                    onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  State / Province
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="state"
-                    name="state"
-                    type="text"
-                    autoComplete="off"
-                    value={operatorToEdit.state}
-                    onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  ZIP / Postal Code
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="zip"
-                    name="zip"
-                    type="text"
-                    autoComplete="off"
-                    value={operatorToEdit.zip}
-                    onChange={handleOperatorAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Country
-                </label>
-                <div className="mt-1 grid grid-cols-1">
-                  <select
-                    id="country"
-                    name="country"
-                    autoComplete="off"
-                    value={operatorToEdit.country}
-                    onChange={handleOperatorAddressChange}
-                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  > <option></option>
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                  </select>
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-            <button
-              disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) ? true : false}
-              onClick={async(e: any) => { 
-                e.preventDefault();
-                handleClickActivateOrDeactivateOperator();
-                notifyStandard(`Operator name and billing address have been ${operatorRecord.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operatorRecord.active ? 'deactivated' : 'activated'}.)`);
-            }}
-              className={
+          <div className="">
+            <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-4">
+              <div className="px-4 py-2">
+                <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+                  <div className="sm:col-span-3 sm:col-start-1">
+                    <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Operator Name
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        placeholder="Nav Oil Inc."
+                        autoComplete="off"
+                        value={operatorRecord.name}
+                        onChange={handleOperatorNameChange}
+                        autoFocus={true}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-4 sm:col-start-1">
+                    <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Street Address
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="street"
+                        name="street"
+                        type="text"
+                        autoComplete="off"
+                        value={operatorToEdit.street}
+                        onChange={handleOperatorAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Suite
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="suite"
+                        name="suite"
+                        type="text"
+                        autoComplete="off"
+                        value={operatorToEdit.suite}
+                        onChange={handleOperatorAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      City
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="city"
+                        name="city"
+                        type="text"
+                        autoComplete="off"
+                        value={operatorToEdit.city}
+                        onChange={handleOperatorAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      State / Province
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="state"
+                        name="state"
+                        type="text"
+                        autoComplete="off"
+                        value={operatorToEdit.state}
+                        onChange={handleOperatorAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      ZIP / Postal Code
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="zip"
+                        name="zip"
+                        type="text"
+                        autoComplete="off"
+                        value={operatorToEdit.zip}
+                        onChange={handleOperatorAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-4 pb-2 sm:col-start-1">
+                    <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Country
+                    </label>
+                    <div className="mt-1 grid grid-cols-1">
+                      <select
+                        id="country"
+                        name="country"
+                        autoComplete="off"
+                        value={operatorToEdit.country}
+                        onChange={handleOperatorAddressChange}
+                        className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      > <option></option>
+                        <option>United States</option>
+                        <option>Canada</option>
+                        <option>Mexico</option>
+                      </select>
+                      <ChevronDownIcon
+                        aria-hidden="true"
+                        className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
+                    <button
+                      disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) ? true : false}
+                      onClick={async (e: any) => {
+                        e.preventDefault();
+                        handleClickActivateOrDeactivateOperator();
+                        notifyStandard(`Operator name and billing address have been ${operatorRecord.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operatorRecord.active ? 'deactivated' : 'activated'}.)`);
+                      }}
+                      className={
                         `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
-                        ${!operatorRecord.active 
-                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
-                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
-                        }>
-              {operatorRecord.active ? 'Deactivate' : 'Activate'}
-            </button>
-            <button
-              disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
-              onClick={async(e: any) => { 
-                e.preventDefault();
-                {saveOpNameChange ? handleClickSaveOpName() : null};
-                {saveOpAddressChange ? handleClickSaveOpAddress() : null};
-                setSaveOpAddressChange(false);
-                setSaveOpNameChange(false);
-                notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
-            }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-              Save
-                </button>
+                        ${!operatorRecord.active
+                          ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
+                          : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                      }>
+                      {operatorRecord.active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
+                      disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
+                      onClick={async (e: any) => {
+                        e.preventDefault();
+                        { saveOpNameChange ? handleClickSaveOpName() : null };
+                        { saveOpAddressChange ? handleClickSaveOpAddress() : null };
+                        setSaveOpAddressChange(false);
+                        setSaveOpNameChange(false);
+                        notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
+                      }}
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                      Save
+                    </button>
+                  </div>
+                </div>
               </div>
+            </form>
+            <div hidden={partnerList.length < 1 ? true : false}>
+                <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-4">
+                  <div className="p-4 border-b border-[var(--darkest-teal)]/30">
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Edit the Operator Addresses for Non-Op AFEs</h2>
+                  </div>
+                  {partnerList.map((partner, partnerIdx) => (
+                  <div key={partner.apc_id} className="px-4 pt-4">
+                    <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 pb-4 sm:grid-cols-6 border-b border-[var(--darkest-teal)]/40">
+                      <div className="sm:col-span-3">
+                        <label htmlFor="additionalName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          Name
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            placeholder="Nav Oil Inc."
+                            autoComplete="off"
+                            value={partner.name}
+                            onChange={(e) => handlePartnerNameChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-4 sm:col-start-1">
+                        <label htmlFor="additionalStreet" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          Street Address
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="street"
+                            name="street"
+                            type="text"
+                            autoComplete="off"
+                            value={partner.street}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="additionalSuite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          Suite
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="suite"
+                            name="suite"
+                            type="text"
+                            autoComplete="off"
+                            value={partner.suite}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2 sm:col-start-1">
+                        <label htmlFor="additionalCity" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          City
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="city"
+                            name="city"
+                            type="text"
+                            autoComplete="off"
+                            value={partner.city}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="additionalState" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          State / Province
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="state"
+                            name="state"
+                            type="text"
+                            autoComplete="off"
+                            value={partner.state}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label htmlFor="additionalZip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          ZIP / Postal Code
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            id="zip"
+                            name="zip"
+                            type="text"
+                            autoComplete="off"
+                            value={partner.zip}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-4 pb-2 sm:col-start-1">
+                        <label htmlFor="additionalCountry" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                          Country
+                        </label>
+                        <div className="mt-1 grid grid-cols-1 ">
+                          <select
+                            id="country"
+                            name="country"
+                            autoComplete="off"
+                            value={partner.country}
+                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
+                            className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                          > <option></option>
+                            <option>United States</option>
+                            <option>Canada</option>
+                            <option>Mexico</option>
+                          </select>
+                          <ChevronDownIcon
+                            aria-hidden="true"
+                            className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
+                        <button
+                          //type="submit"
+                          disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
+                          onClick={async (e: any) => {
+                            e.preventDefault();
+                            handleClickActivateOrDeactivatePartner(partnerIdx);
+                            notifyStandard(`Operator's Partner name and address have been ${partner.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.active ? 'deactive' : 'active'})`);
+                          }}
+                          //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+                          className={
+                            `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
+                        ${!partner.active
+                              ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
+                              : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
+                          }>
+                          {partner.active ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          //type="submit"
+                          disabled={((!partner.apc_id && !partner.apc_address_id) || (partnerAddressUpdate[partnerIdx] === false && partnerNameUpdate[partnerIdx] === false)) ? true : false}
+                          onClick={async (e: any) => {
+                            e.preventDefault();
+                            { partnerAddressUpdate[partnerIdx] === true ? handleClickSavePartnerAddress(partner, partnerIdx) : null };
+                            { partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null }
+                            notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
+                          }}
+                          className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                </form>
             </div>
-          </div>
-        </form>
-        <p className="custom-style font-semibold text-[var(--darkest-teal)] mb-1">Edit the Operator Addresses for Non-Op AFEs.</p>
-        {partnerList.map((partner, partnerIdx) => (
-        <form key={partner.apc_id} className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
-          <div className="px-4 py-2">
             <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Name
-                </label>
-                <div className="mt-1">
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Nav Oil Inc."
-                      autoComplete="off"
-                      value={partner.name}
-                      onChange={(e) => handlePartnerNameChange(e, partnerIdx)}
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                    />
+              <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:col-span-6 mb-4">
+              <div className="p-4 border-b border-[var(--darkest-teal)]/30">
+                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
+                <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
+                  From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
+                </p>
+              </div>
+                <div >
+                  <PartnerToOperatorGrid
+                    singleOpID={true}
+                    currentOpID={operatorToEdit.apc_id!}>
+                  </PartnerToOperatorGrid>
                 </div>
-              </div>
-              <div className="sm:col-span-4 sm:col-start-1">
-                <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Street Address
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="street"
-                    name="street"
-                    type="text"
-                    autoComplete="off"
-                    value={partner.street}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Suite
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="suite"
-                    name="suite"
-                    type="text"
-                    autoComplete="off"
-                    value={partner.suite}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  City
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="city"
-                    name="city"
-                    type="text"
-                    autoComplete="off"
-                    value={partner.city}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  State / Province
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="state"
-                    name="state"
-                    type="text"
-                    autoComplete="off"
-                    value={partner.state}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  ZIP / Postal Code
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="zip"
-                    name="zip"
-                    type="text"
-                    autoComplete="off"
-                    value={partner.zip}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Country
-                </label>
-                <div className="mt-1 grid grid-cols-1 ">
-                  <select
-                    id="country"
-                    name="country"
-                    autoComplete="off"
-                    value={partner.country}
-                    onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  > <option></option>
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                  </select>
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-                <button
-              //type="submit"
-              disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
-              onClick={async(e: any) => { 
-                e.preventDefault();
-                handleClickActivateOrDeactivatePartner(partnerIdx);
-                notifyStandard(`Operator's Partner name and address have been ${partner.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.active ? 'deactive' : 'active'})`);}}
-              //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
-              className={
-                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
-                        ${!partner.active 
-                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1' 
-                            : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
-                        }>
-              {partner.active ? 'Deactivate' : 'Activate'}
-                </button>
-                <button
-              //type="submit"
-              disabled={((!partner.apc_id && !partner.apc_address_id) || (partnerAddressUpdate[partnerIdx]===false && partnerNameUpdate[partnerIdx]===false)) ? true : false}
-              onClick={async(e: any) => { 
-                e.preventDefault();
-                {partnerAddressUpdate[partnerIdx] === true ? handleClickSavePartnerAddress(partner, partnerIdx) : null};
-                {partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null}
-                notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
-            }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-              Save
-                </button>
-              </div>
-              
+              </form>
             </div>
+            <form className="bg-white rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6">
+              <div className="px-4 py-2">
+                <div className="mb-4 border-b border-[var(--darkest-teal)]/30">
+                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Add New Addresses for Non-Op AFEs</h2>
+                  </div>
+                <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Name
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        placeholder="Nav Oil Inc."
+                        autoComplete="off"
+                        value={newPartnerAddress?.name || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-4 sm:col-start-1">
+                    <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Street Address
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="street"
+                        name="street"
+                        type="text"
+                        autoComplete="off"
+                        value={newPartnerAddress?.street || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Suite
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="suite"
+                        name="suite"
+                        type="text"
+                        autoComplete="off"
+                        value={newPartnerAddress?.suite || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      City
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="city"
+                        name="city"
+                        type="text"
+                        autoComplete="off"
+                        value={newPartnerAddress?.city || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      State / Province
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="state"
+                        name="state"
+                        type="text"
+                        autoComplete="off"
+                        value={newPartnerAddress?.state || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      ZIP / Postal Code
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="zip"
+                        name="zip"
+                        type="text"
+                        autoComplete="off"
+                        value={newPartnerAddress?.zip || ''}
+                        onChange={handleNewAddressChange}
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-4 pb-2 sm:col-start-1">
+                    <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Country
+                    </label>
+                    <div className="mt-1 grid grid-cols-1 ">
+                      <select
+                        id="country"
+                        name="country"
+                        autoComplete="off"
+                        value={newPartnerAddress?.country || ''}
+                        onChange={handleNewAddressChange}
+                        className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      > <option></option>
+                        <option>United States</option>
+                        <option>Canada</option>
+                        <option>Mexico</option>
+                      </select>
+                      <ChevronDownIcon
+                        aria-hidden="true"
+                        className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
+                    <button
+                      disabled={!saveNewPartnerAddress}
+                      onClick={async (e: any) => {
+                        e.preventDefault();
+                        if (!newPartnerAddress) return;
+                        insertPartnerRecord(newPartnerAddress, token);
+                        setSaveNewPartnerAddress(false);
+                        notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
+                      }}
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
-      ))}
-      
-      <div className="grid grid-cols-1 gap-x-8 gap-y-2 py-10 sm:grid-cols-6">
-        <div className="px-4 sm:px-0 sm:col-span-6">
-          <p className="font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</p>
-          <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
-            From the list of addresses claim those for the Operator.  Additional addresses can be added below.  Only unclaimed addresses are visible.
-          </p>
-        </div>
-
-        <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:col-span-6">
-          <div >
-            <PartnerToOperatorGrid
-            singleOpID={true}
-            currentOpID={operatorToEdit.apc_id!}>
-            </PartnerToOperatorGrid>
-          </div>
-        </form>
-        
-      </div>
-      <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-6">
-          <div className="px-4 py-2">
-            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Name
-                </label>
-                <div className="mt-1">
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Nav Oil Inc."
-                      autoComplete="off"
-                      value={newPartnerAddress?.name || ''}
-                      onChange={handleNewAddressChange}
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                    />
-                </div>
-              </div>
-              <div className="sm:col-span-4 sm:col-start-1">
-                <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Street Address
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="street"
-                    name="street"
-                    type="text"
-                    autoComplete="off"
-                    value={newPartnerAddress?.street || ''}
-                    onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Suite
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="suite"
-                    name="suite"
-                    type="text"
-                    autoComplete="off"
-                    value={newPartnerAddress?.suite || ''}
-                    onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  City
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="city"
-                    name="city"
-                    type="text"
-                    autoComplete="off"
-                    value={newPartnerAddress?.city || ''}
-                    onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  State / Province
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="state"
-                    name="state"
-                    type="text"
-                    autoComplete="off"
-                    value={newPartnerAddress?.state || ''}
-                    onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  ZIP / Postal Code
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="zip"
-                    name="zip"
-                    type="text"
-                    autoComplete="off"
-                    value={newPartnerAddress?.zip || ''}
-                    onChange={handleNewAddressChange}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                  Country
-                </label>
-                <div className="mt-1 grid grid-cols-1 ">
-                  <select
-                    id="country"
-                    name="country"
-                    autoComplete="off"
-                    value={newPartnerAddress?.country || ''}
-                    onChange={handleNewAddressChange}
-                    className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                  > <option></option>
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                  </select>
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-                <button
-              disabled={!saveNewPartnerAddress}
-              onClick={async(e: any) => { 
-                e.preventDefault();
-                if(!newPartnerAddress) return;
-                insertPartnerRecord(newPartnerAddress, token);
-                setSaveNewPartnerAddress(false);
-                notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
-            }}
-              className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-              Save
-                </button>
-              </div>
-              
-            </div>
-          </div>
-        </form>
-      
-    </div>
     )}
     <ToastContainer />
     </>

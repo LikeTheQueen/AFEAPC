@@ -100,7 +100,7 @@ useEffect(() => {
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form method="POST" className="space-y-6">
         <div hidden={!hideVerification}>
-          <label htmlFor="email" className="block text-md/6 font-medium text-white custom-style">
+          <label htmlFor="email" className="block text-base/6 font-medium text-white custom-style">
             Email
           </label>
           <div className="mt-2">
@@ -121,7 +121,7 @@ useEffect(() => {
           <button
             type="button"
             onClick={handleLogin}
-            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-md/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || email === ''}>
+            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || email === ''}>
             {isLoading ? 'Sending Verification Code...' : 'Get Verification Code'}
           </button>
         </div>
@@ -129,7 +129,7 @@ useEffect(() => {
             <label htmlFor="otp" className="text-lg/6 font-medium text-white custom-style align-center">
             Verification Code
           </label>
-            <p className="mb-10 mt-2 text-md/6 text-white custom-style-info">If your email address is associated to an active user you will be sent a verification code.  Enter that below.</p>
+            <p className="mb-10 mt-2 text-base/6 text-white custom-style-info">If your email address is associated to an active user you will be sent a verification code.  Enter that below.</p>
             <OTPInput length={6} onComplete={handleOTP} />
         </div>
         

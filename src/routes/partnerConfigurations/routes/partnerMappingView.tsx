@@ -1,61 +1,28 @@
 import { fetchPartnersFromPartnersCrosswalk } from "provider/fetch";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { PartnerMappingDisplayRecord } from "src/types/interfaces";
 import LoadingPage from "src/routes/loadingPage";
 import { ToastContainer } from 'react-toastify';
 import { ArrowRightIcon, ArrowTurnDownLeftIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { updatePartnerMapping, updatePartnerProcessedMapping } from "provider/write";
 import { notifyStandard } from "src/helpers/helpers";
 import { OperatorDropdown } from "src/routes/operatorDropdown";
+import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 export default function PartnerMappingView() {
     const [partnerMapRecord, setPartnerMapRecord] = useState<PartnerMappingDisplayRecord[] | []>([]);
     const [opAPCID, setOpAPCID] = useState('');
     const [loading, setLoading] = useState(false);
-    const [rowsLimit] = useState(5);
     const [rowsToShow, setRowsToShow] = useState<PartnerMappingDisplayRecord[]>([]);
-    const [customPagination, setCustomPagination] = useState<number[] | []>([]);
-    const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
+    const maxRowsToShow = (1);
         
-    const nextPage = () => {
-        const startIndex = rowsLimit * (currentPage + 1);
-        const endIndex = startIndex + rowsLimit;
-        const newArray = partnerMapRecord.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(currentPage + 1);
-        };
-    const changePage = (value: number) => {
-        const startIndex = value * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = partnerMapRecord.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(value);
-        };
-    const previousPage = () => {
-        const startIndex = (currentPage - 1) * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = partnerMapRecord.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        } else {
-          setCurrentPage(0);
-        }
+    const handlePageChange = (paginatedData: PartnerMappingDisplayRecord[], page: number) => {
+                  setRowsToShow(paginatedData);
+                  setCurrentPage(page);
     };
-
-    useMemo(() => {
-        setCustomPagination(
-          Array(Math.ceil(partnerMapRecord.length / rowsLimit)).fill(null)
-        );
-        setTotalPage(
-            Math.ceil(partnerMapRecord.length / rowsLimit)
-        )
-        }, [partnerMapRecord]);
-
-    
+ 
     useEffect(() => {
         let isMounted = true;
                 async function getPartnerLists() { 
@@ -64,7 +31,7 @@ export default function PartnerMappingView() {
                         const apcPartList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
                         if (isMounted) {
                             setPartnerMapRecord(apcPartList ?? [])
-                            setRowsToShow(apcPartList ? apcPartList.slice(0,rowsLimit) : [])
+                            
                         }
                     } finally {
                         if (isMounted) {
@@ -82,8 +49,9 @@ export default function PartnerMappingView() {
 
     },[opAPCID]);
 
-    const removeMapping = (index: number) => {
-        const recordFromList = partnerMapRecord[index];
+    const removeMapping = (partnerIDX: number) => {
+        const actualIndex = currentPage * maxRowsToShow + partnerIDX;
+        const recordFromList = partnerMapRecord[actualIndex];
         const recordToDeletePartnerProcessedTableArray: string[] = [];
         const recordToDeletePartnerProcessedTable = recordFromList.source_partner.source_id;
         const recordToDeleteMappingTableArray: string[] = [];
@@ -91,14 +59,10 @@ export default function PartnerMappingView() {
 
         setPartnerMapRecord(prevMap => {
             const updatedMap = [...prevMap];
-            updatedMap.splice(index, 1);
+            updatedMap.splice(actualIndex, 1);
             return updatedMap;
         });
-        setRowsToShow(prevMap => {
-            const updatedMap = [...prevMap];
-            updatedMap.splice(index, 1);
-            return updatedMap;
-        });
+
         async function deletePartnerRecord() {
         recordToDeletePartnerProcessedTableArray.push(recordToDeletePartnerProcessedTable);
         recordToDeleteMappingTableArray.push(recordToDeleteMappingTable);
@@ -110,29 +74,28 @@ export default function PartnerMappingView() {
     return (
         <> 
         <div>
-            <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
-                                    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
-                                            <div className="">
-                                                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
-                                                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                                                <br></br><p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
-                                             </div>
-                                             <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
-                                                    <div className="">
-                                                    <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
-                                                    <div className="">
-                                                    <OperatorDropdown 
-                                                        onChange={(id) => {setOpAPCID(id)} }
-                                                        limitedList={true}
-                                                    />
-                                                    </div>
-                                            </div>        
-                                        </div>
-                                    </div>
-                                          
+                <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+                    <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
+                        <div className="">
+                            <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
+                            <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
+                        </div> 
+                        <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
+                            <div className="">
+                                <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
+                                <div className="">
+                                    <OperatorDropdown
+                                        onChange={(id) => { setOpAPCID(id) }}
+                                        limitedList={true}
+                                    />
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
             
-                            {loading ? (
+                {loading ? (
                                 <div className="mt-60">
                                     <LoadingPage></LoadingPage>
                                 </div>
@@ -261,49 +224,14 @@ export default function PartnerMappingView() {
                                     </div>
 
                                     {/* Paging */}
-                                    <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                    <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                        Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                        {currentPage == totalPage - 1
-                                            ? partnerMapRecord?.length
-                                            : (currentPage + 1) * rowsLimit}{" "}
-                                        of {partnerMapRecord?.length} Mapped Partners
-                                    </div>
-                                    <div className="flex">
-                                        <ul
-                                            className="flex justify-center items-center align-center gap-x-2 z-30"
-                                            role="navigation"
-                                            aria-label="Pagination">
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={previousPage}>
-                                                <ChevronLeftIcon></ChevronLeftIcon>
-                                            </li>
-                                            {customPagination?.map((data, index) => (
-                                                <li
-                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
-                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                        }`}
-                                                    onClick={() => changePage(index)}
-                                                    key={index}
-                                                >
-                                                    {index + 1}
-                                                </li>
-                                            ))}
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={nextPage}>
-                                                <ChevronRightIcon></ChevronRightIcon>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div
+                                    hidden={partnerMapRecord.length === 0 ? true : false}>
+                                    <UniversalPagination
+                                        data={partnerMapRecord}
+                                        rowsPerPage={maxRowsToShow}
+                                        listOfType="Mapped Partners"
+                                        onPageChange={handlePageChange}
+                                    />
                                 </div>
                                 </div>
                                 </>

@@ -204,7 +204,7 @@ export default function GLMapping() {
                                                     scope="col"
                                                     className="sticky xl:w-1/2 xl:table-cell top-0 z-10 bg-white/75 py-3.5 pr-3 xl:text-left text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] backdrop-blur-xs backdrop-filter pl-2">
                                                     <div>Operator GL Account Code</div>
-                                                    <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-md">mapped to </div>
+                                                    <div className="xl:hidden custom-style-long-text font-normal justify-self-center text-base">mapped to </div>
                                                     <div className="xl:hidden">Your GL Account Code</div>
                                                 </th>
                                                 <th
