@@ -49,7 +49,9 @@ const settings = [
 ]
 const onboarding = [
   { id: 1, name: 'Create Operator', href: "/mainscreen/createOperator", initial: 'O' },
-  { id: 2, name: 'Create Users', href: "/mainscreen/createUser", initial: 'U' }
+  { id: 2, name: 'Create Users', href: "/mainscreen/createUser", initial: 'U' },
+  { id: 3, name: 'Manage All Users', href: "/mainscreen/manageUsersSystem", initial: 'M' },
+  { id: 4, name: 'Manage All User Permissions', href: "/mainscreen/manageUserPermissionsSystem", initial: 'P' },
 ]
 const userNavigation = [
   { name: 'Your profile', href: '/mainScreen/profile' },
@@ -104,7 +106,7 @@ export default function MainScreen() {
                 <div className="flex h-16 shrink-0 items-center">
                   <img
                     alt="AFE Partner Connections"
-                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                    src={`https://api.dicebear.com/7.x/bottts/svg?seed=${loggedInUser?.user_id}`}
                     className="h-8 w-auto"
                   />
                 </div>
@@ -403,8 +405,8 @@ export default function MainScreen() {
                     <span className="sr-only">Open user menu</span>
                     <img
                       alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="size-8 rounded-full bg-gray-50"
+                      src={`https://api.dicebear.com/7.x/bottts/svg?seed=${loggedInUser?.user_id}`}
+                      className="size-8 rounded-full bg-[var(--darkest-teal)]"
                     />
                     <span className="hidden lg:flex lg:items-center">
                       <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-white">

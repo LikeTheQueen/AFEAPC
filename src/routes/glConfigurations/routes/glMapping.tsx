@@ -1,6 +1,6 @@
 import { fetchAccountCodesforOperatorToMap } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
-import { type GLCodeRowData } from "src/types/interfaces";
+import { type GLCodeType } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { writeGLCodeMapping } from "provider/write";
@@ -18,8 +18,8 @@ export default function GLMapping() {
     const [cumaltiveGLMap, setCumaltiveGLMap] = useState<GLMappingRecord[] | []>([]);
     const [currentGLMap, setCurrentGLMap] = useState<GLMappingRecord | null>(null);
     const [loading, setLoading] = useState(false);
-    const [operatorAccountCodes, setOperatorAccountCodes] = useState<GLCodeRowData[] | []>([])
-    const [partnerAccountCodes, setPartnerAccountCodes] = useState<GLCodeRowData[] | []>([])
+    const [operatorAccountCodes, setOperatorAccountCodes] = useState<GLCodeType[] | []>([])
+    const [partnerAccountCodes, setPartnerAccountCodes] = useState<GLCodeType[] | []>([])
 
     const [opAPCID, setOpAPCID] = useState('');
     const [partnerAPCID, setPartnerAPCID] = useState('');
@@ -59,7 +59,7 @@ export default function GLMapping() {
     }, [opAPCID, partnerAPCID]);
 
     const toggleOperatorGLCode = (
-        sourceGLCode: GLCodeRowData
+        sourceGLCode: GLCodeType
 
     ) => {
         console.log(sourceGLCode, 'THE PASSES GL');
@@ -91,10 +91,9 @@ export default function GLMapping() {
 
     };
     const togglePartnerGLCode = (
-        sourceGLCode: GLCodeRowData
+        sourceGLCode: GLCodeType
     ) => {
         if (currentGLMap?.partner_account_number === sourceGLCode.account_number && currentGLMap?.apc_partner_id !== '') {
-
             setCurrentGLMap({
                 ...currentGLMap,
                 partner_account_number: '',

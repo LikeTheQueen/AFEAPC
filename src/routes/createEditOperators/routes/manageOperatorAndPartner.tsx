@@ -121,7 +121,7 @@ export default function OperatorViewAndEdit() {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-
+console.log(partnersList,'THE PARTNER LIST');
     return (
         <>
             <div className="px-4 sm:px-10 sm:py-16">

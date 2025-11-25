@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive } from 'provider/write';
 import { type UserFullNameAndEmail } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 
 
-export default function UserDashboard({ userList =[], isError=false } : {  userList: UserFullNameAndEmail[]; isError:boolean;}) {
+export default function UserDashboard({ userList =[] }: {  userList: UserFullNameAndEmail[];}) {
     
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
@@ -65,11 +65,12 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
             <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 ">
                 <div className="md:col-span-2">
                     <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">User Profiles</h2>
-                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">You can Activate or Deactivate users associated to the addresses you have the Edit User Permissions for.</p>
-                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt.</p>
-                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Another admin for your organization will need to deactivate your profile or contact AFE Partner Connections directly.</p>
+                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Only Super Users get to push the shiny buttons that do anything.</p>
+                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">This page shows every user in the entire application, not just your team.</p>
+                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">If you need your profile deactivated, you’ll have to contact AFE Partner Connections.</p>
                 </div>
                 <div className="md:col-span-5 ">
+
                 <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                 <thead>
                     <tr className="bg-white text-white ">
@@ -134,7 +135,6 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                             <td className="hidden text-center px-3 py-4 text-[var(--darkest-teal)] custom-style-long-text lg:whitespace-nowrap lg:table-cell">
                                 {user.email}
                             </td>
-
                             <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
                                 <span
                                     hidden={!user.active}
@@ -151,7 +151,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={user.active}
-                                    disabled={loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(loggedInUser?.user_id === user.id || !loggedInUser?.is_super_user) ? true : false}
                                     onClick={(e: any) => handleReactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                                     Activate User
@@ -159,7 +159,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={!user.active}
-                                    disabled={loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(loggedInUser?.user_id === user.id || !loggedInUser?.is_super_user) ? true : false}
                                     onClick={(e: any) => handleDeactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                                     Deactivate User

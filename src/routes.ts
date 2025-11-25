@@ -30,6 +30,8 @@ export default [
     route("/mainScreen/supporthistory", "./routes/supportHistory.tsx"),
     route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/editUserDashboard.tsx"),
     route("/mainScreen/manageUsers", "./routes/createEditUsers/routes/manageUserDashboard.tsx"),
+    route("/mainScreen/manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),
+    route("/mainScreen/manageUserPermissionsSystem", "./routes/createEditUsers/routes/manageUserPermissionsSystem.tsx"),
     route("/mainScreen/createOperator", "./routes/createEditOperators/routes/createOperator.tsx"),
     route("/mainScreen/editOperator", "./routes/createEditOperators/routes/manageOperatorAndPartner.tsx"),
     route("/mainScreen/createUser", "./routes/createEditUsers/routes/createNewUser.tsx"),

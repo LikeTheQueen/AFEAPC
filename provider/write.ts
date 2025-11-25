@@ -4,6 +4,7 @@ import  supabase  from './supabase';
 import type { UUID } from 'crypto';
 import type { AddressType, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
+import { notifyStandard } from 'src/helpers/helpers';
 
 
   export const addOperatorSupabase = async (name: string, source_system:number) => {
@@ -128,22 +129,26 @@ import { callEdge } from 'src/edge';
   };
 
   export const updatePartnerWithOpID = async(partnerRecordID: PartnerRecordToUpdate[]) => {
-    const {data, error} = await supabase.from('PARTNERS').upsert(partnerRecordID);
+    const ids = partnerRecordID.map(x => x.id);
+    const apc_op_id = partnerRecordID[0].apc_op_id;
+    console.log(apc_op_id,'opid', ids,'ids')
+    const {error} = await supabase.from('PARTNERS').update({ 'apc_op_id': apc_op_id }).in('id',ids);
+    
     if (error) {
         console.error(`Error updating Partner with Operator ID`, error);
-        return null;
+        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${error.message})`);
       }
       
-      return;
+      return notifyStandard(`Partner address updated. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);;
   };
 
   export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {
     const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
     if (error) {
         console.error(`Error adding the Operator's Partners`, error);
-        return null;
+        return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
       }
-      return data;
+      return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
   };
 
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
@@ -191,9 +196,9 @@ import { callEdge } from 'src/edge';
     const { data, error } = await supabase.from('GL_CODES').insert(accountRecords).select();
     if (error) {
         console.error(`Error adding the Operator's GL Codes`, error);
-        return null;
+        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${error.message})`);
       }
-      return data;
+      return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
   };
 
   export const writeGLCodeMapping = async(glMappings: GLMappingRecord[]) => {

@@ -19,7 +19,6 @@ export function PartnerDropdown({ onChange, limitedList }: Props) {
         setPartnerAPCID(id);
         onChange?.(id);
     };
-
     async function filterOpsList() {
         if(limitedList!==true) {
             async function getPartners() {
@@ -32,7 +31,7 @@ export function PartnerDropdown({ onChange, limitedList }: Props) {
         if (!loggedInUser) return [];
         
         const partnerList: OperatorOrPartnerList[] = (loggedInUser.partnerRoles ?? [])
-            .filter(partner => partner.role === 3)
+            .filter(partner => partner.role === 9)
             .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
     
             setFilteredPartners(partnerList);

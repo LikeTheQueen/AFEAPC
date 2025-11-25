@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { addNewUser, deactivateUser,createNewUser } from 'provider/write';
+import { addNewUser, deactivateUser, createNewUser } from 'provider/write';
 import { fetchRolesGeneric, fetchListOfOperatorsOrPartnersForUser } from 'provider/fetch';
 import { type UserProfileRecordSupabaseType, type OperatorType, type RoleEntryWrite, type RoleTypesGeneric, type OperatorPartnerAddressType } from 'src/types/interfaces';
 import { transformOperatorPartnerAddress } from '../../../types/transform';
@@ -16,7 +16,7 @@ export default function CreateNewUser() {
     lastName: '',
     email: '',
     active: false,
-    is_super_user:false,
+    is_super_user: false,
     operatorRoles: [],
     partnerRoles: [],
     user_id: "00000000-0000-0000-0000-000000000000",
@@ -34,44 +34,46 @@ export default function CreateNewUser() {
   const [loadingPermissions, setLoadingPermissions] = useState(true);
 
   useEffect(() => {
-    if (!loggedInUser || token==='') {
+    if (!loggedInUser || token === '') {
       setLoadingPermissions(false);
       return;
     }
 
     let isMounted = true;
     async function getOperatorList() {
-      if(!loggedInUser?.user_id) return;
+      if (!loggedInUser?.user_id) return;
 
       setLoadingPermissions(true);
-    try{
-      const [opListResult, partnerListResult] = await Promise.all([
-        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1,4,5], token),
-        fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1,4,5], token)
-      ]);
-     
-      if(opListResult.ok) {
-      const opListTransformed = transformOperatorPartnerAddress(opListResult.data);
-      if(isMounted) {
-      setOperatorsList(opListTransformed);
-      }
-      }
+      try {
+        const [opListResult, partnerListResult] = await Promise.all([
+          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 4, 5], token),
+          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 4, 5], token)
+        ]);
 
-      if(partnerListResult.ok) {
-        const partnerListTransformed = transformOperatorPartnerAddress(partnerListResult.data);
-        if(isMounted) {
-        setPartnersList(partnerListTransformed);
+        if (opListResult.ok) {
+          const opListTransformed = transformOperatorPartnerAddress(opListResult.data);
+          if (isMounted) {
+            setOperatorsList(opListTransformed);
+          }
         }
+        if (partnerListResult.ok) {
+          const partnerListTransformed = transformOperatorPartnerAddress(partnerListResult.data);
+          if (isMounted) {
+            setPartnersList(partnerListTransformed);
+          }
+        }
+      } catch (e) {
+        console.error('Unable to get permissions', e);
+      } finally {
+        setLoadingPermissions(false);
+        
+        return;
       }
-    } catch(e) {
-      console.error('Unable to get permissions',e);
-    } finally {
-      setLoadingPermissions(false);
-      return;
-    }
     } getOperatorList();
     return () => {
       isMounted = false;
+      //console.log(newRoles,'THE NEW ROLES')
+            console.log(operatorsList,'the opt list')
     }
   }, [loggedInUser]);
 
@@ -81,6 +83,25 @@ export default function CreateNewUser() {
       setRolesGeneric(roleList);
     } getGenericRoles();
   }, []);
+
+  useEffect(() => {
+    const newRoles = operatorsList.map(item => ({
+      role: null,
+      active: true,
+      apc_id: item.apc_id!,
+      apc_address_id: item.apc_address_id!
+    }));
+    console.log(newRoles, 'THE NEW ROLES')
+    console.log(operatorsList, 'the opt list')
+    setRoles([...roles, ...newRoles]);
+    const newPartnerRoles = partnersList.map(item => ({
+      role: null,
+      active: true,
+      apc_id: item.apc_id!,
+      apc_address_id: item.apc_address_id!
+    }));
+    setPartnerRoles([...partnerRoles, ...newPartnerRoles]);
+  }, [operatorsList, partnersList])
 
   useEffect(() => {
     console.count("CreateNewUser render");
@@ -155,6 +176,7 @@ export default function CreateNewUser() {
   };
 
 
+console.log(operatorsList,'the opt list')
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -163,9 +185,9 @@ export default function CreateNewUser() {
             <div className="px-4 sm:px-0 md:col-span-1">
               <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">User Information</h2>
               <p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Create a user and assign privileges to that user for <span className="font-bold italic">each Operator or Non-Op address.</span></p>
-                <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"> You are <span className="font-bold italic">NOT</span> giving privileges to your Partners.  You are giving privileges to a user in your organization for AFEs associated to your Non-Op AFEs via the address.</p>
-                <br></br><p className="text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Active users with a valid email will be to login with a magic link sent to their email each time they sign-on.</p>
-                <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"><span className="font-medium italic">Definitions for privileges are below.</span>
+              <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"> You are <span className="font-bold italic">NOT</span> giving privileges to your Partners.  You are giving privileges to a user in your organization for AFEs associated to your Non-Op AFEs via the address.</p>
+              <br></br><p className="text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Active users with a valid email will be to login with a magic link sent to their email each time they sign-on.</p>
+              <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"><span className="font-medium italic">Definitions for privileges are below.</span>
               </p>
 
               <ol role="list" className="flex flex-1 flex-col gap-y-7 mt-3 border-t border-gray-900/30">
@@ -225,7 +247,7 @@ export default function CreateNewUser() {
                     </div>
                   </div>
                   <div className="sm:col-span-4">
-                    
+
                     <label htmlFor="email" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                       Email address
                     </label>
@@ -244,219 +266,218 @@ export default function CreateNewUser() {
                     </div>
                   </div>
                   <div className="sm:col-span-4">
-                    <Field className={`flex items-end justify-start sm:col-span-4 mt-2 ${
-                            !loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
-                            }`}>
-                    <Switch
-                      checked={newUser.is_super_user}
-                      onChange={handleSuperToggle}
-                      className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
-                      />
-                    </Switch>
-                    <Label as="span" className="ml-3 text-sm">
-                      <span className="font-medium text-[var(--darkest-teal)] custom-style">Super User</span>{' '}
-                      <span className="text-gray-500 custom-style-long-text">(User has full application access)</span>
-                    </Label>
-                  </Field>
+                    <Field className={`flex items-end justify-start sm:col-span-4 mt-2 ${!loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
+                      }`}>
+                      <Switch
+                        checked={newUser.is_super_user}
+                        onChange={handleSuperToggle}
+                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                        />
+                      </Switch>
+                      <Label as="span" className="ml-3 text-sm">
+                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Super User</span>{' '}
+                        <span className="text-gray-500 custom-style-long-text">(User has full application access)</span>
+                      </Label>
+                    </Field>
                     <Field className="flex items-end justify-start sm:col-span-4 mt-2">
-                    <Switch
-                      checked={newUser.active}
-                      onChange={handleActiveToggle}
-                      className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
-                      />
-                    </Switch>
-                    <Label as="span" className="ml-3 text-sm">
-                      <span className="font-medium text-[var(--darkest-teal)] custom-style">Active</span>{' '}
-                      <span className="text-gray-500 custom-style-long-text">(User will be able to sign-on)</span>
-                    </Label>
-                  </Field>
-                  
+                      <Switch
+                        checked={newUser.active}
+                        onChange={handleActiveToggle}
+                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                        />
+                      </Switch>
+                      <Label as="span" className="ml-3 text-sm">
+                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Active</span>{' '}
+                        <span className="text-gray-500 custom-style-long-text">(User will be able to sign-on)</span>
+                      </Label>
+                    </Field>
+
                   </div>
                 </div>
-          {loadingPermissions ? (
-            <LoadingPage></LoadingPage>
-          ) : ( <>   
-                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] mt-10 pt-5"
-                hidden={operatorsList.length >0 ? false : true}
-                >
-                  <div>
-                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
-                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
+                {loadingPermissions ? (
+                  <LoadingPage></LoadingPage>
+                ) : (<>
+                  <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] mt-10 pt-5"
+                    hidden={operatorsList.length > 0 ? false : true}
+                  >
+                    <div>
+                      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
+                      <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
+
+                    </div>
+                    <div className="">
+                      <div className="divide-y divide-[var(--darkest-teal)]/40">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
+                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30">
+                            <thead>
+                              <tr>
+                                <th scope="col" className="w-1/4 py-3.5 pr-1 pl-1 text-left sm:pl-0">
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  View Operated AFEs
+                                </th>
+                                <th scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  Edit Operator Users
+                                </th>
+                                <th scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  Operator Library Manager
+                                </th>
+                                <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
+                                  View Billing Details
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 bg-white">
+                              {operatorsList.map((role) => (
+                                <tr key={role.apc_id}>
+                                  <td className="w-full max-w-0 py-2 pr-1 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
+                                    {role.name}
+                                    <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
+                                      <br></br>{role.city}, {role.state}
+                                      <br></br>{role.zip}</p>
+                                  </td>
+                                  {[2, 4, 8, 7].map(roleVal => (
+                                    <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
+                                      <div className="flex h-6 shrink-0 items-center justify-center">
+                                        <div className="group grid size-4 grid-cols-1">
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => handleCheckboxChange(role.apc_id!, role.apc_address_id!, roleVal, e.target.checked)}
+                                            aria-describedby="comments-description"
+                                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..." />
+                                          <svg
+                                            fill="none"
+                                            viewBox="0 0 14 14"
+                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                          >
+                                            <path
+                                              d="M3 8L6 11L11 3.5"
+                                              strokeWidth={2}
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              className="opacity-0 group-has-checked:opacity-100"
+                                            />
+                                            <path
+                                              d="M3 7H11"
+                                              strokeWidth={2}
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              className="opacity-0 group-has-indeterminate:opacity-100"
+                                            />
+                                          </svg>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  ))}
+
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
 
                   </div>
-                  <div className="">
-                    <div className="divide-y divide-[var(--darkest-teal)]/40">
-                      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                        <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30">
-                          <thead>
-                            <tr>
-                              <th scope="col" className="w-1/4 py-3.5 pr-1 pl-1 text-left sm:pl-0">
-                              </th>
-                              <th
-                                scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                View Operated AFEs
-                              </th>
-                              <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                Edit Operator Users
-                              </th>
-                              <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                Operator Library Manager
-                              </th>
-                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 pl-3 sm:pr-0">
-                                View Billing Details
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-200 bg-white">
-                            {operatorsList.map((role) => (
-                              <tr key={role.apc_id}>
-                                <td className="w-full max-w-0 py-2 pr-1 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
-                                  {role.name}
-                                  <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
-                                    <br></br>{role.city}, {role.state}
-                                    <br></br>{role.zip}</p>
-                                </td>
-                                {[2, 4, 8, 7].map(roleVal => (
-                                  <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
-                                    <div className="flex h-6 shrink-0 items-center justify-center">
-                                      <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                          type="checkbox"
-                                          onChange={(e) => handleCheckboxChange(role.apc_id!, role.apc_address_id!, roleVal, e.target.checked)}
-                                          aria-describedby="comments-description"
-                                          className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..."/>
-                                        <svg
-                                          fill="none"
-                                          viewBox="0 0 14 14"
-                                          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                        >
-                                          <path
-                                            d="M3 8L6 11L11 3.5"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="opacity-0 group-has-checked:opacity-100"
-                                          />
-                                          <path
-                                            d="M3 7H11"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="opacity-0 group-has-indeterminate:opacity-100"
-                                          />
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </td>
-                                ))}
+                  <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
+                    hidden={partnersList.length > 0 ? false : true}>
+                    <div>
+                      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
+                      <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
 
+                    </div>
+                    <div className="">
+                      <div className="divide-y divide-gray-900/10">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
+                          <table className="min-w-full divide-y divide-gray-400 ">
+                            <thead>
+                              <tr>
+                                <th scope="col" className="w-1/4 py-3.5 text-left sm:pl-0">
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  View Non-Op AFEs
+                                </th>
+                                <th scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  Edit Non-Op Users
+                                </th>
+                                <th scope="col"
+                                  className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
+                                  Partner Library Manager
+                                </th>
+                                <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
+                                  Approve or Reject Non-Op AFEs
+                                </th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 bg-white">
+                              {partnersList?.map((role) => (
+                                <tr key={role.apc_id}>
+                                  <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
+                                    {role.name}
+                                    <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
+                                      <br></br>{role.city}, {role.state}
+                                      <br></br>{role.zip}</p>
+                                  </td>
+                                  {[3, 5, 9, 6].map(roleVal => (
+                                    <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
+                                      <div className="flex h-6 shrink-0 items-center justify-center">
+                                        <div className="group grid size-4 grid-cols-1">
+                                          <input
+                                            type="checkbox"
+                                            onChange={(e) => handleCheckboxChangeNonOp(role.apc_id!, role.apc_address_id!, roleVal, e.target.checked)}
+                                            aria-describedby="comments-description"
+                                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..."
+                                          />
+                                          <svg
+                                            fill="none"
+                                            viewBox="0 0 14 14"
+                                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                                          >
+                                            <path
+                                              d="M3 8L6 11L11 3.5"
+                                              strokeWidth={2}
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              className="opacity-0 group-has-checked:opacity-100"
+                                            />
+                                            <path
+                                              d="M3 7H11"
+                                              strokeWidth={2}
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              className="opacity-0 group-has-indeterminate:opacity-100"
+                                            />
+                                          </svg>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                </div>
-                <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
-                hidden={partnersList.length >0 ? false : true}>
-                  <div>
-                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
-                    <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
-
-                  </div>
-                  <div className="">
-                    <div className="divide-y divide-gray-900/10">
-                      <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                        <table className="min-w-full divide-y divide-gray-400 ">
-                          <thead>
-                            <tr>
-                              <th scope="col" className="w-1/4 py-3.5 text-left sm:pl-0">
-                              </th>
-                              <th
-                                scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                View Non-Op AFEs
-                              </th>
-                              <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                Edit Non-Op Users
-                              </th>
-                              <th scope="col"
-                                className="w-1/5 px-3 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:table-cell">
-                                Partner Library Manager
-                              </th>
-                              <th scope="col" className="w-1/5 py-3.5 text-center text-pretty text-sm/6 font-semibold text-[var(--dark-teal)] custom-style pr-4 sm:pr-0">
-                                Approve or Reject Non-Op AFEs
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-200 bg-white">
-                            {partnersList?.map((role) => (
-                              <tr key={role.apc_id}>
-                                <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
-                                  {role.name}
-                                  <p className="font-normal justify-end text-end mt-1 w-full text-xs">{role.street} {role.suite}
-                                    <br></br>{role.city}, {role.state}
-                                    <br></br>{role.zip}</p>
-                                </td>
-                                {[3, 5, 9, 6].map(roleVal => (
-                                  <td key={roleVal} className="px-3 py-1 text-sm/6 text-[var(--dark-teal)] lg:table-cell">
-                                    <div className="flex h-6 shrink-0 items-center justify-center">
-                                      <div className="group grid size-4 grid-cols-1">
-                                        <input
-                                          type="checkbox"
-                                          onChange={(e) => handleCheckboxChangeNonOp(role.apc_id!, role.apc_address_id!, roleVal, e.target.checked)}
-                                          aria-describedby="comments-description"
-                                          className="col-start-1 row-start-1 appearance-none rounded-sm border border-[var(--dark-teal)] bg-white checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] group-has-disabled:checked:bg-gray-300 group-has-disabled:checked:border-gray-500 ..."
-                                        />
-                                        <svg
-                                          fill="none"
-                                          viewBox="0 0 14 14"
-                                          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                        >
-                                          <path
-                                            d="M3 8L6 11L11 3.5"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="opacity-0 group-has-checked:opacity-100"
-                                          />
-                                          <path
-                                            d="M3 7H11"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="opacity-0 group-has-indeterminate:opacity-100"
-                                          />
-                                        </svg>
-                                      </div>
-                                    </div>
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>)}
+                </>)}
               </div>
               <div className="flex items-center justify-end px-4 py-4 sm:px-8">
                 <button type="button"
-                disabled={(newUser.firstName !=='' && newUser.lastName !=='' && newUser.email !=='') ? false : true}
+                  disabled={(newUser.firstName !== '' && newUser.lastName !== '' && newUser.email !== '') ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
                     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, newUser.is_super_user, token);
@@ -465,10 +486,10 @@ export default function CreateNewUser() {
                   Add New User
                 </button>
                 <button type="button"
-                hidden={loggedInUser?.is_super_user ? false : true }
+                  hidden={loggedInUser?.is_super_user ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
-                    handleNewUser('Rachel','Green','elizabeh.rider.shaw@gmail.com','topSecretPassword25!', false, roles, partnerRoles, false, token);
+                    handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
                   TEST ADD USER

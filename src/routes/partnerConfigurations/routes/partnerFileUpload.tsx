@@ -299,7 +299,7 @@ export default function PartnerFileUpload() {
                     <button
                     disabled={data.length>0 ? false : true}
                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-                    onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''),notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`), setData([])}}>
+                    onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''), setData([])}}>
                         Save Partner List
                     </button>
             </div>     

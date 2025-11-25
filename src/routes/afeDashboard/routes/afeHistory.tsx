@@ -4,7 +4,7 @@ import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
 import { insertAFEHistory } from 'provider/write'
 import { useSupabaseData } from 'src/types/SupabaseContext';
-import { A } from 'build/client/assets/chunk-KNED5TY2-DkGxNDtY';
+
 
  type AFEHistoryProps = {
    historyAFEs: AFEHistorySupabaseType[];

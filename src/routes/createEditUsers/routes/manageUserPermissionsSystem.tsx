@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
-import PermissionDashboard from "../../../routes/permissionGrid";
+import PermissionDashboard from "src/routes/sharedComponents/userPermissionsSystem";
 import { transformRoleEntrySupabase } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
 
@@ -26,12 +26,13 @@ export default function UserPermissionDashboard() {
       setUserPermissionListLoading(true);
       
       try{
-        const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
+        console.log(loggedInUser.is_super_user)
+        const userPermissionsRaw = await fetchUserPermissions(true, token);
 
         if(!userPermissionsRaw.ok) {
           throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
         }
-        console.log('THE USER PERMISSION DAHS', userPermissionsRaw.data)
+        
         const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
         const opPermissions = userPermissionsTransformed.filter(permission => permission.is_op_permission);
         const partnerPermissions = userPermissionsTransformed.filter(permission => permission.is_partner_permission);
@@ -64,7 +65,7 @@ export default function UserPermissionDashboard() {
       <LoadingPage></LoadingPage>
     ) : (
     <PermissionDashboard 
-    readOnly={false}
+    readOnly={loggedInUser?.is_super_user}
     operatorRoles={opUserRoleList}
     partnerRoles={partnerUserRoleList}>
     </PermissionDashboard>

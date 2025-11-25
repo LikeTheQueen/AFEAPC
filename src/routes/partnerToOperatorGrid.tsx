@@ -78,7 +78,7 @@ export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID =
     async function updatePartnerWithOpIDChange() {
         await updatePartnerWithOpID(partnerListToLink)
     };
-    
+    console.log(partnerListToLink,'the partner to link')
 if (loading) return <LoadingPage/>
     return (
         <>

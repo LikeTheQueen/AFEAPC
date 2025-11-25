@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchUsersForOperator } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { UserFullNameAndEmail } from "src/types/interfaces";
-import UserDashboard from "../../../routes/manageUserGrid";
+import UserDashboard from "src/routes/sharedComponents/userDashboardSystem";
 import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
 
@@ -29,7 +29,7 @@ export default function UserPermissionDashboard() {
         setIsError(false);
 
        try{
-        const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, false, token);
+        const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, true, token);
       
         if(!userListRaw.ok) {
         throw new Error((userListRaw as any).message ?? 'Unable to fetch users');
@@ -69,8 +69,7 @@ export default function UserPermissionDashboard() {
       <LoadingPage></LoadingPage>
     ) : ( 
     <UserDashboard 
-    userList={userList}
-    isError={isError}>
+    userList={userList}>
     </UserDashboard >
     )}
     </div>

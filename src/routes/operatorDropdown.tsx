@@ -16,7 +16,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
   const [opAPCID, setOpAPCID] = useState<string>('');
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
   const [operatorsList, setOperatorsList] = useState<OperatorPartnerRecord[] | []>([]);
-  console.log(limitedList,'limite list')
+  
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value;
         setOpAPCID(id);
@@ -44,7 +44,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
         }
         };
   
-  console.log(filteredOperators)
+  
     useEffect(() => {
           if (!loggedInUser) return;
           filterOpsList();
@@ -79,7 +79,7 @@ export function OperatorDropdown({ onChange, limitedList }: Props) {
           }
           populateOperatorList();
       }, [loggedInUser])
-  console.log(filteredOperators)
+  
   return (
     <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">

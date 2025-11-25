@@ -111,7 +111,7 @@ export interface AFEType {
   
   export interface RoleEntryWrite{
     id?: number;
-    role: number;
+    role: number | null;
     active: boolean;
     user_id?: string;
     apc_id: string;
@@ -243,8 +243,7 @@ export interface AFEType {
 
   export interface PartnerRecordToUpdate {
     id: string;
-    apc_op_id: string | null; 
-
+    apc_op_id: string; 
   }
 
 //Interface for grouping roles by user and apc_id
@@ -301,7 +300,7 @@ export interface GLCodeRowData {
   account_description: string | null;
   apc_op_id: string | null;
   apc_part_id: string | null;
-  id: number | null;
+  id?: number | null;
 };
 export interface PartnerMappingRecord {
   operator?: string | UUID;

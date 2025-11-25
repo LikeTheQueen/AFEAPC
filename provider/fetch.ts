@@ -219,7 +219,6 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
   if(apc_op_id==='') return;
   const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('id, source_id, street, suite, city, state, zip, country, active, name')
-  .eq('mapped',false)
   .eq('apc_op_id',apc_op_id);
   if (error || !data) {
       console.error(`Error fetching Partners:`, error);
@@ -247,7 +246,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   .eq('active', true);
   
   if (error || !data) {
-      console.error(`Error fetching Partners:`, error);
+      console.error(`Error fetching Partners from Crosswalk:`, error);
       return [];
     }
     const mappedData = transformPartnerMapRecordForDisplay(data);
@@ -419,12 +418,12 @@ export async function fetchListOfOperatorsOrPartnersForUser(loggedinUserId: stri
     return callEdge<TogglePayload, ToggleResult>("fetch_List_Operators_Or_Partners", { loggedinUserId, table, addressTable, roles }, token);
   };
 
-export async function fetchUsersForOperator(is_super_user: boolean, token: string) {
+export async function fetchUsersForOperator(is_super_user: boolean, readOnly: boolean, token: string) {
     
-    type TogglePayload = { is_super_user: boolean; };
+    type TogglePayload = { is_super_user: boolean; readOnly: boolean;};
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_users_for_operator", { is_super_user }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_users_for_operator", { is_super_user, readOnly }, token);
   };
 
 export async function fetchUserPermissions(is_super_user: boolean, token: string) {

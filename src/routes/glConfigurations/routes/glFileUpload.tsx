@@ -70,8 +70,7 @@ export default function GLFileUpload() {
           account_group: String(row[1] ?? ''),
           account_description: String(row[2] ?? ''),
           apc_op_id: '',
-          apc_part_id: '',
-          id: null
+          apc_part_id: ''
         };
 
         const looped = opAPCIDArray.map<GLCodeRowData>((operator) => ({
@@ -89,8 +88,7 @@ export default function GLFileUpload() {
           account_group: String(row[1] ?? ''),
           account_description: String(row[2] ?? ''),
           apc_op_id: '',
-          apc_part_id: '',
-          id: null
+          apc_part_id: ''
         };
 
         const looped = partnerAPCIDArray.map<GLCodeRowData>((partner) => ({
@@ -127,7 +125,7 @@ export default function GLFileUpload() {
     const distinctItems: GLCodeRowData[] = [];
 
     for (const item of arr) {
-      const identifier = props.map((p) => item[p]).join("|"); // Create unique identifier
+      const identifier = props.map((p) => item[p]).join("|"); 
       if (!seen.has(identifier)) {
         seen.add(identifier);
         distinctItems.push(item);
@@ -135,7 +133,7 @@ export default function GLFileUpload() {
     }
     return distinctItems;
   };
-  
+  console.log(data, 'THE GL CODES TO WRITE')
   return (
     <>
       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
@@ -151,7 +149,7 @@ export default function GLFileUpload() {
             <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select the Operator and Partner addresses the GL Account Codes are applicable for</h1>
 
             <div className="flex flex-col lg:flex-row">
-              <div className='grow m-4 '>
+              <div className='grow m-2 '>
                 <OperatorDropdownMultiSelect
                   onChange={(ids) => { setOpAPCIDArray(ids) }}
                   limitedList={true}
@@ -159,7 +157,7 @@ export default function GLFileUpload() {
                   isDisabled={selectListDisabled}
                 />
               </div>
-              <div className='grow m-4'>
+              <div className='grow m-2'>
                 <PartnerDropdownMultiSelect
                   onChange={(ids) => { setPartnerAPCIDArray(ids) }}
                   limitedList={true}
@@ -171,7 +169,7 @@ export default function GLFileUpload() {
               <div className="mt-4">
                 <label
                   htmlFor="file-upload">
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0} />
+                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || selectListDisabled} />
                   <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
                        peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
                 </label>
@@ -221,7 +219,7 @@ export default function GLFileUpload() {
         <button
           disabled={data.length > 0 ? false : true}
           className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-          onClick={(e) => { writeGLAccountlistFromSourceToDB(data), setSelectListDisabled(false), setFileName(''), notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`), setData([]) }}>
+          onClick={(e) => { writeGLAccountlistFromSourceToDB(data), setSelectListDisabled(false), setFileName(''), setData([]), setDistinctAccountArray([]) }}>
           Save GL Account Code List
         </button>
       </div>
