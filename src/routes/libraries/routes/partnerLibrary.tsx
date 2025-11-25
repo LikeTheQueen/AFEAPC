@@ -3,7 +3,7 @@ import type { PartnerRowData } from 'src/types/interfaces';
 import { updatePartnerProcessedStatus } from 'provider/write';
 import { ToastContainer } from 'react-toastify';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
-import { OperatorDropdown } from 'src/routes/operatorDropdown';
+import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";

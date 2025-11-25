@@ -7,8 +7,8 @@ import { updateGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
-import { OperatorDropdown } from 'src/routes/operatorDropdown';
-import { PartnerDropdown } from "src/routes/partnerDropdown";
+import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
+import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformGLCodeCrosswalk } from "src/types/transform";
 

@@ -12,8 +12,8 @@ import { type AFEType } from "src/types/interfaces";
 import { fetchAFEs } from "provider/fetch";
 import { transformAFEs } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
-import { PartnerDropdown } from "src/routes/partnerDropdown";
-import { OperatorDropdown } from "src/routes/operatorDropdown";
+import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
+import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 const tabs = [

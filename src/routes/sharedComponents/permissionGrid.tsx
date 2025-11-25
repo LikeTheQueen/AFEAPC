@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { type RoleEntryWrite, type RoleEntryRead, type PartnerRoleEntryWrite } from "src/types/interfaces";
-import { checkedByRole, getRoleIndex } from "../routes/createEditUsers/routes/helpers/helpers";
+import { type RoleEntryWrite, type RoleEntryRead } from "src/types/interfaces";
+import { checkedByRole, getRoleIndex } from "../createEditUsers/routes/helpers/helpers";
 import { writeorUpadateUserRoles } from "provider/write";
 import React from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";

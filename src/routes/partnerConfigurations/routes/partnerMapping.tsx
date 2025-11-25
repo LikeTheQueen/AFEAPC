@@ -7,7 +7,7 @@ import { updatePartnerMapping, updatePartnerProcessedMapValue, writePartnerMappi
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
-import { OperatorDropdown } from 'src/routes/operatorDropdown';
+import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";

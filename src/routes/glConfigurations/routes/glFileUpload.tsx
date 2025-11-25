@@ -6,7 +6,7 @@ import { writeGLAccountlistFromSourceToDB } from 'provider/write';
 import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
-import { PartnerDropdownMultiSelect } from 'src/routes/partnerDropdownMultiSelect';
+import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 
 const expectedHeaders = ["account_number", "account_group", "account_description"];

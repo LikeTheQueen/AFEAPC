@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
-import PermissionDashboard from "../../../routes/permissionGrid";
+import PermissionDashboard from "../../sharedComponents/permissionGrid";
 import { transformRoleEntrySupabase } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
 

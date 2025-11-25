@@ -7,7 +7,7 @@ import { ArrowRightIcon, ArrowTurnDownLeftIcon } from "@heroicons/react/24/outli
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerMapping, updatePartnerProcessedMapping } from "provider/write";
 import { notifyStandard } from "src/helpers/helpers";
-import { OperatorDropdown } from "src/routes/operatorDropdown";
+import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 export default function PartnerMappingView() {

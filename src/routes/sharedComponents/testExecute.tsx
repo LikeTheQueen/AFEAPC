@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { XMarkIcon} from '@heroicons/react/20/solid';
-import { OperatorDropdown } from '../operatorDropdown';
+import { OperatorDropdown } from './operatorDropdown';
 import { testExecuteConnection } from 'provider/fetch';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 
