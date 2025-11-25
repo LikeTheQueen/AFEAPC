@@ -5,7 +5,7 @@ import type { GLCodeRowData } from 'src/types/interfaces';
 import { writeGLAccountlistFromSourceToDB } from 'provider/write';
 import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
-import { OperatorDropdownMultiSelect } from 'src/routes/operatorDropdownMultiSelect';
+import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/partnerDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 

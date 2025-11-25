@@ -185,7 +185,7 @@ export default function GLMapping() {
                                 <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Operator of Non-Op AFEs:</h1>
                                 <div className="">
                                     <OperatorDropdown
-                                    value={opAPCID}
+                                        value={opAPCID}
                                         onChange={(id) => { setOpAPCID(id) }}
                                         limitedList={false}
                                     />

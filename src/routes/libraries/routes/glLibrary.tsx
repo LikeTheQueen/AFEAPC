@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GLCodeType } from 'src/types/interfaces';
 import { updateGLAccountCodeStatus } from 'provider/write';
-import { notifyStandard } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/operatorDropdown';

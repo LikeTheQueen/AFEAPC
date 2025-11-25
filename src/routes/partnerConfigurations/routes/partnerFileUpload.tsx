@@ -6,7 +6,7 @@ import { writePartnerlistFromSourceToDB } from 'provider/write';
 import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { useSupabaseData } from 'src/types/SupabaseContext';
-import { OperatorDropdownMultiSelect } from 'src/routes/operatorDropdownMultiSelect';
+import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 
 const expectedHeaders = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country"];
 interface PartnerOpList {

@@ -12,13 +12,14 @@ const tabs = [
   {id:1, name:"Upload Partner List", current: false, href:"/mainScreen/configurations/partnerupload", mobile: false},
   {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
   {id:3, name:"View & Manage Partner Mappings", current: false, href:"/mainScreen/configurations/partnermappingview", mobile: true},
+  {id:4, name:"View & Manage Partner Library", current: false, href:"/mainScreen/configurations/partnersview", mobile: true},
 ]},
   { id:2, name: 'GL Library', href: "/mainScreen/configurations", current: false,
     sublist:[
   {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload", mobile: false},
   {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping", mobile: false},
   {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview", mobile: true},
-  {id:4, name:"View & Manage Your GL Codes", current: false, href:"/mainScreen/configurations/glcodesview", mobile: true},
+  {id:4, name:"View & Manage GL Codes", current: false, href:"/mainScreen/configurations/glcodesview", mobile: true},
     ]
    },
   { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,

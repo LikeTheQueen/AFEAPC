@@ -48,6 +48,7 @@ export default function PartnerMapping() {
     };
 
     useEffect(() => {
+        if (opAPCID === '') return;
         let isMounted = true;
         async function getPartnerLists() {
             setLoading(true);

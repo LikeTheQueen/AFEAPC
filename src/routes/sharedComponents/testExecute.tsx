@@ -44,6 +44,7 @@ export default function TestExecuteEstablishedConnection() {
             <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to Test the Connection For:</h1>
             <div>
             <OperatorDropdown
+              value={opAPCID}
               onChange={(id) => { setOpAPCID(id) }}
               limitedList={true}
             />

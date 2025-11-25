@@ -180,6 +180,16 @@ import { notifyStandard } from 'src/helpers/helpers';
       return data;
   };
 
+  export const updatePartnerProcessedStatus = async(id: number, status: boolean) => {
+   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'active': status}).eq('id',id);
+    
+    if (error) {
+        console.error(`Error updating the Partners Processed Table`, error, data);
+        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
+      }
+      return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+  };
+
   
 
   export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {

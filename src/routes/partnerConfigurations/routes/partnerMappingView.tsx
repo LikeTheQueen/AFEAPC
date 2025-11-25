@@ -86,6 +86,7 @@ export default function PartnerMappingView() {
                                 <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
                                 <div className="">
                                     <OperatorDropdown
+                                        value={opAPCID}
                                         onChange={(id) => { setOpAPCID(id) }}
                                         limitedList={true}
                                     />
