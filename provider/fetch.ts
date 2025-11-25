@@ -301,7 +301,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 
 export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, apc_part_id:string) => {
   if(apc_op_id !==''){
-  const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`account_number, account_group, account_description`)
+  const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`id,account_number, account_group, account_description, active`)
   .eq('apc_op_id',apc_op_id);
       if (error || !data) {
       console.error(`Error fetching GL Codes:`, error);
@@ -310,13 +310,13 @@ export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, ap
       
       return transformGLCodes(data);
     } else if(apc_part_id !==''){
-      const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`account_number, account_group, account_description`)
+      const { data, error } = await supabase.from('GL_CODES_PROCESSED').select(`id,account_number, account_group, account_description, active`)
   .eq('apc_part_id',apc_part_id);
       if (error || !data) {
       console.error(`Error fetching GL Codes:`, error);
       return [];
       } 
-      
+      console.log('the data', data)
       return transformGLCodes(data);
 
     }

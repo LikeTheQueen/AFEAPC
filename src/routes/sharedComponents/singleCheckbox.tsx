@@ -1,11 +1,12 @@
 
 type Props = {
+    value: boolean;
     onChange: (checked: boolean) => void;
     label: string;
     id: string;
 };
 
-export function SingleCheckbox({ onChange, label, id }: Props) {
+export function SingleCheckbox({ value, onChange, label, id }: Props) {
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         onChange(e.target.checked);
     };
@@ -16,6 +17,7 @@ export function SingleCheckbox({ onChange, label, id }: Props) {
                     <input
                         id={id}
                         name={id}
+                        checked={value}
                         onChange={handleChange}
                         type="checkbox"
                         aria-describedby={label}

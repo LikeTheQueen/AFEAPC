@@ -201,6 +201,15 @@ import { notifyStandard } from 'src/helpers/helpers';
       return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
   };
 
+  export const updateGLAccountCodeStatus = async(id: number, status: boolean ) => {
+    const { error } = await supabase.from('GL_CODES_PROCESSED').update({'active': status}).eq('id',id);
+    if (error) {
+        console.error(`Error modifying the GL Account Code`, error);
+        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR changing the account code: ${error.message})`);
+      }
+      return notifyStandard(`GL Account Code saved. Books are balanced and the wellhead’s pressure-tight.\n\n(TLDR: GL Account Codes changes SAVED)`);
+  };
+
   export const writeGLCodeMapping = async(glMappings: GLMappingRecord[]) => {
     const { data, error } = await supabase.from('GL_CODE_CROSSWALK').insert(glMappings).select();
     if (error) {

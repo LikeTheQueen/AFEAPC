@@ -194,6 +194,7 @@ export default function PartnerMapping() {
                                 <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select your company, as the Operator, to Create Mappings For:</h1>
                                 <div className="sm:w-1/2">
                                     <OperatorDropdown
+                                        value={opAPCID}
                                         onChange={(id) => { setOpAPCID(id) }}
                                         limitedList={true} />
                                 </div>
@@ -225,6 +226,7 @@ export default function PartnerMapping() {
                                 <div hidden={(opAPCID !== '' && sourcePartnerList.length > 0) ? false : true}
                                     className="flex justify-end gap-3 py-3 px-10">
                                     <SingleCheckbox
+                                        value={hideMappedSourcePartners}
                                         onChange={(checked) => setHideMappedSourcePartners(checked)}
                                         label={'Hide Mapped Partners'}
                                         id={'hideMappedPartnersSource'}>
@@ -320,6 +322,7 @@ export default function PartnerMapping() {
                                 <h2 className="truncate text-base/7 font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in AFE Partner Connections</h2>
                                 <div className="flex justify-end gap-3 py-3 px-10">
                                     <SingleCheckbox
+                                        value={hideMappedAPCPartners}
                                         onChange={(checked) => setHideMappedAPCPartners(checked)}
                                         label={'Hide Mapped Partners in AFE Partner Connections'}
                                         id={'hideMappedPartnersAFEPC'}>

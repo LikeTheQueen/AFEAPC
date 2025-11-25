@@ -535,7 +535,8 @@ export const transformGLCodes = (data: any[]) : GLCodeType[] => {
         account_group: item.account_group,
         id: item.id,
         apc_op_id:'',
-        apc_part_id:''
+        apc_part_id:'',
+        active: item.active,
     }))
 };
 

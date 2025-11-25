@@ -247,6 +247,7 @@ export default function AFE() {
       <div>
       <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
       <OperatorDropdown
+      value={operatorSeach}
       onChange={setOperatorSearch}
       limitedList={false}>
       </OperatorDropdown>
@@ -371,6 +372,7 @@ export default function AFE() {
       <div >
       <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Name</h2>
       <PartnerDropdown
+      value={partnerSearch}
       onChange={setPartnerSearch}
       limitedList={false}>
       </PartnerDropdown>

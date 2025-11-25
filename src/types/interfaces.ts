@@ -340,6 +340,7 @@ export interface OperaatorOrPartnerListAndUsers extends OperatorOrPartnerList {
 
 export interface GLCodeType extends GLCodeRowData{
   id: number;
+  active: boolean;
 }
 
 export interface GLMappingRecord {
