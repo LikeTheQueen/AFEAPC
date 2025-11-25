@@ -18,6 +18,7 @@ const tabs = [
   {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload", mobile: false},
   {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping", mobile: false},
   {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview", mobile: true},
+  {id:4, name:"View & Manage Your GL Codes", current: false, href:"/mainScreen/configurations/glcodesview", mobile: true},
     ]
    },
   { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,

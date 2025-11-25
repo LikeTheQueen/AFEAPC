@@ -2,7 +2,7 @@ export default function GLLibrary() {
     return (
       <>
       <div>
-        THIS IS HTE LIBRARY
+        This is the GL Library
       </div>
       </>
     );

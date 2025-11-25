@@ -65,7 +65,7 @@ export default function UniversalPagination<T>({
             </div>
             <div className="flex">
                 <ul
-                    className="flex justify-center items-center align-center gap-x-2 z-30"
+                    className="flex justify-center items-center align-center gap-x-2"
                     role="navigation"
                     aria-label="Pagination">
                     <li

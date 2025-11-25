@@ -4,7 +4,7 @@ import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusBu
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
@@ -12,8 +12,7 @@ import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, ha
 import LoadingPage from "src/routes/loadingPage";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon} from '@heroicons/react/24/outline';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import DocumentBrowser from '../../documentViewer';
+import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
@@ -264,8 +263,6 @@ console.log(file)
         XLSX.writeFile(wb, "export.xlsx");
       
   };
-  
-  
   
   return (
     <>

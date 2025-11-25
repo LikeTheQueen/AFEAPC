@@ -2,7 +2,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithProviders';
-import Configurations from '../src/routes/configurations';
+import Configurations from '../src/routes/parentPages/routes/configurations';
 
 describe('Configurations', () => {
   const user = userEvent.setup();
