@@ -67,7 +67,7 @@ export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID =
             } else {
                 updatedPartnerListToLink.push({
                     id: id,
-                    apc_op_id: apc_op_id
+                    apc_op_id: apc_op_id!
 
                 })
             }

@@ -212,7 +212,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
                             return -1;
                         }
                         return (a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
-                    });
+                    }); 
     return apcPartListSorted;
 };
 
@@ -260,9 +260,20 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
       console.error(`Error fetching Operators and Partners:`, error);
       return emptyArray;
       }
-      console.log(data, 'THE RETURN TO THE CALL')
     const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
-    return dataFormatted; 
+    const operatorListSorted = dataFormatted.sort((a,b) => {
+      if (a.apc_name === undefined && b.apc_name === undefined) {
+        return 0;
+      }
+      if (a.apc_name === undefined) {
+        return 1;
+      }
+      if (b.apc_name === undefined) {
+        return -1;
+      }
+      return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+    });
+    return operatorListSorted; 
 };
 
  export const fetchAllPartners = async() => {
@@ -273,7 +284,19 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
       return emptyArray;
       }
     const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
-    return dataFormatted; 
+    const partnerListSorted = dataFormatted.sort((a,b) => {
+      if (a.apc_name === undefined && b.apc_name === undefined) {
+        return 0;
+      }
+      if (a.apc_name === undefined) {
+        return 1;
+      }
+      if (b.apc_name === undefined) {
+        return -1;
+      }
+      return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+    });
+    return partnerListSorted; 
 };
 
 export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, apc_part_id:string) => {

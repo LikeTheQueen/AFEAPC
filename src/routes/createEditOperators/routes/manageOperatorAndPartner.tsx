@@ -124,29 +124,30 @@ export default function OperatorViewAndEdit() {
 console.log(partnersList,'THE PARTNER LIST');
     return (
         <>
-            <div className="px-4 sm:px-10 sm:py-16">
+            <div className="px-4 w-full sm:px-10 sm:py-16">
                 <div className="py-4 sm:py-0">
-                    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7">
+                    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-6">
                         <div className="md:col-span-2">
                             <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operator Profiles</h2>
                             <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Manage the addresses for your AFEs. The main address is the billing address for your organization with associated addresses for Non-Op AFEs.</p>
                             <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
                             <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                         </div>
-                        <div className="md:col-span-5 ">
-                            <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
+                        <div className="md:col-span-4 ">
+                            <table className="w-full sm:w-7/8 divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                                 <thead>
-                                    <tr className="bg-white text-white ">
+                                    <tr className="bg-white text-white">
                                         <th scope="col"
-                                            className="hidden rounded-tl-xl w-3/5 px-4 py-3.5 text-left text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                                            className="rounded-tl-xl px-4 py-3.5 text-left text-pretty text-base leading-7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                                             Company Name
                                         </th>
                                         <th
                                             scope="col"
-                                            className="hidden w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                                            className="hidden w-32 px-2 py-3.5 text-center text-pretty text-base leading-7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                                             <span className="sr-only">Edit</span>
                                         </th>
-                                        <th scope="col" className="hidden rounded-tr-lg w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                                        <th scope="col"
+                                            className="rounded-tr-lg w-32 px-2 py-0 text-center text-pretty text-base leading-7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                                             <span className="sr-only">Activate or Deactivate</span>
                                         </th>
                                     </tr>
@@ -154,64 +155,69 @@ console.log(partnersList,'THE PARTNER LIST');
                                 <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
                                     {rowsToShow.map((operator, operatorIdx) => (
                                         <tr key={operator.apc_id}>
-                                            <td className="text-base/7 text-start align-middle max-w-0 py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none">
+                                            <td className="text-base leading-7 text-start align-middle py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style">
                                                 {operator.name}
                                                 <dl className="font-normal">
                                                     <dt className="sr-only">Address</dt>
-                                                    <dd className="mt-1 truncate text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">{addressDisplay(operator)}</dd>
-                                                    <dt className="sr-only ">Status</dt>
-                                                    <dd className="mt-1 flex justify-between">
+                                                    <dd className="mt-1 truncate text-sm leading-6 text-[var(--darkest-teal)] custom-style-long-text">
+                                                        {addressDisplay(operator)}
+                                                    </dd>
+                                                    <dt className="sr-only">Status</dt>
+                                                    <dd className="mt-1 flex justify-between items-center gap-2">
                                                         <span
                                                             hidden={!operator.active}
-                                                            className="inline-flex items-center rounded-full bg-[var(--bright-pink)] px-3 py-2 text-sm/6 font-semibold text-white custom-style">
+                                                            className="inline-flex items-center rounded-full bg-[var(--bright-pink)] px-3 py-2 text-sm leading-6 font-semibold text-white custom-style">
                                                             Active
                                                         </span>
                                                         <span
                                                             hidden={operator.active}
-                                                            className="inline-flex items-center rounded-full bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
+                                                            className="inline-flex items-center rounded-full bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm leading-6 font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
                                                             Inactive
                                                         </span>
                                                         <button
-                                                            disabled={(!operator.apc_id && !operator.apc_address_id) ? true : false}
-                                                            onClick={async (e: any) => {
+                                                            disabled={(!operator.apc_id && !operator.apc_address_id)}
+                                                            onClick={async (e) => {
                                                                 e.preventDefault();
                                                                 handleClickActivateOrDeactivateOperator(operatorIdx);
                                                                 notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                             }}
-                                                            className={
-                                                                `sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] 
-                                                        ${!operator.active
-                                                                    ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                                                                    : 'bg-white text-[var(--darkest-teal)] outline-[var(--darkest-teal)] outline-1 -outline-offset-1'}`
-                                                            }>
+                                                            className={`sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md px-3 py-2 text-sm leading-6 font-semibold custom-style transition-colors min-w-24
+                                    ${!operator.active
+                                                                    ? 'bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)]'
+                                                                    : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
+                                                                }
+                                    disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
+                                `}>
                                                             {operator.active ? 'Deactivate' : 'Activate'}
                                                         </button>
                                                     </dd>
                                                 </dl>
-
                                             </td>
-                                            <td className="hidden px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center align-middle sm:table-cell">
+
+                                            <td className="hidden px-3 py-4 text-center align-middle sm:table-cell">
                                                 <button
                                                     type="button"
-                                                    onClick={(e: any) => { setOperatorToEdit(operator), setOpen(true) }}
-                                                    className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]">
+                                                    onClick={(e) => { setOperatorToEdit(operator); setOpen(true); }}
+                                                    className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-4 py-2 text-sm leading-6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style transition-colors w-full max-w-28">
                                                     Edit
                                                 </button>
                                             </td>
-                                            <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
+
+                                            <td className="hidden align-middle px-3 py-4 text-center sm:table-cell">
                                                 <button
-                                                    disabled={(!operator.apc_id && !operator.apc_address_id) ? true : false}
-                                                    onClick={async (e: any) => {
+                                                    disabled={(!operator.apc_id && !operator.apc_address_id)}
+                                                    onClick={async (e) => {
                                                         e.preventDefault();
                                                         handleClickActivateOrDeactivateOperator(operatorIdx);
                                                         notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                     }}
-                                                    className={
-                                                        `cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]
-                                                        ${!operator.active
-                                                            ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                                                            : 'bg-white text-[var(--darkest-teal)] outline-[var(--darkest-teal)] outline-1'}`
-                                                    }>
+                                                    className={`cursor-pointer disabled:cursor-not-allowed rounded-md px-4 py-2 text-sm leading-6 font-semibold custom-style transition-colors w-full max-w-28
+                            ${!operator.active
+                                                            ? 'bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)]'
+                                                            : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
+                                                        }
+                            disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
+                        `}>
                                                     {operator.active ? 'Deactivate' : 'Activate'}
                                                 </button>
                                             </td>
@@ -219,13 +225,14 @@ console.log(partnersList,'THE PARTNER LIST');
                                     ))}
                                 </tbody>
                             </table>
-                            
+                                <div className="w-full sm:w-7/8">
                             <UniversalPagination
                                 data={operatorsList}
                                 rowsPerPage={maxRowsToShow}
                                 listOfType="Operators"
                                 onPageChange={handlePageChange}
                             />
+                            </div>
 
                         </div>
                     </div>
@@ -266,7 +273,7 @@ console.log(partnersList,'THE PARTNER LIST');
                                                 ></EditOperator>
                                             </div>
                                         </div>
-                                    </DialogPanel> 
+                                    </DialogPanel>
                                 </div>
                             </div>
                         </div>

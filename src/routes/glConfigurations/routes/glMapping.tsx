@@ -477,7 +477,7 @@ export default function GLMapping() {
                                                                 </p>
                                                                 <p className="max-w-full flex-1 truncate xl:whitespace-normal text-sm/6 custom-style-long-text text-[var(--dark-teal)]">
                                                                     {glCode.operator_account_number} | {glCode.operator_account_description}
-                                                                    <ArrowTurnDownLeftIcon className="xl:hidden size-7 stroke-2 text-[var(--(darkest-teal))] justify-self-end mr-2"></ArrowTurnDownLeftIcon>
+                                                                    <ArrowTurnDownLeftIcon className="xl:hidden size-7 stroke-2 text-[var(--darkest-teal)] justify-self-end mr-2"></ArrowTurnDownLeftIcon>
                                                                 </p>
                                                             </div>
                                                             {/* User's GL Code  Only shows when screen is not xl*/}
