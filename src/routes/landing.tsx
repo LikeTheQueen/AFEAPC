@@ -3,6 +3,8 @@ import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink, useNavigate } from "react-router";
 import  Footer  from "./footer"
+import LiquidEther from '../blocks/LiquidEther';
+
 
 const navigation = [
    { name: 'How it Works', href: '#' },
@@ -14,7 +16,28 @@ export default function LandingPage() {
    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
    const navigate = useNavigate();
 
-return <div>
+return (
+  <>
+  <div style={{ width: '100%', height: 600, position: 'relative' }}>
+  <LiquidEther
+    colors={[ '#5227FF', '#FF9FFC', '#B19EEF' ]}
+    mouseForce={20}
+    cursorSize={100}
+    isViscous={false}
+    viscous={30}
+    iterationsViscous={32}
+    iterationsPoisson={32}
+    resolution={0.5}
+    isBounce={false}
+    autoDemo={true}
+    autoSpeed={0.5}
+    autoIntensity={2.2}
+    takeoverDuration={0.25}
+    autoResumeDelay={3000}
+    autoRampDuration={0.6}
+  />
+
+  <div>
     <section className="relative py-6 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24" aria-label='landingPage'>
         <nav aria-label="Global" className="flex items-center justify-between p-4 lg:px-8 border-b-1 border-b-white/50">
           <div className="flex lg:flex-1">
@@ -150,5 +173,9 @@ return <div>
         </div>
     </section>
     <Footer/>
-    </div>;
+  </div>
+  </div>
+  
+  </>
+)
   }
