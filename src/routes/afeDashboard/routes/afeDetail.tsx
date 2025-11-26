@@ -482,33 +482,33 @@ console.log(file)
                {/* AFE Estimates */}
                <div className="">
                 
-              <table className="w-full text-left text-sm/6 2xl:whitespace-nowrap table-fixed">
+              <table className="w-full text-left text-sm/6 2xl:whitespace-nowrap">
 
                 {groupedAccounts && Array.from(groupedAccounts).map(([accountGroup, accounts]) => (
                   <tbody key={accountGroup} >
 
                     <tr className="border-t border-[var(--darkest-teal)]/90 text-[var(--darkest-teal)] font-semibold custom-style h-10">
-                      <td className="hidden w-1/5 table-cell pl-2">{accountGroup.toUpperCase()}</td>
-                      <td className="hidden px-0 py-0 text-right w-1/5 table-cell">Operator Account#</td>
-                      <td className="px-0 py-0 text-right w-1/5 table-cell">Account#</td>
-                      <td className="hidden px-0 py-0 text-right w-1/5 table-cell">Gross Amount</td>
-                      <td className="px-0 py-0 pr-2 text-right w-1/5 table-cell">Net Amount</td>
+                      <td className="hidden sm:table-cell w-1/5 pl-2">{accountGroup.toUpperCase()}</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Operator Account#</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Account#</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Gross Amount</td>
+                      <td className="table-cell px-0 py-0 pr-2 text-right w-1/5 ">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
                       <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
-                        <td className="hidden px-0 py-3 text-left w-2/5 sm:table-cell">
+                        <td className="hidden sm:table-cell px-0 py-3 text-left sm:w-2/5 ">
                           {item.operator_account_description}
                         </td>
-                        <td className="hidden px-0 py-3 text-right w-1/5 sm:table-cell">
+                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
                           {item.operator_account_number}
                         </td>
-                        <td className="px-0 py-3 text-right w-1/5 sm:table-cell">
+                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
                           {item.partner_account_number}
                         </td>
-                        <td className="hidden px-0 py-3 text-right w-1/5 sm:table-cell">
+                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
                           ${item.amount_gross.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td className="px-0 py-3 pr-2 text-right w-1/5 sm:table-cell">
+                        <td className="table-cell px-0 py-3 pr-2 text-right w-1/5 ">
                           ${item.partner_net_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
 

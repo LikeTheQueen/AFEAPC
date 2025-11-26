@@ -7,6 +7,7 @@ import { transformOperatorPartnerAddress } from '../../../types/transform';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
 import LoadingPage from 'src/routes/loadingPage';
+import { buildAppEmailHTML, sendEmail, handleSendEmail } from 'email/emailBasic';
 
 
 export default function CreateNewUser() {
@@ -72,8 +73,6 @@ export default function CreateNewUser() {
     } getOperatorList();
     return () => {
       isMounted = false;
-      //console.log(newRoles,'THE NEW ROLES')
-            console.log(operatorsList,'the opt list')
     }
   }, [loggedInUser]);
 
@@ -91,8 +90,7 @@ export default function CreateNewUser() {
       apc_id: item.apc_id!,
       apc_address_id: item.apc_address_id!
     }));
-    console.log(newRoles, 'THE NEW ROLES')
-    console.log(operatorsList, 'the opt list')
+    
     setRoles([...roles, ...newRoles]);
     const newPartnerRoles = partnersList.map(item => ({
       role: null,
@@ -174,9 +172,17 @@ export default function CreateNewUser() {
       return updatedRoles;
     });
   };
+  const handleTestEmailSending = async () => {
+    handleSendEmail(
+      `Test Email From ${loggedInUser?.firstName}`,
+      loggedInUser?.firstName!,
+      'This message is a test to let you know that we say hi',
+      "Operator for Support",
+      "AFE Partner Connections",
+      loggedInUser?.email!,
+    );
+  };
 
-
-console.log(operatorsList,'the opt list')
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -489,10 +495,11 @@ console.log(operatorsList,'the opt list')
                   hidden={loggedInUser?.is_super_user ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
-                    handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
+                    handleTestEmailSending();
+                    //handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
-                  TEST ADD USER
+                  TEST SEND EMAIL
                 </button>
               </div>
             </form>

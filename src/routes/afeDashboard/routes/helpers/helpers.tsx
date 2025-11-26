@@ -2,11 +2,14 @@ import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperato
 import type { UserProfileRecordSupabaseType } from "src/types/interfaces";
 import { insertAFEHistory } from 'provider/write'
 
-export function handlePartnerStatusChange(id: string, partnerStatus: string, newPartnerStatus: string, description: string, type: string, token: string) {
+export async function handlePartnerStatusChange(id: string, partnerStatus: string, newPartnerStatus: string, description: string, type: string, token: string) {
   if (partnerStatus === newPartnerStatus) {
     return;
   } else {
-    updateAFEPartnerStatus(id, newPartnerStatus, token);
+    const partnerStatusChange = await updateAFEPartnerStatus(id, newPartnerStatus, token);
+      if(partnerStatusChange.ok) {
+        
+      }
     insertAFEHistory(id, description, type, token);
   }
 };

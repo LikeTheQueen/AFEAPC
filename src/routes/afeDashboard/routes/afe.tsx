@@ -15,6 +15,8 @@ import LoadingPage from "src/routes/loadingPage";
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { handleSendEmail } from "email/emailBasic";
+import { insertAFEHistory, updateAFEPartnerStatus } from "provider/write";
 
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
@@ -166,6 +168,32 @@ export default function AFE() {
           setCurrentPageNonOperated(page);
   };
 
+  const handleEmailNotifcation = async ( partner: string, operator: string, url: string, urlText: string ) => {
+      handleSendEmail(
+        `Your AFE has been viewed by ${loggedInUser?.firstName} at ${partner}`,
+        operator,
+        'This message is to let you know that your AFE has been viewed!',
+        `${partner}`,
+        "AFE Partner Connections",
+        loggedInUser?.email!,
+        url,
+        urlText
+      );
+  };
+
+  async function handlePartnerStatusChanged(afe: AFEType) {
+    const newPartnerStatus = afe.partner_status === 'New' ? 'Viewed' : `${afe.partner_status}`;
+    if (afe.partner_status === newPartnerStatus) {
+      return;
+    } else {
+      const partnerStatusChange = await updateAFEPartnerStatus(afe.id, newPartnerStatus, token);
+        if(partnerStatusChange.ok) {
+          handleEmailNotifcation(afe.partner_name, afe.operator,`https://www.afepartner.com/mainscreen/afeDetail/${afe.id}`,'View AFE')
+          insertAFEHistory(afe.id, 'The Partner Status on the AFE changed from New to Viewed','action', token);
+        } return;
+    }
+  };
+
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-4">
@@ -277,7 +305,7 @@ export default function AFE() {
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
-        onClick={ (e:any) =>{handlePartnerStatusChange(`${afe.id}`, `${afe.partner_status}`,afe.partner_status === 'New' ? 'Viewed' : `${afe.partner_status}`, 'The Partner Status on the AFE changed from New to Viewed','action', token)}}
+        onClick={ (e:any) =>{handlePartnerStatusChanged(afe)}}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
        
           <div className="flex w-full items-center justify-between p-3 pt-3">
@@ -404,7 +432,6 @@ export default function AFE() {
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
-          
           <div className="flex w-full items-center justify-between p-3 pt-3">
             <div className="flex-1 truncate">
               <div className="flex items-end justify-between">
