@@ -90,7 +90,7 @@ const navigation = {
         <div className="absolute inset-0 overflow-hidden bg-black/20">
         </div>
         <div className="mx-auto max-w-7xl px-0 pt-16 pb-8 z-6">
-        <div className="xl:grid xl:grid-cols-5 xl:gap-8 border-t border-white/60 pt-8">
+        <div className="xl:grid xl:grid-cols-5 xl:gap-8 border-t border-white/60 pt-8 pl-4 sm:pl-0">
           <div className="space-y-8 col-span-2">
             <img
               alt="Company name"
@@ -139,7 +139,7 @@ const navigation = {
           </div>
           
         </div>
-            <div className="mt-8 border-t border-white/60 pt-8">
+            <div className="mt-8 border-t border-white/60 pt-8 pl-4 sm:pl-0">
               <p className="text-sm/6 text-gray-300 custom-style-long-text">&copy; 2024 Like The Queen LLC. All rights reserved.</p>
               
               <div className="flex flex-col sm:flex-row items-start sm:items-end sm:justify-between">

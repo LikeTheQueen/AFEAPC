@@ -210,7 +210,7 @@ return (
                   Streamline your AFE Partner Workflow
                 </h1>
                 </div>
-                <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8 custom-style-long-text">
+                <p className="col-span-2 sm:col-span-1 mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8 custom-style-long-text">
                   Generate faster AFE responses from your partners with direct integrations to your AFE System, automated alerts and email notifications all with a complete audit history
                 </p>
                 <div className="row-start-3 col-start-2 relative mt-8 mb-8 rounded-full sm:mt-12 z-6">
