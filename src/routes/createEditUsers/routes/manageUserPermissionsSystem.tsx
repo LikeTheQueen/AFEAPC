@@ -56,7 +56,8 @@ export default function UserPermissionDashboard() {
     }
   }, [token, loggedInUser])
 
-  
+  console.log(loggedInUser?.is_super_user, 'is')
+  console.log(!loggedInUser?.is_super_user)
   return (
     <>
     
@@ -65,7 +66,7 @@ export default function UserPermissionDashboard() {
       <LoadingPage></LoadingPage>
     ) : (
     <PermissionDashboard 
-    readOnly={loggedInUser?.is_super_user}
+    readOnly={!loggedInUser?.is_super_user}
     operatorRoles={opUserRoleList}
     partnerRoles={partnerUserRoleList}>
     </PermissionDashboard>

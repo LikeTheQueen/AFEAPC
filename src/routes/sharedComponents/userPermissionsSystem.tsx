@@ -39,7 +39,9 @@ useEffect(() => {
   setPartnerRoles(partnerRoles);
 }, [partnerRoles]);
  
-
+console.log(readOnly,'read')
+console.log(loggedInUser?.is_super_user, 'is')
+  console.log(!loggedInUser?.is_super_user)
   const groupByUserThenOperatorRole = useMemo(() => {
     const grouped = new Map<string, GroupedData>();
     const filterInactiveUser = opRoles.filter(role => role.user_active === true);
@@ -201,11 +203,15 @@ useEffect(() => {
   });
 };
   const isPartnerRowDisabled = (apc_id: string) => {
+    if (loggedInUser?.is_super_user) return false;
+    
     const userPartnerRole = loggedInUser?.partnerRoles.find(pr => pr.apc_id === apc_id && pr.role === 5);
 
     return !userPartnerRole;
 };
 const isOperatorRowDisabled = (apc_id: string) => {
+  if (loggedInUser?.is_super_user) return false;
+
     const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === 4);
 
     return !userOperatorRole;
