@@ -206,7 +206,7 @@ useEffect(() => {
 
     return !userPartnerRole;
 };
-const isOperatorRowDisabled = (apc_id: string, user_id: string) => {
+  const isOperatorRowDisabled = (apc_id: string, user_id: string) => {
     if( user_id === loggedInUser?.user_id) return true;
     const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === 4);
 
