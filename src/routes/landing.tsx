@@ -1,16 +1,43 @@
 import { useState } from 'react';
-import { Dialog, DialogPanel } from '@headlessui/react'
+import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink, useNavigate } from "react-router";
 import  Footer  from "./footer"
 import LiquidEther from '../blocks/LiquidEther';
+import StarBorder from 'src/blocks/StarBorder';
+import FloatingLines from 'src/blocks/FloatingLines';
+import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import "../style.css";
 
 
 const navigation = [
    { name: 'How it Works', href: '#' },
    { name: 'AFE Systems', href: '#' },
-   { name: 'About', href: '#' }
+   { name: 'About', href: '#' },
+   { name: 'Contact Us', href: '#' }
  ];
+
+const mainNavigation = [
+  {
+    id: 1, name: 'How it Works', href: "#", current: true,
+    sublist: []
+  },
+  {
+    id: 2, name: 'AFE Systems', href: "#", current: false,
+    sublist: [
+      { id: 1, name: "Quorum Execute", current: false, href: "#", mobile: false },
+      { id: 2, name: "W Energy", current: false, href: "#", mobile: false },
+    ]
+  },
+  {
+    id: 3, name: 'About', href: "#", current: false,
+    sublist: []
+  },
+  {
+    id: 4, name: 'Contact Us', href: "#", current: false,
+    sublist: []
+  },
+]
  
 export default function LandingPage() {
    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,29 +45,11 @@ export default function LandingPage() {
 
 return (
   <>
-  <div style={{ width: '100%', height: 600, position: 'relative' }}>
-  <LiquidEther
-    colors={[ '#5227FF', '#FF9FFC', '#B19EEF' ]}
-    mouseForce={20}
-    cursorSize={100}
-    isViscous={false}
-    viscous={30}
-    iterationsViscous={32}
-    iterationsPoisson={32}
-    resolution={0.5}
-    isBounce={false}
-    autoDemo={true}
-    autoSpeed={0.5}
-    autoIntensity={2.2}
-    takeoverDuration={0.25}
-    autoResumeDelay={3000}
-    autoRampDuration={0.6}
-  />
-
-  <div>
-    <section className="relative py-6 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24" aria-label='landingPage'>
-        <nav aria-label="Global" className="flex items-center justify-between p-4 lg:px-8 border-b-1 border-b-white/50">
-          <div className="flex lg:flex-1">
+  <div className='bg-black'>
+    <section className="relative overflow-visible py-6 sm:pb-16 z-6" aria-label='landingPage'>
+        <nav aria-label="Global" className="flex items-center justify-between p-4 sm:px-8 border-b border-white/50">
+          {/* Logo - Left */}
+          <div className="flex">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">AFE partner Connections</span>
               <img
@@ -50,34 +59,80 @@ return (
               />
             </a>
           </div>
-          <div className="flex lg:hidden">
+
+          {/* Mobile menu button */}
+          <div className="flex sm:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
             >
               <span className="sr-only">Open main menu</span>
               <Bars3Icon aria-hidden="true" className="size-8" />
             </button>
           </div>
-          <div className="hidden lg:flex lg:gap-x-12 justify-center w-3/5">
-            {navigation.map((item) => (
-              <NavLink key={item.name} to={item.href} className="text-base/6 text-center px-6 py-2 font-normal text-white custom-style rounded-full inset-px hover:bg-[var(--bright-pink)]">
-                {item.name}
+
+          {/* Menu items - Center */}
+          <div className="hidden sm:flex sm:absolute sm:left-1/2 sm:-translate-x-1/2">
+            <div className="flex gap-2">
+              {mainNavigation.map((item, index) => (
+                <div key={item.id} className="relative">
+                  <Popover className="relative z-50 ">
+                    <PopoverButton
+                      as={NavLink}
+                      to={item.href}
+                      className={`rounded-lg inline-flex items-center gap-1 px-4 py-3 custom-style transition-colors ease-in-out duration-300 text-base leading-7 text-white whitespace-nowrap focus:outline-none focus-visible:outline-none
+                ${item.current
+                          ? 'font-medium underline decoration-[var(--bright-pink)] decoration-3 underline-offset-8'
+                          : 'font-normal hover:bg-[var(--bright-pink)] hover:font-semibold hover:underline hover:decoration-3 hover:underline-offset-8 hover:decoration-white'
+                        }`}
+                    >
+                      <span>{item.name}</span>
+                      {item.sublist.length > 0 && (
+                        <ChevronDownIcon aria-hidden="true" className="size-5" />
+                      )}
+                    </PopoverButton>
+
+                    {item.sublist.length > 0 && (
+                      <PopoverPanel
+                        transition
+                        className="absolute left-0 top-full rounded-md min-w-48 bg-black backdrop-blur-sm text-white shadow-xl transition data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+                      >
+                        <div className="py-2 z-51">
+                          {item.sublist.map((sub) => (
+                            <PopoverButton
+                              key={sub.id}
+                              as={NavLink}
+                              to={sub.href}
+                              className="rounded-lg block px-4 py-3 custom-style text-white font-normal hover:bg-[var(--bright-pink)] hover:font-semibold transition-colors"
+                            >
+                              {sub.name}
+                            </PopoverButton>
+                          ))}
+                        </div>
+                      </PopoverPanel>
+                    )}
+                  </Popover>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Login button - Right */}
+          <div className="hidden sm:flex">
+            <div className="relative inline-flex items-center justify-center group">
+              <div className="absolute -inset-px transition-all duration-200 rounded-lg bg-gradient-to-r from-[var(--dark-teal)] to-[var(--bright-pink)] group-hover:shadow-lg group-hover:shadow-[#F61067]"></div>
+              <NavLink
+                to='login'
+                className="relative inline-flex items-center justify-center px-6 py-2 custom-style font-normal text-white bg-black border border-transparent rounded-lg"
+                role="button">
+                Login
               </NavLink>
-            ))}
+            </div>
           </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          
-          <div className="relative inline-flex items-center justify-center group">
-                        <div className="absolute transition-all duration-200 rounded-full -inset-px bg-gradient-to-r from-[var(--dark-teal)] to-[var(--bright-pink)] group-hover:shadow-lg group-hover:shadow-[#F61067]"></div>
-                        
-                        <NavLink to='login' className="relative inline-flex items-center justify-center w-full px-6 py-2 custom-style font-normal text-white bg-black border border-transparent rounded-full" role="button"> Login </NavLink>
-                    </div>
-          </div>
-          
+
         </nav>
-        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
+        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="sm:hidden">
           <div className="fixed inset-0 z-50" />
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-black px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
             <div className="flex items-center justify-between">
@@ -92,7 +147,7 @@ return (
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="-m-2.5 rounded-md p-2.5 text-gray-200"
+                className="-m-2.5 rounded-md p-2.5 text-white"
               >
                 <span className="sr-only">Close menu</span>
                 <XMarkIcon aria-hidden="true" className="size-6" />
@@ -123,57 +178,64 @@ return (
             </div>
           </DialogPanel>
         </Dialog>
-        
-        <div className="px-4 mx-auto relativea sm:px-6 lg:px-8 max-w-7xl">
-        
-            <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16">
-                <div>
+    </section>
+      <section className="relative w-full h-full bg-black/60">
+        {/* Background layer */}
+        <div className="absolute inset-0 z-5">
+          <LiquidEther
+            colors={['#FF4FA3', '#FF6FB7', '#FF5CAB']}
+            mouseForce={20}
+            cursorSize={100}
+            isViscous={false}
+            viscous={30}
+            iterationsViscous={32}
+            iterationsPoisson={32}
+            resolution={0.5}
+            isBounce={true}
+            autoDemo={false}
+            autoSpeed={0.5}
+            autoIntensity={2.2}
+            takeoverDuration={0.15}
+            autoResumeDelay={3000}
+            autoRampDuration={0.6}
+          />
+        </div>
+
+        {/* Foreground content */}
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 gap-y-0 sm:grid-cols-2 gap-x-16">
+              <div className='col-span-2'>
                 <h1 className="mt-10 text-5xl tracking-tight text-pretty text-white sm:text-7xl custom-style">
-                Streamline your AFE Partner Workflow
-               </h1>
-      
-                    <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8 custom-style-long-text">Generate faster AFE responses from your partners with direct integrations to your AFE System, automated alerts and email notifications, and a complete audit history</p>
-
-                    <div className="relative mt-8 rounded-full sm:mt-12">
-                        <div className="relative">
-                            <div className="absolute rounded-full -inset-0.5 bg-gradient-to-r from-[var(--bright-pink)] via-[var(--dark-teal)] to-[var(--dark-teal)] "></div>
-                            <div className="relative">
-                                <p className="block w-full p-0  text-white/80 bg-black rounded-full pl-6 sm:py-5 custom-style">Want to know more?</p>
-                            </div>
-                        </div>
-                        <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0">
-                            <button type="submit" className="inline-flex items-center justify-center w-full px-12 py-1 text-sm/6 font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:bg-[var(--bright-pink)]/80 hover:text-white">Let's Talk</button>
-                        </div>
-                    </div>
-
-                    
+                  Streamline your AFE Partner Workflow
+                </h1>
                 </div>
-
-                <div className="relative">
-                    <div className="absolute inset-0">
-                        <svg className="blur-3xl filter opacity-70"  width="444" height="536" viewBox="0 0 444 536" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M225.919 112.719C343.98 64.6648 389.388 -70.487 437.442 47.574C485.496 165.635 253.266 481.381 135.205 529.435C17.1445 577.488 57.9596 339.654 9.9057 221.593C-38.1482 103.532 107.858 160.773 225.919 112.719Z" fill="url(#c)" />
-                            <defs>
-                                <linearGradient id="c" x1="82.7339" y1="550.792" x2="-39.945" y2="118.965" gradientUnits="userSpaceOnUse">
-                                <stop stopOpacity="80" offset="0%" stopColor="var(--dark-teal)" />
-                                <stop offset="100%" stopColor="var(--bright-pink)" /> 
-
-                                </linearGradient>
-                            </defs>
-                        </svg>
+                <p className="mt-8 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8 custom-style-long-text">
+                  Generate faster AFE responses from your partners with direct integrations to your AFE System, automated alerts and email notifications all with a complete audit history
+                </p>
+                <div className="row-start-3 col-start-2 relative mt-8 mb-8 rounded-full sm:mt-12 z-6">
+                  <div className="relative">
+                    <div className="absolute rounded-full -inset-0.5 bg-gradient-to-r from-[var(--bright-pink)] via-[var(--dark-teal)] to-[var(--dark-teal)]"></div>
+                    <div className="relative">
+                      <p className="block w-full p-0 text-white/80 bg-black rounded-full pl-6 sm:py-5 custom-style">
+                        Want to know more?
+                      </p>
                     </div>
-
-                    <div className="absolute inset-0">
-                        <img className="object-cover w-full h-full opacity-50" src="https://landingfoliocom.imgix.net/store/collection/dusk/images/noise.png" alt="" />
-                    </div>
-
-                    <img className="relative w-full max-w-md mx-auto mt-12" src="https://landingfoliocom.imgix.net/store/collection/dusk/images/hero/2/illustration.png" alt="" />
+                  </div>
+                  <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0 z-6">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center w-full px-12 py-1 text-sm/6 font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:bg-[var(--bright-pink)]/80 hover:text-white cursor-pointer"
+                    >
+                      Let's Talk
+                    </button>
+                  </div>
                 </div>
             </div>
+          </div>
         </div>
-    </section>
+      </section>
     <Footer/>
-  </div>
   </div>
   
   </>

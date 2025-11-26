@@ -1,4 +1,5 @@
 import {  NavLink } from "react-router";
+import { HeartIcon } from "@heroicons/react/24/outline";
 const navigation = {
     solutions: [
       { name: 'AFE Systems', href: '#' },
@@ -85,22 +86,10 @@ const navigation = {
   export default function Footer() {
     return (
       <footer className="bg-black">
-        
-
-        <div className="relative ">
-        <div className="absolute inset-0">
-                        <svg className="blur-3xl filter opacity-20"  width="444" height="536" viewBox="0 0 444 536" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M225.919 112.719C343.98 64.6648 389.388 -70.487 437.442 47.574C485.496 165.635 253.266 481.381 135.205 529.435C17.1445 577.488 57.9596 339.654 9.9057 221.593C-38.1482 103.532 107.858 160.773 225.919 112.719Z" fill="url(#c)" />
-                            <defs>
-                                <linearGradient id="c" x1="82.7339" y1="550.792" x2="-39.945" y2="118.965" gradientUnits="userSpaceOnUse">
-                                <stop stopOpacity="80" offset="0%" stopColor="var(--dark-teal)" />
-                                <stop offset="100%" stopColor="var(--bright-pink)" /> 
-
-                                </linearGradient>
-                            </defs>
-                        </svg>
+        <div className="relative bg-[var(--dark-teal)]/30">
+        <div className="absolute inset-0 overflow-hidden bg-black/20">
         </div>
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-8 sm:pt-24 lg:px-8 lg:pt-32">
+        <div className="mx-auto max-w-7xl px-0 pt-16 pb-8 z-6">
         <div className="xl:grid xl:grid-cols-5 xl:gap-8 border-t border-white/60 pt-8">
           <div className="space-y-8 col-span-2">
             <img
@@ -108,21 +97,13 @@ const navigation = {
               src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
               className="h-9"
             />
-            <p className="text-sm/6 text-balance text-gray-300">
-            Streamline your AFE Partner workflow with a single, centralized place for all your AFE documents and details.
+            <p className="text-sm/6 text-balance text-gray-300 custom-style-long-text">
+            Streamline your AFE Partner workflow with a single, centralized platform for all your AFE documents and details.
             </p>
-            <div className="flex gap-x-6">
-              {navigation.social.map((item) => (
-                <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-300">
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon aria-hidden="true" className="size-6" />
-                </a>
-              ))}
-            </div>
           </div>
-          <div className="space-y-8 md:justify-self-center">
-          <h3 className="text-sm/6 font-semibold text-white">Support</h3>
-                <ul role="list" className="mt-6 space-y-4">
+          <div className="space-y-0 md:justify-self-center">
+          <h3 className="text-sm/6 font-medium text-white custom-style">Support</h3>
+                <ul role="list" className="mt-4 space-y-2 custom-style-long-text">
                   {navigation.support.map((item) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-sm/6 text-gray-400 hover:text-white">
@@ -132,9 +113,9 @@ const navigation = {
                   ))}
                 </ul>
           </div>
-          <div className="space-y-8 md:justify-self-center">
-          <h3 className="text-sm/6 font-semibold text-white">Solutions</h3>
-                <ul role="list" className="mt-6 space-y-4">
+          <div className="space-y-0 md:justify-self-center">
+          <h3 className="text-sm/6 font-medium text-white custom-style">Solutions</h3>
+                <ul role="list" className="mt-4 space-y-2 custom-style-long-text">
                   {navigation.solutions.map((item) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-sm/6 text-gray-400 hover:text-white">
@@ -144,9 +125,9 @@ const navigation = {
                   ))}
                 </ul>
           </div>
-          <div className="space-y-8 md:justify-self-center">
-          <h3 className="text-sm/6 font-semibold text-white">Company</h3>
-                <ul role="list" className="mt-6 space-y-4">
+          <div className="space-y-0 md:justify-self-center">
+          <h3 className="text-sm/6 font-medium text-white custom-style">Company</h3>
+                <ul role="list" className="mt-4 space-y-2 custom-style-long-text">
                   {navigation.company.map((item) => (
                     <li key={item.name}>
                       <a href={item.href} className="text-sm/6 text-gray-400 hover:text-white">
@@ -158,10 +139,17 @@ const navigation = {
           </div>
           
         </div>
-        <div className="mt-16 border-t border-white/60 pt-8 sm:mt-20 lg:mt-24">
-            <p className="text-sm/6 text-gray-400 custom-style-long-text">&copy; 2024 Like The Queen LLC. All rights reserved.</p>
-            <p className="text-sm/6 text-gray-400 custom-style-long-text">For Whit & Corr - I write this code while you sleep</p>
-          </div>
+            <div className="mt-8 border-t border-white/60 pt-8">
+              <p className="text-sm/6 text-gray-300 custom-style-long-text">&copy; 2024 Like The Queen LLC. All rights reserved.</p>
+              
+              <div className="flex items-end justify-between">
+                <p className="text-sm/6 text-gray-300 custom-style-long-text">For Whit & Corr - I write this code while you sleep</p>
+                <p className="text-sm/6 text-gray-300 custom-style-long-text flex items-center gap-1">
+                  Made with
+                  <HeartIcon className="size-5 inline-block text-gray-300" /> not AI
+                </p>
+              </div>
+            </div>
           </div>
           </div>
       </footer>
