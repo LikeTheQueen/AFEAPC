@@ -530,7 +530,7 @@ console.log(file)
           </>
                )}
               <div hidden={afeEstimates.length > 0 ? false : true} 
-              className="mt-4 -mb-8 flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
+              className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
                 <button
                   onClick={async (e: any) => {
                     e.preventDefault();
