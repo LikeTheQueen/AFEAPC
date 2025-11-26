@@ -260,7 +260,7 @@ console.log(partnersList,'THE PARTNER LIST');
                                                             className="relative rounded-md text-[var(--darkest-teal)]/70 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                                                             <span className="absolute -inset-2.5" />
                                                             <span className="sr-only">Close panel</span>
-                                                            <XMarkIcon aria-hidden="true" className="size-6" />
+                                                            <XMarkIcon aria-hidden="true" className="size-6 cursor-pointer" />
                                                         </button>
                                                     </div>
                                                 </div>

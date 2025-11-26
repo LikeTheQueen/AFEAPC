@@ -200,12 +200,14 @@ useEffect(() => {
     return updatedRoles;
   });
 };
-  const isPartnerRowDisabled = (apc_id: string) => {
+  const isPartnerRowDisabled = (apc_id: string, user_id: string) => {
+    if( user_id === loggedInUser?.user_id) return true;
     const userPartnerRole = loggedInUser?.partnerRoles.find(pr => pr.apc_id === apc_id && pr.role === 5);
 
     return !userPartnerRole;
 };
-const isOperatorRowDisabled = (apc_id: string) => {
+const isOperatorRowDisabled = (apc_id: string, user_id: string) => {
+    if( user_id === loggedInUser?.user_id) return true;
     const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === 4);
 
     return !userOperatorRole;
@@ -293,7 +295,7 @@ const isOperatorRowDisabled = (apc_id: string) => {
   <input
     type="checkbox"
     defaultChecked={checkedByRole(operator.roles, roleVal)}
-    disabled={readOnly || isOperatorRowDisabled(operator.apc_id) || (loggedInUser?.user_id===user.user_id && !loggedInUser.is_super_user)}
+    disabled={readOnly || isOperatorRowDisabled(operator.apc_id, user.user_id)}
     value={getRoleIndex(operator.roles,roleVal,operator.apc_id,operator.apc_address_id,user.user_id)}
     onChange={(e) => handleCheckboxChangeOp(operator.apc_id,
                                           operator.apc_address_id,
@@ -429,7 +431,7 @@ const isOperatorRowDisabled = (apc_id: string) => {
   <input
     type="checkbox"
     defaultChecked={checkedByRole(operator.roles, roleVal)}
-    disabled={readOnly || isPartnerRowDisabled(operator.apc_id)}
+    disabled={readOnly || isPartnerRowDisabled(operator.apc_id, user.user_id)}
     value={getRoleIndex(operator.roles,roleVal,operator.apc_id,operator.apc_address_id,user.user_id)}
     onChange={(e) => handleCheckboxChangeNonOp(operator.apc_id,
                                           operator.apc_address_id,
