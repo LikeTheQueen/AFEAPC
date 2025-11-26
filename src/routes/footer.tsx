@@ -142,7 +142,7 @@ const navigation = {
             <div className="mt-8 border-t border-white/60 pt-8">
               <p className="text-sm/6 text-gray-300 custom-style-long-text">&copy; 2024 Like The Queen LLC. All rights reserved.</p>
               
-              <div className="flex flex-col sm:flex-row items-end justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-end sm:justify-between">
                 <p className="text-sm/6 text-gray-300 custom-style-long-text">For Whit & Corr - I write this code while you sleep</p>
                 <p className="text-sm/6 text-gray-300 custom-style-long-text flex items-center gap-1">
                   Made with
