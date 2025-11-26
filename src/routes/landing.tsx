@@ -19,7 +19,7 @@ const navigation = [
 
 const mainNavigation = [
   {
-    id: 1, name: 'How it Works', href: "#", current: true,
+    id: 1, name: 'How it Works', href: "#", current: false,
     sublist: []
   },
   {
