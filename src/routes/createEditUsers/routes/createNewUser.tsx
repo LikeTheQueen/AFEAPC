@@ -483,7 +483,7 @@ console.log( partnerRoles,'part roles')
                     //handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
-                  TEST SEND EMAIL
+                  SEND Test EMAIL
                 </button>
               </div>
             </form>

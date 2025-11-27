@@ -22,7 +22,7 @@ export function filterPartnerRolePermissions (roles: RoleEntryWrite[], user_id:s
         active: true
     })) 
 }
-export async function handleNewUser(
+export const handleNewUser = async(
         firstName: string, 
         lastName: string, 
         email: string, 
@@ -31,7 +31,7 @@ export async function handleNewUser(
         pRoles: RoleEntryWrite[],
         is_super_user: boolean,
         token: string,
-    ) {
+    ) => {
         try{
          const newUser = await createNewUser(email, 'topSecretPassword25!', token);
 
