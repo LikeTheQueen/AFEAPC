@@ -1,6 +1,7 @@
 import type { RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from "src/types/interfaces";
 import { fetchIsUserSuperUser } from 'provider/fetch';
 import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
+import { notifyStandard } from "src/helpers/helpers";
 
 export function filterOperatorRolePermissions (roles: RoleEntryWrite[], user_id:string): RoleEntryWrite[] {
         return roles.filter(item => item.role === 2 || item.role === 4 || item.role === 7 || item.role === 8 ).map(item => ({
@@ -25,16 +26,14 @@ export async function handleNewUser(
         firstName: string, 
         lastName: string, 
         email: string, 
-        password: string, 
         active:boolean, 
         roles: RoleEntryWrite[],
         pRoles: RoleEntryWrite[],
         is_super_user: boolean,
         token: string,
-        
     ) {
         try{
-         const newUser = await createNewUser(email, password, token);
+         const newUser = await createNewUser(email, 'topSecretPassword25!', token);
 
          if(!newUser.ok) {
             throw new Error((newUser as any).message ?? 'Cannot create new user');
@@ -57,7 +56,9 @@ export async function handleNewUser(
 
         } catch(e) {
             console.error('An error was thrown', e)
+            notifyStandard(`The system stalled out like a pump jack overdue for maintenance and the user didn't save.\n\n(TLDR: Error saving user: ${e}.)`)
         } finally {
+            notifyStandard(`New user saved to the system.  They got saved faster than a last minute AFE approval.\n\n(TLDR: New user successfully saved.)`)
             return;
         }
     /*

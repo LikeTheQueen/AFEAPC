@@ -54,13 +54,13 @@ export default function CreateNewUser() {
         if (opListResult.ok) {
           const opListTransformed = transformOperatorPartnerAddress(opListResult.data);
           if (isMounted) {
-            setOperatorsList(opListTransformed);
+            setOperatorsList(opListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
           }
         }
         if (partnerListResult.ok) {
           const partnerListTransformed = transformOperatorPartnerAddress(partnerListResult.data);
           if (isMounted) {
-            setPartnersList(partnerListTransformed);
+            setPartnersList(partnerListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
           }
         }
       } catch (e) {
@@ -82,8 +82,6 @@ export default function CreateNewUser() {
       setRolesGeneric(roleList);
     } getGenericRoles();
   }, []);
-
-  
 
   useEffect(() => {
     console.count("CreateNewUser render");
@@ -166,6 +164,9 @@ export default function CreateNewUser() {
       loggedInUser?.email!,
     );
   };
+  const handleSaveNewUser = async () => {
+    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, roles, partnerRoles, newUser.is_super_user, token);
+  }
 console.log(operatorsList.length,'new roles')
 console.log( partnersList.length,'part roles')
 console.log(roles,'new roles')
@@ -469,7 +470,7 @@ console.log( partnerRoles,'part roles')
                   disabled={(newUser.firstName !== '' && newUser.lastName !== '' && newUser.email !== '') ? false : true}
                   onClick={(e: any) => {
                     e.preventDefault();
-                    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, newUser.is_super_user, token);
+                    handleSaveNewUser();
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end cursor-pointer disabled:cursor-not-allowed">
                   Add New User

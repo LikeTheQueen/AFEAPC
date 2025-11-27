@@ -56,7 +56,7 @@ export default function OperatorViewAndEdit() {
                     const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
                     if (isMounted) {
                         setOperatorsList(opListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
-                    }
+                    } 
                 }
 
                 if (partnerListResult.ok) {
