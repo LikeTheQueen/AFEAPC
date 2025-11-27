@@ -29,7 +29,7 @@ export function PartnerDropdown({ value, onChange, limitedList }: Props) {
       if (!loggedInUser) return;
 
       const partnerList: OperatorOrPartnerList[] = (loggedInUser.partnerRoles ?? [])
-        .filter((partner) => partner.role === 9)
+        .filter((partner) => partner.role === 9 || partner.role === 1)
         .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
 
       setFilteredPartners(partnerList);

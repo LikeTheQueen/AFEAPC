@@ -220,7 +220,7 @@ const isOperatorRowDisabled = (apc_id: string) => {
   return (
     <>
     <div className="py-4 sm:py-0">
-    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 " 
+    <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 border-b-3 border-[var(darkest-teal)]" 
     hidden={groupByUserThenOperatorRole.length > 0 ? false : true}>
       <div className="md:col-span-2">
         <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
@@ -240,17 +240,15 @@ const isOperatorRowDisabled = (apc_id: string) => {
           <thead>
             <tr hidden={readOnly} className="bg-white text-white">
               <th colSpan={5} scope="col" className="sm:hidden sm:pl-0 text-[var(--darkest-teal)] bg-[var(--darkest-teal)]/20 rounded-tl-xl rounded-tr-xl table-cell">
-                 <h2 className="font-semibold custom-style text-center py-1"
-                 hidden={readOnly}>
-                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                 <h2 className="font-semibold custom-style text-center py-1">
+                  {`${user.user_firstname} ${user.user_lastName}`}
                   </h2>
               </th>
             </tr>
             <tr className="bg-white text-white ">
               <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl sm:table-cell">
-                 <h2  className="font-semibold custom-style text-center py-1"
-                 hidden={readOnly}>
-                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                 <h2  className="font-semibold custom-style text-center py-1">
+                  {`${user.user_firstname} ${user.user_lastName}`}
                   </h2>
               </th>
               <th
@@ -376,17 +374,15 @@ const isOperatorRowDisabled = (apc_id: string) => {
           <thead>
             <tr hidden={readOnly} className="bg-white text-white">
               <th colSpan={5} scope="col" className="sm:hidden sm:pl-0 text-[var(--darkest-teal)] bg-[var(--darkest-teal)]/20 rounded-tl-xl rounded-tr-xl table-cell">
-                 <h2 className="font-semibold custom-style text-center py-1"
-                 hidden={readOnly}>
-                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                 <h2 className="font-semibold custom-style text-center py-1">
+                  {`${user.user_firstname} ${user.user_lastName}`}
                   </h2>
               </th>
             </tr>
             <tr className="bg-white text-white ">
               <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl sm:table-cell">
-                 <h2  className="font-semibold custom-style text-center py-1"
-                 hidden={readOnly}>
-                  {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
+                 <h2  className="font-semibold custom-style text-center py-1">
+                   {`${user.user_firstname} ${user.user_lastName}`}
                   </h2>
               </th>
               <th

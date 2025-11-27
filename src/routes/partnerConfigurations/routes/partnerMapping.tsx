@@ -325,7 +325,7 @@ export default function PartnerMapping() {
                                     <SingleCheckbox
                                         value={hideMappedAPCPartners}
                                         onChange={(checked) => setHideMappedAPCPartners(checked)}
-                                        label={'Hide Mapped Partners in AFE Partner Connections'}
+                                        label={'Hide AFEPC Partners Already Mapped To'}
                                         id={'hideMappedPartnersAFEPC'}>
                                     </SingleCheckbox>
                                 </div>
