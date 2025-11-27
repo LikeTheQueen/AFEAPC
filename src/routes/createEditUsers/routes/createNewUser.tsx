@@ -8,6 +8,7 @@ import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
 import LoadingPage from 'src/routes/loadingPage';
 import { buildAppEmailHTML, sendEmail, handleSendEmail } from 'email/emailBasic';
+import { ToastContainer } from 'react-toastify';
 
 
 export default function CreateNewUser() {
@@ -167,10 +168,7 @@ export default function CreateNewUser() {
   const handleSaveNewUser = async () => {
     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, roles, partnerRoles, newUser.is_super_user, token);
   }
-console.log(operatorsList.length,'new roles')
-console.log( partnersList.length,'part roles')
-console.log(roles,'new roles')
-console.log( partnerRoles,'part roles')
+
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -490,6 +488,7 @@ console.log( partnerRoles,'part roles')
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }
