@@ -83,23 +83,7 @@ export default function CreateNewUser() {
     } getGenericRoles();
   }, []);
 
-  useEffect(() => {
-    const newRoles = operatorsList.map(item => ({
-      role: null,
-      active: true,
-      apc_id: item.apc_id!,
-      apc_address_id: item.apc_address_id!
-    }));
-    
-    setRoles([...roles, ...newRoles]);
-    const newPartnerRoles = partnersList.map(item => ({
-      role: null,
-      active: true,
-      apc_id: item.apc_id!,
-      apc_address_id: item.apc_address_id!
-    }));
-    setPartnerRoles([...partnerRoles, ...newPartnerRoles]);
-  }, [operatorsList, partnersList])
+  
 
   useEffect(() => {
     console.count("CreateNewUser render");
@@ -182,7 +166,10 @@ export default function CreateNewUser() {
       loggedInUser?.email!,
     );
   };
-
+console.log(operatorsList.length,'new roles')
+console.log( partnersList.length,'part roles')
+console.log(roles,'new roles')
+console.log( partnerRoles,'part roles')
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -310,7 +297,7 @@ export default function CreateNewUser() {
                   <LoadingPage></LoadingPage>
                 ) : (<>
                   <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] mt-10 pt-5"
-                    hidden={operatorsList.length > 0 ? false : true}
+                    hidden={(operatorsList.length > 0 && !makeSuperUser) ? false : true}
                   >
                     <div>
                       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
@@ -396,7 +383,7 @@ export default function CreateNewUser() {
 
                   </div>
                   <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
-                    hidden={partnersList.length > 0 ? false : true}>
+                    hidden={(partnersList.length > 0 && !makeSuperUser) ? false : true}>
                     <div>
                       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
                       <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
