@@ -183,7 +183,7 @@ console.log( partnerRoles,'part roles')
               <br></br><p className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text"><span className="font-medium italic">Definitions for privileges are below.</span>
               </p>
 
-              <ol role="list" className="flex flex-1 flex-col gap-y-7 mt-3 border-t border-gray-900/30">
+              <ol role="list" className="flex flex-1 flex-col gap-y-7 mt-3 border-t border-[var(--darkest-teal)]/40">
                 <li>
                   <ul role="list" className="mx-1 space-y-8 mt-5">
                     {rolesGeneric.map((role) => (
@@ -200,7 +200,7 @@ console.log( partnerRoles,'part roles')
                 </li>
               </ol>
             </div>
-            <form className="bg-white shadow-m ring-1 ring-gray-900/20 sm:rounded-xl md:col-span-3">
+            <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-3">
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-7xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-11">
                   <div className="sm:col-span-4">
@@ -208,7 +208,6 @@ console.log( partnerRoles,'part roles')
                       First name
                     </label>
                     <div className="mt-2">
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
                         <input
                           id="firstName"
                           name="firstName"
@@ -216,9 +215,8 @@ console.log( partnerRoles,'part roles')
                           autoComplete="off"
                           placeholder="Mary"
                           onChange={handleUserChange}
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                         />
-                      </div>
                     </div>
                   </div>
                   <div className="sm:col-span-4">
@@ -226,7 +224,6 @@ console.log( partnerRoles,'part roles')
                       Last name
                     </label>
                     <div className="mt-2 ">
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
                         <input
                           id="lastName"
                           name="lastName"
@@ -234,9 +231,9 @@ console.log( partnerRoles,'part roles')
                           autoComplete="off"
                           placeholder="Jane"
                           onChange={handleUserChange}
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                         />
-                      </div>
+                      
                     </div>
                   </div>
                   <div className="sm:col-span-4">
@@ -245,7 +242,7 @@ console.log( partnerRoles,'part roles')
                       Email address
                     </label>
                     <div className="mt-2">
-                      <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+              
                         <input
                           id="email"
                           name="email"
@@ -253,9 +250,8 @@ console.log( partnerRoles,'part roles')
                           autoComplete="off"
                           placeholder="user@yourcompany.com"
                           onChange={handleUserChange}
-                          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                          className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                         />
-                      </div>
                     </div>
                   </div>
                   <div className="sm:col-span-4">
@@ -307,7 +303,7 @@ console.log( partnerRoles,'part roles')
                     <div className="">
                       <div className="divide-y divide-[var(--darkest-teal)]/40">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30">
+                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/50">
                             <thead>
                               <tr>
                                 <th scope="col" className="w-1/4 py-3.5 pr-1 pl-1 text-left sm:pl-0">
@@ -330,7 +326,7 @@ console.log( partnerRoles,'part roles')
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
+                            <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
                               {operatorsList.map((role) => (
                                 <tr key={role.apc_id}>
                                   <td className="w-full max-w-0 py-2 pr-1 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
@@ -382,7 +378,7 @@ console.log( partnerRoles,'part roles')
                     </div>
 
                   </div>
-                  <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-gray-900/30 pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
+                  <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
                     hidden={(partnersList.length > 0 && !makeSuperUser) ? false : true}>
                     <div>
                       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
@@ -390,9 +386,9 @@ console.log( partnerRoles,'part roles')
 
                     </div>
                     <div className="">
-                      <div className="divide-y divide-gray-900/10">
+                      <div className="divide-y divide-[var(--darkest-teal)]/40">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                          <table className="min-w-full divide-y divide-gray-400 ">
+                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/50 ">
                             <thead>
                               <tr>
                                 <th scope="col" className="w-1/4 py-3.5 text-left sm:pl-0">
@@ -415,7 +411,7 @@ console.log( partnerRoles,'part roles')
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
+                            <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
                               {partnersList?.map((role) => (
                                 <tr key={role.apc_id}>
                                   <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
@@ -475,7 +471,7 @@ console.log( partnerRoles,'part roles')
                     e.preventDefault();
                     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, 'topSecretPassword25!', newUser.active, roles, partnerRoles, newUser.is_super_user, token);
                   }}
-                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
+                  className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end cursor-pointer disabled:cursor-not-allowed">
                   Add New User
                 </button>
                 <button type="button"
