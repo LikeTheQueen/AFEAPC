@@ -99,10 +99,13 @@ export default function AFE() {
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
   
-  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => (allowedOperatorIds.has(afe.apc_op_id) || loggedInUser?.is_super_user) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
+  if (loggedInUser?.is_super_user) {
+    setOperatedAFEs(allAFEs)
+  } else {
+  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
   setOperatedAFEs(opAFEs);
-  
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => (allowedPartnerIds.has(afe.partnerID) || loggedInUser?.is_super_user) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
+  }
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
   setNonOperatedAFEs(nonOpAFEs);    
 };
