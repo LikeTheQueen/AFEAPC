@@ -276,7 +276,7 @@ export default function ContactSupport() {
                       </div>
                       <div 
                       hidden={support.active} 
-                      className="-mt-12 flex w-full items-start justify-between px-3 py-1">
+                      className={`${loggedInUser?.is_super_user ? '-mt-12' : ''} flex w-full items-start justify-between px-3 py-1`}>
                         <div className="text-base/6 font-medium text-[var(--darkest-teal)] ">
                           Resolution
                         </div>
