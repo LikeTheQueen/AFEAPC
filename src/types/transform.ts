@@ -27,7 +27,8 @@ import type {
     AFEDocuments,
     UserFullNameAndEmail,
     OperatorPartnerRecord,
-    AFEWells
+    AFEWells,
+    SupportHistory
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -583,3 +584,30 @@ export const transformAFEWells = (data: any[]) : AFEWells[] => {
         description: item.description
     }))
 };
+
+export const transformSupportHistory = (data: any[]) : SupportHistory[] => {
+    return data.map(item => ({
+        id: item.id,
+        created_at: item.created_at,
+        created_by: item.created_by.first_name +' '+item.created_by.last_name,
+        active: item.active,
+        subject: item.subject,
+        message: item.message,
+        closed_by: item.closed_by,
+        closed_on: item.closed_on,
+        resolution: item.resolution,
+        resolution_date: item.resolution_date,
+        user_id: item.created_by.id,
+        support_thread: item.SUPPORT_HISTORY_THREAD.map((c: any) => ({
+            id: c.id,
+            created_at: c.created_at,
+            created_by: c.created_by.first_name +' '+c.created_by.last_name,
+            active: c.active,
+            comment: c.comment,
+            comment_date: c.comment_date,
+            user_id: c.created_by.id
+        }))
+    }))
+};
+
+

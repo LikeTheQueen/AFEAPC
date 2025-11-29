@@ -38,10 +38,10 @@ const navigation = [
 ]
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
-  { id: 2, name: 'Contact Support', href: "contactsupport", initial: 'C' }
+  { id: 2, name: 'Contact Support', href: "/mainScreen/contactsupport", initial: 'C' }
 ]
 const settings = [
-  { id: 1, name: 'Manage Permissions', href: "/mainscreen/managePermissions", initial: 'P' },
+  { id: 1, name: 'Manage User Permissions', href: "/mainscreen/managePermissions", initial: 'P' },
   { id: 2, name: 'Manage Users', href: "/mainscreen/manageUsers", initial: 'U' },
   { id: 3, name: 'Manage Operator Addresses', href: "/mainScreen/editOperator", initial: 'O' },
   { id: 4, name: 'Configurations', href: "/mainScreen/configurations", initial: 'C' }

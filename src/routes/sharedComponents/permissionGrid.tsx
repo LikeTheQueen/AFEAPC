@@ -222,7 +222,7 @@ useEffect(() => {
           <p hidden ={readOnly} className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to each user.</p>
           <br></br><p hidden ={readOnly} className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Only users with edit rights get to push the buttons that matter.</p>
           <p hidden ={!readOnly} className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to your user. </p>
-          <br></br><p hidden ={!readOnly} className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Users Screen.</p>
+          <br></br><p hidden ={!readOnly} className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">For changes please contact your administrator.  Only users with edit rights get to push the buttons that matter.  Changes must be made from the Manage Permissions Screen.</p>
         </div>
       <div className="md:col-span-5">
      

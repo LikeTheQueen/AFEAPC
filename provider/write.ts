@@ -190,8 +190,6 @@ import { notifyStandard } from 'src/helpers/helpers';
       return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
   };
 
-  
-
   export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
    const {data, error} = await supabase.from('PARTNERS_CROSSWALK').update({'active': mapValue}).eq('id',partnerSourceID).select();
     
@@ -227,6 +225,26 @@ import { notifyStandard } from 'src/helpers/helpers';
         return null;
       }
       return data;
+  };
+
+  export const createSupportTicket = async(subject: string, message: string ) => {
+    const { data, error } = await supabase.from('SUPPORT_HISTORY').insert({
+      subject: subject, message: message
+    }).select()
+    if(error) {
+      return notifyStandard('There was an issue');
+    }
+    return data;
+  };
+
+  export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ) => {
+    const { data, error } = await supabase.from('SUPPORT_HISTORY_THREAD').insert({
+      comment: comment, comment_date: comment_date, related_ticket: related_ticket
+    }).select()
+    if(error) {
+      return notifyStandard('There was an issue');
+    }
+    return data;
   };
 //INSERT DATA
   export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {

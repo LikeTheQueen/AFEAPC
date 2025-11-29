@@ -373,3 +373,28 @@ export interface AFEWells {
   description: string;
   well_number: string;
 };
+
+export interface SupportHistoryThread {
+  created_at: Date;
+  created_by: string;
+  active: boolean;
+  comment: string;
+  comment_date: Date;
+  id: number;
+  user_id: string;
+};
+
+export interface SupportHistory {
+  id: number;
+  created_at: Date;
+  created_by: string;
+  active: boolean;
+  subject: string;
+  message: string;
+  closed_by: string;
+  closed_on: Date;
+  resolution: string;
+  resolution_date: Date;
+  support_thread: SupportHistoryThread[];
+  user_id: string;
+};

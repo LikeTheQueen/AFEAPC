@@ -7,7 +7,7 @@ import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/loadingPage";
 
 
-export default function UserPermissionDashboard() {
+export default function UserStatusDashboard() {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
   const [userList, setUserList] = useState<UserFullNameAndEmail[] | []>([]);

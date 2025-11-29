@@ -158,11 +158,11 @@ export default function CreateNewUser() {
   const handleTestEmailSending = async () => {
     handleSendEmail(
       `Test Email From ${loggedInUser?.firstName}`,
-      loggedInUser?.firstName!,
       'This message is a test to let you know that we say hi',
-      "Operator for Support",
-      "AFE Partner Connections",
       loggedInUser?.email!,
+      "AFE Partner Connections",
+      loggedInUser?.firstName!,
+      "Operator for Support",
     );
   };
   const handleSaveNewUser = async () => {

@@ -53,6 +53,25 @@ export function formatDate(date: Date | null | string) {
         return dateFormatted;
     }
 };
+export function formatDateShort(date: Date | null | string) {
+    if (date === null) {
+        return '';
+    } else if(typeof(date) === 'string' && date.length<=10){
+        const dateFormatted = new Date(date).toLocaleDateString('en-us', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+        return dateFormatted;
+    } else {
+        const dateFormatted = new Date(date).toLocaleDateString('en-us', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        return dateFormatted;
+    }
+};
 
 export function doesLoggedInUserHaveCorrectRole(roles: RoleEntryRead[], roleVal: number, apc_id: string) {
     

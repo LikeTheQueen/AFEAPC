@@ -135,21 +135,30 @@ export const sendEmail = async (
   }
 }
 
-export const handleSendEmail = async (subject: string, firstName: string, message: string, supportContact: string, whoSent: string, sentTo: string, ctaUrl?: string, ctaUrlText?: string) => {
+export const handleSendEmail = async (
+  subject: string, 
+  message: string, 
+  sendTo: string,
+  sentFrom: string,
+  sentFromfirstName: string,
+  supportContact: string,   
+  ctaUrl?: string, 
+  ctaUrlText?: string
+) => {
     
     const html = buildAppEmailHTML({
       subject: subject,
-      firstName: firstName,
+      firstName: sentFromfirstName,
       messageBody: message,
       supportContactName: supportContact,
-      fromAddress: whoSent,
-      toAddress: sentTo,
+      fromAddress: sentFrom,
+      toAddress: sendTo,
       ctaUrl: ctaUrl,
       ctaUrlText: ctaUrlText
     });
     
     await sendEmail(
-    sentTo,
+    sendTo,
     subject,
     html
   )

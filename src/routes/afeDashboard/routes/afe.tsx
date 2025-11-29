@@ -105,9 +105,14 @@ export default function AFE() {
   const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
   setOperatedAFEs(opAFEs);
   }
+    if (loggedInUser?.is_super_user) {
+    setNonOperatedAFEs(allAFEs);
+  } else {
   const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
-  setNonOperatedAFEs(nonOpAFEs);    
+
+  setNonOperatedAFEs(nonOpAFEs); 
+  }   
 };
     sortAndFilterAFEs();
   },[loggedInUser, allAFEs])
@@ -174,11 +179,11 @@ export default function AFE() {
   const handleEmailNotifcation = async ( partner: string, operator: string, url: string, urlText: string ) => {
       handleSendEmail(
         `Your AFE has been viewed by ${loggedInUser?.firstName} at ${partner}`,
-        operator,
         'This message is to let you know that your AFE has been viewed!',
-        `${partner}`,
-        "AFE Partner Connections",
         loggedInUser?.email!,
+        "AFE Partner Connections",
+        `${partner}`,
+        operator,
         url,
         urlText
       );
@@ -254,7 +259,6 @@ export default function AFE() {
       noAFEsToView('There are no Non-Operated AFEs to view')
       }
     </div>
-    
       </div>
       {/* Filter Non-Op AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
       <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"

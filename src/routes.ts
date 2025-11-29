@@ -29,17 +29,17 @@ export default [
     ]),
     route("/mainScreen/profile", "./routes/userProfile/routes/profile.tsx"),
     route("/mainScreen/afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
-    route("/mainScreen/supporthistory", "./routes/supportHistory.tsx"),
-    route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/editUserDashboard.tsx"),
+    route("/mainScreen/supporthistory", "./routes/support/routes/supportHistory.tsx"),
+    route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/manageUserPermissions.tsx"), 
     route("/mainScreen/manageUsers", "./routes/createEditUsers/routes/manageUserDashboard.tsx"),
     route("/mainScreen/manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),
     route("/mainScreen/manageUserPermissionsSystem", "./routes/createEditUsers/routes/manageUserPermissionsSystem.tsx"),
     route("/mainScreen/createOperator", "./routes/createEditOperators/routes/createOperator.tsx"),
     route("/mainScreen/editOperator", "./routes/createEditOperators/routes/manageOperatorAndPartner.tsx"),
     route("/mainScreen/createUser", "./routes/createEditUsers/routes/createNewUser.tsx"),
-    route("/mainScreen/notifications", "./routes/notifications.tsx"),]),
-    route("/contactsupport", "./routes/contactSupport.tsx"),
-    route("/missingAFEsupport", "./routes/missingAFEsupport.tsx"),
+    route("/mainScreen/notifications", "./routes/notifications.tsx"),
+    route("/mainScreen/contactsupport", "./routes/contactSupport.tsx"),
+    route("/mainScreen/missingAFEsupport", "./routes/missingAFEsupport.tsx"),]),
     
 ])
 ] satisfies RouteConfig;

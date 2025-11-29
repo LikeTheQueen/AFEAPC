@@ -13,7 +13,8 @@ import { transformOperator,
   transformPartnerSourceSystemAddress,
   transformOperatorForDropDown,
   transformGLCodes,
-  transformGLCodeCrosswalk} from 'src/types/transform';
+  transformGLCodeCrosswalk,
+  transformSupportHistory} from 'src/types/transform';
 import  supabase  from './supabase';
 import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
@@ -361,7 +362,18 @@ export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:st
   } return [];
 };
 
-
+export const fetchSupportHistory = async(user_id: string) => {
+  const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))').eq('created_by',user_id);
+  if(error) {
+    console.error('Unable to get Support History');
+    return [];
+  }
+  console.log(data);
+  const transformedSupportHistory = transformSupportHistory(data);
+  console.log(transformedSupportHistory);
+  return transformedSupportHistory;
+}
+//Edge Functions
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
     type TogglePayload = { apc_op_id: string; apc_part_id:string };
