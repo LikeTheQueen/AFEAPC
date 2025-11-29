@@ -4,11 +4,13 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { notifyStandard } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
+import { AtSymbolIcon } from "@heroicons/react/24/outline";
 
 export default function ContactSupport() {
   const { loggedInUser } = useSupabaseData();
   const [emailSubject, setEmailSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
+  const [focused, setFocused] = useState('');
 
   const handleClickSendEmail = async () => {
 
@@ -37,18 +39,30 @@ export default function ContactSupport() {
     };
 
   };
-
+//className="relative max-w-5xl mx-auto"
   return (
     <>
-      <div className="px-4 sm:px-10 sm:py-16">
-        <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 md:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
-            <div className="">
-              <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Oh hey there!</h2>
-              <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">So glad you stopped by.  Tell us what you need help with and we'll get back to you as soon as possible. </p>
-
+      <div className="min-h-screen px-4 sm:px-10 sm:py-16 bg-gradient-to-br from-[var(--darkest-teal)] via-[var(--darkest-teal)] to-[var(--dark-teal)] to-[var(--darkest-teal)]/60">
+        <div className="max-w-5xl mx-auto">
+        <div className="backdrop-blur-2xl rounded-lg shadow-2xl ring-1 ring-white mb-5">
+          <div className="grid grid-cols-1 gap-x-0 sm:grid-cols-2 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
+            <div className="rounded-tl-lg rounded-bl-lg bg-transparent p-8 md:p-10 text-white relative overflow-hidden">
+              <div className="inline-block mb-4">
+                  <div className="w-16 h-16 bg-[var(--bright-pink)] rounded-2xl flex items-center justify-center transition-transform hover:rotate-0 duration-300">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <AtSymbolIcon></AtSymbolIcon>
+                    </svg>
+                  </div>
+                </div>
+              <h2 className="text-3xl font-semibold text-white custom-style">Oh hey there!</h2>
+              <p className="mt-2 text-lg text-white custom-style-long-text px-3">So glad you stopped by.  Tell us what you need help with and we'll get back to you as soon as possible. </p>
+              <div className="mt-8 flex gap-2">
+                  <div className="w-2 h-2 bg-[var(--bright-pink)] rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse delay-100"></div>
+                  <div className="w-2 h-2 bg-pink-300 rounded-full animate-pulse delay-200"></div>
+                </div>
             </div>
-            <div className="px-4 py-6 sm:p-8">
+            <div className="bg-white rounded-tr-lg rounded-br-lg px-4 py-6 sm:p-8">
               <div className="grid max-w-7xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-1">
                 <div className="sm:col-span-4">
                   <label htmlFor="subject" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
@@ -61,8 +75,9 @@ export default function ContactSupport() {
                       type="text"
                       value={emailSubject}
                       autoComplete="off"
+                      placeholder="What's the about?"
                       onChange={e => setEmailSubject(e.target.value)}
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/60 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
                   </div>
                 </div>
@@ -76,6 +91,7 @@ export default function ContactSupport() {
                       name="emailBody"
                       value={emailBody}
                       autoComplete="off"
+                      placeholder="Spill the tea and tell us what's on your mind..."
                       onChange={e => setEmailBody(e.target.value)}
                       className="h-60 block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
@@ -92,7 +108,6 @@ export default function ContactSupport() {
                   onClick={(e: any) => {
                     e.preventDefault();
                     handleClickSendEmail();
-                    //handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end cursor-pointer disabled:cursor-not-allowed">
                   Submit
@@ -100,6 +115,7 @@ export default function ContactSupport() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
       <ToastContainer />

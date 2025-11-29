@@ -246,6 +246,16 @@ import { notifyStandard } from 'src/helpers/helpers';
     }
     return data;
   };
+
+  export const updateSupportTicket = async(id:number, active: boolean, user_id: string, resolution: string) => {
+    const { data, error } = await supabase.from('SUPPORT_HISTORY').update({
+      active: active, closed_by: user_id, closed_on: new Date(), resolution: resolution, resolution_date: new Date()
+    }).eq('id',id)
+    if(error) {
+      return notifyStandard('There was an issue with closing the Support Ticket');
+    }
+    return notifyStandard('The Support Ticket has been closed');
+  };
 //INSERT DATA
   export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
     

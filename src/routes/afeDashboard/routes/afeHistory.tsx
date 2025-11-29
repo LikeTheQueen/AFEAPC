@@ -134,7 +134,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName}: AFEHist
                                 name="comment"
                                 rows={2}
                                 placeholder="Add your comment..."
-                                className="block w-full resize-none bg-transparent px-3 py-1.5 text-sm/6 text-[var(--darkest-teal)] placeholder:text-[var(--darkest-teal)]/70 focus:outline-none custom-style"
+                                className="block w-full resize-none bg-transparent px-3 py-1.5 text-sm/6 text-[var(--darkest-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-none custom-style"
                                 value={commentVal}
                                 onChange={handleCommentChange}
                             />

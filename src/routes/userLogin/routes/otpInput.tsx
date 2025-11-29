@@ -59,7 +59,7 @@ const handleTextChange = (input: string, index: number) => {
           onChange={(e) => handleTextChange(e.target.value, index)}
           onPaste={index === 0 ? handlePaste : undefined}
           ref={(ref) => {(inputRef.current[index] = ref as HTMLInputElement)}}
-          className="text-center block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+          className="text-center block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
         />
       ))}
     </div>
