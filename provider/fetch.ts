@@ -362,15 +362,22 @@ export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:st
   } return [];
 };
 
-export const fetchSupportHistory = async(user_id: string) => {
+export const fetchSupportHistory = async(user_id: string, is_super_user: boolean) => {
+  if(is_super_user) {
+    const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))');
+    if(error) {
+    console.error('Unable to get Support History');
+    return [];
+  }
+  const transformedSupportHistory = transformSupportHistory(data);
+  return transformedSupportHistory;
+  }
   const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))').eq('created_by',user_id);
   if(error) {
     console.error('Unable to get Support History');
     return [];
   }
-  console.log(data);
   const transformedSupportHistory = transformSupportHistory(data);
-  console.log(transformedSupportHistory);
   return transformedSupportHistory;
 }
 //Edge Functions

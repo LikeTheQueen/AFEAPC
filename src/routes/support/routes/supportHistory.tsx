@@ -29,7 +29,7 @@ export default function ContactSupport() {
 
   async function getHistory() {
     if (!loggedInUser?.user_id) return;
-    const supportHistory = await fetchSupportHistory(loggedInUser?.user_id);
+    const supportHistory = await fetchSupportHistory(loggedInUser?.user_id, loggedInUser.is_super_user);
     setSupportHistories(supportHistory);
   };
 
