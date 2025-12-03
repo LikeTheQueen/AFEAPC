@@ -365,12 +365,15 @@ export default function AFE() {
         </Link>
       ))}
     </ul>
+    <div className="mt-4">
     <UniversalPagination
             data={filteredNonOperatedAFEs}
             rowsPerPage={6}
             listOfType="Operated AFEs"
             onPageChange={handlePageChangeNonOperatedAFEs}
           />
+          </div>
+          <div className="h-4"></div>
     </div>
     </div>
        {/* Operated AFEs */}
@@ -489,12 +492,15 @@ export default function AFE() {
         </Link>
       ))}
     </ul>
+    <div className="mt-4">
           <UniversalPagination
             data={filteredOperatedAFEs}
             rowsPerPage={6}
             listOfType="Operated AFEs"
             onPageChange={handlePageChangeOperatedAFEs}
           />
+          </div>
+          <div className="h-4"></div>
           </div>
     </div>
     </>

@@ -9,7 +9,7 @@ import { createSupportTicket, createSupportTicketThread, updateSupportTicket } f
 import { notifyStandard } from "src/helpers/helpers";
 import { formatDateShort } from "src/helpers/styleHelpers";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
-import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { UniversalPaginationForDarkBackground } from "src/routes/sharedComponents/pagnation";
 import { type SupportHistory } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { CheckCircle2, Clock } from "lucide-react";
@@ -104,7 +104,6 @@ export default function ContactSupport() {
         "AFE Partner Connections"
       );
 
-      
       await createSupportTicket(emailSubject, emailBody);
 
       notifyStandard(
@@ -141,25 +140,24 @@ export default function ContactSupport() {
 
   return (
     <>
-      <div className="px-4 sm:px-10 sm:py-4">
+      <div className="min-h-screen px-4 sm:px-10 sm:py-4 bg-gradient-to-br from-[var(--darkest-teal)] via-[var(--darkest-teal)] to-[var(--dark-teal)] to-[var(--darkest-teal)]/60">
         <div className="divide-y divide-[var(--darkest-teal)]/40">
-          <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-1 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
+          <div className="text-white">
             <div>
-              <h2 className="text-xl font-semibold text-[var(--darkest-teal)] custom-style">
+              <h2 className="text-xl font-semibold custom-style">
                 Support History
               </h2>
-              <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">
+              <p className="text-base/6 custom-style-long-text px-3">
                 You can view all your support tickets anytime. If you need to add
                 anything, just drop a comment on the ticket and we’ll see it.
-                Simple, no fuss.
               </p>
             </div>
           </div>
 
           <div className="px-4 py-6 sm:p-8 sm:col-span-3">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+            <div  className="grid grid-cols-1 gap-x-6 gap-y-4">
               {/* No tickets */}
-              <div hidden={rowsToShow.length > 0} className="sm:col-span-3">
+              <div hidden={rowsToShow.length !== 0} className="sm:col-span-3">
                 <NoSelectionOrEmptyArrayMessage message="There are no support tickets to view" />
               </div>
 
@@ -167,7 +165,7 @@ export default function ContactSupport() {
               <div hidden={rowsToShow.length === 0}>
                 <ul
                   role="list"
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
                   data-testid="SupportHistory"
                 >
                   {[...rowsToShow]
@@ -192,10 +190,10 @@ export default function ContactSupport() {
               </div>
             </div>
 
-            <div hidden={rowsToShow.length === 0}>
-              <UniversalPagination
+            <div hidden={rowsToShow.length === 0} className="border-t border-white mt-4">
+              <UniversalPaginationForDarkBackground
                 data={supportHistories}
-                rowsPerPage={3}
+                rowsPerPage={4}
                 listOfType="Support Tickets"
                 onPageChange={handlePageChange}
               />
@@ -234,13 +232,13 @@ function SupportTicketCard({
   const isSuperUser = !!loggedInUser?.is_super_user;
 
   return (
-    <li className="h-[550px] lg:h-[600px] pb-4 col-span-1 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 ring-1 ring-[var(--darkest-teal)]/70 flex flex-col min-h-0">
+    <li className="h-[550px] lg:h-[600px] pb-4 col-span-1 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 border border-white flex flex-col min-h-0">
       {/* Status, Subject and Date */}
       <div
-        className={`rounded-t-lg text-lg/10 font-medium flex items-center gap-2 px-2 custom-style ${
+        className={`h-16 rounded-t-lg text-lg/10 font-medium flex items-center gap-2 px-2 custom-style ${
           support.active
-            ? "bg-gradient-to-r from-[var(--bright-pink)]/60 to-[var(--bright-pink)] text-white"
-            : "bg-gradient-to-r from-[var(--darkest-teal)]/60 to-[var(--darkest-teal)] text-white"
+            ? "bg-[var(--bright-pink)] text-white"
+            : "bg-[var(--darkest-teal)]/80 text-white"
         }`}
       >
         {support.active ? (
@@ -255,17 +253,17 @@ function SupportTicketCard({
                   </>
                 )}
       </div>
-      <div className="flex w-full items-center justify-between p-2 border-b border-[var(--darkest-teal)]/30 bg-white/50">
-        <div className="basis-3/4 text-start text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text line-clamp-2">
+      <div className="h-16 flex w-full items-center justify-between p-2 border-b border-[var(--darkest-teal)]/30 bg-[var(--darkest-teal)] text-white">
+        <div className="basis-3/4 text-start text-sm/6 font-medium custom-style-long-text line-clamp-2">
           {support.subject}
         </div>
-        <div className="basis-1/4 text-end text-sm/6 font-normal text-[var(--darkest-teal)]/80 custom-style-long-text line-clamp-1">
+        <div className="basis-1/4 text-end text-sm/6 font-normal custom-style-long-text line-clamp-1">
           {formatDateShort(support.created_at)}
         </div>
       </div>
 
       {/* History + comment input */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 bg-white">
         {/* Scrollable history */}
         <div className="flex-1 overflow-y-auto px-2" ref={scrollRef}>
           {/* Original message */}
@@ -340,7 +338,7 @@ function SupportTicketCard({
         </div>
 
         {/* Comment box */}
-        <div className="mt-4 mx-3 rounded-lg outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 bg-white shadow-2xl focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
+        <div className="mt-4 mx-3 rounded-lg outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 bg-white shadow-sm focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-[var(--bright-pink)]">
           <label htmlFor={`comment-${support.id}`} className="sr-only">
             Add your comment
           </label>

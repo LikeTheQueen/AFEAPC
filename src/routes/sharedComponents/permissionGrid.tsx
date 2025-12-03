@@ -242,7 +242,7 @@ useEffect(() => {
               </th>
             </tr>
             <tr className="bg-white text-white ">
-              <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] bg-white rounded-tl-xl rounded-tr-xl sm:table-cell">
+              <th scope="col" className="hidden sm:pl-0 text-[var(--darkest-teal)] rounded-tl-xl rounded-tr-xl ring-1 ring-[var(--darkest-teal)]/10 ring-offset-1 sm:table-cell">
                  <h2  className="font-semibold custom-style text-center py-1"
                  hidden={readOnly}>
                   {readOnly ? '' : `${user.user_firstname} ${user.user_lastName}`}
