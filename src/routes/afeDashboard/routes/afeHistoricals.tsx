@@ -3,7 +3,6 @@ import { useSupabaseData } from "../../../types/SupabaseContext";
 import { formatDate } from "src/helpers/styleHelpers";
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor, noAFEsToView, PartnerStatusDropdown, OperatorApprovalDropdown } from "./helpers/styleHelpers";
 import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
-import { handlePartnerStatusChange } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
 import { activeTab } from "src/helpers/styleHelpers";
@@ -277,7 +276,6 @@ export default function AFE() {
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
         to={`/mainscreen/afeDetail/${afe.id}`}
-        onClick={ (e:any) =>{handlePartnerStatusChange(`${afe.id}`, `${afe.partner_status}`,afe.partner_status === 'New' ? 'Viewed' : `${afe.partner_status}`, 'The Partner Status on the AFE changed from New to Viewed','action', token)}}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
        
           <div className="flex w-full items-center justify-between p-3 pt-3">

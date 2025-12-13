@@ -1,4 +1,3 @@
-import type { Session } from "@supabase/supabase-js";
 import type {
     AFEType,
     OperatorType,
@@ -28,7 +27,9 @@ import type {
     UserFullNameAndEmail,
     OperatorPartnerRecord,
     AFEWells,
-    SupportHistory
+    SupportHistory,
+    Notifications,
+    SystemHistory
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -610,4 +611,34 @@ export const transformSupportHistory = (data: any[]) : SupportHistory[] => {
     }))
 };
 
+export const transformNotifications = (data: any[]) : Notifications[] => {
+    return data.map(item => ({
+        id: item.id,
+        created_at: item.created_at,
+        user: {
+            name: item.user_id.first_name +' '+item.user_id.last_name,
+            email: item.user_id.email
+        },
+        description: item.description,
+         afe_number: item.afe_id.afe_number,
+        afe_version: item.afe_id.version_string,
+        afe_id: item.afe_id.id,
+        user_id: item.user_id.id
+    }))
+};
+
+export const transformSystemHistory = (data: any[]) : SystemHistory[] => {
+    return data.map(item => ({
+        id: item.id,
+        created_at: item.created_at,
+        created_by: {
+            name: item.created_by.first_name +' '+item.created_by.last_name,
+            email: item.created_by.email
+        },
+        description: item.description,
+        user_id: item.created_by.id,
+        action: item.action,
+        apc_op_id: item.apc_op_id
+    }))
+};
 

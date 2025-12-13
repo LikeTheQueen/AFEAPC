@@ -379,6 +379,24 @@ export const fetchSupportHistory = async(user_id: string, is_super_user: boolean
   }
   const transformedSupportHistory = transformSupportHistory(data);
   return transformedSupportHistory;
+};
+export const fetchNotifications = async() => {
+  const { data, error } = await supabase.from('AFE_HISTORY').select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)').eq('type','action');
+  if(error) {
+    console.error('Unable to get Support History');
+    return [];
+  }
+  console.log(data);
+  return data
+};
+export const fetchSystemHistory = async() => {
+  const { data, error } = await supabase.from('SYSTEM_HISTORY').select('*, apc_op_id(name),apc_partner_id(name),created_by(id,first_name, last_name, email)');
+  if(error) {
+    console.error('Unable to get Support History');
+    return [];
+  }
+  console.log(data);
+  return data
 }
 //Edge Functions
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {

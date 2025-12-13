@@ -3,7 +3,7 @@ import { useSupabaseData } from "../../../types/SupabaseContext";
 import { formatDate } from "src/helpers/styleHelpers";
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor, noAFEsToView, PartnerStatusDropdown, OperatorApprovalDropdown } from "./helpers/styleHelpers";
 import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
-import { handlePartnerStatusChange } from "./helpers/helpers";
+//import { handlePartnerStatusChange } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
 import { activeTab } from "src/helpers/styleHelpers";

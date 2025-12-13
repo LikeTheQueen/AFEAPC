@@ -16,6 +16,7 @@ import { CheckCircle2, Clock } from "lucide-react";
 
 export default function ContactSupport() {
   const { loggedInUser } = useSupabaseData();
+  const supportEmail = 'elizabeth.shaw@afepartner.com'
 
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
@@ -88,7 +89,7 @@ export default function ContactSupport() {
       await handleSendEmail(
         emailSubject,
         emailBody,
-        "elizabeth.shaw@afepartner.com",
+        supportEmail,
         loggedInUser.email,
         loggedInUser.firstName,
         loggedInUser.email
@@ -165,7 +166,7 @@ export default function ContactSupport() {
               <div hidden={rowsToShow.length === 0}>
                 <ul
                   role="list"
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                   data-testid="SupportHistory"
                 >
                   {[...rowsToShow]

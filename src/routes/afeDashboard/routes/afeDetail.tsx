@@ -8,19 +8,21 @@ import { useEffect, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
-import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, handlePartnerStatusChange } from "./helpers/helpers";
+import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "./helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon} from '@heroicons/react/24/outline';
 import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { ToastContainer } from "react-toastify";
 
 export default function AFEDetailURL() {
   const { afeID } = useParams<{ afeID: string }>();
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const { handlePartnerStatusChange } = usePartnerStatusChange();
 
   const [afeHistoryloading, setAFEHistoryLoading] = useState(false);
   const [afeLoading, setAFELoading] = useState(false);
@@ -319,7 +321,7 @@ console.log(file)
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Approved', 'The partner marked the AFE as approved', 'action', token),
+                        handlePartnerStatusChange(afeRecord!, 'Approved', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE a approved`, 'action'),
                         setButtonDisabled(true),
                         handleStatusComment('Approved'),
                         setAFEPartnerStatus('Approved'),
@@ -335,7 +337,7 @@ console.log(file)
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord?.id!, afeRecord?.partner_status!, 'Rejected', 'The partner marked the AFE as rejected', 'action', token),
+                        handlePartnerStatusChange(afeRecord!, 'Rejected', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE a rejected`, 'action'),
                         setButtonDisabled(true),
                         handleStatusComment('Rejected'),
                         setAFEPartnerStatus('Rejected'),
@@ -488,27 +490,27 @@ console.log(file)
                   <tbody key={accountGroup} >
 
                     <tr className="border-t border-[var(--darkest-teal)]/90 text-[var(--darkest-teal)] font-semibold custom-style h-10">
-                      <td className="hidden sm:table-cell w-1/5 pl-2">{accountGroup.toUpperCase()}</td>
-                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Operator Account#</td>
-                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Account#</td>
-                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/5 ">Gross Amount</td>
-                      <td className="table-cell px-0 py-0 pr-2 text-right w-1/5 ">Net Amount</td>
+                      <td className="hidden sm:table-cell w-2/6 pl-0">{accountGroup.toUpperCase()}</td>
+                      <td className="table-cell px-0 py-0 text-left sm:text-center w-1/6 ">Operator Account#</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-center w-1/6 ">Account#</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/6 ">Gross Amount</td>
+                      <td className="table-cell px-0 py-0 text-right w-1/6 ">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
                       <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
-                        <td className="hidden sm:table-cell px-0 py-3 text-left sm:w-2/5 ">
+                        <td className="hidden sm:table-cell px-0 py-3 text-left sm:w-2/6">
                           {item.operator_account_description}
                         </td>
-                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
+                        <td className="table-cell px-0 py-3 text-left sm:text-center w-1/6">
                           {item.operator_account_number}
                         </td>
-                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
+                        <td className="hidden sm:table-cell px-0 py-3 text-center w-1/6">
                           {item.partner_account_number}
                         </td>
-                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/5 ">
+                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/6">
                           ${item.amount_gross.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td className="table-cell px-0 py-3 pr-2 text-right w-1/5 ">
+                        <td className="table-cell px-0 py-3 text-right w-1/6">
                           ${item.partner_net_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
 
@@ -584,6 +586,7 @@ console.log(file)
           </div>
         </div>
       </main>
+      <ToastContainer/>
     </>
   )
 }

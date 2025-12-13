@@ -3,9 +3,9 @@ import { useEffect, useState } from "react"
 import { formatDateShort } from "src/helpers/styleHelpers";
 import { type Notifications } from "src/types/interfaces";
 import { transformNotifications } from "src/types/transform";
-import UniversalPagination from "./sharedComponents/pagnation";
+import UniversalPagination from "../../sharedComponents/pagnation";
 
-export default function Notifications() {
+export default function SystemHistory() {
 const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
 // State for paginated data
     const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);

@@ -398,3 +398,24 @@ export interface SupportHistory {
   support_thread: SupportHistoryThread[];
   user_id: string;
 };
+
+export interface Notifications {
+  id: number;
+  afe_number: string;
+  afe_version: string;
+  afe_id: string;
+  user: UserNameAndEmail;
+  user_id: string;
+  description: string;
+  created_at: Date;
+};
+
+export interface SystemHistory {
+  id: number;
+  created_at: Date;
+  created_by: UserNameAndEmail;
+  user_id: string;
+  description: string;
+  action: string;
+  apc_op_id: string;
+}

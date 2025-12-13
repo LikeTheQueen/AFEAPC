@@ -11,6 +11,7 @@ import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { useSupabaseData } from "src/types/SupabaseContext";
 
 interface PartnerMappingRecord {
     operator?: string;
@@ -29,6 +30,9 @@ interface PartnerMapDisplay {
 };
 
 export default function PartnerMapping() {
+    const { loggedInUser, session } = useSupabaseData();
+    const token = session?.access_token ?? "";
+
     const [apcPartnerList, setAPCPartnerList] = useState<OperatorPartnerAddressType[] | []>([]);
     const [sourcePartnerList, setSourcePartnerList] = useState<PartnerRowData[] | []>([]);
     const [currentPartnerMapDisplay, setCurrentPartnerMapDisplay] = useState<PartnerMapDisplay | null>(null);
@@ -53,11 +57,9 @@ export default function PartnerMapping() {
         async function getPartnerLists() {
             setLoading(true);
             try {
-                const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
                 const sourcePartList = await fetchPartnersFromSourceSystemInSupabase(opAPCID);
                 const mappedPartnerList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
                 if (isMounted) {
-                    setAPCPartnerList(apcPartList ?? []);
                     setSourcePartnerList(sourcePartList ?? []);
                     setExistingPartnerMap(mappedPartnerList ?? []);
                 }
@@ -72,6 +74,27 @@ export default function PartnerMapping() {
             isMounted = false;
         };
     }, [opAPCID]);
+
+    useEffect(() => {
+        let isMounted = true;
+        async function getPartnerLists() {
+            setLoading(true);
+            try {
+                const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
+                if (isMounted) {
+                    setAPCPartnerList(apcPartList ?? []);
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        }
+        getPartnerLists();
+        return () => {
+            isMounted = false;
+        };
+    }, [loggedInUser]);
 
     const toggleSourcePartner = (
         sourcePartner: PartnerRowData
@@ -178,7 +201,7 @@ export default function PartnerMapping() {
             return updatedMap;
         });
     };
-    console.log(hideMappedSourcePartners)
+    
     return (
         <>
             <div>
@@ -348,7 +371,7 @@ export default function PartnerMapping() {
                                                             </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody >
                                                         {apcPartnerList.map((partner, partnerIdx) => (
                                                             <tr key={partner.apc_id}
                                                             hidden={(hideMappedAPCPartners && existingPartnerMap.find(item => item.apc_partner.apc_id === partner.apc_id)) ? true : false}>
