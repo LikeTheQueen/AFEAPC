@@ -204,4 +204,4 @@ export const notifyFailure = (message:string) => toast(FailureNotifcation, {
         // user clicked Ignore
       }
     },
-  });
+  }); 

@@ -95,7 +95,7 @@ export function PartnerStatusDropdown ({onChange}: Props) {
               <option>New</option>
               <option>Viewed</option>
               <option>Rejected</option>
-              <option>Accepted</option>
+              <option>Approved</option>
           </select>
           <ChevronDownIcon
               aria-hidden="true"

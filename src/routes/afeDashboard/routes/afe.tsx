@@ -3,7 +3,6 @@ import { useSupabaseData } from "../../../types/SupabaseContext";
 import { formatDate } from "src/helpers/styleHelpers";
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor, noAFEsToView, PartnerStatusDropdown, OperatorApprovalDropdown } from "./helpers/styleHelpers";
 import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
-//import { handlePartnerStatusChange } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
 import { activeTab } from "src/helpers/styleHelpers";
@@ -17,6 +16,8 @@ import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { handleSendEmail } from "email/emailBasic";
 import { insertAFEHistory, updateAFEPartnerStatus } from "provider/write";
+import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
+import { ToastContainer } from "react-toastify";
 
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
@@ -38,6 +39,8 @@ export default function AFE() {
   const [operatorApprovedDaysAgo, setOperatorApprovedDaysAgo] = useState(100);
   const [partnerStatusDaysAgo, setPartnerStatusDaysAgo] = useState(100);
   const [afeNumberSearch, setAFENumberSearch] = useState('');
+  const [noOpAFEToView, setNoOpAFEToView] = useState('There are no Operated AFEs to View');
+  const [noNonOpAFEToView, setNoNonOpAFEToView] = useState('There are no Non-Operated AFEs to View')
 
   // State for paginated data
   const [rowsToShowOperated, setRowsToShowOperated] = useState<AFEType[]>([]);
@@ -45,7 +48,7 @@ export default function AFE() {
   const [rowsToShowNonOperated, setRowsToShowNonOperated] = useState<AFEType[]>([]);
   const [currentPageNonOperated, setCurrentPageNonOperated] = useState(0);
  
-  
+  //Create a date for today and then calculate days ago.  Used in the AFE Filters
   const today = new Date();
   const operatorApprovedcutOffDate = new Date(today);
   const partnerStatusCutOffDate = new Date(today);
@@ -55,12 +58,14 @@ export default function AFE() {
   partnerStatusCutOffDate.setDate(partnerStatusCutOffDate.getDate() - partnerStatusDaysAgo);
   partnerStatusCutOffDate.setHours(0, 0, 0, 0);
   
+  
   function handleTabChange(selected: number){
     const updateCurrentTab = activeTab(tabs, selected);
     setCurrentTab(updateCurrentTab.selectedTabId);
     setTabList(updateCurrentTab.updatedTabs);
   };
 
+  //Use effect to get the AFEs for th user.  Show error message if the user can't get AFEs  
   useEffect(() => {
     if(!token || token==='') return;
       let cancelled = false;
@@ -68,8 +73,9 @@ export default function AFE() {
         setAFELoading(true);
         try{
           const afes = await fetchAFEs(token);
-  
+
           if(!afes.ok) {
+            setAFELoading(false);
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
           }
           const transformedAFEs = transformAFEs(afes.data)
@@ -79,18 +85,19 @@ export default function AFE() {
             setAllAFEs(transformedAFEs);
           }
         } catch (err) {
-      
+      setNoNonOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
+      setNoOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
       console.error(err);
-    } finally {
-                  if (!cancelled) {
-                      setAFELoading(false);
-                  }
-      } 
+        } finally {
+          if (!cancelled) {
+            setAFELoading(false);
+          }
+        } 
       }; 
     getAFERecord();
     return () => {
-              cancelled = true;
-          };
+      cancelled = true;
+    };
     }, [token])
 
   useEffect(() => {
@@ -210,7 +217,16 @@ export default function AFE() {
         {}
         <select
           value={tabList.find((tab) => tab.current)?.id || ''}
-          onChange={e => {handleTabChange(parseInt(e.target.value, 10)), handleFilterReset()}}
+          onChange={e => {handleFilterReset(), 
+            handleTabChanged(
+              {
+                selected: parseInt(e.target.value, 10),
+                tabs: tabs,
+                onTabChange: (currentTab)=>setCurrentTab(currentTab),
+                onTabListChange: (tabs)=>setTabList(tabs)
+              }
+            )
+          }}
           aria-label="Select a tab"
           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
           {tabs.map((tab) => (
@@ -229,12 +245,21 @@ export default function AFE() {
             {tabList.map((item, index) => (
                 <Button
                 key={item.id}
-                onClick={e => {handleTabChange(item.id), handleFilterReset()}}
+                onClick={e => {handleFilterReset(),
+                  handleTabChanged(
+              {
+                selected: item.id,
+                tabs: tabs,
+                onTabChange: (currentTab)=>setCurrentTab(currentTab),
+                onTabListChange: (tabs)=>setTabList(tabs)
+              }
+            )
+                }}
                 className={`flex-1 text-center px-4 py-3 custom-style transition-colors ease-in-out duration-300
       
       ${item.current
           ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium shadow-sm z-10'
-          : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal'}
+          : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal cursor-pointer'}
           ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
           ${index === 0 ? 'rounded-tl-md' : ''}
           ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
@@ -256,7 +281,7 @@ export default function AFE() {
         <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? true : false} >
       {
-      noAFEsToView('There are no Non-Operated AFEs to view')
+      noAFEsToView(noNonOpAFEToView)
       }
     </div>
       </div>
@@ -384,7 +409,7 @@ export default function AFE() {
       <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false}>
       {
-      noAFEsToView('There are no Operated AFEs to view')
+      noAFEsToView(noOpAFEToView)
       }
       </div>
       </div>
@@ -505,6 +530,7 @@ export default function AFE() {
     </div>
     </>
     )}
+    <ToastContainer/>
     </>
     
   )

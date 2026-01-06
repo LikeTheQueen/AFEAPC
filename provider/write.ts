@@ -1,12 +1,26 @@
 
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
-import type { UUID } from 'crypto';
 import type { AddressType, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
+import type { UUID } from 'crypto';
 
-
+  export const writeToFunctionLogs = async (function_name: string, message: string, details: JSON | null, level: string, triggered_from: string) => {
+    
+    const { data, error } = await supabase.from('FUNCTION_LOGS').insert({
+      function_name: function_name,
+      message: message,
+      details: details,
+      level: level,
+      triggered_from: triggered_from
+    });
+    if (error) {
+        console.error(`Error adding Operator`, error);
+        return null;
+      }
+    return;
+  }
   export const addOperatorSupabase = async (name: string, source_system:number) => {
     const { data, error } = await supabase.from('OPERATORS').insert({name: name, source_system: source_system, active:true}).select();
     if (error) {
@@ -71,7 +85,6 @@ import { notifyStandard } from 'src/helpers/helpers';
       return (user);
   };
 
-  
   export const createUserProfile = async(firstName: string, lastName: string, email: string, id:string, active: boolean) => {
     const { data, error } = await supabase.from('USER_PROFILE').insert({id: id, first_name: firstName, last_name:lastName, email: email, active:active});
     if (error) {
@@ -145,7 +158,8 @@ import { notifyStandard } from 'src/helpers/helpers';
   export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {
     const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
     if (error) {
-        console.error(`Error adding the Operator's Partners`, error);
+        console.error(`Error adding the Operator's Partners`, error, data);
+        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners')
         return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
       }
       return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);

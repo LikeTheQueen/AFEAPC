@@ -80,7 +80,7 @@ export function usePartnerStatusChange() {
   };
 
   return { handlePartnerStatusChange };
-}
+};
 export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
   updateAFEPartnerArchiveStatus(id, archivedStatus, token);
   insertAFEHistory(id, description, type, token);
@@ -105,4 +105,34 @@ export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | 
       .map(role => role.apc_id);
 };
 
+const handleEmailPartnerStatusChangeNotification = async ( 
+  afeRecord: AFEType,
+  newPartnerStatus: string,
+  loggedInUserFirstName: string,
+  loggedInUserEmail: string,
+ ) => {
+  //Send email to Operator
+  await handleSendEmail(
+                `Your AFE has been ${newPartnerStatus} by ${loggedInUserFirstName} at ${afeRecord.partner_name}`,
+                `This message is to let you know that your AFE has been ${newPartnerStatus}.  The AFE Number is ${afeRecord.afe_number} (${afeRecord.version_string})`,
+                loggedInUserEmail,
+                "AFE Partner Connections",
+                afeRecord.operator,
+                afeRecord.partner_name,
+                `https://www.afepartner.com/mainscreen/afeDetail/${afeRecord.id}`,
+                'View AFE'
+              );
+    //Send email to Partners
+    await handleSendEmail(
+                `Your AFE has been ${newPartnerStatus} by ${loggedInUserFirstName} at ${afeRecord.partner_name}`,
+                `This message is to let you know that your AFE has been ${newPartnerStatus}.  The AFE Number is ${afeRecord.afe_number} (${afeRecord.version_string})`,
+                loggedInUserEmail,
+                "AFE Partner Connections",
+                afeRecord.operator,
+                afeRecord.partner_name,
+                `https://www.afepartner.com/mainscreen/afeDetail/${afeRecord.id}`,
+                'View AFE'
+              );
+
+};
 

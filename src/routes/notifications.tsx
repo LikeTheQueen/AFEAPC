@@ -20,7 +20,7 @@ useEffect(() => {
         
             if(result.length > 0 ) {
                 const transformedNotifications = transformNotifications(result);
-                setNotifications(transformedNotifications);
+                setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
                 console.log(transformedNotifications);
             }
         } finally {
@@ -75,7 +75,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-[var(--darkest-teal)]/20">
-          {rowsToShow.sort((a,b) => b.id - a.id).map((item) => (
+          {rowsToShow.map((item) => (
             <tr key={item.id}>
               <td className="py-4 sm:pr-10 pl-4 sm:pl-6 lg:pl-8">
                 <div className="flex items-center">

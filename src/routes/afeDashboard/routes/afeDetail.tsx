@@ -321,7 +321,7 @@ console.log(file)
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord!, 'Approved', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE a approved`, 'action'),
+                        handlePartnerStatusChange(afeRecord!, 'Approved', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as approved`, 'action'),
                         setButtonDisabled(true),
                         handleStatusComment('Approved'),
                         setAFEPartnerStatus('Approved'),
@@ -337,7 +337,7 @@ console.log(file)
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord!, 'Rejected', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE a rejected`, 'action'),
+                        handlePartnerStatusChange(afeRecord!, 'Rejected', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as rejected`, 'action'),
                         setButtonDisabled(true),
                         handleStatusComment('Rejected'),
                         setAFEPartnerStatus('Rejected'),
@@ -523,7 +523,7 @@ console.log(file)
               className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 px-1 items-center pt-2">
                 <UniversalPagination
                   data={afeEstimates}
-                  rowsPerPage={8}
+                  rowsPerPage={6}
                   listOfType="Line Items"
                   onPageChange={handlePageChange}
                 />
