@@ -53,7 +53,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName}: AFEHist
                             className={`${afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6'} absolute top-0 left-0 flex w-6 justify-center`}>
                                 <div className="w-px bg-[var(--darkest-teal)]/40" />
                             </div>
-                            {afeHistory.type === 'action' ? (
+                            {afeHistory.type !== 'comment' ? (
                                 <>
                                     <CommandLineIcon aria-hidden="true" className="relative size-6 flex-none text-[var(--darkest-teal)]" />
                                     <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--darkest-teal)] ">

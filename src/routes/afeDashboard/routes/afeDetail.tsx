@@ -16,6 +16,7 @@ import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { ToastContainer } from "react-toastify";
+import { insertAFEHistory } from "provider/write";
 
 export default function AFEDetailURL() {
   const { afeID } = useParams<{ afeID: string }>();
@@ -563,12 +564,16 @@ console.log(file)
               role="navigation"
               aria-label="View Document">
                 <li className="cursor-pointer"
-                onClick={(e) => handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimeype)}>
+                onClick={(e) => {handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimeype),
+                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ',loggedInUser!.lastName!,' downloaded the AFE attachment ',afeDoc.filename_display, ' for AFE# ',afeRecord!.afe_number!,afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) :''),'file download', token)
+                }}>
                   Download
                 </li>
                 <li className="cursor-pointer"
                 hidden={afeDoc.mimeype==='pdf'? false : true}
-                onClick={(e) => {setOpen(true), handleViewDocument(afeDoc.storage_path)}}>
+                onClick={(e) => {setOpen(true), handleViewDocument(afeDoc.storage_path),
+                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ',loggedInUser!.lastName!,' viewed the AFE attachment ',afeDoc.filename_display, ' for AFE# ',afeRecord!.afe_number!,afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) :''),'file viewed', token)
+                }}>
                   View
                 </li>
                 </ul>
