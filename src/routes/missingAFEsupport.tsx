@@ -11,12 +11,14 @@ const [systemHistory, setSystemHistory] = useState<SystemHistory[] | []>([]);
     const [rowsToShow, setRowsToShow] = useState<SystemHistory[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const maxRowsToShow = (8);
+    const minRange = (0);
+    const [maxRange, setMaxRange] = useState(23);
 
 useEffect(() => {
     let isMounted = true;
     async function getSystemHistory() {
         try {
-            const result = await fetchSystemHistory();
+            const result = await fetchSystemHistory(minRange,maxRange);
         
             if(result.length > 0 ) {
                 const transformedSystemHistory = transformSystemHistory(result);
@@ -33,7 +35,7 @@ useEffect(() => {
             isMounted = false;
         };
     
-},[])
+},[maxRange])
 
 const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
         setRowsToShow(paginatedData);
@@ -45,15 +47,14 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
     <div className="px-4 sm:px-16 sm:py-16">
       <h2 className="text-xl font-semibold custom-style">System Changes</h2>
        <p className="text-base/6 custom-style-long-text px-3">
-                Who's doing what and when are they doing it.
+                Who's doing what and when are they're doing it.
               </p>
-      <table className="mt-6 sm:w-full text-left whitespace-nowrap">
+      <table className="mt-6 sm:w-full text-left">
         <colgroup>
-          <col className="w-full sm:w-3/12" />
-          <col className="lg:w-4/12" />
+          <col className="w-full sm:w-4/12" />
+          <col className="lg:w-5/12" />
           <col className="lg:w-1/12" />
-          <col className="lg:w-1/12" />
-          <col className="lg:w-1/12" />
+          <col className="lg:w-2/12" />
         </colgroup>
         <thead className="border-b border-[var(--darkest-teal)]/30 text-xs/5 sm:text-base/6 text-[var(--darkest-teal)] custom-style">
           <tr>
@@ -68,9 +69,6 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             </th>
             <th scope="col" className="hidden py-2 pr-8 pl-0 font-semibold md:table-cell sm:text-center lg:pr-20">
              Date
-            </th>
-            <th scope="col" className="hidden py-2 pr-4 pl-0 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8">
-              <span className="sr-only">View</span>
             </th>
           </tr>
         </thead>
@@ -105,21 +103,29 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
               <td className="hidden px-3 py-3.5 pl-0 text-center text-sm/6 text-[var(--darkest-teal)] custom-style md:table-cell lg:pr-20">
                 {formatDateShort(item.created_at)}
               </td>
-              <td className="hidden px-3 py-3.5 pl-0 text-right text-sm/6 text-[var(--darkest-teal)] sm:table-cell sm:pr-6 lg:pr-8">
-                      
-              </td>
             </tr>
           ))}
         </tbody>
       </table>
       <div className="w-full border-t border-[var(--darkest-teal)]">
-                                  <UniversalPagination
-                                      data={systemHistory}
-                                      rowsPerPage={maxRowsToShow}
-                                      listOfType="System Changes"
-                                      onPageChange={handlePageChange}
-                                  />
-                                  </div>
+          <UniversalPagination
+            data={systemHistory}
+            rowsPerPage={maxRowsToShow}
+            listOfType="System Changes"
+            onPageChange={handlePageChange}
+          />
+    </div>
+        <div
+          className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
+          <button
+            onClick={async (e: any) => {
+              e.preventDefault();
+              setMaxRange(maxRange+24);
+            }}
+            className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+            Load More
+          </button>
+        </div>
     </div>
     </>
   )

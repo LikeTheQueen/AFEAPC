@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 
 type PaginationProps<T> = {
     data: T[];
@@ -17,6 +17,8 @@ export default function UniversalPagination<T>({
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [paginationArray, setPaginationArray] = useState<number[]>([]);
+    const [minPageNumber, setMinPageNumber] = useState(0);
+    const [maxPageNumber, setMaxPageNumber] = useState(4);
 
     // Calculate total pages and pagnation array when data changes
     useMemo(() => {
@@ -36,19 +38,27 @@ export default function UniversalPagination<T>({
     const goToPage = (pageNumber: number) => {
         if (pageNumber >= 0 && pageNumber < totalPages) {
             setCurrentPage(pageNumber);
+            setMinPageNumber(Math.min(Math.max(0, pageNumber - 2),4));
+            setMaxPageNumber(Math.max(Math.min(totalPages, pageNumber + 2),4));
         }
     };
 
     const nextPage = () => {
         if (currentPage < totalPages - 1) {
             setCurrentPage(currentPage + 1);
+            setMinPageNumber(Math.min(Math.max(0, currentPage - 1), totalPages - 5));
+            setMaxPageNumber(Math.min(totalPages, Math.max(0, currentPage + 3, 4)));
         }
+
     };
 
     const previousPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
+            setMinPageNumber(Math.min(Math.max(0, currentPage - 3), totalPages - 5));
+            setMaxPageNumber(Math.min(totalPages, Math.max(currentPage + 1, 4)));
         }
+        
     };
 
     // Calculate the range of items being shown
@@ -57,11 +67,32 @@ export default function UniversalPagination<T>({
         ? data.length
         : (currentPage + 1) * rowsPerPage;
 
+    //Function to get the starting and ending page numbers to display
+    function getStartEndPageNumbers(currentpage: number): number[] {
+        let start = currentPage - 2;
+        let end = currentPage + 2;
+
+        if(start < 0) {
+            end += Math.abs(start);
+            start = 0;
+        }
+
+        if(end >= totalPages) {
+            start -= end - (totalPages - 1);
+            end = totalPages - 1;
+        }
+
+        start = Math.max(0, start);
+
+        return [start, end];
+    }
     return (
         <>
         <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
             <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                Showing {startItem} to {endItem} of {data.length} {listOfType}
+                Showing {startItem} to {endItem} of {data.length} {listOfType} 
+                <br></br>Page {currentPage + 1} of {totalPages}
+                
             </div>
             <div className="flex">
                 <ul
@@ -70,14 +101,14 @@ export default function UniversalPagination<T>({
                     aria-label="Pagination">
                     <li
                         className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid ${currentPage === 0
-                                ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                ? "bg-white border-[var(--darkest-teal)]/20 text-[var(--darkest-teal)]/30 pointer-events-none"
                                 : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                             }`}
                         onClick={previousPage}>
                         <ChevronLeftIcon className="w-5 h-5" />
                     </li>
                     {paginationArray.map((pageNum) => (
-                        <li
+                        <li hidden={pageNum <= maxPageNumber-1 && pageNum >= minPageNumber ? false : true }
                             className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage === pageNum
                                     ? "bg-white border-[var(--bright-pink)] pointer-events-none"
                                     : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
@@ -87,9 +118,14 @@ export default function UniversalPagination<T>({
                             {pageNum + 1}
                         </li>
                     ))}
+                    <li hidden={maxPageNumber >= totalPages ? true : false }
+                        className={`flex items-end justify-center w-8 rounded-md h-8 bg-white text-[var(--darkest-teal)]/40 pointer-events-none}`}
+                        onClick={nextPage}>
+                        <EllipsisHorizontalIcon className="w-5 h-5" />
+                    </li>
                     <li
                         className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid ${currentPage === totalPages - 1
-                                ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
+                                ? "bg-white border-[var(--darkest-teal)]/20 text-[var(--darkest-teal)]/30 pointer-events-none"
                                 : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                             }`}
                         onClick={nextPage}>
@@ -174,7 +210,7 @@ export function UniversalPaginationForDarkBackground<T>({
                         <ChevronLeftIcon className="w-5 h-5" />
                     </li>
                     {paginationArray.map((pageNum) => (
-                        <li
+                        <li 
                             className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage === pageNum
                                     ? "bg-white border-[var(--bright-pink)] pointer-events-none"
                                     : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
@@ -184,7 +220,7 @@ export function UniversalPaginationForDarkBackground<T>({
                             {pageNum + 1}
                         </li>
                     ))}
-                    <li
+                    <li 
                         className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid ${currentPage === totalPages - 1
                                 ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
                                 : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"

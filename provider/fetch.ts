@@ -389,8 +389,12 @@ export const fetchNotifications = async() => {
   console.log(data);
   return data
 };
-export const fetchSystemHistory = async() => {
-  const { data, error } = await supabase.from('SYSTEM_HISTORY').select('*, apc_op_id(name),apc_partner_id(name),created_by(id,first_name, last_name, email)');
+export const fetchSystemHistory = async( minRange: number, maxRange: number) => {
+  const { data, error } = await supabase
+  .from('SYSTEM_HISTORY')
+  .select('*, apc_op_id(name),apc_partner_id(name),created_by(id,first_name, last_name, email)')
+  .order('id', { ascending: false })
+  .range(minRange,maxRange);
   if(error) {
     console.error('Unable to get Support History');
     return [];
