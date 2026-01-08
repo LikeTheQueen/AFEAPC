@@ -638,7 +638,7 @@ export const transformSystemHistory = (data: any[]) : SystemHistory[] => {
         description: item.description,
         user_id: item.created_by.id,
         action: item.action,
-        apc_op_id: item.apc_op_id
+        apc_op_id: item.apc_op_id ? item.apc_op_id.id : ''
     }))
 };
 

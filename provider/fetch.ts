@@ -392,7 +392,7 @@ export const fetchNotifications = async() => {
 export const fetchSystemHistory = async( minRange: number, maxRange: number) => {
   const { data, error } = await supabase
   .from('SYSTEM_HISTORY')
-  .select('*, apc_op_id(name),apc_partner_id(name),created_by(id,first_name, last_name, email)')
+  .select('*, apc_op_id(id,name),apc_partner_id(id,name),created_by(id,first_name, last_name, email)')
   .order('id', { ascending: false })
   .range(minRange,maxRange);
   if(error) {
@@ -401,7 +401,19 @@ export const fetchSystemHistory = async( minRange: number, maxRange: number) => 
   }
   console.log(data);
   return data
-}
+};
+export const fetchSystemHistoryCount = async () => {
+  const { count, error } = await supabase
+    .from('SYSTEM_HISTORY')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    console.error('Unable to get System History count', error);
+    return 0;
+  }
+  console.log(count,'THE COUNT FROM THE CALL')
+  return count ?? 0;
+};
 //Edge Functions
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     

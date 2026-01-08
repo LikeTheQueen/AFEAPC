@@ -6,13 +6,15 @@ type PaginationProps<T> = {
     rowsPerPage?: number;
     listOfType: string;
     onPageChange: (paginatedData: T[], currentPage: number) => void;
+    totalUnfilteredRows?: number;
 };
 
 export default function UniversalPagination<T>({
     data,
     rowsPerPage = 5,
     listOfType,
-    onPageChange
+    onPageChange,
+    totalUnfilteredRows = 0,
 }: PaginationProps<T>) {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -23,10 +25,16 @@ export default function UniversalPagination<T>({
     // Calculate total pages and pagnation array when data changes
     useMemo(() => {
         const pages = Math.ceil(data.length / rowsPerPage);
+        console.log(pages,'THE PAGES');
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
-    }, [data.length, rowsPerPage]);
 
+        if(data.length < rowsPerPage*(currentPage+1) && currentPage !==0) {
+            console.log(Math.ceil(data.length/rowsPerPage)-1);
+            setCurrentPage(Math.ceil(data.length/rowsPerPage)-1);
+        }
+    }, [data.length, rowsPerPage]);
+console.log(paginationArray,'the page aray');
     // Update paginated rows whenever page or data changes
     useEffect(() => {
         const startIndex = currentPage * rowsPerPage;
@@ -67,30 +75,11 @@ export default function UniversalPagination<T>({
         ? data.length
         : (currentPage + 1) * rowsPerPage;
 
-    //Function to get the starting and ending page numbers to display
-    function getStartEndPageNumbers(currentpage: number): number[] {
-        let start = currentPage - 2;
-        let end = currentPage + 2;
-
-        if(start < 0) {
-            end += Math.abs(start);
-            start = 0;
-        }
-
-        if(end >= totalPages) {
-            start -= end - (totalPages - 1);
-            end = totalPages - 1;
-        }
-
-        start = Math.max(0, start);
-
-        return [start, end];
-    }
     return (
         <>
         <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
             <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                Showing {startItem} to {endItem} of {data.length} {listOfType} 
+                Showing {startItem} to {endItem} of {data.length} {listOfType} {totalUnfilteredRows !== 0 && data.length !== totalUnfilteredRows ? '(Filtered from '+totalUnfilteredRows+' Total)' : ''}
                 <br></br>Page {currentPage + 1} of {totalPages}
                 
             </div>
@@ -108,7 +97,7 @@ export default function UniversalPagination<T>({
                         <ChevronLeftIcon className="w-5 h-5" />
                     </li>
                     {paginationArray.map((pageNum) => (
-                        <li hidden={pageNum <= maxPageNumber-1 && pageNum >= minPageNumber ? false : true }
+                        <li hidden={(pageNum <= maxPageNumber-1 && pageNum >= minPageNumber) || paginationArray.length <=1 ? false : true }
                             className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage === pageNum
                                     ? "bg-white border-[var(--bright-pink)] pointer-events-none"
                                     : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"

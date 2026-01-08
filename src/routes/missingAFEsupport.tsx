@@ -1,9 +1,11 @@
-import { fetchNotifications, fetchSystemHistory } from "provider/fetch";
-import { useEffect, useState } from "react"
+import { fetchNotifications, fetchSystemHistory, fetchSystemHistoryCount } from "provider/fetch";
+import { startTransition, useCallback, useEffect, useMemo, useState } from "react"
 import { formatDateShort } from "src/helpers/styleHelpers";
 import { type Notifications, type SystemHistory } from "src/types/interfaces";
 import { transformSystemHistory } from "src/types/transform";
 import UniversalPagination from "./sharedComponents/pagnation";
+import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
+import { ChevronDownIcon } from '@heroicons/react/16/solid'
 
 export default function SystemHistories() {
 const [systemHistory, setSystemHistory] = useState<SystemHistory[] | []>([]); 
@@ -13,6 +15,13 @@ const [systemHistory, setSystemHistory] = useState<SystemHistory[] | []>([]);
     const maxRowsToShow = (8);
     const minRange = (0);
     const [maxRange, setMaxRange] = useState(23);
+    const [totalSystemHistoryRowCount, setTotalSystemHistoryRowCount] = useState(0);
+    const [selectedOperator, setSelectedOperator] = useState('');
+    const [actionList, setActionList] = useState<string [] | []>([]);
+    const [userList, setUserList] = useState<string [] | []>([]);
+    const [selectedAction, setSelectedAction] = useState('');
+    const [selectedUser, setSelectedUser] = useState('');
+    const [descriptionSearch, setDescriptionSearch] = useState('');
 
 useEffect(() => {
     let isMounted = true;
@@ -34,8 +43,59 @@ useEffect(() => {
     return () => {
             isMounted = false;
         };
-    
 },[maxRange])
+
+useEffect(() => {
+  let isMounted = true;
+  async function getList() {
+    const actionArray = systemHistory.map(history => history.action);
+        setActionList([...new Set(actionArray)]);
+    const userArray = systemHistory.map(users => users.created_by.name);
+        setUserList([...new Set(userArray)]);
+  }; getList();
+  
+  return () => {
+    isMounted = false;
+  };
+},[systemHistory])
+
+useMemo(() => {
+  async function getSystemHistoryRowCount() {
+    const systemHistoryRowCountResult = await fetchSystemHistoryCount();
+    setTotalSystemHistoryRowCount(systemHistoryRowCountResult);
+  }; getSystemHistoryRowCount();
+  
+},[])
+
+function handleActionListChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        setSelectedAction(e.target.value);
+};
+
+function handleUserListChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        setSelectedUser(e.target.value);
+};
+
+const handleDesriptionSearchChange = useCallback((e: any) => {
+    const value = e.target.value;
+    startTransition(() => {
+      setDescriptionSearch(value);
+    });
+  }, []);
+
+const filterSystemHistory = (systemHistories: SystemHistory[]) => {
+  return systemHistories.filter(sysHistory => {
+    const matchesOperator = sysHistory.apc_op_id === selectedOperator || selectedOperator === '';
+    const matchesActionItem = sysHistory.action === selectedAction || selectedAction === '';
+    const matchesUser = sysHistory.created_by.name === selectedUser || selectedUser === '';
+    const matchesDescription = sysHistory.description.toUpperCase().includes(descriptionSearch.toUpperCase()) || descriptionSearch === '';
+
+    return matchesOperator && matchesActionItem && matchesUser && matchesDescription;
+  });
+};
+
+const filteredSystemHistory = useMemo(() => {
+  return filterSystemHistory(systemHistory);
+}, [systemHistory, selectedOperator, selectedAction, selectedUser, descriptionSearch]);
 
 const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
         setRowsToShow(paginatedData);
@@ -49,6 +109,81 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
        <p className="text-base/6 custom-style-long-text px-3">
                 Who's doing what and when are they're doing it.
               </p>
+      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
+            <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter System History</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
+            <div>
+            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
+             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+          <select
+              id="userMapID"
+              name="userMapID"
+              autoComplete="off"
+              value={selectedUser}
+              onChange={handleUserListChange}
+              className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
+              <option></option>
+              {userList.map((option) => (
+                  <option key={option} value={option}>
+                      {option}
+                  </option>
+              ))}
+          </select>
+          <ChevronDownIcon
+              aria-hidden="true"
+              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+          />
+          </div>
+            </div>
+            <div>
+            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Action Type</h2>
+             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+          <select
+              id="actionMapID"
+              name="actionMapID"
+              autoComplete="off"
+              value={selectedAction}
+              onChange={handleActionListChange}
+              className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
+              <option></option>
+              {actionList.map((option) => (
+                  <option key={option} value={option}>
+                      {option}
+                  </option>
+              ))}
+          </select>
+          <ChevronDownIcon
+              aria-hidden="true"
+              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+          />
+          </div>
+            </div>
+            <div>
+            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
+              <OperatorDropdown
+                value={selectedOperator}
+                onChange={setSelectedOperator}
+                limitedList={true} />
+          </div>
+          <div >
+            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+                <input
+                  id="descriptionSearch"
+                  name="descriptionSearch"
+                  type="text"
+                  placeholder="GL Number 9230.001"
+                  autoComplete="off"
+                  value={descriptionSearch}
+                  onChange={handleDesriptionSearchChange}
+                  autoFocus={true}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                />
+          </div>
+          </div>
+            </div>
+            </div>
+
       <table className="mt-6 sm:w-full text-left">
         <colgroup>
           <col className="w-full sm:w-4/12" />
@@ -109,15 +244,17 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
       </table>
       <div className="w-full border-t border-[var(--darkest-teal)]">
           <UniversalPagination
-            data={systemHistory}
+            data={filteredSystemHistory}
             rowsPerPage={maxRowsToShow}
             listOfType="System Changes"
             onPageChange={handlePageChange}
+            totalUnfilteredRows={systemHistory.length}
           />
     </div>
         <div
           className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
           <button
+          disabled={systemHistory.length >= totalSystemHistoryRowCount ? true : false}
             onClick={async (e: any) => {
               e.preventDefault();
               setMaxRange(maxRange+24);
