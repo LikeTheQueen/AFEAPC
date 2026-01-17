@@ -34,7 +34,7 @@ export default function UniversalPagination<T>({
             setCurrentPage(Math.ceil(data.length/rowsPerPage)-1);
         }
     }, [data.length, rowsPerPage]);
-console.log(paginationArray,'the page aray');
+
     // Update paginated rows whenever page or data changes
     useEffect(() => {
         const startIndex = currentPage * rowsPerPage;

@@ -106,14 +106,15 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
     <>
     <div className="px-4 sm:px-16 sm:py-16">
       <h2 className="text-xl font-semibold custom-style">System Changes</h2>
-       <p className="text-base/6 custom-style-long-text px-3">
-                Who's doing what and when are they're doing it.
-              </p>
+        <p className="text-base/6 custom-style-long-text px-3">
+          Who's doing what and when are they're doing it.
+        </p>
+      {/* Filter out System History */}
       <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
             <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter System History</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
             <div>
-            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
+            <h2 className="text-sm/6 2xl:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="userMapID"
@@ -136,7 +137,7 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </div>
             </div>
             <div>
-            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Action Type</h2>
+            <h2 className="text-sm/6 2xl:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Action Type</h2>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="actionMapID"
@@ -159,14 +160,14 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </div>
             </div>
             <div>
-            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
+            <h2 className="text-sm/6 2xl:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
               <OperatorDropdown
                 value={selectedOperator}
                 onChange={setSelectedOperator}
                 limitedList={true} />
           </div>
           <div >
-            <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
+            <h2 className="text-sm/6 2xl:text-base/7 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="descriptionSearch"
@@ -182,13 +183,13 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </div>
           </div>
             </div>
-            </div>
-
+      </div>
+      {/* System History table */}
       <table className="mt-6 sm:w-full text-left">
         <colgroup>
-          <col className="w-full sm:w-4/12" />
+          <col className="w-full sm:w-3/12" />
           <col className="lg:w-5/12" />
-          <col className="lg:w-1/12" />
+          <col className="lg:w-2/12" />
           <col className="lg:w-2/12" />
         </colgroup>
         <thead className="border-b border-[var(--darkest-teal)]/30 text-xs/5 sm:text-base/6 text-[var(--darkest-teal)] custom-style">
@@ -242,6 +243,7 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           ))}
         </tbody>
       </table>
+      {/* Pagination for Table */}
       <div className="w-full border-t border-[var(--darkest-teal)]">
           <UniversalPagination
             data={filteredSystemHistory}
@@ -250,8 +252,9 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             onPageChange={handlePageChange}
             totalUnfilteredRows={systemHistory.length}
           />
-    </div>
-        <div
+      </div>
+      {/* Load More Button */}
+      <div
           className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
           <button
           disabled={systemHistory.length >= totalSystemHistoryRowCount ? true : false}
@@ -262,7 +265,7 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
             Load More
           </button>
-        </div>
+      </div>
     </div>
     </>
   )
