@@ -288,10 +288,10 @@ export default function AFE() {
       {/* Filter Non-Op AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
       <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
       hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined && currentTab===1) ? false : true} >
-      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
+      <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
         <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
       <input
         id="afeNumber"
         name="afeNumber"
@@ -301,11 +301,11 @@ export default function AFE() {
         value={afeNumberSearch}
         onChange={handleAFENumberSearchChange}
         autoFocus={true}
-        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+        className="block w-full rounded-md bg-white px-3 py-1.5 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
       />
     </div>
       <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
       <OperatorDropdown
       value={operatorSeach}
       onChange={setOperatorSearch}
@@ -313,13 +313,13 @@ export default function AFE() {
       </OperatorDropdown>
     </div>
     <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Your AFE Status</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Your AFE Status</h2>
       <PartnerStatusDropdown
       onChange={setPartnerStatusSearch}>
       </PartnerStatusDropdown>
     </div>
     <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Op Approval Date</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Op Approval Date</h2>
       <OperatorApprovalDropdown
       onChange={setOperatorApprovedDaysAgo}>
       </OperatorApprovalDropdown>
@@ -390,7 +390,7 @@ export default function AFE() {
         </Link>
       ))}
     </ul>
-    <div className="mt-4">
+    <div className="mt-4 text-xs/6 2xl:text-sm/6">
     <UniversalPagination
             data={filteredNonOperatedAFEs}
             rowsPerPage={6}
@@ -416,10 +416,10 @@ export default function AFE() {
       {/* Filter Operated AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
       <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
       hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined && currentTab===2) ? false : true} >
-      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
+      <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
       <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
       <input
         id="afeNumber"
         name="afeNumber"
@@ -433,7 +433,7 @@ export default function AFE() {
       />
     </div>
       <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Name</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Partner Name</h2>
       <PartnerDropdown
       value={partnerSearch}
       onChange={setPartnerSearch}
@@ -441,13 +441,13 @@ export default function AFE() {
       </PartnerDropdown>
     </div>
     <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Status</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Partner Status</h2>
       <PartnerStatusDropdown
       onChange={setPartnerStatusSearch}>
       </PartnerStatusDropdown>
     </div>
     <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Change</h2>
+      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Partner Change</h2>
       <OperatorApprovalDropdown
       onChange={setPartnerStatusDaysAgo}>
       </OperatorApprovalDropdown>
@@ -517,7 +517,7 @@ export default function AFE() {
         </Link>
       ))}
     </ul>
-    <div className="mt-4">
+    <div className="mt-4 text-xs/6 2xl:text-sm/6">
           <UniversalPagination
             data={filteredOperatedAFEs}
             rowsPerPage={6}

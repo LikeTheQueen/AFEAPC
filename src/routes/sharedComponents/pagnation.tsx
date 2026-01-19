@@ -77,8 +77,8 @@ export default function UniversalPagination<T>({
 
     return (
         <>
-        <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-            <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+        <div className="w-full flex justify-between sm:justify-between flex-row sm:flex-row gap-5 px-1 items-center">
+            <div className="text-[var(--darkest-teal)] custom-style font-medium">
                 Showing {startItem} to {endItem} of {data.length} {listOfType} {totalUnfilteredRows !== 0 && data.length !== totalUnfilteredRows ? '(Filtered from '+totalUnfilteredRows+' Total)' : ''}
                 <br></br>Page {currentPage + 1} of {totalPages}
                 
@@ -89,7 +89,7 @@ export default function UniversalPagination<T>({
                     role="navigation"
                     aria-label="Pagination">
                     <li
-                        className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid ${currentPage === 0
+                        className={`flex items-center justify-center w-6 h-6 2xl:w-8 2xl:h-8 rounded-md  border-2 border-solid ${currentPage === 0
                                 ? "bg-white border-[var(--darkest-teal)]/20 text-[var(--darkest-teal)]/30 pointer-events-none"
                                 : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                             }`}
@@ -98,7 +98,7 @@ export default function UniversalPagination<T>({
                     </li>
                     {paginationArray.map((pageNum) => (
                         <li hidden={(pageNum <= maxPageNumber-1 && pageNum >= minPageNumber) || paginationArray.length <=1 ? false : true }
-                            className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage === pageNum
+                            className={`flex items-center justify-center w-6 h-6 2xl:w-8 2xl:h-8 rounded-md border-2 border-solid bg-white cursor-pointer ${currentPage === pageNum
                                     ? "bg-white border-[var(--bright-pink)] pointer-events-none"
                                     : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                                 }`}
@@ -108,12 +108,12 @@ export default function UniversalPagination<T>({
                         </li>
                     ))}
                     <li hidden={maxPageNumber >= totalPages ? true : false }
-                        className={`flex items-end justify-center w-8 rounded-md h-8 bg-white text-[var(--darkest-teal)]/40 pointer-events-none}`}
+                        className={`flex items-end justify-center w-6 h-6 2xl:w-8 2xl:h-8 rounded-md bg-white text-[var(--darkest-teal)]/40 pointer-events-none}`}
                         onClick={nextPage}>
                         <EllipsisHorizontalIcon className="w-5 h-5" />
                     </li>
                     <li
-                        className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid ${currentPage === totalPages - 1
+                        className={`flex items-center justify-center w-6 h-6 2xl:w-8 2xl:h-8 rounded-md border-2 border-solid ${currentPage === totalPages - 1
                                 ? "bg-white border-[var(--darkest-teal)]/20 text-[var(--darkest-teal)]/30 pointer-events-none"
                                 : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
                             }`}

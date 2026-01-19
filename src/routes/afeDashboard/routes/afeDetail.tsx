@@ -10,18 +10,27 @@ import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupa
 import AFEHistory from "./afeHistory";
 import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "./helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
-import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon} from '@heroicons/react/24/outline';
 import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { ToastContainer } from "react-toastify";
 import { insertAFEHistory } from "provider/write";
+import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+
+const tabs = [
+  {id:1, name:"AFE Documents", current: true},
+  {id:2, name:"AFE History", current: false}
+];
 
 export default function AFEDetailURL() {
   const { afeID } = useParams<{ afeID: string }>();
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
+  const [tabList, setTabList] = useState(tabs);
+  const [currentTab, setCurrentTab] = useState(1);
   const [open, setOpen] = useState(false);
   const { handlePartnerStatusChange } = usePartnerStatusChange();
 
@@ -209,7 +218,7 @@ export default function AFEDetailURL() {
   async function handleViewDocument(url:string) {
     try{
     const file = await fetchRelatedDocuments(url,token);
-console.log(file)
+
     if(file.ok) {
       setDocToView(file.data[0].uri)
     }
@@ -270,8 +279,7 @@ console.log(file)
   return (
     <>
       <main >
-          <div className="relative h-full">
-      
+      <div className="relative h-full">
       <Dialog open={open} onClose={setOpen} className="relative z-10">
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
@@ -311,16 +319,16 @@ console.log(file)
         </div>
       </Dialog>
     </div>
-        <div className="pt-16 px-4 sm:px-16 ">
+        <div className="pt-16 px-4 sm:px-16 h-full">
           <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 xl:mx-0 xl:max-w-none xl:grid-cols-3"> 
             {/* Archive Accept Reject Buttons */}
-            <div className="xl:col-start-3 xl:row-end-1 h-15 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3">
+            <div className="xl:col-start-3 xl:row-end-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3 ">
               <div className="max-w-7xl">
                 <div className="flex justify-between max-w-2xl gap-x-1 xl:mx-0 xl:max-w-none">
-                  <div className="flex gap-x-4 sm:gap-x-6">
+                  <div className="flex items-center gap-x-4">
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord!, 'Approved', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as approved`, 'action'),
                         setButtonDisabled(true),
@@ -336,7 +344,7 @@ console.log(file)
                     </button>
                     <button
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={(e: any) => {
                         handlePartnerStatusChange(afeRecord!, 'Rejected', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as rejected`, 'action'),
                         setButtonDisabled(true),
@@ -353,10 +361,10 @@ console.log(file)
                     
                     
                   </div>
-                  <div className="flex items-center gap-x-4 sm:gap-x-6">
+                  <div className="flex items-center gap-x-4">
                     <button
                       hidden={doesUserHavePartnerViewAFERole ? false : true}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         
                         handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action', token),
@@ -367,8 +375,8 @@ console.log(file)
                     </button>
                     
                     <button
-                      hidden={doesUserHaveOperatorViewAFERole ? false : true}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                      hidden={doesUserHaveOperatorViewAFERole ? true : true}
+                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
                         setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));
@@ -384,69 +392,69 @@ console.log(file)
               </div>
             </div>
            {/* AFE Details */}
-            <div className="sm:-mx-4 px-2 py-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
+            <div className="px-2 py-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
                {afeLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                {/* AFE Header 1 */}
-              <div className="m-0 max-w-2xl sm:w-full sm:flex justify-between">
+              <div className="m-0 max-w-2xl sm:w-full sm:flex justify-between text-xs/6 2xl:text-sm/6 ">
                 <div>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left sm:mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
                 </div>
                 <div>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
-                <h2 className="text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">{afeRecord?.operator} WI<span className="font-normal pl-2">{afeRecord?.operator_wi.toFixed(6)}%</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-right sm:mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">{afeRecord?.operator} WI<span className="font-normal pl-2">{afeRecord?.operator_wi.toFixed(6)}%</span></h2>
                 </div>
               </div>
               {/* AFE Header 2 */}
               <div className="mt-4 sm:w-full border-t border-t-1 border-b border-b-4 border-double border-[var(--darkest-teal)]/70">
-                <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
-                  <div className="sm:pr-4 text-left col-span-4">
-                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-xs/6 2xl:text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
+                  <div className="2xl:pr-4 text-left sm:col-span-4 col-span-7">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.afe_number}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left col-span-2">
-                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                  <div className="2xl:pr-4 text-left sm:col-span-3 col-span-7">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.version_string}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left col-span-4">
-                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                  <div className="2xl:pr-4 text-left sm:col-span-4 col-span-7">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-4 sm:text-right col-span-5">
-                    <dt className="inline text-sm/6 font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2 capitalize">
+                  <div className="sm:pr-2 sm:text-right sm:col-span-4 col-span-7">
+                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.well_name}
                     </dd>
                   </div>
 
-                  <div className="sm:pr-4 text-left sm:col-start-1 col-span-4">
+                  <div className="2xl:pr-4 text-left sm:col-start-1 col-span-7">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       ${ afeRecord?.supp_gross_estimate! > 0 ?
                       afeRecord?.supp_gross_estimate!.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) :
                       afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                       }
                     </dd>
                   </div>
-                  <div className="sm:pr-4 text-left col-span-3">
+                  <div className="2xl:pr-4 text-left col-span-7">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Net Total</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       { afeRecord?.supp_gross_estimate! > 0 ?
                       calcPartnerNet(afeRecord?.supp_gross_estimate!, afeRecord?.partner_wi) :
                       calcPartnerNet(afeRecord?.total_gross_estimate, afeRecord?.partner_wi)
                       }
                     </dd>
                   </div>
-                  <div className="sm:pr-4 col-span-8 sm:text-right shrink">
+                  <div className="sm:pr-4 col-span-15 sm:row-start-3 sm:text-right">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">{afeRecord?.operator} Approved</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)] pl-2">
+                    <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       {afeRecord?.iapp_date}
                     </dd>
                   </div>
@@ -458,10 +466,10 @@ console.log(file)
                <div 
                hidden={afeWells.length === 0 ? true : false}
                className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
-               <h2 className="pt-1 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm/6 custom-style-long-text text-[var(--dark-teal)] capitalize">
+               <h2 className="pt-1 text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style">Wells</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-1 text-xs/6 2xl:text-sm/6 custom-style-long-text text-[var(--dark-teal)] capitalize">
                 {afeWells.map((item, wellIdx) => (
-                  <div key={wellIdx} className="p-2">
+                  <div key={wellIdx} className="p-0 pb-1">
                     {item.well_name}
                     {item.well_number !== null && (
                       <>
@@ -483,9 +491,9 @@ console.log(file)
                 <>
                 
                {/* AFE Estimates */}
-               <div className="">
-                
-              <table className="w-full text-left text-sm/6 2xl:whitespace-nowrap">
+              
+              <div className="2xl:h-100">  
+              <table className="w-full text-left text-xs/6 2xl:text-sm/6 2xl:whitespace-nowrap">
 
                 {groupedAccounts && Array.from(groupedAccounts).map(([accountGroup, accounts]) => (
                   <tbody key={accountGroup} >
@@ -521,7 +529,7 @@ console.log(file)
                 ))}
               </table>
               <div hidden={afeEstimates.length > 0 ? false : true}
-              className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 px-1 items-center pt-2">
+              className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-end sm:justify-between flex-row sm:flex-row gap-5 px-1 items-center pt-2 text-xs/6 2xl:text-sm/6">
                 <UniversalPagination
                   data={afeEstimates}
                   rowsPerPage={6}
@@ -540,7 +548,7 @@ console.log(file)
                     handleExport();
 
                   }}
-                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-xs/6 2xl:text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                   Export Line Items to Excel
                 </button>
               </div>
@@ -549,16 +557,59 @@ console.log(file)
             
             {/* AFE DOCS and AFE History*/}
             <div className="xl:col-start-3">
+              <div className="sm:flex">
+                      <div className="w-full">
+                        <nav aria-label="Tabs" className="-mb-px flex rounded-t-md border border-[var(--darkest-teal)]">
+                          {tabList.map((item, index) => (
+                              <Button
+                              key={item.id}
+                              onClick={e => {
+                                handleTabChanged(
+                            {
+                              selected: item.id,
+                              tabs: tabs,
+                              onTabChange: (currentTab)=>setCurrentTab(currentTab),
+                              onTabListChange: (tabs)=>setTabList(tabs)
+                            }
+                          )
+                              }}
+                              className={`flex-1 text-center custom-style transition-colors ease-in-out duration-300 text-xs/6 2xl:text-sm/6
+                    
+                    ${item.current
+                        ? 'bg-[var(--dark-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-2 font-medium shadow-sm z-10'
+                        : 'bg-white shadow-2xl text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal cursor-pointer'}
+                        ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
+                        ${index === 0 ? 'rounded-tl-md' : ''}
+                        ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
+                        `}>
+                              <span className="">{item.name}</span>
+                              </Button>
+                          ))}
+                        </nav>
+                      </div>
+                    </div>
+                    <div hidden={currentTab !== 1}>
+                      <div hidden={afeDocs.length <= 0 ? false : true}
+                      className="mt-4 rounded-lg shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg">
+                  <NoSelectionOrEmptyArrayMessage
+                    message={
+                      <>
+                        There are no documents for this AFE.
+                        <br /><br />
+                        If you are the Operator and expect to see attachments please verify the comments associated to the files are correct.
+                      </>
+                    }
+                  />
+                      </div>
               <div hidden={afeDocs.length> 0 ? false : true }>
-              <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">AFE Documents </h2>
-              <div className="mb-6 mt-2 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-lg px-5 py-3">
+              <div className="mb-6 bg-white mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg px-5 py-3">
               <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
               {afeDocs?.map((afeDoc) => (
                 <li key={afeDoc.id}>
-                  <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                  <div className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
                   {afeDoc.filename_display}
                   </div>
-                  <div className="flex items-center gap-x-3 pl-5 custom-style-long-text font-semibold underline text-sm/6 mb-3 mt-1">
+                  <div className="flex items-center gap-x-3 pl-5 custom-style-long-text font-semibold underline text-xs/6 2xl:text-sm/6 mb-3 mt-1">
                     <ul
               className="flex justify-center items-center align-center gap-x-[10px]"
               role="navigation"
@@ -583,10 +634,13 @@ console.log(file)
             </ul>
             </div>
             </div>
+            </div>
+            <div hidden={currentTab !== 2}>
             <AFEHistory historyAFEs={afeHistories}
             apc_afe_id={afeID!}
             userName={loggedInUser?.firstName}
             />
+            </div>
             </div>
           </div>
         </div>

@@ -42,7 +42,7 @@ export function SingleCheckbox({ value, onChange, label, id }: Props) {
                     </svg>
                 </div>
             </div>
-            <div className="text-sm/6">
+            <div className="">
                 <label htmlFor={id} className="font-medium text-[var(--darkest-teal)] custom-style">
                     {label}
                 </label>

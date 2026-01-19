@@ -380,8 +380,13 @@ export const fetchSupportHistory = async(user_id: string, is_super_user: boolean
   const transformedSupportHistory = transformSupportHistory(data);
   return transformedSupportHistory;
 };
-export const fetchNotifications = async() => {
-  const { data, error } = await supabase.from('AFE_HISTORY').select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)').eq('type','action');
+export const fetchNotifications = async(minRange: number, maxRange: number) => {
+  const { data, error } = await supabase
+  .from('AFE_HISTORY')
+  .select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)')
+  .eq('type','action')
+  .order('id', { ascending: false })
+  .range(minRange,maxRange);
   if(error) {
     console.error('Unable to get Support History');
     return [];
@@ -412,6 +417,30 @@ export const fetchSystemHistoryCount = async () => {
     return 0;
   }
   console.log(count,'THE COUNT FROM THE CALL')
+  return count ?? 0;
+};
+export const fetchAFEHistoryCount = async (afe_id: string) => {
+  const { count, error } = await supabase
+    .from('AFE_HISTORY')
+    .select('*', { count: 'exact', head: true })
+    .eq('afe_id',afe_id);
+
+  if (error) {
+    console.error('Unable to get AFE History count', error);
+    return 0;
+  }
+  return count ?? 0;
+};
+export const fetchAFENotificationCount = async () => {
+  const { count, error } = await supabase
+    .from('AFE_HISTORY')
+    .select('*', { count: 'exact', head: true })
+    .eq('type','action');
+
+  if (error) {
+    console.error('Unable to get AFE History count', error);
+    return 0;
+  }
   return count ?? 0;
 };
 //Edge Functions

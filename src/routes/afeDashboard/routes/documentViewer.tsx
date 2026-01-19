@@ -83,43 +83,40 @@ return (
     <div className="text-sm/6 text-white custom-style font-medium">
             Showing page {pageNumber} {" "}of {numPages} Pages
     </div>
-          <div className="flex ">
-                      <ul
-                        className="flex justify-center items-center align-center gap-x-[10px] "
-                        role="navigation"
-                        aria-label="Pagination">
-                        <li
-                          className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
-                            pageNumber === 1
-                              ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
-                              : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
-                          }`}
-                          onClick={previousPage}>
-                          <ChevronLeftIcon className="w-5 h-5"></ChevronLeftIcon>
-                        </li> 
-                        {createArrayWithArrayFrom(numPages).map((pageNum) => (
-                          <li hidden={(pageNum <= maxPageNumber && pageNum >= minPageNumber) || numPages <=1 ? false : true }
-                            className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${
-                              pageNumber === (pageNum)
-                                ? "border-[var(--bright-pink)] pointer-events-none"
-                                : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
-                            }`}
-                            onClick={() => setPage(pageNum)}
-                            key={pageNum}>
-                            {pageNum}
-                          </li>
-                        ))}
-                        <li
-                          className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
-                            pageNumber == numPages
-                              ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
-                              : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
-                          }`}
-                          onClick={nextPage}>
-                          <ChevronRightIcon className="w-5 h-5"></ChevronRightIcon>
-                        </li>
-                      </ul>
-                    </div>
+              <div className="flex ">
+                <ul
+                  className="flex justify-center items-center align-center gap-x-[10px] "
+                  role="navigation"
+                  aria-label="Pagination">
+                  <li
+                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${pageNumber === 1
+                        ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
+                        : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
+                      }`}
+                    onClick={previousPage}>
+                    <ChevronLeftIcon className="w-5 h-5"></ChevronLeftIcon>
+                  </li>
+                  {createArrayWithArrayFrom(numPages).map((pageNum) => (
+                    <li hidden={(pageNum <= maxPageNumber && pageNum >= minPageNumber) || numPages <= 1 ? false : true}
+                      className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${pageNumber === (pageNum)
+                          ? "border-[var(--bright-pink)] pointer-events-none"
+                          : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
+                        }`}
+                      onClick={() => setPage(pageNum)}
+                      key={pageNum}>
+                      {pageNum}
+                    </li>
+                  ))}
+                  <li
+                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${pageNumber == numPages
+                        ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
+                        : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
+                      }`}
+                    onClick={nextPage}>
+                    <ChevronRightIcon className="w-5 h-5"></ChevronRightIcon>
+                  </li>
+                </ul>
+              </div>
     </div>
     </div>
     </>
