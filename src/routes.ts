@@ -30,6 +30,7 @@ export default [
     route("/mainScreen/profile", "./routes/userProfile/routes/profile.tsx"),
     route("/mainScreen/afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
     route("/mainScreen/supporthistory", "./routes/support/routes/supportHistory.tsx"),
+    route("/mainScreen/systemhistory", "./routes/support/routes/systemHistory.tsx"),
     route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/manageUserPermissions.tsx"), 
     route("/mainScreen/manageUsers", "./routes/createEditUsers/routes/manageUserDashboard.tsx"),
     route("/mainScreen/manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),

@@ -32,13 +32,14 @@ import { DialogTitle } from '@headlessui/react'
 
 const navigation = [
   { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon},
-  { name: 'Historical AFEs', href: "/mainscreen/afeArchived", icon: ClockIcon },
-  { name: 'Notifications', href: "/mainScreen/notifications", icon: BellIcon },
+  { name: 'Archived AFEs', href: "/mainscreen/afeArchived", icon: ClockIcon },
+  { name: 'AFE History', href: "/mainScreen/notifications", icon: BellIcon },
 ]
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
-  { id: 2, name: 'Contact Support', href: "/mainScreen/contactsupport", initial: 'C' },
-  { id: 3, name: 'Support History', href: "/mainScreen/supporthistory", initial: 'S' }
+  { id: 2, name: 'System History', href: "systemHistory", initial: 'S' },
+  { id: 3, name: 'Contact Support', href: "/mainScreen/contactsupport", initial: 'C' },
+  { id: 4, name: 'Support History', href: "/mainScreen/supporthistory", initial: 'S' }
 ]
 const settings = [
   { id: 1, name: 'Manage User Access', href: "/mainscreen/manageUsers", initial: 'U' },

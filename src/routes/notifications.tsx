@@ -27,6 +27,7 @@ const [notifications, setNotifications] = useState<Notifications[] | []>([]);
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
     const [afeSearch, setAFESearch] = useState('');
+    const [verSearch, setVerSearch] = useState('');
     const [descriptionSearch, setDescriptionSearch] = useState('');
 
     useEffect(() => {
@@ -63,9 +64,11 @@ useEffect(() => {
   let isMounted = true;
   async function getList() {
     const userArray = notifications.map(notification => notification.user.name);
+    const actionArray = notifications.map(notification => notification.type);
         
     if(isMounted) {
         setUserList([...new Set(userArray)]);
+        setActionList([...new Set(actionArray)]);
       }
   }; getList();
   
@@ -88,11 +91,20 @@ const handleAFESearchChange = useCallback((e: any) => {
     });
   }, []);
 
+const handleAFEVerSearchChange = useCallback((e: any) => {
+    const value = e.target.value;
+    startTransition(() => {
+      setVerSearch(value);
+    });
+  }, []);
+
 function handleUserListChange(e: React.ChangeEvent<HTMLSelectElement>) {
   setSelectedUser(e.target.value);
 };
 
-
+function handleAcionListChange(e: React.ChangeEvent<HTMLSelectElement>) {
+  setSelectedAction(e.target.value);
+};
 
 const filterNotifications = (notificationsList: Notifications[]) => {
     return notificationsList.filter(notice => {
@@ -100,16 +112,15 @@ const filterNotifications = (notificationsList: Notifications[]) => {
       const matchesAFENumber = notice.afe_number.toUpperCase().includes(afeSearch.toUpperCase()) || afeSearch === '';
       const matchesDescription = notice.description.toUpperCase().includes(descriptionSearch.toUpperCase()) || descriptionSearch === '';
       const matchesAction = notice.type === selectedAction || selectedAction === '';
+      const matchesVersion = notice.afe_version !== null && notice.afe_version.toUpperCase().includes(verSearch.toUpperCase()) || verSearch === '';
 
-      return matchesUser && matchesDescription && matchesAction && matchesAFENumber
+      return matchesUser && matchesDescription && matchesAction && matchesAFENumber && matchesVersion
     })
   };
 
 const filteredNotifiations = useMemo(() => {
   return filterNotifications(notifications);
-},[notifications, selectedUser, afeSearch, descriptionSearch]);
-
-
+},[notifications, selectedUser, selectedAction, afeSearch, descriptionSearch, verSearch]);
 
 const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
@@ -119,14 +130,15 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
   return (
     <>
     <div className="px-4 py-4 sm:px-6 sm:py-6">
-      <h2 className="text-lg sm:text-xl font-semibold custom-style">Notifications</h2>
+      <h2 className="text-lg sm:text-xl font-semibold custom-style">AFE Histories</h2>
        <p className="text-xs/6 2xl:text-sm/6 custom-style-long-text px-3">
-                Cumlative history of actions taken on AFEs.
+                Cumlative history of actions taken on all AFEs.
               </p>
       {/* Filter out System History */}
       <div className="ml-2 mr-2 sm:mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
-            <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFE Notifications</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
+        <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFE Histories</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
+            {/* Filter on the User */}
             <div>
             <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
@@ -150,7 +162,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
           />
           </div>
             </div>
-            
+            {/* Filter on the AFE Number */}
             <div >
             <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Number</h2>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
@@ -166,8 +178,26 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                 />
           </div>
+            </div>
+            {/* Filter on the AFE Version */}
+            <div >
+            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Version</h2>
+            <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+                <input
+                  id="afeVerSearch"
+                  name="afeVerSearch"
+                  type="text"
+                  placeholder="S2"
+                  autoComplete="off"
+                  value={verSearch}
+                  onChange={handleAFEVerSearchChange}
+                  autoFocus={false}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
+                />
           </div>
-          <div >
+            </div>
+            {/* Filter on the Description */}
+            <div >
             <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
@@ -182,8 +212,8 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                 />
           </div>
-          </div>
             </div>
+          </div>
       </div>
       <table className="mt-6 w-full text-left whitespace-normal">
         <colgroup>
@@ -544,7 +574,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
               setMaxRange(maxRange+15);
             }}
             className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-            Load More
+            {notifications.length >= totalAFEHistoryRowCount ? "That's Everything!" : "Load More"}
           </button>
       </div>
     </div>

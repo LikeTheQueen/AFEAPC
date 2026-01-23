@@ -516,7 +516,7 @@ export default function AFEDetailURL() {
                       <td className="table-cell px-0 py-0 text-right w-1/6 ">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
-                      <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums ">
+                      <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums">
                         <td className="hidden sm:table-cell px-0 py-3 text-left sm:w-2/6">
                           {item.operator_account_description}
                         </td>

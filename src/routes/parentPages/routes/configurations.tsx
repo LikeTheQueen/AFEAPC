@@ -22,16 +22,17 @@ const tabs = [
   {id:4, name:"View & Manage GL Codes", current: false, href:"/mainScreen/configurations/glcodesview", mobile: true},
     ]
    },
-  { id:3, name: 'Data Export', href: "/mainScreen/configurations", current: false,
+   { id:3, name: 'System Connections', href: "/mainScreen/configurations", current: false,
+    sublist:[
+  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
+  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
+    ] },
+  { id:4, name: 'Data Export', href: "/mainScreen/configurations", current: false,
     sublist:[
   {id:1, name:"Upload Export Templates", current: true, href:"/mainScreen/configurations/partnerupload", mobile: false},
   {id:2, name:"Export Data", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
     ] },
-  { id:4, name: 'System Connections', href: "/mainScreen/configurations", current: false,
-    sublist:[
-  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
-  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/partnermapping", mobile: true},
-    ] },
+  
 ];
 
 export default function Configurations() {

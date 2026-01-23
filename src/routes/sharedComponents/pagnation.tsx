@@ -25,14 +25,15 @@ export default function UniversalPagination<T>({
     // Calculate total pages and pagnation array when data changes
     useMemo(() => {
         const pages = Math.ceil(data.length / rowsPerPage);
-        console.log(pages,'THE PAGES');
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
 
         if(data.length < rowsPerPage*(currentPage+1) && currentPage !==0) {
             console.log(Math.ceil(data.length/rowsPerPage)-1);
             setCurrentPage(Math.ceil(data.length/rowsPerPage)-1);
-        }
+        } 
+
+        
     }, [data.length, rowsPerPage]);
 
     // Update paginated rows whenever page or data changes
@@ -41,12 +42,15 @@ export default function UniversalPagination<T>({
         const endIndex = startIndex + rowsPerPage;
         const paginatedData = data.slice(startIndex, endIndex);
         onPageChange(paginatedData, currentPage);
+        if(currentPage < minPageNumber || currentPage > maxPageNumber) {
+            goToPage(currentPage);
+        }
     }, [currentPage, data, rowsPerPage]);
 
     const goToPage = (pageNumber: number) => {
         if (pageNumber >= 0 && pageNumber < totalPages) {
             setCurrentPage(pageNumber);
-            setMinPageNumber(Math.min(Math.max(0, pageNumber - 2),4));
+            setMinPageNumber(Math.min(Math.max(0, pageNumber - 2), totalPages - 5));
             setMaxPageNumber(Math.max(Math.min(totalPages, pageNumber + 2),4));
         }
     };
@@ -57,7 +61,6 @@ export default function UniversalPagination<T>({
             setMinPageNumber(Math.min(Math.max(0, currentPage - 1), totalPages - 5));
             setMaxPageNumber(Math.min(totalPages, Math.max(0, currentPage + 3, 4)));
         }
-
     };
 
     const previousPage = () => {
@@ -66,7 +69,6 @@ export default function UniversalPagination<T>({
             setMinPageNumber(Math.min(Math.max(0, currentPage - 3), totalPages - 5));
             setMaxPageNumber(Math.min(totalPages, Math.max(currentPage + 1, 4)));
         }
-        
     };
 
     // Calculate the range of items being shown
@@ -80,7 +82,7 @@ export default function UniversalPagination<T>({
         <div className="w-full flex justify-between sm:justify-between flex-row sm:flex-row gap-5 px-1 items-center">
             <div className="text-[var(--darkest-teal)] custom-style font-medium">
                 Showing {startItem} to {endItem} of {data.length} {listOfType} {totalUnfilteredRows !== 0 && data.length !== totalUnfilteredRows ? '(Filtered from '+totalUnfilteredRows+' Total)' : ''}
-                <br></br>Page {currentPage + 1} of {totalPages}
+                <br></br>Page {currentPage + 1} of {totalPages} 
                 
             </div>
             <div className="flex">
@@ -122,9 +124,7 @@ export default function UniversalPagination<T>({
                     </li>
                 </ul>
             </div>
-            
         </div>
-       
         </>
     );
 
