@@ -4,7 +4,7 @@ import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusBu
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
@@ -22,7 +22,8 @@ import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelect
 
 const tabs = [
   {id:1, name:"AFE Documents", current: true},
-  {id:2, name:"AFE History", current: false}
+  {id:2, name:"AFE Comments", current: false},
+  {id:3, name:"AFE History", current: false}
 ];
 
 export default function AFEDetailURL() {
@@ -42,6 +43,8 @@ export default function AFEDetailURL() {
   const [afeRecord, setAFERecord] = useState<AFEType | null>(null);
   const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | []>([]);
   const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
+  const [afeHistoriesComments, setAFEHistoryComments] = useState<AFEHistorySupabaseType[] | []>([]);
+  const [afeHistoriesActions, setAFEHistoryActions] = useState<AFEHistorySupabaseType[] | []>([]);
   const [afeDocs, setDocs] = useState<AFEDocuments[] | []>([]);
   const [afeWells, setWells] = useState<AFEWells[] | []>([]);
   const [docToView, setDocToView] = useState<string>('');
@@ -105,13 +108,14 @@ export default function AFEDetailURL() {
 
         if(isMounted) {
           const historyTransformed = transformAFEHistorySupabase(historyResponse.data);
-        setHistory(historyTransformed);
+          setHistory(historyTransformed.sort((a: AFEHistorySupabaseType, b: AFEHistorySupabaseType) => a.id - b.id));
         }
 
       } 
       finally {
                 if (isMounted) {
                     setAFEHistoryLoading(false);
+                   
                 }
       };
 
@@ -187,7 +191,7 @@ export default function AFEDetailURL() {
 
     fetchAllRelatedData();
     return () => {
-            isMounted = false;
+            isMounted = false; 
         };
   }, [afeRecord]);
 
@@ -275,6 +279,13 @@ export default function AFEDetailURL() {
         XLSX.writeFile(wb, "export.xlsx");
       
   };
+
+  useMemo(() => {
+     setAFEHistoryComments(afeHistories.filter(history => history.type === 'comment'));
+     setAFEHistoryActions(afeHistories.filter(history => history.type !== 'comment'));
+
+  },[afeHistories]);
+
   
   return (
     <>
@@ -463,6 +474,7 @@ export default function AFEDetailURL() {
               </div>
               </>
                )}
+               {/* AFE Wells - Hidden if there is only one */}
                <div 
                hidden={afeWells.length === 0 ? true : false}
                className="rounded-lg bg-white shadow-xl ring-1 ring-[var(--darkest-teal)]/70 my-4 pl-2">
@@ -489,9 +501,7 @@ export default function AFEDetailURL() {
               </div>
                {afeEstimatesLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
-                
                {/* AFE Estimates */}
-              
               <div className="2xl:h-100">  
               <table className="w-full text-left text-xs/6 2xl:text-sm/6 2xl:whitespace-nowrap">
 
@@ -558,39 +568,39 @@ export default function AFEDetailURL() {
             {/* AFE DOCS and AFE History*/}
             <div className="xl:col-start-3">
               <div className="sm:flex">
-                      <div className="w-full">
-                        <nav aria-label="Tabs" className="-mb-px flex rounded-t-md border border-[var(--darkest-teal)]">
-                          {tabList.map((item, index) => (
-                              <Button
-                              key={item.id}
-                              onClick={e => {
-                                handleTabChanged(
+                <div className="w-full">
+                  <nav aria-label="Tabs" className="-mb-px flex rounded-t-md border border-[var(--darkest-teal)]">
+                    {tabList.map((item, index) => (
+                      <Button
+                        key={item.id}
+                        onClick={e => {
+                          handleTabChanged(
                             {
                               selected: item.id,
                               tabs: tabs,
-                              onTabChange: (currentTab)=>setCurrentTab(currentTab),
-                              onTabListChange: (tabs)=>setTabList(tabs)
+                              onTabChange: (currentTab) => setCurrentTab(currentTab),
+                              onTabListChange: (tabs) => setTabList(tabs)
                             }
                           )
-                              }}
-                              className={`flex-1 text-center custom-style transition-colors ease-in-out duration-300 text-xs/6 2xl:text-sm/6
+                        }}
+                        className={`flex-1 text-center custom-style transition-colors ease-in-out duration-300 text-xs/6 2xl:text-sm/6
                     
                     ${item.current
-                        ? 'bg-[var(--dark-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-2 font-medium shadow-sm z-10'
-                        : 'bg-white shadow-2xl text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal cursor-pointer'}
+                            ? 'bg-[var(--dark-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-2 font-medium shadow-sm z-10'
+                            : 'bg-white shadow-2xl text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal cursor-pointer'}
                         ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
                         ${index === 0 ? 'rounded-tl-md' : ''}
                         ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
                         `}>
-                              <span className="">{item.name}</span>
-                              </Button>
-                          ))}
-                        </nav>
-                      </div>
-                    </div>
-                    <div hidden={currentTab !== 1}>
-                      <div hidden={afeDocs.length <= 0 ? false : true}
-                      className="mt-4 rounded-lg shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg">
+                        <span className="">{item.name}</span>
+                      </Button>
+                    ))}
+                  </nav>
+                </div>
+              </div>
+              <div hidden={currentTab !== 1}>
+                <div hidden={afeDocs.length <= 0 ? false : true}
+                  className="mt-4 rounded-lg shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg">
                   <NoSelectionOrEmptyArrayMessage
                     message={
                       <>
@@ -600,47 +610,63 @@ export default function AFEDetailURL() {
                       </>
                     }
                   />
-                      </div>
-              <div hidden={afeDocs.length> 0 ? false : true }>
-              <div className="mb-6 bg-white mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg px-5 py-3">
-              <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
-              {afeDocs?.map((afeDoc) => (
-                <li key={afeDoc.id}>
-                  <div className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                  {afeDoc.filename_display}
+                </div>
+                <div hidden={afeDocs.length > 0 ? false : true}>
+                  <div className="mb-6 bg-white mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg px-5 py-3">
+                    <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
+                      {afeDocs?.map((afeDoc) => (
+                        <li key={afeDoc.id}>
+                          <div className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                            {afeDoc.filename_display}
+                          </div>
+                          <div className="flex items-center gap-x-3 pl-5 custom-style-long-text font-semibold underline text-xs/6 2xl:text-sm/6 mb-3 mt-1">
+                            <ul
+                              className="flex justify-center items-center align-center gap-x-[10px]"
+                              role="navigation"
+                              aria-label="View Document">
+                              <li className="cursor-pointer"
+                                onClick={(e) => {
+                                  handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimeype),
+                                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', token)
+                                }}>
+                                Download
+                              </li>
+                              <li className="cursor-pointer"
+                                hidden={afeDoc.mimeype === 'pdf' ? false : true}
+                                onClick={(e) => {
+                                  setOpen(true), handleViewDocument(afeDoc.storage_path),
+                                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', token)
+                                }}>
+                                View
+                              </li>
+                            </ul>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="flex items-center gap-x-3 pl-5 custom-style-long-text font-semibold underline text-xs/6 2xl:text-sm/6 mb-3 mt-1">
-                    <ul
-              className="flex justify-center items-center align-center gap-x-[10px]"
-              role="navigation"
-              aria-label="View Document">
-                <li className="cursor-pointer"
-                onClick={(e) => {handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimeype),
-                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ',loggedInUser!.lastName!,' downloaded the AFE attachment ',afeDoc.filename_display, ' for AFE# ',afeRecord!.afe_number!,afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) :''),'file download', token)
-                }}>
-                  Download
-                </li>
-                <li className="cursor-pointer"
-                hidden={afeDoc.mimeype==='pdf'? false : true}
-                onClick={(e) => {setOpen(true), handleViewDocument(afeDoc.storage_path),
-                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ',loggedInUser!.lastName!,' viewed the AFE attachment ',afeDoc.filename_display, ' for AFE# ',afeRecord!.afe_number!,afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) :''),'file viewed', token)
-                }}>
-                  View
-                </li>
-                </ul>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            </div>
-            </div>
-            </div>
-            <div hidden={currentTab !== 2}>
-            <AFEHistory historyAFEs={afeHistories}
-            apc_afe_id={afeID!}
-            userName={loggedInUser?.firstName}
-            />
-            </div>
+                </div>
+              </div>
+              <div hidden={currentTab !== 2}>
+                <AFEHistory historyAFEs={afeHistoriesComments}
+                apc_afe_id={afeID!}
+                userName={loggedInUser?.firstName}
+                maxRowsToShow={5}
+                onlyShowRecentFileHistory={false}
+                hideCommentBox={false}
+                />
+              </div>
+              
+              <div hidden={currentTab !== 3} >
+                <AFEHistory historyAFEs={afeHistoriesActions}
+                apc_afe_id={afeID!}
+                userName={loggedInUser?.firstName}
+                maxRowsToShow={5}
+                onlyShowRecentFileHistory={true}
+                hideCommentBox={true}
+                />
+              </div>
+              
             </div>
           </div>
         </div>

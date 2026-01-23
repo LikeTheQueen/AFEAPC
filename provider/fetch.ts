@@ -380,19 +380,34 @@ export const fetchSupportHistory = async(user_id: string, is_super_user: boolean
   const transformedSupportHistory = transformSupportHistory(data);
   return transformedSupportHistory;
 };
-export const fetchNotifications = async(minRange: number, maxRange: number) => {
+export const fetchNotifications = async(minRange: number, maxRange: number, afeSpecificHistory: boolean, apc_afe_id?:string) => {
+  if(afeSpecificHistory) {
+  const { data, error } = await supabase
+  .from('AFE_HISTORY')
+  .select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)')
+  .eq('afe_id',apc_afe_id)
+  .order('id', { ascending: false })
+  .range(minRange,maxRange);
+
+  if(error) {
+    console.error('Unable to get AFE History');
+    return [];
+  }
+  return data;
+
+  }
   const { data, error } = await supabase
   .from('AFE_HISTORY')
   .select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)')
   .eq('type','action')
   .order('id', { ascending: false })
   .range(minRange,maxRange);
-  if(error) {
-    console.error('Unable to get Support History');
-    return [];
+  
+    if(error) {
+    console.error('Unable to get AFE History');
+     return [];
   }
-  console.log(data);
-  return data
+  return data;
 };
 export const fetchSystemHistory = async( minRange: number, maxRange: number) => {
   const { data, error } = await supabase

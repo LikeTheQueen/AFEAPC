@@ -275,6 +275,8 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </button>
       </div>
     </div>
+    <div>
+    </div>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { ChatBubbleBottomCenterTextIcon, CommandLineIcon } from '@heroicons/react/20/solid';
+import { ChatBubbleBottomCenterTextIcon, CommandLineIcon, ArrowTopRightOnSquareIcon, XMarkIcon, DocumentIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { useEffect, useMemo, useState } from 'react';
 import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
@@ -6,61 +6,75 @@ import { insertAFEHistory } from 'provider/write'
 import { useSupabaseData } from 'src/types/SupabaseContext';
 import { SingleCheckbox } from 'src/routes/sharedComponents/singleCheckbox';
 import { fetchAFEHistoryCount } from 'provider/fetch';
+import { AFEHistoryBlock } from 'src/routes/sharedComponents/shatedUIBlocks';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { NotificationsGridPreFiltered } from 'src/routes/notifications';
 
 
 type AFEHistoryProps = {
     historyAFEs: AFEHistorySupabaseType[];
     apc_afe_id: string;
     userName?: string;
+    maxRowsToShow: number;
+    onlyShowRecentFileHistory: boolean;
+    hideCommentBox: boolean;
 };
 
-export default function AFEHistory({ historyAFEs, apc_afe_id, userName }: AFEHistoryProps) {
+export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsToShow, onlyShowRecentFileHistory, hideCommentBox }: AFEHistoryProps) {
+    
+    //User session information for adding a comment
     const { session } = useSupabaseData();
     const token = session?.access_token ?? "";
-    const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
-    const [onlyRecentAFEDocViewHistory, setOnlyRecentAFEDocViewHistory] = useState(true);
+    //Status for dialog box
+    const [open, setOpen] = useState(false);
+    
+    const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>([]);
+    //Unfiltered AFE History
+    const [unfilteredAFEHistory, setUnfilteredAFEHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
+    const [onlyRecentAFEDocViewHistory, setOnlyRecentAFEDocViewHistory] = useState(false);
     const [hideAFEActions, setHideAFEActions] = useState(false);
     const [hideAFEComments, setHideAFEComments] = useState(false);
     const [hideAFEFileActions, setHideAFEFileActions] = useState(false);
     const [commentVal, setCommentVal] = useState('');
     const [totalAFEHistoryCount, setTotalAFEHistoryCount] = useState(0);
     const [totalAFEHistoryDocFilteredCount, setTotalAFEHistoryDocFilteredCount] = useState(0);
-    const [maxAFEHistoryRange, setMaxAFEHistoryRange] = useState(3);
+    const [maxAFEHistoryRange, setMaxAFEHistoryRange] = useState(maxRowsToShow);
     const [totalAFEActionCount, setTotalAFEActionCount] = useState(0);
     const [totalAFECommentCount, setTotalAFECommentCount] = useState(0);
     const [totalDocumentActionsCount, setTotalDocumentActionsCount] = useState(0);
+    const [totalRecentDocumentActionsCount, setTotalRecentDocumentActionsCount] = useState(0);
 
     useMemo(() => {
       async function getAFEHistoryRowCount() {
-        const afeHistoryRowCountResult = await fetchAFEHistoryCount(apc_afe_id);
-        setTotalAFEHistoryCount(afeHistoryRowCountResult);
+        setTotalAFEHistoryCount(historyAFEs.length);
       }; getAFEHistoryRowCount();
       
-    },[])
+    },[historyAFEs])
+    console.log(totalAFEHistoryCount,'total oount')
 
     useEffect(() => {
-        const orderAFEHistory = historyAFEs.sort((a: AFEHistorySupabaseType, b: AFEHistorySupabaseType) => a.id - b.id);
-        const filteredAFEHistory = filterAFEHistory(orderAFEHistory).slice().sort((a, b) => b.id - a.id).slice(0, maxAFEHistoryRange).sort((a, b) => a.id - b.id);
+        if (onlyShowRecentFileHistory) {
+            const filteredAFEHistory = filterAFEHistory(historyAFEs).slice().sort((a, b) => b.id - a.id).slice(0, maxAFEHistoryRange).sort((a, b) => a.id - b.id);
+            setHistory(filteredAFEHistory);
+        } else {
+        const filteredAFEHistory = historyAFEs.slice().sort((a, b) => b.id - a.id).slice(0, maxAFEHistoryRange).sort((a, b) => a.id - b.id);
         setHistory(filteredAFEHistory);
-        setTotalAFEHistoryCount(historyAFEs.length);
-    }, [historyAFEs, onlyRecentAFEDocViewHistory, hideAFEActions, hideAFEComments, hideAFEFileActions, maxAFEHistoryRange]);
+        }
+    }, [historyAFEs, maxAFEHistoryRange]);
+    
 
-    const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
+    const afeHistoryMaxId: number = setAFEHistoryMaxID(unfilteredAFEHistory);
 
     const filterAFEHistory = (afeHistories: AFEHistorySupabaseType[]) => {
         const applyFilters = afeHistories.filter(afeHistory => {
-            const commentsFilter = ((afeHistory.type === 'comment' && !hideAFEComments) || afeHistory.type !== 'comment');
             
-            const actionFilter = ((afeHistory.type === 'action' && !hideAFEActions) || afeHistory.type !== 'action');
-            
-            const documentFilter = ((afeHistory.type.includes('file') && !hideAFEFileActions)
-            || (!afeHistory.type.includes('file')));
-            setTotalAFEActionCount(afeHistories.filter(afeHistory => afeHistory.type === 'action').length);
-            setTotalAFECommentCount(afeHistories.filter(afeHistory => afeHistory.type === 'comment').length);
-            setTotalDocumentActionsCount(afeHistories.filter(afeHistory => afeHistory.type.includes('file')).length)
-            return commentsFilter && actionFilter && documentFilter;
+            const documentFilter = afeHistory.type.includes('file');
+
+            setTotalDocumentActionsCount(afeHistories.filter(afeHistory => afeHistory.type.includes('file')).length);
+            return documentFilter ;
         })
-        const maxIDDocView = applyFilters.reduce<Record<string, AFEHistorySupabaseType>>((acc, curr) => {
+
+        const maxIDDocView = afeHistories.reduce<Record<string, AFEHistorySupabaseType>>((acc, curr) => {
         const key = `${curr.user}-${curr.description}-${curr.type}`
   
         if (!acc[key] || curr.id > acc[key].id) {
@@ -69,9 +83,10 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName }: AFEHis
   
         return acc;
         }, {});
-    setTotalAFEHistoryDocFilteredCount(Object.keys(maxIDDocView).filter(afeHistory => afeHistory.includes('file')).length);  
-    console.log(Object.values(maxIDDocView))  
-    return onlyRecentAFEDocViewHistory ? Object.values(maxIDDocView) : applyFilters;
+    setTotalAFEHistoryDocFilteredCount(Object.keys(maxIDDocView).length);
+    setTotalRecentDocumentActionsCount(Object.keys(maxIDDocView).filter(afeHistory => afeHistory.includes('file')).length);  
+    
+    return Object.values(maxIDDocView);
     };
 
     const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -86,14 +101,11 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName }: AFEHis
         setCommentVal('');
     };
 
-console.log('TOTAL FILTERED',totalAFEHistoryDocFilteredCount);
-console.log('the length', afeHistories.length)
-
     return (
         <>
             <div className="h-full flex flex-col">
-                {/* History feed */}
-                <div className='mr-1 grid grid-cols-1 2xl:grid-cols-5 gap-x-1 mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-lg px-2 py-3 text-xs/5 2xl:text-sm/6'>
+                {/* History feed 
+                <div className='mr-1 grid grid-cols-1 2xl:grid-cols-5 gap-x-0 gap-y-2 mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-lg px-2 py-3 text-xs/5 2xl:text-sm/6'>
                     
                     <div className="justify-start col-span-2 flex flex-row-reverse gap-2 py-0 px-0">
                           <SingleCheckbox 
@@ -124,48 +136,39 @@ console.log('the length', afeHistories.length)
                           <SingleCheckbox 
                             value={onlyRecentAFEDocViewHistory}
                             onChange={(onlyRecentAFEDocViewHistory) => setOnlyRecentAFEDocViewHistory(onlyRecentAFEDocViewHistory)}
-                            label={`Only Latest Document Action* (${totalAFEHistoryDocFilteredCount})`}
+                            label={`Only Latest Document Action* (${totalRecentDocumentActionsCount})`}
                             id={'onlyRecentAFEDocViewHistory'}>
                           </SingleCheckbox>
                     </div>
-                    <div className='2xl:col-span-5 text-right -mb-2 font-light custom-style-info text-[var(--darkest-teal)] sm:text-right text-xs/5'>
+                    <div className='2xl:col-span-5 text-right -mt-2 font-light custom-style-info text-[var(--darkest-teal)] sm:text-right text-xs/5'>
                         *Defaulted to show each user’s most recent document view/download
                     </div>
+
+                    <div className='2xl:col-span-5 flex flex-row justify-end items-center text-right -mb-2 font-medium custom-style text-[var(--darkest-teal)] sm:text-right text-xs/5 2xl:text-sm/6'>
+                        <div className='pr-2'>Complete AFE History</div>
+                        <ArrowTopRightOnSquareIcon aria-hidden="true" onClick={(e) => {
+                                  setOpen(true)}} className="relative size-5 flex-none text-[var(--darkest-teal)]" />
+                    </div>
                     
-                </div>
-                <div className="overflow-y-auto flex-1 sm:min-h-81 sm:max-h-81">
+                </div>*/}
+                <div className="overflow-y-auto flex-1 sm:max-h-130 sm:min-h-130">
                 <ul role="list" className="mt-2 mr-1 space-y-4 mb-1 ">
                     {
-                        afeHistories?.map((afeHistory, afeHistoryIdx) => (
+                        afeHistories.map((afeHistory, afeHistoryIdx) => (
                             <li key={afeHistory.id} className="relative flex gap-x-4">
                                 <div
                                     className={`${afeHistoryIdx === afeHistories.length - 1 ? 'h-6' : '-bottom-6'} absolute top-0 left-0 flex w-6 justify-center`}>
                                     <div className="w-px bg-[var(--darkest-teal)]/40" />
                                 </div>
-                                {afeHistory.type !== 'comment' ? (
+                                {afeHistory.type === 'action' ? (
                                     <>
-                                        <CommandLineIcon aria-hidden="true" className="relative size-6 flex-none text-[var(--darkest-teal)]" />
+                                        <UserCircleIcon aria-hidden="true" className="relative size-6 flex-none bg-white text-[var(--darkest-teal)]" />
                                         <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--darkest-teal)] ">
-                                            <div className="flex justify-between gap-x-4">
-                                                <div className="text-xs/6 2xl:text-sm/6">
-                                                    <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
-                                                </div>
-                                                <p className="sr-only 2xl:not-sr-only flex-none text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                    hour: 'numeric',
-                                                    minute: 'numeric',
-                                                    hour12: true,
-                                                })}</p>
-                                                <p className="2xl:hidden flex-none text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text ">{new Date(afeHistory.created_at).toLocaleDateString('en-us', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}</p>
-
-                                            </div>
-                                            <p className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style-long-text italic">{afeHistory.description}</p>
+                                        <AFEHistoryBlock
+                                        user={afeHistory.user}
+                                        created_at={afeHistory.created_at}
+                                        description={afeHistory.description}
+                                        ></AFEHistoryBlock>
                                         </div>
                                     </>
                                 ) : (
@@ -174,32 +177,15 @@ console.log('the length', afeHistories.length)
                                             {afeHistory.type === 'comment' ? (
                                                 <ChatBubbleBottomCenterTextIcon aria-hidden="true" className="size-6 text-[var(--bright-pink)]" />
                                             ) : (
-                                                <div className="size-1.5 rounded-full bg-gray-300 ring-1 ring-gray-400" />
+                                                <DocumentIcon aria-hidden="true" className="relative size-6 flex-none bg-white text-[var(--darkest-teal)]" />
                                             )}
                                         </div>
-                                        <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)] truncate">
-                                            <div className="flex justify-between gap-x-4">
-                                                <div className=" text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)]">
-                                                    <span className="font-medium text-[var(--darkest-teal)] custom-style-long-text">{afeHistory.user}</span>
-                                                </div>
-                                                <p className="sr-only 2xl:not-sr-only flex-none text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text text-clip">
-                                                    {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                        hour: 'numeric',
-                                                        minute: 'numeric',
-                                                        hour12: true,
-                                                    })}</p>
-                                                <p className="2xl:hidden flex-none text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)] custom-style-long-text text-clip">
-                                                    {new Date(afeHistory.created_at).toLocaleDateString('en-us', {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                    })}</p>
-
-                                            </div>
-                                            <p className="text-xs/6 2xl:text-sm/6 font-normal text-[var(--darkest-teal)] custom-style-long-text italic">{afeHistory.description}</p>
+                                        <div className="flex-auto rounded-md p-1.5 ring-1 ring-opacity-10 ring-[var(--bright-pink)]">
+                                        <AFEHistoryBlock
+                                        user={afeHistory.user}
+                                        created_at={afeHistory.created_at}
+                                        description={afeHistory.description}
+                                        ></AFEHistoryBlock>
                                         </div>
                                     </>
                                 )}
@@ -208,9 +194,9 @@ console.log('the length', afeHistories.length)
 
                     }
                 </ul>
-                </div>
+                
                 {/* New comment form */}
-                <div className="mt-6 flex gap-x-3">
+                <div hidden={hideCommentBox} className="mt-4 sm:mt-10 flex gap-x-3">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-sm font-medium text-white ">
                         {userName?.charAt(0)}
                     </span>
@@ -240,26 +226,66 @@ console.log('the length', afeHistories.length)
                         </div>
                     </div>
                 </div>
+                </div>
                 {/* Load More Button */}
                 <div
                     className="mt-4 -mb-8 flex items-center justify-between border-t border-[var(--darkest-teal)]/30 py-4">
                     <div className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
                     Showing {afeHistories.length} of {totalAFEHistoryCount}
+                    <br></br><span className='text-xs/6' hidden={!onlyShowRecentFileHistory}>*Hiding {totalAFEHistoryCount-totalAFEHistoryDocFilteredCount} repetative histories</span>
                     </div>
                     <button
-                        disabled={onlyRecentAFEDocViewHistory ?
-                            (afeHistories.length >= totalAFEHistoryDocFilteredCount ? true : false) :
-                            (afeHistories.length >= totalAFEHistoryCount ? true : false)
-                        }
+                        
                         onClick={async (e: any) => {
                             e.preventDefault();
-                            setMaxAFEHistoryRange(maxAFEHistoryRange + 5 <= totalAFEHistoryCount ? maxAFEHistoryRange+5 : totalAFEHistoryDocFilteredCount);
+                            setOpen(true)
+                            //setMaxAFEHistoryRange(maxAFEHistoryRange + 5 <= totalAFEHistoryCount ? maxAFEHistoryRange + 5 : totalAFEHistoryCount);
                         }}
                         className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-                        Load More
+                        Full History
                     </button>
                 </div>
             </div>
+            <div className="relative h-full">
+                  <Dialog open={open} onClose={setOpen} className="relative z-10">
+                    <div className="fixed inset-0" />
+                    <div className="fixed inset-0 overflow-hidden">
+                      <div className="absolute inset-0 overflow-hidden">
+                        <div className="pointer-events-none fixed top-0 bottom-0 right-0 flex max-w-full pl-10 sm:pl-16 items-start pt-20">
+                          <DialogPanel
+                            transition
+                            className="pointer-events-auto w-screen max-w-7xl h-full transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
+                          >
+                            <div className="relative flex flex-col overflow-y-auto bg-[var(--dark-teal)]/85 py-6 shadow-xl max-h-[calc(95vh-5rem)] shadow-lg ring-3 ring-[var(--darkest-teal)]/9 rounded-lg">
+                              <div className="px-4 sm:px-6">
+                                <div className="flex items-start justify-between">
+                                  <DialogTitle className="text-base font-semibold text-gray-900"></DialogTitle>
+                                  <div className="ml-3 flex h-3 items-center">
+                                    <button
+                                      type="button"
+                                      onClick={() => {setOpen(false)}}
+                                      className="relative rounded-md text-white/70 hover:text-white cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                                    >
+                                      <span className="absolute -inset-2.5" />
+                                      <span className="sr-only">Close panel</span>
+                                      <XMarkIcon aria-hidden="true" className="size-6" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="relative mt-6 flex-1 px-4 sm:px-4 overflow-y-auto">
+                                <NotificationsGridPreFiltered
+                                    apc_afe_id={apc_afe_id}
+                                ></NotificationsGridPreFiltered>
+                              </div>
+                            </div>
+                          </DialogPanel>
+                        </div>
+                      </div>
+                    </div>
+                  </Dialog>
+                </div>
         </>
     )
 }
+

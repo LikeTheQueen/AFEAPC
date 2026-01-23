@@ -623,7 +623,8 @@ export const transformNotifications = (data: any[]) : Notifications[] => {
          afe_number: item.afe_id.afe_number,
         afe_version: item.afe_id.version_string,
         afe_id: item.afe_id.id,
-        user_id: item.user_id.id
+        user_id: item.user_id.id,
+        type: item.type
     }))
 };
 

@@ -408,6 +408,7 @@ export interface Notifications {
   user_id: string;
   description: string;
   created_at: Date;
+  type: string;
 };
 
 export interface SystemHistory {

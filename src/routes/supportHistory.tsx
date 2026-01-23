@@ -4,7 +4,7 @@
 import executeAFECall from "src/scripts/executeReadWritePromise";
 
 import React, { useEffect, useState } from 'react'
-import supabase from "provider/supabase";a
+import supabase from "provider/supabase";
 import { useSupabaseData } from "../types/SupabaseContext";
 import { testExecuteConnection } from "provider/fetch";
 
@@ -82,6 +82,7 @@ export default function Avatar({
   }
 //executeAFECall(baseURL,urlPath,docId,key,operator);
   return (
+    
     <div>
       {avatarUrl ? (
         <img
@@ -123,5 +124,6 @@ export default function Avatar({
     )
 }
     </div>
+    
   )
 }
