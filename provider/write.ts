@@ -270,6 +270,28 @@ import type { UUID } from 'crypto';
     }
     return notifyStandard('The Support Ticket has been closed');
   };
+
+  export const insertIntoAFEDocTableNonOpAgreement = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {
+    const { data, error } = await supabase.from('AFE_PROCESSED_FILE').insert({
+      apc_afe_id: apc_afe_id, 
+      apc_op_id: apc_op_id, 
+      apc_partner_id: apc_partner_id, 
+      storage_path: storage_path, 
+      filename: filename, 
+      filename_display: filename_display, 
+      mimetype: mimetype, 
+      byte_size: byte_size, 
+      isAttachment: false, 
+      isForm: !isNonOpSignedAFE, 
+      isNonOpSignedAFE: isNonOpSignedAFE, 
+      documentDate: new Date(),
+      checksum: checksum
+    }).select()
+    if(error) {
+      return notifyStandard('There was an issue');
+    }
+    return data;
+  };
 //INSERT DATA
   export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
     

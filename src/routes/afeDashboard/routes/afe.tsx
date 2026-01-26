@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { formatDate } from "src/helpers/styleHelpers";
+import { formatDate, formatDateShort } from "src/helpers/styleHelpers";
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor, noAFEsToView, PartnerStatusDropdown, OperatorApprovalDropdown } from "./helpers/styleHelpers";
 import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
@@ -58,13 +58,6 @@ export default function AFE() {
   partnerStatusCutOffDate.setDate(partnerStatusCutOffDate.getDate() - partnerStatusDaysAgo);
   partnerStatusCutOffDate.setHours(0, 0, 0, 0);
   
-  
-  function handleTabChange(selected: number){
-    const updateCurrentTab = activeTab(tabs, selected);
-    setCurrentTab(updateCurrentTab.selectedTabId);
-    setTabList(updateCurrentTab.updatedTabs);
-  };
-
   //Use effect to get the AFEs for th user.  Show error message if the user can't get AFEs  
   useEffect(() => {
     if(!token || token==='') return;
@@ -228,6 +221,7 @@ export default function AFE() {
             )
           }}
           aria-label="Select a tab"
+          name="MobileMenu"
           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
           {tabs.map((tab) => (
             <option key={tab.id} value={tab.id}>{tab.name}</option>
@@ -293,8 +287,8 @@ export default function AFE() {
         <div>
       <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
       <input
-        id="afeNumber"
-        name="afeNumber"
+        id="afeNumberNonOp"
+        name="afeNumberNonOp"
         type="text"
         placeholder="DC26001"
         autoComplete="off"
@@ -348,11 +342,11 @@ export default function AFE() {
                   {afe.partner_status}
                 </span>
               </div>
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Approved by Operator: </span>{formatDate(afe.iapp_date)}</p>
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
+              <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Approved by Operator: </span>{window.innerWidth >= 1440 ? formatDate(afe.iapp_date) : formatDateShort(afe.iapp_date)}</p>
+              <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
               <div className="flex flex-row items-center justify-between">
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
-              <p className="truncate text-sm/6 font-semibold text-[var(--darkest-teal)]/80">AFE Number: {afe.afe_number} {afe.version_string}</p>
+              <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
+              <p className="truncate text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)]/80">AFE Number: {afe.afe_number} {afe.version_string}</p>
             </div>
             
             </div>
@@ -361,7 +355,7 @@ export default function AFE() {
           <div className="-mt-px flex divide-x divide-[var(--darkest-teal)]/40">
               <div className="flex w-0 flex-1">
                 <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
+                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
                   <span>Gross:</span>
                   { afe.supp_gross_estimate > 0 ?
                   Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.supp_gross_estimate) :
@@ -371,14 +365,14 @@ export default function AFE() {
               </div>
               <div className="flex w-0 flex-1">
                 <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
+                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
                   <span>Partner WI:</span>
                    {afe.partner_wi.toFixed(6)}%
                 </div>
               </div>
               <div className="-ml-px flex w-0 flex-1">
                 <div
-                  className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
+                  className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 px-1 text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
                   <span>Net:</span>
                   { afe.supp_gross_estimate > 0 ?
                   Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.supp_gross_estimate*afe.partner_wi)/100) :
@@ -406,7 +400,7 @@ export default function AFE() {
       {/* No Operated AFEs to view */}
       <div className="mt-4 sm:mt-0 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operated AFEs</h2>
-      <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
+      <p className="mt-1 text-center text-xs/6 2xl:text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
       <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false}>
       {
       noAFEsToView(noOpAFEToView)

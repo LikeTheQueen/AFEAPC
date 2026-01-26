@@ -208,14 +208,14 @@ export default function PartnerMapping() {
                 <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                         <div className="sm:col-span-1 pr-1">
-                            <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
-                            <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
-                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
+                            <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Map Partners from your AFE System to Partners in AFE Partner Connections</h2>
+                            <p className="text-sm/6 2xl:text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                            <br></br><p className="text-sm/6 2xl:text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to map Partners from your AFE System</p>
+                            <br></br><p className="text-sm/6 2xl:text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3"><span className="font-bold">YES, </span>you do need to do this for each Operator you have in AFE Partner Connections.  <span className="font-bold">Why?  </span>Because we said so, and also because we need to know which Partner the Operator is sending an AFE to.</p>
                         </div>
                         <div className="sm:col-span-2">
                             <div className="">
-                                <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select your company, as the Operator, to Create Mappings For:</h1>
+                                <h1 className="text-sm/6 2xl:text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select your company, as the Operator, to Create Mappings For:</h1>
                                 <div className="sm:w-1/2">
                                     <OperatorDropdown
                                         value={opAPCID}
@@ -234,8 +234,8 @@ export default function PartnerMapping() {
                     <div className="mt-10">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                             {/* Partner Library in your AFE System */}
-                            <div className="">
-                                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in Your AFE System</h2>
+                            <div className="text-sm/6 2xl:text-base/7">
+                                <h2 className="font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in Your AFE System</h2>
                                 {/* Default DIV display and warning if there are no partners for the selected Operator */}
                                 <div className="sm:mt-14" hidden={(opAPCID === '') ? false : true}>
                                     <NoSelectionOrEmptyArrayMessage
@@ -342,8 +342,8 @@ export default function PartnerMapping() {
                                 </div>
                             </div>
                             {/* Partner Library in AFE Partner Connections */}
-                            <div className="">
-                                <h2 className="truncate text-base/7 font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in AFE Partner Connections</h2>
+                            <div className="text-sm/6 2xl:text-base/7">
+                                <h2 className="truncate  font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in AFE Partner Connections</h2>
                                 <div className="flex justify-end gap-3 py-3 px-10">
                                     <SingleCheckbox
                                         value={hideMappedAPCPartners}

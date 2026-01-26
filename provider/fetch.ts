@@ -522,6 +522,15 @@ export async function fetchAFEDocs(afeID: string, apc_op_id:string, apc_partner_
     
   };
 
+  export async function fetchAFESignedNonOp(afeID: string, apc_op_id:string, apc_partner_id:string, token: string) {
+    
+    type TogglePayload = { afeID: string; apc_op_id:string; apc_partner_id:string; };
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_Signed_Non_Op", { afeID, apc_op_id, apc_partner_id }, token);
+    
+  };
+
 export async function fetchAFEAttachments(afeID: string, apc_op_id:string, token: string) {
     
     type TogglePayload = { afeID: string; apc_op_id:string; };

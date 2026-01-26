@@ -1,5 +1,5 @@
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory, fetchAFEWells } from "provider/fetch";
+import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory, fetchAFEWells, fetchAFESignedNonOp } from "provider/fetch";
 import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable } from "src/helpers/helpers";
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
@@ -19,6 +19,7 @@ import { ToastContainer } from "react-toastify";
 import { insertAFEHistory } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import FileUpload from "src/routes/sharedComponents/fileUpload";
 
 const tabs = [
   {id:1, name:"AFE Documents", current: true},
@@ -125,14 +126,17 @@ export default function AFEDetailURL() {
       try{
         const documentResponse = await fetchAFEDocs(afeID, afeRecord.apc_op_id, afeRecord.apc_partner_id, token);
         const attachmentResponse = await fetchAFEAttachments(afeID, afeRecord.apc_op_id, token);
+        const signedAFENonOpResponse = await fetchAFESignedNonOp(afeID, afeRecord.apc_op_id, afeRecord.apc_partner_id, token);
         
-        if(!documentResponse.ok || !attachmentResponse.ok) {
+        if(!documentResponse.ok || !attachmentResponse.ok || !signedAFENonOpResponse.ok) {
           return;
         }
         if(isMounted) {
+          
           const documentTransformed: AFEDocuments[] = transformAFEDocumentList(documentResponse.data);
           const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(attachmentResponse.data);
-          setDocs(documentTransformed.concat(attachmentTransformed));
+          const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(signedAFENonOpResponse.data);
+          setDocs(documentTransformed.concat(attachmentTransformed, signedAFENonOpTransformed));
         }
       }
       finally {
@@ -645,6 +649,21 @@ export default function AFEDetailURL() {
                       ))}
                     </ul>
                   </div>
+                </div>
+                <div
+                  className="">
+                  <FileUpload
+                  apc_afe_id={afeRecord?.id!}
+                  apc_op_id={afeRecord?.apc_op_id!}
+                  apc_part_id={afeRecord?.apc_partner_id!}
+                  apc_partner_name={afeRecord?.partner_name!}
+                  userName={loggedInUser?.firstName+' '+loggedInUser?.lastName}
+                  loggedInUserEmail={loggedInUser?.email!}
+                  token={token}
+                  afe_number={afeRecord?.afe_number!}
+                  afe_version={afeRecord?.version_string!}
+                  ></FileUpload>
+                  <ToastContainer/>
                 </div>
               </div>
               <div hidden={currentTab !== 2}>

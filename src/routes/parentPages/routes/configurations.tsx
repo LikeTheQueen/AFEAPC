@@ -96,6 +96,7 @@ useEffect(() => {
                 value={tabList.find((tab) => tab.current)?.id || ''}
                 onChange={e => {handleParentTabChangeMobile(parseInt(e.target.value, 10))}}
                 aria-label="Select a tab"
+                name='MobileMenu'
                 className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
                 {tabs.map((tab) => (
                   <option key={tab.id} value={tab.id}>{tab.name}</option>
@@ -112,6 +113,7 @@ useEffect(() => {
                 value={mobileSubTab.find((tab) => tab.current)?.id || ''}
                 onChange={e => {handleSubTabChangeMobile(parseInt(e.target.value, 10))}}
                 aria-label="Select a tab"
+                name='DesktopMenu'
                 className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
                 {mobileSubTab.map((tab) => (
                   <option key={tab.id} value={tab.id} hidden={!tab.mobile}>{tab.name}</option>

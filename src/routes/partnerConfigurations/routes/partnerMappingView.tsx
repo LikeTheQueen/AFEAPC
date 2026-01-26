@@ -77,13 +77,13 @@ export default function PartnerMappingView() {
                 <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-3 sm:divide-x sm:divide-[var(--darkest-teal)]/40">
                         <div className="">
-                            <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
-                            <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
-                            <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
+                            <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">View and Manage your Partner Mappings</h2>
+                            <p className="text-sm/6 2xl:text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">These are the Partners you will be sending AFEs <span className="font-bold">TO</span>, as the Operator.</p>
+                            <br></br><p className="text-sm/6 2xl:text-base/6 text-[var(--darkest-teal)] custom-style-long-text px-3">Select your Operating company from the dropdown menu to view mappings.</p>
                         </div> 
                         <div className="col-span-1 grid grid-cols-1 gap-x-8 gap-y-10 ">
                             <div className="">
-                                <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
+                                <h1 className="text-sm/6 2xl:text-sm/6 2xl:text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to View Mappings For:</h1>
                                 <div className="">
                                     <OperatorDropdown
                                         value={opAPCID}

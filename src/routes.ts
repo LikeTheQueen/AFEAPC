@@ -15,6 +15,7 @@ export default [
     route("/mainScreen", "./routes/mainScreen.tsx", [
     route("/mainScreen/afe", "./routes/afeDashboard/routes/afe.tsx"),
     route("/mainScreen/afeArchived", "./routes/afeDashboard/routes/afeHistoricals.tsx"),
+    route("/mainScreen/afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
     route("/mainScreen/configurations", "./routes/parentPages/routes/configurations.tsx",[
         route("/mainScreen/configurations/systemConfigurations", "./routes/systemConfigurations.tsx"),
         route("/mainScreen/configurations/glmapping", "./routes/glConfigurations/routes/glMapping.tsx"),
@@ -28,7 +29,7 @@ export default [
         route("/mainScreen/configurations/partnersview", "./routes/libraries/routes/partnerLibrary.tsx"),
     ]),
     route("/mainScreen/profile", "./routes/userProfile/routes/profile.tsx"),
-    route("/mainScreen/afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
+    
     route("/mainScreen/supporthistory", "./routes/support/routes/supportHistory.tsx"),
     route("/mainScreen/systemhistory", "./routes/support/routes/systemHistory.tsx"),
     route("/mainScreen/managePermissions", "./routes/createEditUsers/routes/manageUserPermissions.tsx"), 

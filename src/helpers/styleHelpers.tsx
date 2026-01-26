@@ -59,7 +59,7 @@ export function formatDateShort(date: Date | null | string) {
     } else if(typeof(date) === 'string' && date.length<=10){
         const dateFormatted = new Date(date).toLocaleDateString('en-us', {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
         });
         return dateFormatted;
