@@ -71,6 +71,7 @@ export default function AFE() {
             setAFELoading(false);
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
           }
+          console.log(afes.data);
           const transformedAFEs = transformAFEs(afes.data)
 
           if (!cancelled) {
@@ -92,23 +93,28 @@ export default function AFE() {
       cancelled = true;
     };
     }, [token])
+    
 
   useEffect(() => {
   function sortAndFilterAFEs() {
   allAFEs.sort((a,b) => b.sortID - a.sortID)
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
+
+  
+
   
   if (loggedInUser?.is_super_user) {
     setOperatedAFEs(allAFEs)
   } else {
-  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.partnerID));
+  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.apc_partner_id));
+ 
   setOperatedAFEs(opAFEs);
   }
     if (loggedInUser?.is_super_user) {
     setNonOperatedAFEs(allAFEs);
   } else {
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
+  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.apc_partner_id) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
 
   setNonOperatedAFEs(nonOpAFEs); 
@@ -270,17 +276,17 @@ export default function AFE() {
     {/* Non-Operated AFEs */}
     <div hidden = {currentTab ===2} className="py-0 px-4 sm:px-8">
       {/* No Non-Operated AFEs to view */}
-      <div className="mt-4 sm:mt-0 mb-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
+      <div className="mt-4 sm:mt-0 mb-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70" data-testid="NonOperatedAFElistHeader">
       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Non-Operated AFEs</h2>
         <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
-      <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? true : false} >
+      <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? true : false} data-testid="NoNonOperatedAFElist">
       {
       noAFEsToView(noNonOpAFEToView)
       }
     </div>
       </div>
       {/* Filter Non-Op AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
-      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
+      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70" data-testid="NonOperatedAFElistFilter"
       hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined && currentTab===1) ? false : true} >
       <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
@@ -398,17 +404,17 @@ export default function AFE() {
        {/* Operated AFEs */}
     <div hidden = {currentTab ===1} className="py-0 px-4 sm:px-8">
       {/* No Operated AFEs to view */}
-      <div className="mt-4 sm:mt-0 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
+      <div className="mt-4 sm:mt-0 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70" data-testid="OperatedAFElistHeader">
       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operated AFEs</h2>
       <p className="mt-1 text-center text-xs/6 2xl:text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
-      <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false}>
+      <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false} data-testid="NoOperatedAFElist">
       {
       noAFEsToView(noOpAFEToView)
       }
       </div>
       </div>
       {/* Filter Operated AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
-      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
+      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70" data-testid="OperatedAFElistFilter"
       hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined && currentTab===2) ? false : true} >
       <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">

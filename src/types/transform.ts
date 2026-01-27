@@ -35,7 +35,7 @@ import type {
 export const transformAFEs = (data: any[]): AFEType[] => {
     return data.map(item => ({
         id: item.id,
-        operator: item.apc_op_id.name,
+        operator: item.operator,
         created_at: new Date(item.created_at),
         afe_type: item.afe_type.toLowerCase() as Lowercase<string>,
         afe_number: item.afe_number,
@@ -57,7 +57,7 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         source_system_id: item.source_system_id,
         sortID: item.sortID,
         partner_status_date: item.partner_status_date,
-        apc_op_id: item.apc_op_id.id,
+        apc_op_id: item.apc_op_id,
         archived: item.archived,
         partner_archived: item.partner_archived,
         apc_partner_id: item.apc_partner_id,

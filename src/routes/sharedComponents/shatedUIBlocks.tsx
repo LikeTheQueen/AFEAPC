@@ -19,4 +19,10 @@ export function AFEHistoryBlock({ user, created_at, description}: AFEHistoryRowP
             <p className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style-long-text italic">{description}</p>
         </>
     )
+};
+
+export function Paragraph(message: string) {
+    return (
+        <p>{message}</p>
+    )
 }

@@ -53,7 +53,7 @@ export function setStatusRingColor(partner_status: string | null | undefined) {
 
 export function noAFEsToView(message: string) {
     return (
-        <div className="overflow-hidden mt-6 flex justify-center items-center" data-testid="NoNonOperatedAFElist">
+        <div className="overflow-hidden mt-6 flex justify-center items-center" data-testid="NoNonOperatedAFElistMessage">
     <div className="relative w-full sm:w-9/10 h-20">
       <div aria-hidden="true" className="absolute inset-0 flex justify-center items-center">
         <div className="sm:w-full border-t border-[var(--darkest-teal)] border-1" />

@@ -37,7 +37,7 @@ export function PartnerDropdown({ value, onChange, limitedList }: Props) {
 
     load();
   }, [loggedInUser, limitedList]);
-   
+ 
   return (
     <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
