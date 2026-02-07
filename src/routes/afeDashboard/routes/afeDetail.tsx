@@ -294,6 +294,12 @@ export default function AFEDetailURL() {
   return (
     <>
       <main >
+        <div className="h-full text-center mx-20 mt-20" hidden={(afeRecord === null && afeLoading == false) ? false : true}>
+          <NoSelectionOrEmptyArrayMessage
+          message={'You do not have permission to view this AFE'}
+          />
+        </div>
+        <div hidden={(afeRecord === null && afeLoading == false) ? true : false}>
       <div className="relative h-full">
       <Dialog open={open} onClose={setOpen} className="relative z-10">
         <div className="fixed inset-0" />
@@ -337,7 +343,8 @@ export default function AFEDetailURL() {
         <div className="pt-16 px-4 sm:px-16 h-full">
           <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 xl:mx-0 xl:max-w-none xl:grid-cols-3"> 
             {/* Archive Accept Reject Buttons */}
-            <div className="xl:col-start-3 xl:row-end-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3 ">
+            <div hidden={!doesUserHaveAcceptRejectRole && !doesUserHaveOperatorViewAFERole && !doesUserHaveOperatorViewAFERole}
+            className="xl:col-start-3 xl:row-end-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3 ">
               <div className="max-w-7xl">
                 <div className="flex justify-between max-w-2xl gap-x-1 xl:mx-0 xl:max-w-none">
                   <div className="flex items-center gap-x-4">
@@ -390,7 +397,7 @@ export default function AFEDetailURL() {
                     </button>
                     
                     <button
-                      hidden={doesUserHaveOperatorViewAFERole ? true : true}
+                      hidden={doesUserHaveOperatorViewAFERole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
                         handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
@@ -688,6 +695,7 @@ export default function AFEDetailURL() {
               
             </div>
           </div>
+        </div>
         </div>
       </main>
       <ToastContainer/>

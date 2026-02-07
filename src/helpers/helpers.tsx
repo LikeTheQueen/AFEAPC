@@ -72,6 +72,7 @@ export function activeTab(tabList: any[], selected: number | null) {
 export async function sourceSystemList() {
   const rawSource = await fetchFromSupabase("SOURCE_SYSTEM","id, system");
   const fetchSource = transformSourceSystemSupabase(rawSource);
+  console.log(rawSource,'the RAW', fetchSource,'TRANSFORMED');
   return fetchSource;
 };
 

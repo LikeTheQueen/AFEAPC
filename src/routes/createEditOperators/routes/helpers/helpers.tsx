@@ -2,19 +2,19 @@ import type { UUID } from "crypto";
 import type { AddressType, OperatorType } from "src/types/interfaces";
 
 export function disableCreateButton(operator: OperatorType, operatorAddress: AddressType) {
-    if(!operator && !operatorAddress) {
+    if (!operator && !operatorAddress) {
         return true;
-    } else if(operator && !operatorAddress) {
+    } else if (operator && !operatorAddress) {
         return true;
-    } else if(operator && operatorAddress) {
-        if(operatorAddress.street !=='' && 
-            operatorAddress.state !=='' && 
-            operatorAddress.city !=='' && 
-            operatorAddress.zip !=='' && 
-            operatorAddress.country !=='' && 
-            operator.source_system !==0 && 
-            operator.name !=='' && (operator.id === null || operator.id === undefined)) {
-                return false;
+    } else if (operator && operatorAddress) {
+        if (operatorAddress.street !== '' &&
+            operatorAddress.state !== '' &&
+            operatorAddress.city !== '' &&
+            operatorAddress.zip !== '' &&
+            operatorAddress.country !== '' &&
+            operator.source_system !== 0 &&
+            operator.name !== '' && (operator.id === null || operator.id === undefined)) {
+            return false;
         } else {
             return true;
         }

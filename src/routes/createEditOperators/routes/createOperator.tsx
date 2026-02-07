@@ -8,6 +8,8 @@ import { disableCreateButton, disableSaveAndSaveAnother, isAddressListHidden } f
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
+import { fetchSourceSystems } from 'provider/fetch';
+import { transformSourceSystemSupabase } from 'src/types/transform';
 
 export default function CreateOperator() {
     let operatorBlank : OperatorType = {
@@ -43,18 +45,41 @@ export default function CreateOperator() {
     const [opPartnerID, setOpPartnerID] = useState<string | null>(null);
     const [showSaved, setShowSaved] = useState<boolean>(false);
 
-    const fetchData = async () => {
-    const afeSystemList = await sourceSystemList();
-    const blankOption: AFESourceSystemType = {
-    id: 0,
-    system: '', 
-  };
-    const extendedList = [blankOption, ...afeSystemList];
-    setSourceSystems(extendedList);
-    };
     useEffect(() => {
-        fetchData();
-    },[]);
+        let isMounted = true;
+        async function getSourceSystemList() {
+          try {
+            const sourceSystemResult = await fetchSourceSystems();
+    
+            if (isMounted) {
+              if (!sourceSystemResult.ok) {
+                throw new Error(sourceSystemResult.message);
+              }
+              const sourceSystemResultTransformed = transformSourceSystemSupabase(sourceSystemResult.data);
+              const blankOption: AFESourceSystemType = {
+                id: 0,
+                system: '',
+              };
+            const extendedList = [blankOption, ...sourceSystemResultTransformed];
+            setSourceSystems(extendedList);
+            }
+          } catch (error) {
+    
+            if (isMounted) {
+              console.error('Failed to load source systems:', error);
+            }
+          } finally {
+            if (isMounted) {
+            }
+          }
+        }
+        getSourceSystemList();
+        return () => {
+          isMounted = false;
+        };
+      }, []);
+  
+    
   
   function handleAddressChange(e: { target: { name: any; value: any; }; }) {
     setOpBillAddress({
@@ -275,7 +300,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="grid grid-cols-1 mt-1">
                   <select
-                    id="source_system"
+                    id="sourceSystem"
                     name="source_system"
                     autoComplete="off"
                     value={operator.source_system}
@@ -323,8 +348,7 @@ export default function CreateOperator() {
         <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
-            singleOpID={true}
-            currentOpID={operator.id!}>
+            currentOpID={ operator.id ? operator.id : null }>
             </PartnerToOperatorGrid>
           </div>
         </form>
@@ -361,7 +385,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="street"
+                    id="additionalStreet"
                     name="street"
                     type="text"
                     value={operatorPartnerAddressSingle.street}
@@ -377,7 +401,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="suite"
+                    id="additionalSuite"
                     name="suite"
                     type="text"
                     autoComplete="off"
@@ -393,7 +417,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="city"
+                    id="additionalCity"
                     name="city"
                     type="text"
                     autoComplete="off"
@@ -409,7 +433,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="state"
+                    id="additionalState"
                     name="state"
                     type="text"
                     autoComplete="off"
@@ -425,7 +449,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="mt-1">
                   <input
-                    id="zip"
+                    id="additionalZip"
                     name="zip"
                     type="text"
                     autoComplete="off"
@@ -441,7 +465,7 @@ export default function CreateOperator() {
                 </label>
                 <div className="grid grid-cols-1 mt-1">
                   <select
-                    id="country"
+                    id="additionalCountry"
                     name="country"
                     autoComplete="off"
                     value={operatorPartnerAddressSingle.country}

@@ -13,8 +13,13 @@ const apc_op_id = '123e4567-e89b-12d3-a456-426614174000';
 const apc_op_id2 = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
 const apc_part_id = '';
 
+export const apc_op_id_Nav = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
+export const apc_op_id_CW = '3b34a78a-13ad-40b5-aecd-268d56dd5e0d';
+export const apc_part_id_John = '8ed0a285-0011-4f56-962f-c46bc0889d1b';
+export const apc_part_id_Athena = '626390b5-6f63-4caa-a0aa-b333a15eaf59';
+
 const apc_afe_id1 = '025439e7-c970-44f0-9e50-f7b28f70199a';
-const apc_afe_id2 = '34d7bd01-d43b-4e3a-a586-34f0297a8008'
+const apc_afe_id2 = '34d7bd01-d43b-4e3a-a586-34f0297a8008';
 
 const userID1 = '13e69340-d14c-45a9-96a8-142795925487'
 
@@ -600,9 +605,123 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     ],
 };
 
-export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
-    firstName: 'User 1',
+//User has no view rights to Operated and Non Op view rights to Athena can approve
+export const loggedInUserNoOpViewRightsAthena: UserProfileRecordSupabaseType = {
+    firstName: 'Jane',
     lastName: 'Athena',
+    email: 'user@email',
+    active: true,
+    is_super_user: false,
+    operatorRoles: [],
+    partnerRoles: [
+        {
+        apc_name: 'Athena Minerals',
+        apc_address: {
+            address_active: true,
+            id: 7,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 35,
+        role: 3,
+        active: true,
+        apc_id: apc_part_id_Athena,
+        apc_address_id: 7
+    },
+    {
+        apc_name: 'Athena Minerals',
+        apc_address: {
+            address_active: true,
+            id: 7,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 72,
+        role: 9,
+        active: true,
+        apc_id: apc_part_id_Athena,
+        apc_address_id: 7
+    },
+    {
+        apc_name: 'Athena Minerals',
+        apc_address: {
+            address_active: true,
+            id: 7,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 74,
+        role: 5,
+        active: true,
+        apc_id: apc_part_id_Athena,
+        apc_address_id: 7
+    },
+    {
+        apc_name: 'Athena Minerals',
+        apc_address: {
+            address_active: true,
+            id: 7,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 185,
+        role: 6,
+        active: true,
+        apc_id: apc_part_id_Athena,
+        apc_address_id: 7
+    }
+    
+    ],
+};
+
+//User has view rights to operated AFEs for Nav Oils and Non Op view rights to John Ross and can Approve NonOp AFEs
+export const loggedInUserOpNavOilsPartnerJohnRoss: UserProfileRecordSupabaseType = {
+    firstName: 'Tim',
+    lastName: 'Ross',
     email: 'user@email',
     active: true,
     is_super_user: false,
@@ -629,7 +748,7 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 46,
         role: 2,
         active: true,
-        apc_id: apc_op_id2,
+        apc_id: apc_op_id_Nav,
         apc_address_id: 51
     },
     {
@@ -654,11 +773,11 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 49,
         role: 4,
         active: true,
-        apc_id: apc_op_id2,
+        apc_id: apc_op_id_Nav,
         apc_address_id: 51
     },
     {
-        apc_name: 'Corr and Whit Oils',
+        apc_name: 'Nav Oils',
         apc_address: {
             address_active: true,
             id: 51,
@@ -679,7 +798,7 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 52,
         role: 8,
         active: true,
-        apc_id: apc_op_id2,
+        apc_id: apc_op_id_Nav,
         apc_address_id: 51
     }
     ],
@@ -706,7 +825,7 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 35,
         role: 3,
         active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_id: apc_part_id_John,
         apc_address_id: 10
     },
     {
@@ -731,7 +850,7 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 72,
         role: 9,
         active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_id: apc_part_id_John,
         apc_address_id: 10
     },
     {
@@ -756,7 +875,7 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 74,
         role: 5,
         active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_id: apc_part_id_John,
         apc_address_id: 10
     },
     {
@@ -781,39 +900,25 @@ export const loggedInUserOperatedAFEs: UserProfileRecordSupabaseType = {
         id: 185,
         role: 6,
         active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_id: apc_part_id_John,
         apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 186,
-        role: 3,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 7
     }
     
     ],
 };
 
+export const loggedInUserIsSuperUser: UserProfileRecordSupabaseType = {
+    firstName: 'Tim',
+    lastName: 'Ross',
+    email: 'user@email',
+    active: true,
+    is_super_user: true,
+    operatorRoles: [],
+    partnerRoles: [],
+};
+
 export const AFEsFromSupbase: AFEType[] = [
+    //Operated by Nav Oil & John Ross Partner NOT ARCHIVED
     {
         id: "025439e7-c970-44f0-9e50-f7b28f70199a",
         created_at:  new Date("2025-10-22 17:10:50.830331+00"),
@@ -844,6 +949,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Navigator Oil',
         well_name: "SHIELDS-CANTRELL #1",
     },
+    //Operated by Corr Whit Oil & John Ross Partner NOT ARCHIVED
     {
         id: "34d7bd01-d43b-4e3a-a586-34f0297a8008",
         created_at:  new Date("2025-10-22 17:10:47.867426+00"),
@@ -874,6 +980,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Corr and Whit Oil',
         well_name: "Many"
     },
+    //Operated by Nav Oil & John Ross Partner NOT ARCHIVED
     {
         id: "4b6cebbf-ca88-4e9e-8479-dd50cc13e03d",
         created_at:  new Date("2025-11-15 00:00:06.292558+00"),
@@ -904,6 +1011,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Navigator Oil',
         well_name: "DRAKE SURVEY-MASON #1"
     },
+    //Operated by Corr Whit Oil & John Ross Partner NOT ARCHIVED
     {
         id: "88760c34-38b0-4bdd-a6d1-59376ec8c9be",
         created_at:  new Date("2025-11-15 00:00:03.139299+00"),
@@ -916,7 +1024,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator_wi: 80,
         partner_name: "John Ross Exploration Inc",
         partner_wi: 20,
-        partner_status: "Approved",
+        partner_status: "New",
         op_status: "FAPP",
         iapp_date: "2025-11-14",
         last_mod_date: "2025-11-14",
@@ -934,6 +1042,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Corr and Whit Oil',
         well_name: "DRAKE SURVEY-MASON #1"
     },
+    //Operated by Corr Whit Oil & John Ross Partner NOT ARCHIVED
     {
         id: "9f1ab2b4-3f58-4d6e-8365-f5126c4d0b4c",
         created_at:  new Date("2025-10-22 17:10:47.867426+00"),
@@ -964,6 +1073,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Corr and Whit Oil',
         well_name: "SHIELDS-CANTRELL #1"
     },
+    //Operated by Nav Oil & Athena Partner NOT ARCHIVED
     {
         id: "9f6dce03-0eea-484a-bcae-0b4659640daa",
         created_at:  new Date("2025-10-22 17:10:50.830331+00"),
@@ -994,6 +1104,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Navigator Oil',
         well_name: "Many"
     },
+    //Operated by Nav Oil & Athena Partner NOT ARCHIVED
     {
         id: "d9238faa-2914-4215-8ca2-78384663102d",
         created_at:  new Date("2025-10-22 17:10:50.830331+00"),
@@ -1024,6 +1135,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Navigator Oil',
         well_name: "SHIELDS-CANTRELL #1"
     },
+    //Operated by Nav Oil & John Ross Partner NOT ARCHIVED
     {
         id: "e5676564-f4f2-40ec-b115-52635ec0593b",
         created_at:  new Date("2025-10-22 17:10:50.830331+00"),
@@ -1054,6 +1166,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Navigator Oil',
         well_name: "Many"
     },
+    //Operated by Corr Whit Oil & Athena Partner NOT ARCHIVED
     {
         id: "e74130a2-d985-4179-b0ff-9cc7e077d77e",
         created_at:  new Date("2025-10-22 17:10:47.867426+00"),
@@ -1084,6 +1197,7 @@ export const AFEsFromSupbase: AFEType[] = [
         operator: 'Corr and Whit Oil',
         well_name: "Many"
     },
+    //Operated by Nav Oil & Athena Partner NOT ARCHIVED
     {
         id: "f7247f99-2094-45b7-acb8-6bbd7070e261",
         created_at: new Date("2025-10-22 17:10:47.867426+00"),
@@ -1420,4 +1534,553 @@ export const PartnerDropdown: OperatorOrPartnerList[] = [
         apc_name: "Whit and Corr Oil",
         apc_address: null
     }
-]
+];
+
+export const afeReturnFromSupabase = [
+    //Operated by Nav Oil & Athena is Partner NOT ARCHIVED 
+    {
+        "id": "4b6cebbf-ca88-4e9e-8479-dd50cc13e03W",
+        "created_at": "2025-11-15T00:00:06.292558+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "DR26NAVAT",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Athena Minerals",
+        "partner_wi": 20,
+        "partner_status": "Viewed",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 166,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:51.423+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Nav Oil & Athena is Partner OP Archived Partner NOT Archived 
+    {
+        "id": "4b6cebbf-ca88-4e9e-8479-dd50cc13e03E",
+        "created_at": "2025-11-15T00:00:06.292558+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "AO06D111NA",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Athena Minerals",
+        "partner_wi": 20,
+        "partner_status": "Viewed",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 166,
+        "archived": true,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:51.423+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Nav Oil & Athena is Partner OP NOT Archived Partner IS Archived 
+    {
+        "id": "4b6cebbf-ca88-4e9e-8479-dd50cc13e03Q",
+        "created_at": "2025-11-15T00:00:06.292558+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "PA07D111NA",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Athena Minerals",
+        "partner_wi": 20,
+        "partner_status": "Viewed",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 166,
+        "archived": false,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:51.423+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Corr Whit & John Ross is Partner NOT ARCHIVED 
+    {
+        "id": "88760c34-38b0-4bdd-a6d1-59376ec8c9be",
+        "created_at": "2025-11-15T00:00:03.139299+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "06D111CJ",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20,
+        "partner_status": "Approved",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": "2025-12-17T18:45:49.184+00:00",
+        "sortID": 165,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:48.995+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Corr Whit & Athena is Partner NOT ARCHIVED 
+    {
+        "id": "e74130a2-d985-4179-b0ff-9cc7e077d77e",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "25D001CA",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": "S2",
+        "supp_gross_estimate": 2333.1,
+        "operator_wi": 65,
+        "apc_partner_name": "Athena Minerals Inc.",
+        "partner_wi": 15,
+        "partner_status": "Viewed",
+        "op_status": "IAPP",
+        "iapp_date": "2025-08-12",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 414,
+        "legacy_afeid": 425,
+        "chain_version": 3,
+        "source_system_id": "e217aede-6af1-4696-8776-4d56d1ac16bf",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 151,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "475e4d12-8a0b-4264-933d-d960936852b2",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "Many"
+    },
+    //Operated by Corr Whit & Athena is Partner NOT ARCHIVED 
+    {
+        "id": "f7247f99-2094-45b7-acb8-6bbd7070e261",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D001CA",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 25,
+        "apc_partner_name": "Athena Minerals Inc.",
+        "partner_wi": 25,
+        "partner_status": "Viewed",
+        "op_status": "IAPP",
+        "iapp_date": "2025-10-08",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 427,
+        "legacy_afeid": 427,
+        "chain_version": 1,
+        "source_system_id": "8c7a4be7-e577-499d-8c7b-266a1549a020",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 152,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "475e4d12-8a0b-4264-933d-d960936852b2",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "SHIELDS-CANTRELL #1"
+    },
+    //Operated by Corr Whit & John Ross is Partner NOT ARCHIVED 
+    {
+        "id": "34d7bd01-d43b-4e3a-a586-34f0297a8008",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "25D001CJ",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": "S2",
+        "supp_gross_estimate": 2333.1,
+        "operator_wi": 65,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2025-08-12",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 414,
+        "legacy_afeid": 425,
+        "chain_version": 3,
+        "source_system_id": "e217aede-6af1-4696-8776-4d56d1ac16bf",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 153,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "Many"
+    },
+    //Operated by Corr Whit & John Ross is Partner NOT ARCHIVED 
+    {
+        "id": "9f1ab2b4-3f58-4d6e-8365-f5126c4d0b4c",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D001CJ",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 25,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 50,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2025-10-08",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 427,
+        "legacy_afeid": 427,
+        "chain_version": 1,
+        "source_system_id": "8c7a4be7-e577-499d-8c7b-266a1549a020",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 154,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "SHIELDS-CANTRELL #1"
+    },
+    //Operated by Nav Oil & Athena is Partner IS ARCHIVED 
+    {
+        "id": "4b6cebbf-ca88-4e9e-8479-dd50cc13e03z",
+        "created_at": "2025-11-15T00:00:06.292558+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A06D111NA",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Athena Minerals",
+        "partner_wi": 20,
+        "partner_status": "Viewed",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 166,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:51.423+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Corr Whit & John Ross is Partner IS ARCHIVED 
+    {
+        "id": "88760c34-38b0-4bdd-a6d1-59376ec8c9be",
+        "created_at": "2025-11-15T00:00:03.139299+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A06D111CJ",
+        "description": "Drill DRAKE SURVEY-MASON #1",
+        "total_gross_estimate": 275000,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20,
+        "partner_status": "Approved",
+        "op_status": "FAPP",
+        "iapp_date": "2025-11-14",
+        "last_mod_date": "2025-11-14",
+        "legacy_chainID": 176,
+        "legacy_afeid": 176,
+        "chain_version": 1,
+        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": "2025-12-17T18:45:49.184+00:00",
+        "sortID": 165,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 2,
+        "doc_last_fetch_at": "2025-12-30T20:09:48.995+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "DRAKE SURVEY-MASON #1"
+    },
+    //Operated by Corr Whit & Athena is Partner IS ARCHIVED 
+    {
+        "id": "e74130a2-d985-4179-b0ff-9cc7e077d97e",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A25D001CA",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": "S2",
+        "supp_gross_estimate": 2333.1,
+        "operator_wi": 65,
+        "apc_partner_name": "Athena Minerals Inc.",
+        "partner_wi": 15,
+        "partner_status": "Viewed",
+        "op_status": "IAPP",
+        "iapp_date": "2025-08-12",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 414,
+        "legacy_afeid": 425,
+        "chain_version": 3,
+        "source_system_id": "e217aede-6af1-4696-8776-4d56d1ac16bf",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 151,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "475e4d12-8a0b-4264-933d-d960936852b2",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "Many"
+    },
+    //Operated by Corr Whit & Athena is Partner IS ARCHIVED 
+    {
+        "id": "f7247f99-2094-45b7-acb8-2bbd7070e261",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A26D001CA",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 25,
+        "apc_partner_name": "Athena Minerals Inc.",
+        "partner_wi": 25,
+        "partner_status": "Viewed",
+        "op_status": "IAPP",
+        "iapp_date": "2025-10-08",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 427,
+        "legacy_afeid": 427,
+        "chain_version": 1,
+        "source_system_id": "8c7a4be7-e577-499d-8c7b-266a1549a020",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 152,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "475e4d12-8a0b-4264-933d-d960936852b2",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "SHIELDS-CANTRELL #1"
+    },
+    //Operated by Corr Whit & John Ross is Partner IS ARCHIVED 
+    {
+        "id": "34d2bd01-d43b-4e3a-a586-34f0297a8008",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A25D001CJ",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": "S2",
+        "supp_gross_estimate": 2333.1,
+        "operator_wi": 65,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2025-08-12",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 414,
+        "legacy_afeid": 425,
+        "chain_version": 3,
+        "source_system_id": "e217aede-6af1-4696-8776-4d56d1ac16bf",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 153,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "Many"
+    },
+    //Operated by Corr Whit & John Ross is Partner IS ARCHIVED 
+    {
+        "id": "9f4ab2b4-3f58-4d6e-8365-f5126c4d0b4c",
+        "created_at": "2025-10-22T17:10:47.867426+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "A26D001CJ",
+        "description": "Drill SHIELDS-CANTRELL #1",
+        "total_gross_estimate": 563603.25,
+        "version_string": null,
+        "supp_gross_estimate": 0,
+        "operator_wi": 25,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 50,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2025-10-08",
+        "last_mod_date": "2025-10-08",
+        "legacy_chainID": 427,
+        "legacy_afeid": 427,
+        "chain_version": 1,
+        "source_system_id": "8c7a4be7-e577-499d-8c7b-266a1549a020",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 154,
+        "archived": true,
+        "partner_archived": true,
+        "source_partner_id": null,
+        "doc_fetch_status": "pending",
+        "doc_fetch_attempts": 0,
+        "doc_last_fetch_at": null,
+        "doc_last_error": null,
+        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils"
+        },
+        "well_name": "SHIELDS-CANTRELL #1"
+    }
+];

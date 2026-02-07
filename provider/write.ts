@@ -145,14 +145,22 @@ import type { UUID } from 'crypto';
     const ids = partnerRecordID.map(x => x.id);
     const apc_op_id = partnerRecordID[0].apc_op_id;
     console.log(apc_op_id,'opid', ids,'ids')
-    const {error} = await supabase.from('PARTNERS').update({ 'apc_op_id': apc_op_id }).in('id',ids);
+    const [{ error: partnersError }, { error: partnerAddressError }] = await Promise.all([
+    supabase.from('PARTNERS').update({ 'apc_op_id': apc_op_id }).in('id', ids),
+    supabase.from('PARTNER_ADDRESS').update({ 'apc_op_id': apc_op_id }).in('apc_id', ids)
+    ]);
     
-    if (error) {
-        console.error(`Error updating Partner with Operator ID`, error);
-        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${error.message})`);
+    if (partnersError || partnerAddressError) {
+      if(partnersError) {
+        console.error(`Error updating Partner with Operator ID`, partnersError);
+        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${partnersError.message})`);
+      } else if(partnerAddressError) {
+        console.error(`Error updating Partner Address with Operator ID`, partnerAddressError);
+        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${partnerAddressError.message})`);
       }
+    }
       
-      return notifyStandard(`Partner address updated. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);;
+      return notifyStandard(`Partner address updatedaasasas. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);;
   };
 
   export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {

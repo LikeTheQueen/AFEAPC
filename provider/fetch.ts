@@ -30,6 +30,14 @@ export const fetchFromSupabase = async (table: string, select: string) => {
     return data;
   };
 
+export const fetchSourceSystems = async() => {
+  const { data, error } = await supabase.from('SOURCE_SYSTEM').select('id, system');
+  if (error) {
+    return {ok: false, data: [], message: error.message};
+  }
+  return {ok: true, data: data, message: ''};
+};
+
 export const fetchUserFromSupabase = async (table: string, select: string, session: string) => {
     const { data, error } = await supabase.from(table).select(select).eq('id', session).maybeSingle();
     if (error || !data) {
@@ -197,24 +205,11 @@ export const fetchOpUsersForEdit = async(table: string, addressTable: string, ap
 
 export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   const { data, error } = await supabase.from("PARTNERS").select('apc_id:id,name, apc_op_id(name, id), address:PARTNER_ADDRESS!apc_id(id,street, suite, city, state, zip, country)');
-      if (error || !data) {
+      if (error) {
       console.error(`Error fetching Partners:`, error);
-      return [];
+      return {ok: true, data: [], message: 'Error fetching partners: '+error};
     }
-    const dataTransformed = transformOperatorPartnerAddressWithOpName(data);
-    const apcPartListSorted = dataTransformed.sort((a,b) => {
-                        if (a.name === undefined && b.name === undefined) {
-                            return 0;
-                        }
-                        if (a.name === undefined) {
-                            return 1;
-                        }
-                        if (b.name === undefined) {
-                            return -1;
-                        }
-                        return (a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
-                    }); 
-    return apcPartListSorted;
+    return {ok: true, data: data as any[]};
 };
 
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
@@ -393,6 +388,7 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
     console.error('Unable to get AFE History');
     return [];
   }
+  
   return data;
 
   }
@@ -407,6 +403,7 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
     console.error('Unable to get AFE History');
      return [];
   }
+  console.log('the data in the call', data);
   return data;
 };
 export const fetchSystemHistory = async( minRange: number, maxRange: number) => {

@@ -71,7 +71,7 @@ export default function AFE() {
             setAFELoading(false);
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
           }
-          console.log(afes.data);
+         
           const transformedAFEs = transformAFEs(afes.data)
 
           if (!cancelled) {
@@ -81,7 +81,7 @@ export default function AFE() {
         } catch (err) {
       setNoNonOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
       setNoOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
-      console.error(err);
+      
         } finally {
           if (!cancelled) {
             setAFELoading(false);
@@ -101,18 +101,16 @@ export default function AFE() {
   const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
   const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
 
-  
-
-  
   if (loggedInUser?.is_super_user) {
-    setOperatedAFEs(allAFEs)
+    const allAFEsNotArchived: AFEType[] = (allAFEs ?? []).filter((afe) => afe.archived !==true && afe.partner_archived !==true);
+    setOperatedAFEs(allAFEsNotArchived)
   } else {
   const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived !==true && !allowedPartnerIds.has(afe.apc_partner_id));
- 
   setOperatedAFEs(opAFEs);
   }
     if (loggedInUser?.is_super_user) {
-    setNonOperatedAFEs(allAFEs);
+    const allAFEsNotArchived: AFEType[] = (allAFEs ?? []).filter((afe) => afe.archived !==true && afe.partner_archived !==true);
+    setNonOperatedAFEs(allAFEsNotArchived);
   } else {
   const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.apc_partner_id) && afe.partner_archived !==true && !allowedOperatorIds.has(afe.apc_op_id));
   //&& !allowedOperatorIds.has(afe.apc_op_id)
@@ -291,7 +289,7 @@ export default function AFE() {
       <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
         <div>
-      <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
+      <label htmlFor="afeNumberNonOp" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</label>
       <input
         id="afeNumberNonOp"
         name="afeNumberNonOp"
@@ -326,7 +324,7 @@ export default function AFE() {
     </div>
       </div>
       </div>
-      <div hidden ={(filteredNonOperatedAFEs.length > 0 || nonOperatedAFEs.length < 1) ? true : false}>
+      <div hidden ={(filteredNonOperatedAFEs.length > 0 || nonOperatedAFEs.length < 1) ? true : false} data-testid="NoNonOperatedAFElistFiltered">
       {
       noAFEsToView('There are no Non-Operated AFEs to view')
       }
@@ -336,6 +334,7 @@ export default function AFE() {
       <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="NonOperatedAFElist">
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
+        aria-label={`AFE ${afe.afe_number} ${afe.version_string ?? ""}`.trim()}
         to={`/mainscreen/afeDetail/${afe.id}`}
         onClick={ (e:any) =>{handlePartnerStatusChanged(afe)}}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
@@ -394,7 +393,7 @@ export default function AFE() {
     <UniversalPagination
             data={filteredNonOperatedAFEs}
             rowsPerPage={6}
-            listOfType="Operated AFEs"
+            listOfType="Non-Operated AFEs"
             onPageChange={handlePageChangeNonOperatedAFEs}
           />
           </div>

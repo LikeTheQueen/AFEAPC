@@ -1,57 +1,56 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { type AFESourceSystemType, type OperatorPartnerRecord } from 'src/types/interfaces';
+import { type AFESourceSystemType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type PartnerRecordToDisown } from 'src/types/interfaces';
 import { sourceSystemList } from 'src/helpers/helpers';
 import { useEffect, useState } from 'react';
-import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus } from 'provider/write';
+import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 
-
-
 type EditOperatorProps = {
-    operatorToEdit: OperatorPartnerRecord;
-    partnerRecords: OperatorPartnerRecord[];
+    operatorToEdit: OperatorRecordWithNonOpAddresses;
     token: string;
 };
 
-export default function EditOperator({operatorToEdit, partnerRecords, token} : EditOperatorProps) {
+export default function EditOperator({operatorToEdit, token} : EditOperatorProps) {
     
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     
     const [saveOpNameChange, setSaveOpNameChange] = useState(false);
     const [saveOpAddressChange, setSaveOpAddressChange] = useState(false);
-    const [operatorRecord, setOperatorRecord] = useState<OperatorPartnerRecord>(operatorToEdit);
+    const [operatorRecord, setOperatorRecord] = useState<OperatorRecordWithNonOpAddresses>(operatorToEdit);
 
     const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);
     const [partnerAddressUpdate, setPartnerAddressUpdate] = useState<boolean[] | []>([]);
     const [partnerNameUpdate, setPartnerNameUpdate] = useState<boolean[] | []>([]);
+    const [partnerListToDisown, setPartnerListToDisown] = useState<PartnerRecordToDisown[]>([]);
 
     const [newPartnerAddress, setNewPartnerAddress] = useState<OperatorPartnerRecord | null>(null);
     const [saveNewPartnerAddress, setSaveNewPartnerAddress] = useState(false);
-    
+
+//Use Effect to set the Operator Record that is being edited, the Partner List and the array to know which Partner may have changed    
     useEffect(() => {
         if(!operatorToEdit) return;
 
         async function setOperatorAndPartners() {
             
-            if(!operatorToEdit || !partnerRecords) return;
+            if(!operatorToEdit) return;
 
             setOperatorRecord(operatorToEdit);
+            setPartnerList(operatorToEdit.partners);
 
-            const filteredPartners = partnerRecords.filter(item => item.apc_op_id === operatorToEdit.apc_id);
-            setPartnerList(filteredPartners);
-            const falseArray = new Array(partnerList.length).fill(false);
+            const falseArray = new Array(operatorToEdit.partners.length).fill(false);
+
             setPartnerAddressUpdate(falseArray);
             setPartnerNameUpdate(falseArray);
         }
         setOperatorAndPartners();
-    },[operatorToEdit, partnerRecords])
+    }, [])
   
   function handleOperatorAddressChange(e: { target: { name: any; value: any; }; }) {
     setOperatorRecord({
       ...operatorRecord,
-      [e.target.name]: e.target.value!
+      [e.target.name]: e.target.value
     });
     setSaveOpAddressChange(true);
   }
@@ -62,6 +61,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
     });
     setSaveOpNameChange(true);
   }
+
   function handlePartnerNameChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
     setPartnerList(prevPartnerList => 
     prevPartnerList.map((partner, index) =>  
@@ -92,6 +92,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
         )
     );
   }
+  
   async function handleClickSaveOpName() {
     try {
       const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord, token);
@@ -119,16 +120,22 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
   async function handleClickActivateOrDeactivateOperator() {
     if(!operatorRecord.apc_id || !operatorRecord.apc_address_id) return;
 
+    const updatedOperator = {
+            ...operatorRecord,
+        active: !operatorRecord.active,
+        address_active: !operatorRecord.address_active
+        };
+
     setOperatorRecord({
         ...operatorRecord,
         active: !operatorRecord.active,
-        address_active: !operatorToEdit.address_active
+        address_active: !operatorRecord.address_active
     })
 
     try {
         const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
-            updateOperatorNameAndStatus(operatorRecord, token),
-            updateOperatorAddress(operatorRecord, token)
+            updateOperatorNameAndStatus(updatedOperator, token),
+            updateOperatorAddress(updatedOperator, token)
         ])
 
       if(!operatorStatusChange.ok) {
@@ -183,7 +190,7 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
   const partnerToUpdate = partnerList[partnerIdx];
   const updatedPartner = {
     ...partnerToUpdate,
-    active: !partnerToUpdate.active,
+    active: !partnerToUpdate.address_active,
     address_active: !partnerToUpdate.address_active
   }
   setPartnerList(prevPartnerList => 
@@ -211,6 +218,39 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
       console.error("Failed to change Operator status:", error);
     }
   }
+  async function handleDisownPartner(partnerIdx: number, id: string) {
+    setPartnerListToDisown(prevPartnerListToDisown => {
+            const updatedPartnerListToDisown = [...prevPartnerListToDisown];
+            const existingIndex = updatedPartnerListToDisown.findIndex(
+                entry => entry.id === id && entry.apc_op_id === null
+
+            );
+            if (existingIndex > -1) {
+                updatedPartnerListToDisown.splice(existingIndex,1);
+            } else {
+                updatedPartnerListToDisown.push({
+                    id: id,
+                    apc_op_id: null
+
+                })
+            }
+            return updatedPartnerListToDisown;
+        });
+  const partnerToUpdate = partnerList[partnerIdx];
+  const updatedPartner = {
+    ...partnerToUpdate,
+    apc_op_id: null
+  }
+  setPartnerList(prevPartnerList => 
+    prevPartnerList.map((partner, index) =>  
+      index === partnerIdx 
+        ? updatedPartner
+        : partner
+    )
+  );
+  
+ 
+  }
   function handleNewAddressChange(e: { target: { name: any; value: any; }; }) {
     setNewPartnerAddress({
       ...newPartnerAddress,
@@ -221,8 +261,17 @@ export default function EditOperator({operatorToEdit, partnerRecords, token} : E
       [e.target.name]: e.target.value!
     });
     setSaveNewPartnerAddress(true);
-  }
-console.log(newPartnerAddress,'new partner address')
+  };
+  async function updatePartnerWithOpIDChange() {
+          updatePartnerWithOpID(partnerListToDisown)
+  };
+  async function handleClickDisownPartner(partnerIdx: number, id: string) {
+  await handleDisownPartner(partnerIdx,id);
+  console.log(partnerListToDisown,'THE LIST TO DISOWN')
+  await updatePartnerWithOpIDChange();
+  };
+
+
   return (
     <>
     {!operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
@@ -260,7 +309,7 @@ console.log(newPartnerAddress,'new partner address')
                         name="street"
                         type="text"
                         autoComplete="off"
-                        value={operatorToEdit.street}
+                        value={operatorRecord.street}
                         onChange={handleOperatorAddressChange}
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       />
@@ -276,7 +325,7 @@ console.log(newPartnerAddress,'new partner address')
                         name="suite"
                         type="text"
                         autoComplete="off"
-                        value={operatorToEdit.suite}
+                        value={operatorRecord.suite}
                         onChange={handleOperatorAddressChange}
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       />
@@ -292,7 +341,7 @@ console.log(newPartnerAddress,'new partner address')
                         name="city"
                         type="text"
                         autoComplete="off"
-                        value={operatorToEdit.city}
+                        value={operatorRecord.city}
                         onChange={handleOperatorAddressChange}
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       />
@@ -308,7 +357,7 @@ console.log(newPartnerAddress,'new partner address')
                         name="state"
                         type="text"
                         autoComplete="off"
-                        value={operatorToEdit.state}
+                        value={operatorRecord.state}
                         onChange={handleOperatorAddressChange}
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       />
@@ -324,7 +373,7 @@ console.log(newPartnerAddress,'new partner address')
                         name="zip"
                         type="text"
                         autoComplete="off"
-                        value={operatorToEdit.zip}
+                        value={operatorRecord.zip}
                         onChange={handleOperatorAddressChange}
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       />
@@ -339,7 +388,7 @@ console.log(newPartnerAddress,'new partner address')
                         id="country"
                         name="country"
                         autoComplete="off"
-                        value={operatorToEdit.country}
+                        value={operatorRecord.country}
                         onChange={handleOperatorAddressChange}
                         className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                       > <option></option>
@@ -355,7 +404,7 @@ console.log(newPartnerAddress,'new partner address')
                   </div>
                   <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
                     <button
-                      disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) ? true : false}
+                      disabled={(!operatorRecord.apc_id && !operatorRecord.apc_address_id) ? true : false}
                       onClick={async (e: any) => {
                         e.preventDefault();
                         handleClickActivateOrDeactivateOperator();
@@ -370,7 +419,8 @@ console.log(newPartnerAddress,'new partner address')
                       {operatorRecord.active ? 'Deactivate' : 'Activate'}
                     </button>
                     <button
-                      disabled={(!operatorToEdit.apc_id && !operatorToEdit.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
+                      name={`save-${operatorRecord.name}`}
+                      disabled={(!operatorRecord.apc_id && !operatorRecord.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
                       onClick={async (e: any) => {
                         e.preventDefault();
                         { saveOpNameChange ? handleClickSaveOpName() : null };
@@ -395,12 +445,12 @@ console.log(newPartnerAddress,'new partner address')
                   <div key={partner.apc_id} className="px-4 pt-4">
                     <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 pb-4 sm:grid-cols-6 border-b border-[var(--darkest-teal)]/40">
                       <div className="sm:col-span-3">
-                        <label htmlFor="additionalName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor={`partner-name-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           Name
                         </label>
                         <div className="mt-1">
                           <input
-                            id="name"
+                            id={`partner-name-${partnerIdx}`}
                             name="name"
                             type="text"
                             placeholder="Nav Oil Inc."
@@ -412,12 +462,12 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-4 sm:col-start-1">
-                        <label htmlFor="additionalStreet" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor={`partner-street-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           Street Address
                         </label>
                         <div className="mt-1">
                           <input
-                            id="street"
+                            id={`partner-street-${partnerIdx}`}
                             name="street"
                             type="text"
                             autoComplete="off"
@@ -428,7 +478,7 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-2">
-                        <label htmlFor="additionalSuite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           Suite
                         </label>
                         <div className="mt-1">
@@ -444,7 +494,7 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-2 sm:col-start-1">
-                        <label htmlFor="additionalCity" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           City
                         </label>
                         <div className="mt-1">
@@ -460,7 +510,7 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-2">
-                        <label htmlFor="additionalState" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           State / Province
                         </label>
                         <div className="mt-1">
@@ -476,7 +526,7 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-2">
-                        <label htmlFor="additionalZip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           ZIP / Postal Code
                         </label>
                         <div className="mt-1">
@@ -492,7 +542,7 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                        <label htmlFor="additionalCountry" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           Country
                         </label>
                         <div className="mt-1 grid grid-cols-1 ">
@@ -515,22 +565,36 @@ console.log(newPartnerAddress,'new partner address')
                         </div>
                       </div>
                       <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
+                        {/* Button to Deactive the Partner Name and Partner Address*/}
                         <button
                           //type="submit"
                           disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
                           onClick={async (e: any) => {
                             e.preventDefault();
                             handleClickActivateOrDeactivatePartner(partnerIdx);
-                            notifyStandard(`Operator's Partner name and address have been ${partner.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.active ? 'deactive' : 'active'})`);
+                            notifyStandard(`Operator's Partner name and address have been ${partner.address_active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.address_active ? 'deactive' : 'active'})`);
                           }}
                           //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                           className={
                             `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
-                        ${!partner.active
+                        ${!partner.address_active
                               ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
                               : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
                           }>
-                          {partner.active ? 'Deactivate' : 'Activate'}
+                          {partner.address_active ? 'Deactivate' : 'Activate'}
+                        </button>
+                        {/* Button to Disown the Partner Name and Partner Address*/}
+                        <button
+                          //type="submit"
+                          disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
+                          onClick={async (e: any) => {
+                            e.preventDefault();
+                            handleClickDisownPartner(partnerIdx, partner.apc_id!);
+                            notifyStandard(`Operator's Partner name and address have been ${partner.address_active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.address_active ? 'deactive' : 'active'})`);
+                          }}
+                          //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
+                          className='cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'>
+                          {'Disown'}
                         </button>
                         <button
                           //type="submit"
@@ -560,8 +624,7 @@ console.log(newPartnerAddress,'new partner address')
               </div>
                 <div >
                   <PartnerToOperatorGrid
-                    singleOpID={true}
-                    currentOpID={operatorToEdit.apc_id!}>
+                    currentOpID={ operatorToEdit.apc_id ? operatorToEdit.apc_id : null }>
                   </PartnerToOperatorGrid>
                 </div>
               </form>

@@ -29,7 +29,8 @@ import type {
     AFEWells,
     SupportHistory,
     Notifications,
-    SystemHistory
+    SystemHistory,
+    OperatorRecordWithNonOpAddresses
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -57,7 +58,7 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         source_system_id: item.source_system_id,
         sortID: item.sortID,
         partner_status_date: item.partner_status_date,
-        apc_op_id: item.apc_op_id,
+        apc_op_id: item.apc_op_id.id,
         archived: item.archived,
         partner_archived: item.partner_archived,
         apc_partner_id: item.apc_partner_id,
@@ -348,6 +349,40 @@ export const transformOperatorPartnerRecord = (data: any[]): OperatorPartnerReco
         apc_op_id: item.apc_id.apc_op_id ? item.apc_id.apc_op_id.id : null,
         apc_op_name: item.apc_id.apc_op_id ? item.apc_id.apc_op_id.name : null,
         address_active: item.address.active
+        
+    }));
+};
+
+export const transformOperatorPartnerAddressRecord = (data: any[]): OperatorRecordWithNonOpAddresses[] => {
+    return data
+    .filter(item => item.address !==null && item.apc_id !== null && item.apc_id !== undefined )
+    .map(item => ({
+        apc_id: item.apc_id.id,
+        name: item.apc_id.name,
+        active: item.apc_id.active,
+        apc_address_id:item.address.id,
+        street: item.address.street,
+        suite: (item.address.suite === null ? '' : item.address.suite),
+        city: item.address.city,
+        state: item.address.state,
+        zip: item.address.zip,
+        country: item.address.country,
+        apc_op_id: item.apc_id.apc_op_id ? item.apc_id.apc_op_id.id : null,
+        apc_op_name: item.apc_id.apc_op_name ? item.apc_id.apc_op_id.name : null,
+        address_active: item.address.active,
+        partners: item.apc_id.partner.map((item: any) => ({
+            apc_address_id:item.id,
+            street: item.street,
+            suite: (item.suite === null ? '' : item.suite),
+            city: item.city,
+            state: item.state,
+            zip: item.zip,
+            country: item.country,
+            name: item.apc_id.name,
+            apc_id: item.apc_id.id,
+            active: item.apc_id.active,
+            address_active: item.active,
+        }))
         
     }));
 };

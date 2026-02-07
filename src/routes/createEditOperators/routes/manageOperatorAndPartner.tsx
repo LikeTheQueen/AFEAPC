@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { type OperatorPartnerAddressType, type OperatorPartnerRecord } from "src/types/interfaces";
+import { type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { transformOperatorPartnerRecord } from "src/types/transform";
+import { transformOperatorPartnerAddressRecord } from "src/types/transform";
 import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
@@ -10,6 +10,7 @@ import { updateOperatorAddress, updateOperatorNameAndStatus } from "provider/wri
 import { ToastContainer } from "react-toastify";
 import { notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
     const operatorOrPartnerAddress = operatorOrPartnerRecord.street!.concat(' ',
@@ -24,59 +25,62 @@ function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
 export default function OperatorViewAndEdit() {
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
-    const [loadingOperators, setLoadingOperators] = useState(true);
-    const [operatorsList, setOperatorsList] = useState<OperatorPartnerRecord[]>([]);
-    const [partnersList, setPartnersList] = useState<OperatorPartnerRecord[]>([]);
-    const [operatorToEdit, setOperatorToEdit] = useState<OperatorPartnerRecord | null>(null);
+    const [loadingOperators, setLoadingOperators] = useState(false);
+    const [operatorsList, setOperatorsList] = useState<OperatorRecordWithNonOpAddresses[]>([]);
+    const [operatorToEdit, setOperatorToEdit] = useState<OperatorRecordWithNonOpAddresses | null>(null);
+    const [operatorResultErrorMessage, setOperatorResultErrorMessage] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
     
     // State for paginated data
-    const [rowsToShow, setRowsToShow] = useState<OperatorPartnerRecord[]>([]);
+    const [rowsToShow, setRowsToShow] = useState<OperatorRecordWithNonOpAddresses[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const maxRowsToShow = (5);
 
     useEffect(() => {
         if (!loggedInUser || token === '') {
-            setLoadingOperators(false);
             return;
         }
 
         let isMounted = true;
+
         async function getOperatorList() {
-            if (!loggedInUser?.user_id) return;
-
+            if (isMounted) {
             setLoadingOperators(true);
-            try {
-                const [opListResult, partnerListResult] = await Promise.all([
-                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 8, 9], token),
-                    fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 8, 9], token)
-                ]);
+            }
 
-                if (opListResult.ok) {
-                    const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
-                    if (isMounted) {
+            try {
+                const opListResult = await fetchOperatorsOrPartnersToEdit(
+                    loggedInUser!.user_id!, 
+                    'OPERATOR_USER_PERMISSIONS', 
+                    'OPERATOR_ADDRESS', 
+                    [1, 8, 9], 
+                    token
+                );
+
+                if (!opListResult.ok) {
+                   throw new Error(opListResult.message); 
+                }
+                
+            const opListTransformed = transformOperatorPartnerAddressRecord(opListResult.data);
+                    
+            if (isMounted) {
                         setOperatorsList(opListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
                     } 
-                }
 
-                if (partnerListResult.ok) {
-                    const partnerListTransformed = transformOperatorPartnerRecord(partnerListResult.data);
-                    if (isMounted) {
-                        setPartnersList(partnerListTransformed);
-                    }
-                }
             } catch (e) {
                 console.error('Unable to get Operators or Permissions', e);
+                setOperatorResultErrorMessage(e as string);
             } finally {
+                if (isMounted) {
                 setLoadingOperators(false);
-                return;
+            }
             }
         }
         getOperatorList();
         return () => {
             isMounted = false;
         }
-    }, [loggedInUser, open]);
+    }, [loggedInUser]);
 
     async function handleClickActivateOrDeactivateOperator(operatorIdx: number) {
         // Calculate the actual index in the full list based on current page
@@ -117,7 +121,7 @@ export default function OperatorViewAndEdit() {
         }
     }
 
-    const handlePageChange = (paginatedData: OperatorPartnerRecord[], page: number) => {
+    const handlePageChange = (paginatedData: OperatorRecordWithNonOpAddresses[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
@@ -133,7 +137,7 @@ export default function OperatorViewAndEdit() {
                             <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The address will be used by other Operators to send Non-Op AFEs for your review. Sorta like the USPS, but better.</p>
                             <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">User permissions to view, approve, reject or archive AFEs are associated by address.</p>
                         </div>
-                        <div className="md:col-span-4 ">
+                        <div className="md:col-span-4">
                             <table className="w-full sm:w-7/8 divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                                 <thead>
                                     <tr className="bg-white text-white">
@@ -197,6 +201,7 @@ export default function OperatorViewAndEdit() {
                                             <td className="hidden px-3 py-4 text-center align-middle sm:table-cell">
                                                 <button
                                                     type="button"
+                                                    disabled={operator.apc_id === null || operator.apc_id === ''}
                                                     onClick={(e) => { setOperatorToEdit(operator); setOpen(true); }}
                                                     className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-4 py-2 text-sm leading-6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style transition-colors w-full max-w-28">
                                                     Edit
@@ -225,7 +230,7 @@ export default function OperatorViewAndEdit() {
                                     ))}
                                 </tbody>
                             </table>
-                                <div className="w-full sm:w-7/8">
+                                <div hidden={operatorsList.length < 1} className="w-full sm:w-7/8">
                             <UniversalPagination
                                 data={operatorsList}
                                 rowsPerPage={maxRowsToShow}
@@ -233,7 +238,16 @@ export default function OperatorViewAndEdit() {
                                 onPageChange={handlePageChange}
                             />
                             </div>
-
+                            <div hidden={(operatorsList.length === 0 && operatorResultErrorMessage === null) ? false : true } className="w-full sm:w-7/8">
+                                <NoSelectionOrEmptyArrayMessage
+                                    message={'There are no Operators you have access to manage'}
+                                ></NoSelectionOrEmptyArrayMessage>
+                            </div>
+                            <div hidden={(operatorsList.length === 0 && operatorResultErrorMessage !== null) ? false : true } className="w-full sm:w-7/8">
+                                <NoSelectionOrEmptyArrayMessage
+                                    message={'Unable to get Operators. Please contact AFE Partners Support '+operatorResultErrorMessage}
+                                ></NoSelectionOrEmptyArrayMessage>
+                            </div>
                         </div>
                     </div>
                     <Dialog open={open} onClose={() => { setOpen(false); setOperatorToEdit(null); }} className="relative z-50">
@@ -268,7 +282,6 @@ export default function OperatorViewAndEdit() {
                                             <div className="relative mt-2 flex-1 px-4 sm:px-6">
                                                 <EditOperator
                                                     operatorToEdit={operatorToEdit!}
-                                                    partnerRecords={partnersList}
                                                     token={token}
                                                 ></EditOperator>
                                             </div>

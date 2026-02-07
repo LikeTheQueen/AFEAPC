@@ -1,49 +1,60 @@
 import { fetchPartnersLinkedOrUnlinkedToOperator } from 'provider/fetch';
 import { useEffect, useMemo, useState } from 'react';
 import type { OperatorPartnerAddressWithOpNameType, PartnerRecordToUpdate } from 'src/types/interfaces';
-import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import LoadingPage from './loadingPage';
 import { updatePartnerWithOpID } from 'provider/write';
+import NoSelectionOrEmptyArrayMessage from './sharedComponents/noSelectionOrEmptyArrayMessage';
+import { transformOperatorPartnerAddressWithOpName } from 'src/types/transform';
 
 
-export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID = null}:{singleOpID: boolean, currentOpID: string | null}) {
+export default function PartnerToOperatorGrid ({currentOpID = null}:{currentOpID: string | null}) {
     const [partnerListToLink, setPartnerListToLink] = useState<PartnerRecordToUpdate[]>([]);
     const [loading, setLoading] = useState(true);
     const [partnerListToOperator, setPartnerListToOperator] = useState<OperatorPartnerAddressWithOpNameType[]>([]);
     const [opId, setOpID] = useState(currentOpID);
-    const [singleOp, setSingleOp] = useState(singleOpID);
 
-    useEffect(() => {
-        let isMounted = true;
-        async function loadPartnersToOperatorsList() {
-            setLoading(true);
-            try {
-                const data = await fetchPartnersLinkedOrUnlinkedToOperator();
-                if (isMounted) {
-                    
-                    const filterNull = data.filter(record => record.apc_op_id === "");
-                    setPartnerListToOperator(filterNull ?? []);
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
+  useEffect(() => {
+    let isMounted = true;
+    async function loadPartnersToOperatorsList() {
+      setLoading(true);
+      try {
+        const partnerFetchResult = await fetchPartnersLinkedOrUnlinkedToOperator();
+
+        if (isMounted) {
+          if (!partnerFetchResult.ok) {
+            throw new Error(partnerFetchResult.message);
+          }
+          const dataTransformed = transformOperatorPartnerAddressWithOpName(partnerFetchResult.data);
+          const filterNull = dataTransformed.filter(record => record.apc_op_id === "");
+          setPartnerListToOperator(filterNull);
         }
-        loadPartnersToOperatorsList();
-        return () => {
-            isMounted = false;
-        };
-    }, []);
+      } catch (error) {
 
+        if (isMounted) {
+          console.error('Failed to load partners:', error);
+
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+    loadPartnersToOperatorsList();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  //Use Effect for when the OPID changes when the Operator is being created.
     useEffect(() => {
         setOpID(currentOpID);
     }, [currentOpID])
 
     const gridData = useMemo(() => {
         return [...partnerListToOperator].sort((a, b) => {
-    const nameA = a.apc_op_name;
-    const nameB = b.apc_op_name;
+    const nameA = a.name;
+    const nameB = b.name;
 
     if (nameA == null && nameB == null) return 0;      
     if (nameA == null) return -1;                      
@@ -78,12 +89,18 @@ export default function PartnerToOperatorGrid ({singleOpID = true, currentOpID =
     async function updatePartnerWithOpIDChange() {
         await updatePartnerWithOpID(partnerListToLink)
     };
-    console.log(partnerListToLink,'the partner to link')
+    console.log(opId,'THE OP ID FROM THE GRID')
 if (loading) return <LoadingPage/>
     return (
         <>
     <div className="px-4 py-4 sm:py-6">
-      <ul role="list" className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2">
+      <div hidden={gridData.length > 0}>
+      <NoSelectionOrEmptyArrayMessage message={'There are no unclaimed addresses to show'}      
+      ></NoSelectionOrEmptyArrayMessage>
+      </div>
+      <ul role="list" 
+      hidden={gridData.length < 1}
+      className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2">
         {gridData.map((partner) => (
           <li key={partner.apc_id} className="col-span-1 flex rounded-md shadow-lg ">
             <div
@@ -122,30 +139,23 @@ if (loading) return <LoadingPage/>
                 <p className="font-bold text-[var(--dark-teal)] custom-style">Alias: <span className="font-medium not-italic custom-style-long-text">{partner.name}</span></p>
                 <p className="text-[var(--dark-teal)] custom-style-long-text font-normal mt-1 w-full ">{partner.street} {partner.suite} {partner.city}, {partner.state} {partner.zip}</p>  
               </div>
-              <div className="shrink-0 pr-2">
-                <button
-                  type="button"
-                  className="inline-flex size-8 items-center justify-center rounded-full text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-white">
-                  <span className="sr-only">Open options</span>
-                  <EllipsisVerticalIcon aria-hidden="true" className="size-5" />
-                </button>
-              </div>
             </div>
           </li>
         ))}
       </ul>
     </div>
-<div className="flex items-center justify-end gap-x-6 border-t border-[var(--darkest-teal)]/30 px-4 py-4 sm:px-8">
-                  <button 
-                  disabled={opId===null || partnerListToLink.length<1}
-                  onClick={async(e: any) => { 
-                e.preventDefault();
-                updatePartnerWithOpIDChange();
-                }}
-                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-              Save 
-                  </button>
-    </div>
+        <div hidden={gridData.length < 1} 
+        className="flex items-center justify-end gap-x-6 border-t border-[var(--darkest-teal)]/30 px-4 py-4 sm:px-8">
+          <button
+            disabled={opId === null || partnerListToLink.length < 1}
+            onClick={async (e: any) => {
+              e.preventDefault();
+              updatePartnerWithOpIDChange();
+            }}
+            className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+            Save
+          </button>
+        </div>
     </>
   )
 }

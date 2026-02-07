@@ -241,9 +241,18 @@ export interface AFEType {
     active: boolean;
   }
 
+  export interface OperatorRecordWithNonOpAddresses extends OperatorPartnerRecord {
+    partners: OperatorPartnerRecord[] | [];
+  }
+
   export interface PartnerRecordToUpdate {
     id: string;
-    apc_op_id: string; 
+    apc_op_id: string | null; 
+  }
+
+  export interface PartnerRecordToDisown {
+    id: string;
+    apc_op_id: string | null; 
   }
 
 //Interface for grouping roles by user and apc_id

@@ -19,7 +19,6 @@ const TestSupabaseProvider = ({
   overrides: Partial<SupabaseContextType>;
 }) => {
   const defaultValue: SupabaseContextType = {
-    afes: undefined,
     loggedInUser: null,
     isSuperUser: false,
     loading: false,

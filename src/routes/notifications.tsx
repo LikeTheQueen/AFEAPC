@@ -19,7 +19,7 @@ const [notifications, setNotifications] = useState<Notifications[] | []>([]);
     const maxRowsToShow = (6);
 //Paging for the call to Supabase    
     const minRange = (0);
-    const [maxRange, setMaxRange] = useState(10);
+    const [maxRange, setMaxRange] = useState(3);
     const [totalNotificationHistoryRowCount, setTotalNotificationHistoryRowCount] = useState(0);
 //Filtering variables
     const [actionList, setActionList] = useState<string [] | []>([]);
@@ -102,23 +102,19 @@ function handleUserListChange(e: React.ChangeEvent<HTMLSelectElement>) {
   setSelectedUser(e.target.value);
 };
 
-function handleAcionListChange(e: React.ChangeEvent<HTMLSelectElement>) {
-  setSelectedAction(e.target.value);
-};
-
 const filterNotifications = (notificationsList: Notifications[]) => {
     return notificationsList.filter(notice => {
       const matchesUser = notice.user.name === selectedUser || selectedUser === '';
       const matchesAFENumber = notice.afe_number.toUpperCase().includes(afeSearch.toUpperCase()) || afeSearch === '';
       const matchesDescription = notice.description.toUpperCase().includes(descriptionSearch.toUpperCase()) || descriptionSearch === '';
-      const matchesAction = notice.type === selectedAction || selectedAction === '';
       const matchesVersion = notice.afe_version !== null && notice.afe_version.toUpperCase().includes(verSearch.toUpperCase()) || verSearch === '';
 
-      return matchesUser && matchesDescription && matchesAction && matchesAFENumber && matchesVersion
+      return matchesUser && matchesDescription && matchesAFENumber && matchesVersion
     })
   };
 
 const filteredNotifiations = useMemo(() => {
+  console.log('in the memo called')
   return filterNotifications(notifications);
 },[notifications, selectedUser, selectedAction, afeSearch, descriptionSearch, verSearch]);
 
@@ -126,7 +122,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-
+console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 'len of noti', notifications.length);
   return (
     <>
     <div className="px-4 py-4 sm:px-6 sm:py-6">
@@ -302,7 +298,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
               setMaxRange(maxRange+15);
             }}
             className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-            Load More
+            {notifications.length >= totalNotificationHistoryRowCount ? "That's Everything!" : "Load More"}
           </button>
       </div>
     </div>
@@ -404,6 +400,7 @@ const filterNotifications = (notificationsList: Notifications[]) => {
   };
 
 const filteredNotifiations = useMemo(() => {
+  console.log('in the memo calledAFE')
   return filterNotifications(notifications);
 },[notifications, selectedUser, selectedAction, descriptionSearch]);
 
