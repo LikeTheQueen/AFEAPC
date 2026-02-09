@@ -293,8 +293,7 @@ export const transformPartnerSingle = (item: any): PartnerType => ({
         active: item.active,
     });
 
-export const transformAddressSupabase = (data: any[]): AddressType[] => {
-    return data.map(item => ({
+export const transformAddressSupabase = (item: any): AddressType => ({
         id: item.id,
         street: item.street,
         suite: (item.suite === null ? '' : item.suite),
@@ -303,8 +302,7 @@ export const transformAddressSupabase = (data: any[]): AddressType[] => {
         zip: item.zip,
         country: item.country,
         address_active: item.active
-    }))
-};
+    });
 
 export const transformRolesGeneric = (data: any[]): RoleTypesGeneric[] => {
     return data.map(item => ({

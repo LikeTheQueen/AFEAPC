@@ -12,6 +12,7 @@ import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { useSupabaseData } from "src/types/SupabaseContext";
+import { transformOperatorPartnerAddressWithOpName } from "src/types/transform";
 
 interface PartnerMappingRecord {
     operator?: string;
@@ -82,7 +83,17 @@ export default function PartnerMapping() {
             try {
                 const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
                 if (isMounted) {
-                    setAPCPartnerList(apcPartList ?? []);
+                    if (!apcPartList.ok) {
+                        throw new Error(apcPartList.message);
+                    }
+                    const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
+                    setAPCPartnerList(dataTransformed);
+                }
+            } catch (error) {
+
+                if (isMounted) {
+                    console.error('Failed to load partners:', error);
+
                 }
             } finally {
                 if (isMounted) {
@@ -215,7 +226,7 @@ export default function PartnerMapping() {
                         </div>
                         <div className="sm:col-span-2">
                             <div className="">
-                                <h1 className="text-sm/6 2xl:text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select your company, as the Operator, to Create Mappings For:</h1>
+                                <h2 className="text-sm/6 2xl:text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select your company, as the Operator, to Create Mappings For:</h2>
                                 <div className="sm:w-1/2">
                                     <OperatorDropdown
                                         value={opAPCID}

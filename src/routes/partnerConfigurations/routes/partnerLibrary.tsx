@@ -7,6 +7,7 @@ import PartnerFileUpload from "./partnerFileUpload";
 import { Button } from "@headlessui/react";
 import { activeTab } from "src/helpers/styleHelpers";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import { transformOperatorPartnerAddressWithOpName } from "src/types/transform";
 
 
 interface PartnerRowData {
@@ -31,26 +32,36 @@ export default function PartnerLibrary({selectedSubTab}:{ selectedSubTab: number
   const [data, setData] = useState<any[]>([]);
   const [selectedTabSub, setSelectedTabSub] = useState<number>(() => selectedSubTab);
 
-  useEffect(() => {
-    let isMounted = true;
-    async function getPartnerLists() {
-      setLoading(true);
-      try {
-        const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
-        if (isMounted) {
-          setAPCPartnerList(apcPartList ?? [])
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-    getPartnerLists();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+      useEffect(() => {
+          let isMounted = true;
+          async function getPartnerLists() {
+              setLoading(true);
+              try {
+                  const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
+                  if (isMounted) {
+                      if (!apcPartList.ok) {
+                          throw new Error(apcPartList.message);
+                      }
+                      const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
+                      setAPCPartnerList(dataTransformed);
+                  }
+              } catch (error) {
+  
+                  if (isMounted) {
+                      console.error('Failed to load partners:', error);
+  
+                  }
+              } finally {
+                  if (isMounted) {
+                      setLoading(false);
+                  }
+              }
+          }
+          getPartnerLists();
+          return () => {
+              isMounted = false;
+          };
+      }, []);
 
 
   return (

@@ -1,6 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type AFESourceSystemType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type PartnerRecordToDisown } from 'src/types/interfaces';
-import { sourceSystemList } from 'src/helpers/helpers';
 import { useEffect, useState } from 'react';
 import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
@@ -13,8 +12,6 @@ type EditOperatorProps = {
 };
 
 export default function EditOperator({operatorToEdit, token} : EditOperatorProps) {
-    
-    const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     
     const [saveOpNameChange, setSaveOpNameChange] = useState(false);
     const [saveOpAddressChange, setSaveOpAddressChange] = useState(false);

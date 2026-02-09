@@ -1,5 +1,3 @@
-
-import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle } from 'src/types/transform';
 import  supabase  from './supabase';
 import type { AddressType, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
@@ -22,43 +20,60 @@ import type { UUID } from 'crypto';
     return;
   }
   export const addOperatorSupabase = async (name: string, source_system:number) => {
-    const { data, error } = await supabase.from('OPERATORS').insert({name: name, source_system: source_system, active:true}).select();
+    const { data, error } = await supabase.from('OPERATORS')
+    .insert({name: name, source_system: source_system, active:true})
+    .select()
+    .single();
     if (error) {
-        console.error(`Error adding Operator`, error);
-        return null;
+        return {ok: false, data: null, message: error.message};
       }
-      const transformedOperator = transformOperatorSingle(data[0]);
-      return transformedOperator;
+
+      return {ok: true, data: data, message: undefined};
   };
 
   export const addPartnerSupabase = async (name: string, apc_op_id:string) => {
-    const { data, error } = await supabase.from('PARTNERS').insert({name: name, active:true, apc_op_id:apc_op_id}).select();
+    const { data, error } = await supabase.from('PARTNERS')
+    .insert({name: name, active:true, apc_op_id:apc_op_id})
+    .select()
+    .single();
     if (error) {
-        console.error(`Error adding Operator as a Partner`, error);
-        return null;
+        return {ok: false, data: null, message: error.message};
       }
-      const transformedPartner = transformPartnerSingle(data[0]);
-      return transformedPartner;
+      return {ok: true, data: data, message: undefined};
   };
 
-  export const addOperatorAdressSupabase = async (apc_id: string, street: string, suite: string, city: string, state: string, zip: string, country: string ) => {
-    const { data, error } = await supabase.from('OPERATOR_ADDRESS').insert({apc_id: apc_id, street: street, suite: suite, city: city, state: state, zip: zip, country: country }).select();
+  export const addOperatorAdressSupabase = async (apc_id: string, address: AddressType) => {
+    const { data, error } = await supabase.from('OPERATOR_ADDRESS')
+    .insert({apc_id: apc_id, 
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country })
+      .select()
+      .single();
     if (error) {
-        console.error(`Error adding Operator`, error);
-        return null;
+        return { ok: false, data: null, message: error.message};
       }
-      const trasnformedAddress = transformAddressSupabase(data);
-      return trasnformedAddress[0];
+      return {ok: true, data:data, message: undefined};
   };
 
-  export const addOperatorPartnerAddressSupabase = async (apc_id: UUID, street: string, suite: string, city: string, state: string, zip: string, country: string ) => {
-    const { data, error } = await supabase.from('PARTNER_ADDRESS').insert({apc_id: apc_id, street: street, suite: suite, city: city, state: state, zip: zip, country: country }).select();
+  export const addOperatorPartnerAddressSupabase = async (apc_id: UUID, address: AddressType) => {
+    const { data, error } = await supabase.from('PARTNER_ADDRESS')
+    .insert({apc_id: apc_id, 
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country })
+    .select()
+    .single();
     if (error) {
-        console.error(`Error adding Partner Address`, error);
-        return null;
+         return { ok: false, data:null, message: error.message};
       }
-      const trasnformedAddress = transformAddressSupabase(data);
-      return trasnformedAddress[0];
+      return {ok: true, data:data, message: undefined};
   };
 
   export const addNewUser = async(email: string, password: string) => {

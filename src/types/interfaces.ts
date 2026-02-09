@@ -199,12 +199,12 @@ export interface AFEType {
 //Interface for Addresses pulled from Supabse
   export interface AddressType {
     id: number;
-    street: string | undefined;
-    suite: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zip: string | undefined;
-    country: string | undefined;
+    street: string;
+    suite?: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
     address_active: boolean;
   }
 

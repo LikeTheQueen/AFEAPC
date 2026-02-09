@@ -1,14 +1,15 @@
-import { disableCreateButton } from "src/routes/createEditOperators/routes/helpers/helpers";
+import { isAddressValid, isOperatorValid } from '../src/helpers/helpers'
 import type { AddressType, OperatorType } from "src/types/interfaces";
 
 describe('Should toggle the disabled button to create the Operator correctly',() => {
     afterEach(() => {
     vi.resetAllMocks()
 })
-test('It should return true when the Op Name and Source ID is null', () => {
+test('It should return true (to disable save button) when Operator and Address is not valid and there is NOT error message', () => {
     const mockOp: OperatorType | null = {
       name:'',
-      source_system:0
+      source_system:0,
+      id: undefined
     };
     const mockAddress: AddressType | null = {
         id:0,
@@ -20,67 +21,214 @@ test('It should return true when the Op Name and Source ID is null', () => {
         country: '',
         address_active: true,
     };
-    const result = disableCreateButton(mockOp, mockAddress);
+    const operatorWriteMessage = null;
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
 
-    expect(result).toBe(true);
+    expect(isOperatorValidResult).toBe(false);
+    expect(isAddressValidResult).toBe(false);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(true);
 });
-test('It should return true when the Op Name and Source ID is null', () => {
-    const mockOp: OperatorType | null = {
-        name:'',
-        source_system: undefined
 
+test('It should return true (to disable save button) when Operator is not valid and Address is valid and there is NOT error message', () => {
+    const mockOp: OperatorType | null = {
+      name:'',
+      source_system:0,
+      id: undefined
     };
     const mockAddress: AddressType | null = {
-        street:'123 Main Street',
-        suite: undefined,
-        city: undefined,
-        state: undefined,
-        zip: undefined,
-        country: undefined,
-        id: 1,
-        address_active: true
+        id:0,
+        street: '1234 Main',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
     };
-    const result = disableCreateButton(mockOp, mockAddress);
-    expect(result).toBe(true);
+    const operatorWriteMessage = null;
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isOperatorValidResult).toBe(false);
+    expect(isAddressValidResult).toBe(true);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(true);
 });
 
-test('It should return true when the Op Name and Street is null', () => {
+test('It should return true (to disable save button) when Operator is valid and Address is Not valid and there is NOT error message', () => {
     const mockOp: OperatorType | null = {
-        name:'',
-        source_system:1
-
+      name:'Whit and Corr',
+      source_system:1,
+      id: undefined
     };
     const mockAddress: AddressType | null = {
-        street:undefined,
-        suite:undefined,
-        city:'Dallas',
-        state:'Texas',
-        zip:'80220',
-        country:'United States',
-        id: 1,
-        address_active: true
+        id:0,
+        street: '',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
     };
-    const result = disableCreateButton(mockOp, mockAddress);
-    expect(result).toBe(true);
+    const operatorWriteMessage = null;
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isOperatorValidResult).toBe(true);
+    expect(isAddressValidResult).toBe(false);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(true);
 });
 
-test('It should return false when all except suite has a value', () => {
+test('It should return true (to disable save button) when Operator is valid and Address is valid and there is an error message', () => {
     const mockOp: OperatorType | null = {
-        name:'Nav Oil',
-        source_system:1
-
+      name:'Whit and Corr',
+      source_system:1,
+      id: undefined
     };
     const mockAddress: AddressType | null = {
-        street:'1234 Main Street',
-        suite:'',
-        city:'Dallas',
-        state:'Texas',
-        zip:'80220',
-        country:'United States',
-        id: 1,
-        address_active: true
+        id:0,
+        street: '12345 Main Ave',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
     };
-    const result = disableCreateButton(mockOp, mockAddress);
-    expect(result).toBe(false);
+    const operatorWriteMessage = 'Error Message';
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isOperatorValidResult).toBe(true);
+    expect(isAddressValidResult).toBe(true);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(true);
 });
+
+test('It should return true (to disable save button) when Operator is valid but has an ID and Address is valid and there is NOT error message', () => {
+    const mockOp: OperatorType | null = {
+      name:'Whit and Corr',
+      source_system:1,
+      id: '23213'
+    };
+    const mockAddress: AddressType | null = {
+        id:0,
+        street: '12345 Main Ave',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
+    };
+    const operatorWriteMessage = null;
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isOperatorValidResult).toBe(false);
+    expect(isAddressValidResult).toBe(true);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(true);
+});
+
+test('It should return false (to disable save button) when Operator is valid and Address is valid and there is NOT error message', () => {
+    const mockOp: OperatorType | null = {
+      name:'Whit and Corr',
+      source_system:1,
+      id: undefined
+    };
+    const mockAddress: AddressType | null = {
+        id:0,
+        street: '12345 Main Ave',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
+    };
+    const operatorWriteMessage = null;
+    const isOperatorValidResult = isOperatorValid(mockOp);
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isOperatorValidResult).toBe(true);
+    expect(isAddressValidResult).toBe(true);
+    expect(!isOperatorValidResult || !isAddressValidResult || operatorWriteMessage !== null).toBe(false);
+});
+
+});
+
+describe('Should toggle the disabled button to create the Operator Non Op record correctly',() => {
+    afterEach(() => {
+    vi.resetAllMocks()
 })
+
+test('It should return true (to disable button) when there is not an operator ID and the address is not valid', () => {
+    const mockOp: OperatorType | null = {
+      name:'Whit and Corr',
+      source_system:1,
+      id: undefined
+    };
+    const mockAddress: AddressType | null = {
+        id:0,
+        street: '',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
+    };
+    
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isAddressValidResult).toBe(false);
+    expect(!mockOp.id || !isAddressValidResult).toBe(true);
+});
+
+test('It should return true (to disable button) when there is not an operator ID and the address is not valid', () => {
+    const mockOp: OperatorType | null = {
+      name:'Whit and Corr',
+      source_system:1,
+      id: undefined
+    };
+    const mockAddress: AddressType | null = {
+        id:0,
+        street: '12345 Main Ave',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
+    };
+    
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isAddressValidResult).toBe(true);
+    expect(!mockOp.id || !isAddressValidResult).toBe(true);
+});
+
+test('It should return false (to disable button) when there is an operator ID and the address is valid', () => {
+    const mockOp: OperatorType | null = {
+      name:'Whit and Corr',
+      source_system:1,
+      id: '2323'
+    };
+    const mockAddress: AddressType | null = {
+        id:0,
+        street: '12345 Main Ave',
+        suite: '',
+        city: 'Denver',
+        state: 'CO',
+        zip: '80202',
+        country: 'United States',
+        address_active: true,
+    };
+    
+    const isAddressValidResult = isAddressValid(mockAddress);
+
+    expect(isAddressValidResult).toBe(true);
+    expect(!mockOp.id || !isAddressValidResult).toBe(false);
+});
+
+});

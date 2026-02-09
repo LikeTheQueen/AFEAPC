@@ -1,4 +1,4 @@
-import { type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses } from "../../src/types/interfaces";
+import { type AddressType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses } from "../../src/types/interfaces";
 
 export const operatorListReturnFromSupabase = [
     {
@@ -222,7 +222,7 @@ export const operatorDectivatedSentToSupabase =
      "street": "6789 S Blvd",
      "suite": "",
      "zip": "90078",
-    };
+};
 
 export const operatorActivatedSentToSupabase = 
    {
@@ -254,7 +254,7 @@ export const operatorActivatedSentToSupabase =
      "street": "6789 S Blvd",
      "suite": "",
      "zip": "90078",
-    };
+};
 
 export const operatorDeactivatedFromSupabase = 
     {
@@ -696,6 +696,73 @@ export const partnersLinkedOrUnlinked = [
         }
     }
 ];
+
+export const operatorAddedtoSupabaseReturn = 
+   {
+        "id": "2323232",
+        "base_url": null,
+        "created_at": new Date(),
+        "created_by": "test-user-id",
+        "key": null,
+        "docID": null,
+        "name": "Corr Mike Oils",
+        "source_system": "2",
+        "active": true,
+    };
+
+export const operatorBillingAddressToCreate: AddressType = {
+         street:'1234 Main Street',
+         suite: '',
+         city: 'Austin',
+         state: 'Texas',
+         zip: '98987',
+         country: 'United States',
+         address_active: true,
+         id:0
+        };
+
+export const operatorAddressAddedResponse = {
+            "id": 67,
+            "zip": "98987",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": "",
+            "active": true,
+            "street": "1234 Main Street",
+            "country": "United States"
+};
+
+export const partnerID1 = '13e69340-d14c-45a9-96a8-142795925487'
+export const partnerAddedtoSupabaseReturn = 
+   {
+        "id": partnerID1,
+        "created_at": new Date(),
+        "name": "Corr Mike Oils",
+        "apc_op_id": "2323232",
+        "active": true,
+    };
+
+export const nonOpAddressToCreate: AddressType = {
+         street:'1235 Main Street',
+         suite: '',
+         city: 'Austin',
+         state: 'Texas',
+         zip: '98987',
+         country: 'United States',
+         address_active: true,
+         id:0
+        };
+
+export const nonOpAddressAddedResponse = {
+            "id": 67,
+            "zip": "98987",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": "",
+            "active": true,
+            "street": "1235 Main Street",
+            "country": "United States"
+};
 
 
 

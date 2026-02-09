@@ -1,11 +1,10 @@
-import { fetchFromSupabase } from "provider/fetch";
-import { addOperatorSupabase } from "provider/write";
+
 import { useEffect } from "react";
 import { useBlocker } from "react-router";
 import { toast, type ToastContentProps } from "react-toastify";
 import { Slide, Zoom, Flip, Bounce } from 'react-toastify';
-import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from "src/types/interfaces";
-import { transformSourceSystemSupabase } from "src/types/transform";
+import type { AddressType, AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, OperatorType } from "src/types/interfaces";
+
 
 
 export function setAFEHistoryMaxID(afeHistories: AFEHistorySupabaseType[] | []) {
@@ -67,18 +66,6 @@ export function activeTab(tabList: any[], selected: number | null) {
     return {updatedTabs, selectedTabId}
   }
 
-};
-
-export async function sourceSystemList() {
-  const rawSource = await fetchFromSupabase("SOURCE_SYSTEM","id, system");
-  const fetchSource = transformSourceSystemSupabase(rawSource);
-  console.log(rawSource,'the RAW', fetchSource,'TRANSFORMED');
-  return fetchSource;
-};
-
-export async function writeOperatorToSupabase (name: string, source_system:number) {
-  const result = await addOperatorSupabase('Op4', 2);
-  return result;
 };
 
 export const warnUnsavedChanges = (showAlert:boolean, message:string) =>{
@@ -206,3 +193,21 @@ export const notifyFailure = (message:string) => toast(FailureNotifcation, {
       }
     },
   }); 
+
+export function isAddressValid(address: AddressType): boolean {
+  return !!(
+    address.street &&
+    address.city &&
+    address.state &&
+    address.zip &&
+    address.country
+  );
+};
+
+export function isOperatorValid(operator: OperatorType): boolean {
+  return !!(
+    operator.name &&
+    operator.source_system !==0 &&
+    !operator.id
+  );
+};
