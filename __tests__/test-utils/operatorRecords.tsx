@@ -697,6 +697,303 @@ export const partnersLinkedOrUnlinked = [
     }
 ];
 
+export const partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed = [
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "name": "Energy Oil Company",
+        "apc_op_id": {
+            "id": "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+            "name": "This Third Wheel Oil and Gas"
+        },
+        "address": {
+            "id": 28,
+            "zip": "99789",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": null,
+            "street": "82333 South Blvd.",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e47b",
+        "name": "Whit and Corr Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4654e",
+        "name": "AWhitaker Corry Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    }
+];
+
+export const partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames = [
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "name": "Energy Oil Company",
+        "apc_op_id": {
+            "id": "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+            "name": "This Third Wheel Oil and Gas"
+        },
+        "address": {
+            "id": 28,
+            "zip": "99789",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": null,
+            "street": "82333 South Blvd.",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e47b",
+        "name": "Whit and Corr Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4654e",
+        "name": "AWhitaker Corry Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e488",
+        "name": null,
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af46599",
+        "name": null,
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    }
+];
+
+export const partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames = [
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "name": "Energy Oil Company",
+        "apc_op_id": {
+            "id": "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+            "name": "This Third Wheel Oil and Gas"
+        },
+        "address": {
+            "id": 28,
+            "zip": "99789",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": null,
+            "street": "82333 South Blvd.",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e47b",
+        "name": "Whit and Corr Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4654e",
+        "name": "AWhitaker Corry Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e488",
+        "name": 'Cleo Oil',
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af46599",
+        "name": null,
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    }
+];
+
+export const partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName = [
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "name": "Energy Oil Company",
+        "apc_op_id": {
+            "id": "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+            "name": "This Third Wheel Oil and Gas"
+        },
+        "address": {
+            "id": 28,
+            "zip": "99789",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": null,
+            "street": "82333 South Blvd.",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e47b",
+        "name": "Whit and Corr Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4654e",
+        "name": "AWhitaker Corry Oils Company",
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e488",
+        "name": null,
+        "apc_op_id": null,
+        "address": {
+            "id": 48,
+            "zip": "80202",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "1875 Lawrence St",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af46599",
+        "name": 'Cleo Oil',
+        "apc_op_id": null,
+        "address": {
+            "id": 418,
+            "zip": "80203",
+            "city": "Denver",
+            "state": "CO",
+            "suite": null,
+            "street": "183375 Lawrence Ave",
+            "country": "United States"
+        }
+    }
+];
+
+export const partnersLinkedOrUnlinkedNoUnclaimed = [
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "name": "Energy Oil Company",
+        "apc_op_id": {
+            "id": "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+            "name": "This Third Wheel Oil and Gas"
+        },
+        "address": {
+            "id": 28,
+            "zip": "99789",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": null,
+            "street": "82333 South Blvd.",
+            "country": "United States"
+        }
+    },
+    
+];
+
 export const operatorAddedtoSupabaseReturn = 
    {
         "id": "2323232",
@@ -707,6 +1004,32 @@ export const operatorAddedtoSupabaseReturn =
         "docID": null,
         "name": "Corr Mike Oils",
         "source_system": "2",
+        "active": true,
+    };
+
+export const operatorAddedtoSupabaseReturnNoID = 
+   {
+        "id": undefined,
+        "base_url": null,
+        "created_at": new Date(),
+        "created_by": "test-user-id",
+        "key": null,
+        "docID": null,
+        "name": "Corr Mike Oils",
+        "source_system": "2",
+        "active": true,
+    };
+
+export const operatorAddedtoSupabaseReturnWithoutSourceSystem = 
+   {
+        "id": "2323232",
+        "base_url": null,
+        "created_at": new Date(),
+        "created_by": "test-user-id",
+        "key": null,
+        "docID": null,
+        "name": "Corr Mike Oils",
+        "source_system": "0",
         "active": true,
     };
 
@@ -763,6 +1086,27 @@ export const nonOpAddressAddedResponse = {
             "street": "1235 Main Street",
             "country": "United States"
 };
+
+export const claimProofResult = {
+        "id": 3,
+        "afe_number": "06D111",
+        "version_string": null,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20
+    };
+
+export const claimProofResultNoID = {
+        "id": null,
+        "afe_number": "06D111",
+        "version_string": null,
+        "apc_partner_name": "John Ross Exploration Inc",
+        "partner_wi": 20
+    };
+
+export const verificationResultTrue = {
+    "ok": true,
+    "data": true
+}
 
 
 

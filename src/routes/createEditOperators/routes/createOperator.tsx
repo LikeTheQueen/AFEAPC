@@ -1,7 +1,7 @@
 
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType } from 'src/types/interfaces';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
@@ -87,25 +87,35 @@ export default function CreateOperator() {
         };
       }, []);
   
+  const currentOpID = useMemo(() => operator.id ?? null, [operator.id]);
+  
   function handleAddressChange(e: { target: { name: any; value: any; }; }) {
     setOpBillAddress({
       ...operatorBillingAddress,
       [e.target.name]: e.target.value
     })
-  }
+  };
   function handleOperatorNameChange(e: { target: { name: any; value: any; }; }) {
+    if(e.target.name === 'source_system') {
+      setOperator({
+      ...operator,
+      [e.target.name]: parseInt(e.target.value)
+    })
+    } else {
     setOperator({
       ...operator,
       [e.target.name]: e.target.value
     })
   }
+  };
   function handlePartnerAddressChange(e: { target: { name: any; value: any; }; }) {
     setSingleNonOpAddress({
       ...singleNonOpAddress,
       [e.target.name]: e.target.value
     })
-  }
+  };
   async function handleClickSaveOpName() {
+     
     if (!operator.name || !operator.source_system || operator.source_system === 0) {
       setOperatorWriteErrorMessage('The Operator name or Source System is not valid and the record cannot be written');  
       return;
@@ -147,7 +157,7 @@ export default function CreateOperator() {
     } catch (error) {
       setOperatorWriteErrorMessage("Failed to add operator: "+error);
     }
-  }
+  };
   async function handleClickSaveAnother() {
     if(operator.name === '' || operator.name === null || operator.name === undefined || operator.id === undefined) 
     {
@@ -200,7 +210,7 @@ export default function CreateOperator() {
     } catch(error) {
       setPartnerWriteErrorMessage("Failed to add Partner Record: "+error);
     }
-  }
+  };
   
   return (
     <>
@@ -402,7 +412,7 @@ export default function CreateOperator() {
         <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
-            currentOpID={ operator.id ? operator.id : null }>
+            currentOpID={currentOpID}>
             </PartnerToOperatorGrid>
           </div>
         </form>

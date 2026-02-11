@@ -455,6 +455,18 @@ export const fetchAFENotificationCount = async () => {
   }
   return count ?? 0;
 };
+
+export const fetchClaimProofPrompt = async(apc_op_id: string) => {
+  console.log(apc_op_id,'the id in the call')
+    const { data, error } = await supabase.rpc('afeapc_get_claim_proof_record_for_verification',{v_apc_op_id: apc_op_id});
+    if (error) {
+        return {ok: false, data: null, message: error.message+error.hint};
+      }
+    if (!data?.[0]?.id) {
+        return {ok: false, data: null, message: 'There are no AFEs to verify against'};
+      }
+      return {ok: true, data: data, message: undefined};
+  };
 //Edge Functions
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
@@ -574,6 +586,14 @@ export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, tab
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
     return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable, roles }, token);
+  };
+
+export async function verifyClaimProof(afe_doc_id: string, partner_doc_id: string, id: number, token: string) {
+    
+    type TogglePayload = { afe_doc_id: string; partner_doc_id: string; id: number; };
+    type ToggleResult  = { ok: true; data: any } | { ok: false; message: string };
+   
+    return callEdge<TogglePayload, ToggleResult>("verify_secret", { afe_doc_id, partner_doc_id, id }, token);
   };
 
 export async function testExecuteConnection(apc_op_id: string) {

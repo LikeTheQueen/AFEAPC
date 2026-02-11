@@ -429,3 +429,10 @@ export interface SystemHistory {
   action: string;
   apc_op_id: string;
 }
+export interface ClaimProof {
+  id: number;
+  apc_partner_name: string;
+  afe_number: string;
+  afe_version: string;
+  partner_wi: number;
+}

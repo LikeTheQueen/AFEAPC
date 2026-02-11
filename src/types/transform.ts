@@ -13,7 +13,7 @@ import type {
     PartnerType,
     UserProfileRecordSupabaseType,
     RoleEntryRead,
-    APCIDwithRole,
+    ClaimProof,
     RoleTypesGeneric,
     OperatorPartnerAddressType,
     OperatorPartnerAddressWithOpNameType,
@@ -676,3 +676,12 @@ export const transformSystemHistory = (data: any[]) : SystemHistory[] => {
     }))
 };
 
+export const transformClaimProof = (data: any) : ClaimProof => {
+    return {
+        id: data.id,
+        apc_partner_name: data.apc_partner_name,
+        afe_number: data.afe_number,
+        afe_version: data.version_string,
+        partner_wi: data.partner_wi
+    }
+}

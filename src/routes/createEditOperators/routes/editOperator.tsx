@@ -621,7 +621,8 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
               </div>
                 <div >
                   <PartnerToOperatorGrid
-                    currentOpID={ operatorToEdit.apc_id ? operatorToEdit.apc_id : null }>
+                    currentOpID={ operatorToEdit.apc_id ? operatorToEdit.apc_id : null }
+                    token={token}>
                   </PartnerToOperatorGrid>
                 </div>
               </form>

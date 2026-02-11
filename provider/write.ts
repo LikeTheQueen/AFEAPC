@@ -174,8 +174,8 @@ import type { UUID } from 'crypto';
         return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${partnerAddressError.message})`);
       }
     }
-      
-      return notifyStandard(`Partner address updatedaasasas. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);;
+      return {ok: true};
+      //return notifyStandard(`Partner address updatedaasasas. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);
   };
 
   export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {
