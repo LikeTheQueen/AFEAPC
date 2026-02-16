@@ -7,30 +7,30 @@ import { activeTab } from "src/helpers/styleHelpers";
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 
 const tabs = [
-  { id:1, name: 'Partner Library', href: "/mainScreen/configurations/", current: false, 
+  { id:1, name: 'Partner Library', href: "/mainscreen/configurations/", current: false, 
   sublist: [
-  {id:1, name:"Upload Partner List", current: false, href:"/mainScreen/configurations/partnerupload", mobile: false},
-  {id:2, name:"Map Partner Library", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
-  {id:3, name:"View & Manage Partner Mappings", current: false, href:"/mainScreen/configurations/partnermappingview", mobile: true},
-  {id:4, name:"View & Manage Partner Library", current: false, href:"/mainScreen/configurations/partnersview", mobile: true},
+  {id:1, name:"Upload Partner List", current: false, href:"partnerupload", mobile: false},
+  {id:2, name:"Map Partner Library", current: false, href:"partnermapping", mobile: false},
+  {id:3, name:"View & Manage Partner Mappings", current: false, href:"partnermappingview", mobile: true},
+  {id:4, name:"View & Manage Partner Library", current: false, href:"partnersview", mobile: true},
 ]},
-  { id:2, name: 'GL Library', href: "/mainScreen/configurations", current: false,
+  { id:2, name: 'GL Library', href: "/mainscreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Upload GL Codes", current: true, href:"/mainScreen/configurations/glfileupload", mobile: false},
-  {id:2, name:"Map GL Codes", current: false, href:"/mainScreen/configurations/glmapping", mobile: false},
-  {id:3, name:"View & Manage GL Code Mappings", current: false, href:"/mainScreen/configurations/glmappingview", mobile: true},
-  {id:4, name:"View & Manage GL Codes", current: false, href:"/mainScreen/configurations/glcodesview", mobile: true},
+  {id:1, name:"Upload GL Codes", current: true, href:"glfileupload", mobile: false},
+  {id:2, name:"Map GL Codes", current: false, href:"glmapping", mobile: false},
+  {id:3, name:"View & Manage GL Code Mappings", current: false, href:"glmappingview", mobile: true},
+  {id:4, name:"View & Manage GL Codes", current: false, href:"glcodesview", mobile: true},
     ]
    },
-   { id:3, name: 'System Connections', href: "/mainScreen/configurations", current: false,
+   { id:3, name: 'System Connections', href: "/mainscreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Quorum Execute", current: true, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
-  {id:2, name:"W Energy", current: false, href:"/mainScreen/configurations/systemConfigurations", mobile: true},
+  {id:1, name:"Quorum Execute", current: true, href:"systemConfigurations", mobile: true},
+  {id:2, name:"W Energy", current: false, href:"systemConfigurations", mobile: true},
     ] },
-  { id:4, name: 'Data Export', href: "/mainScreen/configurations", current: false,
+  { id:4, name: 'Data Export', href: "/mainscreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Upload Export Templates", current: true, href:"/mainScreen/configurations/partnerupload", mobile: false},
-  {id:2, name:"Export Data", current: false, href:"/mainScreen/configurations/partnermapping", mobile: false},
+  {id:1, name:"Upload Export Templates", current: true, href:"partnerupload", mobile: false},
+  {id:2, name:"Export Data", current: false, href:"partnermapping", mobile: false},
     ] },
   
 ];

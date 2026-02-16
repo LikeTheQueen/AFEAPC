@@ -10,6 +10,7 @@ import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
 import { fetchSourceSystems } from 'provider/fetch';
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle, transformSourceSystemSupabase } from 'src/types/transform';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
 export default function CreateOperator() {
     let operatorBlank : OperatorType = {
@@ -36,7 +37,9 @@ export default function CreateOperator() {
         country: '',
         address_active: true
     };  
-    
+
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     const [operator, setOperator] = useState<OperatorType>(operatorBlank);
     const [operatorBillingAddress, setOpBillAddress] = useState<AddressType>(opAddressBlank);
@@ -412,7 +415,8 @@ export default function CreateOperator() {
         <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-1 mb-5 md:col-span-5">
           <div >
             <PartnerToOperatorGrid
-            currentOpID={currentOpID}>
+            currentOpID={currentOpID}
+            token={token}>
             </PartnerToOperatorGrid>
           </div>
         </form>

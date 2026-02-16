@@ -96,35 +96,27 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     async function updatePartnerWithOpIDVerification() {
         const claimProofResult = await fetchClaimProofPrompt(currentOpID!);
         if(claimProofResult.ok) {
-          console.log(claimProofResult.data)
           const claimProofTransformed = transformClaimProof(claimProofResult.data);
-          console.log(claimProofTransformed,'the transform')
           setClaimProof(claimProofTransformed);
           setClaimProofOpen(true);
         } else {
           setClaimProofNoRecordToVerify(true);
           setClaimProofOpen(true);
         }
-       
-        
     };
 
     async function handleVerifiationSubmit() {
-      if(claimProofAFEDocID === null || claimProofPartnerDocID === null || !claimProof?.id) {
-        setVerificationErrorMessage('Verification fields cannot be null');
-        return;
-      }
-
-      const checkValidAFEDocID = isValidUUID(claimProofAFEDocID);
+      
+      const checkValidAFEDocID = isValidUUID(claimProofAFEDocID!);
         setClaimProofAFEDocIDValid(checkValidAFEDocID);
-      const checkValidPartnerDocID = isValidUUID(claimProofPartnerDocID);
+      const checkValidPartnerDocID = isValidUUID(claimProofPartnerDocID!);
         setClaimProofPartnerDocIDValid(checkValidPartnerDocID);
       
         if(!checkValidAFEDocID || !checkValidPartnerDocID) {
           return;
         } 
           try {
-            const verifyResult = await verifyClaimProof(claimProofAFEDocID, claimProofPartnerDocID, claimProof?.id!, token);
+            const verifyResult = await verifyClaimProof(claimProofAFEDocID!, claimProofPartnerDocID!, claimProof?.id!, token);
           
             if(!verifyResult.ok) {
               throw new Error('Verification Failed');
@@ -161,7 +153,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       setVerificationErrorMessage(null)
     };
 
-if (loading) return <LoadingPage/>
+    if (loading) return <LoadingPage/>
     return (
         <>
     <div className="px-4 py-4 sm:py-6">
@@ -327,7 +319,7 @@ if (loading) return <LoadingPage/>
               <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
                 <button
                   type="button"
-                  disabled={claimProofAFEDocID === null || claimProofPartnerDocID === null || !claimProofAFEDocIDValid || !claimProofPartnerDocIDValid || !claimProof?.id}
+                  disabled={claimProofAFEDocID === null || claimProofPartnerDocID === null || !claimProofAFEDocIDValid || !claimProofPartnerDocIDValid || typeof claimProof?.id !== 'number'}
                   onClick={() => handleVerifiationSubmit()}
                   className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:ring-0 px-3 py-2 text-sm/6 font-semibold custom-style text-white ring-1 ring-[var(--dark-teal)] ring-inset hover:bg-[var(--bright-pink)] hover:ring-[var(--bright-pink)] focus-visible:ring-0 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                   Submit

@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { addAFEHistorySupabase } from '../provider/fetch';
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import { useSupabaseData } from '../src/types/SupabaseContext';
-import { handlePartnerStatusChange } from "src/routes/afeDashboard/routes/helpers/helpers";
+import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "../src/routes/afeDashboard/routes/helpers/helpers";
 
 // Mocks
 let currentId = 100;

@@ -462,8 +462,8 @@ export const fetchClaimProofPrompt = async(apc_op_id: string) => {
     if (error) {
         return {ok: false, data: null, message: error.message+error.hint};
       }
-    if (!data?.[0]?.id) {
-        return {ok: false, data: null, message: 'There are no AFEs to verify against'};
+    if (!data || data.length === 0 || data[0].id == null) {
+        return {ok: false, data: null, message: 'No recods to verify against'};
       }
       return {ok: true, data: data, message: undefined};
   };

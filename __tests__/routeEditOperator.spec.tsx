@@ -43,7 +43,9 @@ vi.mock('provider/write', () => ({
 describe('View and Edit Operators',() => {
   
     afterEach(() => {
-        vi.resetAllMocks()
+        vi.resetAllMocks();
+        vi.clearAllMocks();
+
     })
 
     test('Shows the list of Operators to the user', async () => {

@@ -1,6 +1,6 @@
 import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
 import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
-import { insertAFEHistory } from 'provider/write'
+import { insertAFEHistory } from '../../../../../provider/write'
 import { notifyStandard } from "src/helpers/helpers";
 import { handleSendEmail } from "email/emailBasic";
 import { useSupabaseData } from "src/types/SupabaseContext";

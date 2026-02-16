@@ -10,7 +10,6 @@ export interface RenderOptions {
   supabaseOverrides?: Partial<SupabaseContextType>;
 }
 
-// 👉 Test-only SupabaseProvider
 const TestSupabaseProvider = ({
   children,
   overrides = {},
@@ -24,9 +23,9 @@ const TestSupabaseProvider = ({
     loading: false,
     session: null,
     refreshData: async()=>{},
-    ...overrides, // <-- inject your test values here
+    ...overrides, 
   };
-  console.log('Rendering TestSupabaseProvider with value:', defaultValue);
+  
 
   return (
     <SupabaseContext.Provider value={defaultValue}>

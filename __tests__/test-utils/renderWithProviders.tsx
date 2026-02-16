@@ -18,7 +18,7 @@ export const renderWithProviders = (
 
   const router = createMemoryRouter(routes ?? defaultRoutes, {
     initialEntries: [routePath],
-  });
+  }); 
 
   return render(
     <SupabaseProvider>

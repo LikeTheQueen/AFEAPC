@@ -1,4 +1,10 @@
+vi.mock('../provider/supabase', () => ({
+  supabase: {
+    rpc: vi.fn()
+  }
+}));
 import AFE from '../src/routes/afeDashboard/routes/afe';
+import { formatDate, formatDateShort } from "../src/helpers/styleHelpers";
 import * as fetchProvider from '../provider/fetch';
 import { vi, type Mock } from 'vitest';
 import { getByTestId, screen, waitFor } from '@testing-library/react';
@@ -35,7 +41,8 @@ describe('displaying AFEs', () => {
   });
 
     afterEach(() => {
-        vi.resetAllMocks()
+        vi.resetAllMocks();
+        vi.clearAllMocks();
     })
 
   test('Shows Non-Operated AFEs and hides anything related to Operated AFEs for a user that only has Non-Op AFEs in the system or Non Op View Rights', async () => {

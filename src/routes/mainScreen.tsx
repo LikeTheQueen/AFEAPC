@@ -28,33 +28,31 @@ import { useSupabaseData } from "../types/SupabaseContext";
 import { DialogTitle } from '@headlessui/react'
 
 
-
-
 const navigation = [
-  { name: 'AFEs', href: "/mainScreen/afe", icon: FolderIcon},
-  { name: 'Archived AFEs', href: "/mainscreen/afeArchived", icon: ClockIcon },
-  { name: 'AFE History', href: "/mainScreen/notifications", icon: BellIcon },
+  { name: 'AFEs', href: "afe", icon: FolderIcon},
+  { name: 'Archived AFEs', href: "afeArchived", icon: ClockIcon },
+  { name: 'AFE History', href: "notifications", icon: BellIcon },
 ]
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
-  { id: 2, name: 'System History', href: "systemHistory", initial: 'S' },
-  { id: 3, name: 'Contact Support', href: "/mainScreen/contactsupport", initial: 'C' },
-  { id: 4, name: 'Support History', href: "/mainScreen/supporthistory", initial: 'S' }
+  { id: 2, name: 'System History', href: "systemhistory", initial: 'S' },
+  { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
+  { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
 ]
 const settings = [
-  { id: 1, name: 'Manage User Access', href: "/mainscreen/manageUsers", initial: 'U' },
-  { id: 2, name: 'Manage User Permissions', href: "/mainscreen/managePermissions", initial: 'P' },
-  { id: 3, name: 'Manage Operator Addresses', href: "/mainScreen/editOperator", initial: 'O' },
-  { id: 4, name: 'Configurations', href: "/mainScreen/configurations", initial: 'C' }
+  { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'U' },
+  { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
+  { id: 3, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+  { id: 4, name: 'Configurations', href: "configurations", initial: 'C' }
 ]
 const onboarding = [
-  { id: 1, name: 'Create Operator', href: "/mainscreen/createOperator", initial: 'O' },
-  { id: 2, name: 'Create Users', href: "/mainscreen/createUser", initial: 'U' },
-  { id: 3, name: 'Manage All Users', href: "/mainscreen/manageUsersSystem", initial: 'M' },
-  { id: 4, name: 'Manage All User Permissions', href: "/mainscreen/manageUserPermissionsSystem", initial: 'P' },
+  { id: 1, name: 'Create Operator', href: "createOperator", initial: 'O' },
+  { id: 2, name: 'Create Users', href: "createUser", initial: 'U' },
+  { id: 3, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
+  { id: 4, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
 ]
 const userNavigation = [
-  { name: 'Your profile', href: '/mainScreen/profile' },
+  { name: 'Your profile', href: 'profile' },
   { name: 'Sign out' },
 ]
 
