@@ -10,7 +10,7 @@ export default [
     route("/", "./routes/landing.tsx"),
     route("/login", "./routes/userLogin/routes/login.tsx"),
     layout("./routes/loggedInUserSupabase.tsx", [
-        route("/mainscreen", "./routes/mainscreen.tsx", [
+        route("/mainscreen", "./routes/mainScreen.tsx", [
             route("afe", "./routes/afeDashboard/routes/afe.tsx"),
             route("afeArchived", "./routes/afeDashboard/routes/afeHistoricals.tsx"),
             route("afeDetail/:afeID", "./routes/afeDashboard/routes/afeDetail.tsx"),
