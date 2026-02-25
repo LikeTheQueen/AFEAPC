@@ -8,15 +8,19 @@ type Props = {
   value: string;
   onChange?: (id: string) => void;
   limitedList: boolean;
+  valueLabel?: (name: string) => void;
+
 };
 
-export function OperatorDropdown({ value, onChange, limitedList }: Props) {
+export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: Props) {
   const { loggedInUser } = useSupabaseData();
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
   
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value;
+        const name = e.target.options[e.target.selectedIndex].text;
         onChange?.(id);
+        valueLabel?.(name);
     };
 
     useEffect(() => {

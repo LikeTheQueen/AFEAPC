@@ -24,6 +24,7 @@ export default [
                 route("partnermappingview", "./routes/partnerConfigurations/routes/partnerMappingView.tsx"),
                 route("partnerupload", "./routes/partnerConfigurations/routes/partnerFileUpload.tsx"),
                 route("partnersview", "./routes/libraries/routes/partnerLibrary.tsx"),
+                route("executeafefilters","./routes/createEditOperators/routes/manageOperatorExecuteFilters.tsx"),
             ]),
             route("missingAFEsupport", "./routes/missingAFEsupport.tsx"),
             route("systemhistory", "./routes/support/routes/systemHistory.tsx"),

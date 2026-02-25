@@ -315,6 +315,30 @@ import type { UUID } from 'crypto';
     }
     return data;
   };
+
+  interface AFEFilterCondition {
+  LeftParenthesis?: string;
+  RightParenthesis?: string;
+  Join?: string;
+  Column?: string;
+  Operator?: string;
+  Value?: string;
+};
+
+  export const updateOperatorFilterFields = async(apc_op_id: string, well_colums:string[], afe_filter: AFEFilterCondition[]) => {
+    const { data, error } = await supabase.from('OPERATORS_EXECUTE').update({
+      afe_filter: afe_filter,
+      well_columns: well_colums
+    }).eq('apc_op_id', apc_op_id)
+    .select()
+    
+
+    if(error) {
+      console.log(error)
+      return {ok: false, message: error?.message, data: []}
+    }
+    return {ok: true, message: null, data: data}
+  };
 //INSERT DATA
   export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
     

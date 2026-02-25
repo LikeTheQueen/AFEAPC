@@ -169,7 +169,7 @@ export const fetchIsUserSuperUser = async(loggedInUserID: string | null | undefi
 export const fetchRolesGeneric = async() => {
     const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
     if (error || !data) {
-      console.error(`Error fetching Operators:`, error);
+      console.error(`Error fetching Roles:`, error);
       return [];
     } return transformRolesGeneric(data);
   };
@@ -455,9 +455,7 @@ export const fetchAFENotificationCount = async () => {
   }
   return count ?? 0;
 };
-
 export const fetchClaimProofPrompt = async(apc_op_id: string) => {
-  console.log(apc_op_id,'the id in the call')
     const { data, error } = await supabase.rpc('afeapc_get_claim_proof_record_for_verification',{v_apc_op_id: apc_op_id});
     if (error) {
         return {ok: false, data: null, message: error.message+error.hint};
@@ -466,7 +464,19 @@ export const fetchClaimProofPrompt = async(apc_op_id: string) => {
         return {ok: false, data: null, message: 'No recods to verify against'};
       }
       return {ok: true, data: data, message: undefined};
-  };
+};
+export const fetchOperatorExecuteFilters = async(apc_op_id: string) => {
+  const { data, error } = await supabase.from("OPERATORS_EXECUTE").select('id,afe_filter, well_columns')
+  .eq('apc_op_id',apc_op_id)
+  .eq('active', true);
+  
+  if (error || !data) {
+      console.error(`Error fetching Operator Filters`, error);
+      return {ok: false, message: error.message, data: []};
+    }
+    return {ok: true, data: data};
+
+}
 //Edge Functions
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
@@ -600,6 +610,23 @@ export async function testExecuteConnection(apc_op_id: string) {
     
   const { data, error } = await supabase.functions.invoke('execute_test_connection', {
     body: { apc_op_id: apc_op_id},
+  })
+  
+  if(!data || error) {
+    return {ok: false, message: error}
+  }
+  return {ok: true, message: 'Success'}
+  };
+
+export async function testExecuteNewConnection(apc_op_id: string, apc_op_name: string, baseURL: string, docId: string, key: string) {
+    
+  const { data, error } = await supabase.functions.invoke('execute_test_new_connection', {
+    body: { apc_op_id: apc_op_id,
+            apc_op_name: apc_op_name,
+            baseURL: baseURL,
+            docId: docId,
+            key: key
+           },
   })
   
   if(!data || error) {

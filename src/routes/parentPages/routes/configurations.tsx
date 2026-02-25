@@ -27,10 +27,10 @@ const tabs = [
   {id:1, name:"Quorum Execute", current: true, href:"systemConfigurations", mobile: true},
   {id:2, name:"W Energy", current: false, href:"systemConfigurations", mobile: true},
     ] },
-  { id:4, name: 'Data Export', href: "/mainscreen/configurations", current: false,
+  { id:4, name: 'Data Integration Parameters', href: "/mainscreen/configurations", current: false,
     sublist:[
-  {id:1, name:"Upload Export Templates", current: true, href:"partnerupload", mobile: false},
-  {id:2, name:"Export Data", current: false, href:"partnermapping", mobile: false},
+  {id:1, name:"Quorum Execute", current: true, href:"executeafefilters", mobile: false},
+  {id:2, name:"W Energy", current: false, href:"partnermapping", mobile: false},
     ] },
   
 ];

@@ -36,7 +36,7 @@ vi.mock('../provider/write', () => ({
   addOperatorPartnerAddressSupabase: vi.fn(),
 }));
 
-describe('View and Edit Operators',() => {
+describe('Create New Operator',() => {
   
     afterEach(() => {
         vi.resetAllMocks()
