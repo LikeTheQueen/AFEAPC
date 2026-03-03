@@ -62,7 +62,6 @@ export default function GLMapping() {
         sourceGLCode: GLCodeType
 
     ) => {
-        console.log(sourceGLCode, 'THE PASSES GL');
         if (currentGLMap?.operator_account_number === sourceGLCode.account_number && currentGLMap?.apc_operator_id !== '') {
             setCurrentGLMap({
                 ...currentGLMap,
@@ -327,7 +326,8 @@ export default function GLMapping() {
                                             <NoSelectionOrEmptyArrayMessage
                                                 message={
                                                     <>
-                                                        There are no account codes to show.  Maybe they haven't been uploaded yet?
+                                                        There are no account codes to show.  Maybe they haven't been uploaded yet?  <span className="font-semibold italic">
+                                                        To map account codes for a Non-Op AFE account codes for your Partner Address must also be uploaded, in addition to account codes for your Operator address.</span>
                                                         <br /><br />
                                                         If they haven't been uploaded head back to the upload screen to get those accounts in the system.
                                                         <br /><br />

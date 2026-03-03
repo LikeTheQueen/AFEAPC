@@ -1,9 +1,11 @@
 import { vi } from 'vitest';
 import * as fetchProvider from '../provider/fetch';
-import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable } from '../src/helpers/helpers'
+import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole } from '../src/helpers/helpers'
 import { handlePartnerStatusChange } from "src/routes/afeDashboard/routes/helpers/helpers";
 import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from 'src/types/interfaces';
 import { singleAFE, twoAFErecords, singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
+import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2, loggedInUserNoAFEViewRights } from './test-utils/rachelGreenuser';
+import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
 describe('Determining the max HistoryID', () => {
     afterEach(() => {
@@ -225,5 +227,21 @@ test('If the partner status is Viewed it should return false (it is NOT disabled
     const result = toggleStatusButtonDisable(mockAFE);
 
     expect(result).toBe(false);
+});
+});
+
+describe('User Permissions to view AFEs', () => {
+    
+it('If the user can view Operated and Non Operated AFEs return true', () => {
+    expect(doesUserHaveRole(loggedInUserRachelGreen, 2, 3)).toBe(true);
+});
+it('If the user can view Non Operated AFEs return true', () => {
+    expect(doesUserHaveRole(loggedInUserRachelGreenNoRole2, 2, 3)).toBe(true);
+});
+it('If the user has no view rights return false', () => {
+    expect(doesUserHaveRole(loggedInUserNoAFEViewRights, 2, 3)).toBe(false);
+});
+it('If the user has no roles but is a super user return true', () => {
+    expect(doesUserHaveRole(loggedInUserIsSuperUser, 2, 3)).toBe(true);
 });
 })

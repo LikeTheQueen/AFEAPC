@@ -10,6 +10,7 @@ import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerD
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 
 const expectedHeaders = ["account_number", "account_group", "account_description"];
+const NULL_UUID = '00000000-0000-0000-0000-000000000000';
 
 export default function GLFileUpload() {
   const [data, setData] = useState<GLCodeRowData[]>([]);
@@ -76,7 +77,7 @@ export default function GLFileUpload() {
         const looped = opAPCIDArray.map<GLCodeRowData>((operator) => ({
           ...basic,
           apc_op_id: operator,
-          apc_part_id: null
+          apc_part_id: NULL_UUID
         }))
 
         return looped;
@@ -93,7 +94,7 @@ export default function GLFileUpload() {
 
         const looped = partnerAPCIDArray.map<GLCodeRowData>((partner) => ({
           ...basic,
-          apc_op_id: null,
+          apc_op_id: NULL_UUID,
           apc_part_id: partner
         }))
 

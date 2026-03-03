@@ -5,8 +5,9 @@ import LoadingPage from './loadingPage';
 import { updatePartnerWithOpID } from 'provider/write';
 import NoSelectionOrEmptyArrayMessage from './sharedComponents/noSelectionOrEmptyArrayMessage';
 import { transformOperatorPartnerAddressWithOpName, transformClaimProof } from 'src/types/transform';
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { useSupabaseData } from "../types/SupabaseContext";
 
 export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID: string | null, token: string}) {
     const [partnerListToLink, setPartnerListToLink] = useState<PartnerRecordToUpdate[]>([]);
@@ -23,6 +24,8 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     const [partnerDocIDFocused, setPartnerDocIDFocused] = useState(false);
     const [verificationErrorMessage, setVerificationErrorMessage] = useState<string | null>(null);
     const [claimProofNoRecordToVerify, setClaimProofNoRecordToVerify] = useState(false);
+    const { loggedInUser } = useSupabaseData();
+
 
     const opId = currentOpID;
     
@@ -32,7 +35,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
         setLoading(true);
         try {
           const partnerFetchResult = await fetchPartnersLinkedOrUnlinkedToOperator();
-          console.log(partnerFetchResult.data,'the partner data')
+          
 
           if (isMounted && partnerFetchResult.ok) {
             
@@ -94,6 +97,9 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     };
 
     async function updatePartnerWithOpIDVerification() {
+      if(loggedInUser?.is_super_user) {
+        await updatePartnerWithOpID(partnerListToLink);
+      } else {
         const claimProofResult = await fetchClaimProofPrompt(currentOpID!);
         if(claimProofResult.ok) {
           const claimProofTransformed = transformClaimProof(claimProofResult.data);
@@ -103,6 +109,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
           setClaimProofNoRecordToVerify(true);
           setClaimProofOpen(true);
         }
+      }
     };
 
     async function handleVerifiationSubmit() {
@@ -152,7 +159,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       setClaimProofPartnerDocIDValid(true),
       setVerificationErrorMessage(null)
     };
-
+console.log(loggedInUser);
     if (loading) return <LoadingPage/>
     return (
         <>

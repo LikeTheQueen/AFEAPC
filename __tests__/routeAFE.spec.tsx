@@ -50,7 +50,7 @@ describe('displaying AFEs', () => {
     ok: true,
     data: afeReturnFromSupabase
   });
-    const { getByText } = renderWithProviders(<AFE />, {
+    renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserNoOpViewRightsAthena,
         loading: false,

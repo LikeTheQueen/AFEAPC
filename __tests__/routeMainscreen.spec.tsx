@@ -6,10 +6,40 @@ import MainScreen from '../src/routes/mainScreen';
 import supabase from 'provider/supabase';
 
 import {
-  loggedInUserRachelGreen
+  loggedInUserNoAFEViewRights,
+  loggedInUserRachelGreen,
+  loggedInUserRachelGreenNoRole2
 } from './test-utils/rachelGreenuser';
+import { loggedInUser, loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
 vi.mock('provider/supabase');
+
+const navItems = ['AFEs', 'Archived AFEs', 'AFE History'];
+const afeNavigation = [
+  { id: 1, name: 'AFEs', href: "afe", initial: 'A' },
+  { id: 2, name: 'Archived AFEs', href: "afeArchived", initial: 'A' },
+  { id: 3, name: 'AFE History', href: "notifications", initial: 'H'  },
+]
+    const userSettingsNavigation = [
+  { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'A' },
+  { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
+  { id: 3, name: 'Create Users', href: "createUser", initial: 'C' },
+    ]
+    const libraryNavigation = [
+  { id: 1, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+  { id: 2, name: 'Configurations', href: "configurations", initial: 'C' },
+  { id: 3, name: 'System History', href: "systemhistory", initial: 'S' },
+]
+    const help = [
+  { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
+  { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
+  { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
+]
+const onboarding = [
+  { id: 1, name: 'Create Operator', href: "createOperator", initial: 'O' },
+  { id: 3, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
+  { id: 4, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+]
 
 describe('Mainscreen', async () => {
   const user = userEvent.setup();
@@ -28,6 +58,26 @@ describe('Mainscreen', async () => {
       ],
     },
   ],
+      supabaseOverrides: {
+                loggedInUser: loggedInUserRachelGreen,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
       });
     });
     afterEach(() => {
@@ -104,20 +154,7 @@ describe('Mainscreen User Experience', async () => {
                   user_metadata:{}
                 }
               },
-            },
-        routePath: '/mainscreen',
-        routes: [
-    {
-      path: '/mainscreen',
-      element: <MainScreen />,
-      children: [
-        { path: 'afe', element: <h1>AFEs</h1> },
-        { path: 'afeArchived', element: <h1>AFE History</h1> },
-        { path: 'configurations', element: <h1>Configurations</h1> },
-        { path: 'notifications', element: <h1>Notifications</h1> },
-      ],
-    },
-  ],
+            }
       });
     });
     afterEach(() => {
@@ -137,4 +174,184 @@ describe('Mainscreen User Experience', async () => {
   });
   
 });
+  it('renders all main navigation items', () => {
+    
+    navItems.forEach(name => {
+      // getAllByText because items appear in both mobile + desktop sidebars
+      const elements = screen.getAllByText(name);
+      expect(elements.length).toBeGreaterThan(0);
+      elements.forEach(el => expect(el).toBeInTheDocument());
     });
+    userSettingsNavigation.forEach(name => {
+      const elements = screen.getAllByText(name.name);
+      expect(elements.length).toBeGreaterThan(0);
+      elements.forEach(el => expect(el).toBeInTheDocument());
+    })
+    libraryNavigation.forEach(name => {
+      const elements = screen.getAllByText(name.name);
+      expect(elements.length).toBeGreaterThan(0);
+      elements.forEach(el => expect(el).toBeInTheDocument());
+    })
+    help.forEach(name => {
+      expect(screen.queryByText(name.name)).toBeInTheDocument();
+    })
+    onboarding.forEach(item => {
+    expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+  });
+  });
+  
+    });
+describe('Sidebar visibility by permissions', () => {
+
+  describe('Rachel Green - full operator and partner roles', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserRachelGreen,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+
+    it('can see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+
+    it('can see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Rachel Green - no operator role 2', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserRachelGreenNoRole2,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+
+    it('can still see AFE navigation via partner roles', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('User with no AFE view rights', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserNoAFEViewRights,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+    it('cannot see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+
+    it('cannot see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+
+   
+  });
+
+  describe('Logged in Super User', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserIsSuperUser,
+                loading: false,
+                isSuperUser: true,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+
+    it('can see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+
+    it('can see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+});

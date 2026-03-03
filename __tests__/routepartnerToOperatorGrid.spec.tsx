@@ -51,7 +51,7 @@ test('Displays a message that there are no unclaimed addresses when the return h
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -91,7 +91,7 @@ test('Displays a list of 2 unclaimed partner addresses that are NOT checked and 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -136,7 +136,7 @@ test('Displays a list of unclaimed partner addresses with a null value for the O
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -187,7 +187,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -253,7 +253,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -320,7 +320,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     console.log(typeof claimProofResultNoID.id !== 'number')
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -421,7 +421,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -545,7 +545,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -662,7 +662,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -767,7 +767,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -871,7 +871,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -993,7 +993,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1103,8 +1103,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
 
 });
 
-
-
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses then unchecks first address to claim and save second with opID', async () => {
   const user = userEvent.setup();  
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
@@ -1120,7 +1118,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1242,7 +1240,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1306,7 +1304,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1372,7 +1370,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1497,7 +1495,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1618,7 +1616,7 @@ test('Displays a message that there are no unclaimed addresses when there is an 
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
           supabaseOverrides: {
-            loggedInUser: loggedInUserSuperUser,
+            loggedInUser: loggedInUserRachelGreen,
             loading: false,
             isSuperUser: false,
             session: {
@@ -1647,6 +1645,81 @@ test('Displays a message that there are no unclaimed addresses when there is an 
     expect(noUnclaimedAddresses).toBeVisible();
     const fetchErrorMessage = screen.getByText(/Error retrieving unclaimed addresses: /i);
     expect(fetchErrorMessage).toBeVisible();
+});
+//IF SUPER USER THERE IS NOT A VERIFICATION 
+test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED', async () => {
+  const user = userEvent.setup();
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+        mockPartnersFetch.mockResolvedValue({
+          ok: true,
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
+        });
+
+    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+        const currentOpID = '1234567';
+    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
+    
+    renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
+          supabaseOverrides: {
+            loggedInUser: loggedInUserSuperUser,
+            loading: false,
+            isSuperUser: false,
+            session: {
+              access_token: 'test-token',
+              refresh_token: 'test-refresh-token',
+              expires_in: 3600,
+              token_type: 'bearer',
+              user: {
+                id: 'test-user-id',
+                email: 'test@example.com',
+                aud: 'authenticated',
+                role: 'authenticated',
+                created_at: '2024-01-01T00:00:00Z',
+                app_metadata: [],
+                user_metadata: {}
+              }
+            },
+          }
+        });
+    
+    await waitFor(() => {
+      expect(mockPartnersFetch).toHaveBeenCalled();
+    });
+
+    const noUnclaimedAddresses = screen.getByText(/There are no unclaimed addresses to show/i);
+    expect(noUnclaimedAddresses).not.toBeVisible();
+    
+    const unlinkedPartnerList = screen.getAllByRole("listitem");
+    expect(unlinkedPartnerList).toHaveLength(4);
+    
+    const checkboxes = screen.getAllByRole('checkbox');
+    expect(checkboxes).toHaveLength(4);
+    
+    fireEvent.click(checkboxes[0]);
+    expect(checkboxes[0]).toBeChecked();
+    fireEvent.click(checkboxes[1]);
+    expect(checkboxes[1]).toBeChecked();
+    
+    const saveButton = screen.getByText('Save');
+    expect(saveButton).toBeEnabled();
+
+    fireEvent.click(saveButton);
+    
+    await waitFor(() => {
+      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+        {
+          id: 'ecb2c585-9225-4957-98ce-d4315af4e488',
+          apc_op_id: currentOpID
+        },
+        {
+          id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
+          apc_op_id: currentOpID
+        }
+      ]);
+    });
+
+    
 });
 
 });

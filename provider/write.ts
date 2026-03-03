@@ -238,7 +238,8 @@ import type { UUID } from 'crypto';
   };
 
   export const writeGLAccountlistFromSourceToDB = async(accountRecords: GLCodeRowData[]) => {
-    const { data, error } = await supabase.from('GL_CODES').insert(accountRecords).select();
+    const { data, error } = await supabase.from('GL_CODES').upsert(accountRecords, { onConflict: 'account_number, apc_op_id, apc_part_id' })
+    .select();
     if (error) {
         console.error(`Error adding the Operator's GL Codes`, error);
         return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${error.message})`);

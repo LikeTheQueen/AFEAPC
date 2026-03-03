@@ -23,9 +23,6 @@ const apc_afe_id2 = '34d7bd01-d43b-4e3a-a586-34f0297a8008';
 
 const userID1 = '13e69340-d14c-45a9-96a8-142795925487'
 
-
-
-
 export const singleAFE: AFEType[] = [{
     id: apc_afe_id1,
     operator: 'Gas & Oil Company',
@@ -393,7 +390,7 @@ export const parterRejectedStatus: AFEType = {
 };
 
 export const loggedInUser: UserProfileRecordSupabaseType = {
-    firstName: 'User 1',
+    firstName: 'User lock',
     lastName: 'Athena',
     email: 'user@email',
     active: true,

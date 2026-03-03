@@ -1,5 +1,4 @@
 import type { RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from "src/types/interfaces";
-import { fetchIsUserSuperUser } from 'provider/fetch';
 import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
 import { notifyStandard } from "src/helpers/helpers";
 

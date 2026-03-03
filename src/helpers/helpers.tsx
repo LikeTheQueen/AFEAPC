@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useBlocker } from "react-router";
 import { toast, type ToastContentProps } from "react-toastify";
 import { Slide, Zoom, Flip, Bounce } from 'react-toastify';
-import type { AddressType, AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, OperatorType } from "src/types/interfaces";
+import type { AddressType, AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, OperatorType, UserProfileRecordSupabaseType } from "src/types/interfaces";
 
 
 
@@ -177,7 +177,7 @@ export function FailureNotifcation({
         </div>  
     </div>
   );
-}
+};
 export const notifyFailure = (message:string) => toast(FailureNotifcation, {
     data: message,
     closeButton: false,
@@ -210,4 +210,17 @@ export function isOperatorValid(operator: OperatorType): boolean {
     operator.source_system !==0 &&
     !operator.id
   );
+};
+
+export const doesUserHaveRole = (user: UserProfileRecordSupabaseType | null, operatorMinLevel: number, partnerMinLevel: number): boolean => {
+if (!user) return false;
+if (user.is_super_user) return true;
+//Check that there are roles
+if (!user?.operatorRoles.length && !user?.partnerRoles.length) return false;
+// Check operator roles
+const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorMinLevel) ?? false;  
+  // Check partner roles
+const hasPartnerAccess = user.partnerRoles?.some(r => r.role! === partnerMinLevel) ?? false;
+
+return hasOperatorAccess || hasPartnerAccess; 
 };

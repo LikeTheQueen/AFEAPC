@@ -20,16 +20,6 @@ import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 
-
-export const fetchFromSupabase = async (table: string, select: string) => {
-    const { data, error } = await supabase.from(table).select(select);
-    if (error || !data) {
-      console.error(`Error fetching ${table}:`, error);
-      return [];
-    }
-    return data;
-  };
-
 export const fetchSourceSystems = async() => {
   const { data, error } = await supabase.from('SOURCE_SYSTEM').select('id, system');
   if (error) {
@@ -37,15 +27,6 @@ export const fetchSourceSystems = async() => {
   }
   return {ok: true, data: data, message: ''};
 };
-
-export const fetchUserFromSupabase = async (table: string, select: string, session: string) => {
-    const { data, error } = await supabase.from(table).select(select).eq('id', session).maybeSingle();
-    if (error || !data) {
-      console.error(`Error fetching ${table}:`, error);
-      return null;
-    }
-    return transformUserProfileSupabaseSingle(data);
-  };
 
 export const fetchUserProfileRecordFromSupabase = async(session: string) => {
   const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name),apc_address_id(id, street, suite, city, state, zip, country)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name), apc_address_id(id, street, suite, city, state, zip, country)),is_super_user ')
@@ -59,7 +40,36 @@ export const fetchUserProfileRecordFromSupabase = async(session: string) => {
       return null;
     }
     return transformUserProfileRecordSupabase(data);
+};
+
+export const fetchRolesGeneric = async() => {
+    const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
+    if (error || !data) {
+      console.error(`Error fetching Roles:`, error);
+      return [];
+    } return transformRolesGeneric(data);
+};
+
+//I DON'T THINK THIS SECTION IS NEEDED
+export const fetchFromSupabase = async (table: string, select: string) => {
+    const { data, error } = await supabase.from(table).select(select);
+    if (error || !data) {
+      console.error(`Error fetching ${table}:`, error);
+      return [];
+    }
+    return data;
   };
+//I DON'T THINK THIS SECTION IS NEEDED
+export const fetchUserFromSupabase = async (table: string, select: string, session: string) => {
+    const { data, error } = await supabase.from(table).select(select).eq('id', session).maybeSingle();
+    if (error || !data) {
+      console.error(`Error fetching ${table}:`, error);
+      return null;
+    }
+    return transformUserProfileSupabaseSingle(data);
+  };
+
+
 /*Delete NOT Used
 export const fetchUserOperatorListFromSupabase = async (equal: UUID) => {
     const { data, error } = await supabase.from("OPERATOR_USER_CROSSWALK").select('apc_op_id(id,name)').eq('user_id',equal).eq('role_id',[2,4]);
@@ -151,7 +161,7 @@ export const fetchOperatorsForLoggedInUser = async(loggedinUserId: string, super
     return transformOperatorPartnerAddress(data);
     }
   };
-*/
+
 export const fetchIsUserSuperUser = async(loggedInUserID: string | null | undefined) => {
     if(loggedInUserID === null || loggedInUserID === undefined) {
       return false;
@@ -165,15 +175,8 @@ export const fetchIsUserSuperUser = async(loggedInUserID: string | null | undefi
       return false;
     }
   };
-
-export const fetchRolesGeneric = async() => {
-    const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
-    if (error || !data) {
-      console.error(`Error fetching Roles:`, error);
-      return [];
-    } return transformRolesGeneric(data);
-  };
-
+*/
+  //I THINK THIS CAN BE DELETED
 export const fetchOpUsersForEdit = async(table: string, addressTable: string, apc_id?: string[], user_id?: string ) => {
   
   let query = supabase.from(table)
@@ -203,13 +206,15 @@ export const fetchOpUsersForEdit = async(table: string, addressTable: string, ap
   return formattedRoles;
   };
 
+
+
+
 export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   const { data, error } = await supabase.from("PARTNERS").select('apc_id:id,name, apc_op_id(name, id), address:PARTNER_ADDRESS!apc_id(id,street, suite, city, state, zip, country)');
       if (error) {
-      console.error(`Error fetching Partners:`, error);
-      return {ok: true, data: [], message: 'Error fetching partners: '+error};
+      return {ok: false, data: [], message: 'Error fetching partners: '+error.message};
     }
-    return {ok: true, data: data as any[]};
+    return {ok: true, data: data as any[], message: undefined};
 };
 
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {

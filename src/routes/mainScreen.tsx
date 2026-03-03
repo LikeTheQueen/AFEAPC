@@ -26,6 +26,7 @@ import {
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { useSupabaseData } from "../types/SupabaseContext";
 import { DialogTitle } from '@headlessui/react'
+import { doesUserHaveRole } from "src/helpers/helpers";
 
 
 const navigation = [
@@ -33,9 +34,26 @@ const navigation = [
   { name: 'Archived AFEs', href: "afeArchived", icon: ClockIcon },
   { name: 'AFE History', href: "notifications", icon: BellIcon },
 ]
+//Users that have permission 2 or 3 or a Super User can see these.
+const afeNavigation = [
+  { id: 1, name: 'AFEs', href: "afe", initial: 'A' },
+  { id: 2, name: 'Archived AFEs', href: "afeArchived", initial: 'A' },
+  { id: 3, name: 'AFE History', href: "notifications", initial: 'H'  },
+]
+//Users that have permission 4 or 5 or a Super User can see these.
+const userSettingsNavigation = [
+  { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'A' },
+  { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
+  { id: 3, name: 'Create Users', href: "createUser", initial: 'C' },
+]
+//Users that have permission 8 or 9 or a Super User can see these.
+const libraryNavigation = [
+  { id: 1, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+  { id: 2, name: 'Configurations', href: "configurations", initial: 'C' },
+  { id: 3, name: 'System History', href: "systemhistory", initial: 'S' },
+]
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
-  { id: 2, name: 'System History', href: "systemhistory", initial: 'S' },
   { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
   { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
 ]
@@ -110,9 +128,11 @@ export default function MainScreen() {
                 </div>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                    {/* AFE MENU OPTIONS*/}
                     <li>
+                      {doesUserHaveRole(loggedInUser, 2, 3) && (
                       <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) => (
+                        {afeNavigation.map((item) => (
                           <li key={item.name}>
                             <NavLink
                               className={({ isActive, isPending }) =>
@@ -125,27 +145,29 @@ export default function MainScreen() {
                               to={item.href}
                               onClick={handleClick}
                             >
-                              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
-                                <item.icon aria-hidden="true" className="size-3.5 shrink-0 " />
-                              </span>
+                              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {item.initial}
+                          </span>
                               <span className="">{item.name}</span>
                             </NavLink>
                           </li>
                         ))}
                       </ul>
+                      )}
                     </li>
+                    {/* USER MENU OPTIONS*/}
+                    {doesUserHaveRole(loggedInUser, 4, 5) && (
                     <li>
                       <div className="relative">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
                           <div className="w-full border-t border-white" />
                         </div>
                         <div className="relative flex justify-center">
-                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">System</span>
+                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">Users</span>
                         </div>
                       </div>
-
                       <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {settings.map((setting) => (
+                        {userSettingsNavigation.map((setting) => (
                           <li key={setting.name}>
                             <NavLink
                               className={({ isActive, isPending }) =>
@@ -167,6 +189,44 @@ export default function MainScreen() {
                         ))}
                       </ul>
                     </li>
+                    )}
+                    {/* LIBRARY CONFIGURATION MENU OPTIONS*/}
+                    {doesUserHaveRole(loggedInUser, 8, 9) && (
+                    <li>
+                      <div className="relative">
+                        <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white" />
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">Library & Config</span>
+                        </div>
+                      </div>
+
+                      <ul role="list" className="-mx-2 mt-2 space-y-1">
+                        {libraryNavigation.map((help) => (
+                          <li key={help.id}>
+                            <NavLink
+                              className={({ isActive, isPending }) =>
+                                isActive
+                                  ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+                                  : isPending
+                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                              }
+                              to={help.href}
+                              onClick={handleClick}
+                            >
+                              <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                                {help.initial}
+                              </span>
+                              <span className="truncate">{help.name}</span>
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                    )}
+                     {/* HELP MENU OPTIONS*/}
                     <li>
                       <div className="relative">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
@@ -200,6 +260,8 @@ export default function MainScreen() {
                         ))}
                       </ul>
                     </li>
+                    {/* ONBOARDING MENU OPTIONS*/}
+                    {doesUserHaveRole(loggedInUser, 1, 1) && (
                     <li>
                       <div className="relative">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
@@ -233,6 +295,7 @@ export default function MainScreen() {
                         ))}
                       </ul>
                     </li>
+                    )}
                   </ul>
                 </nav>
               </div>
@@ -252,10 +315,12 @@ export default function MainScreen() {
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                {/* AFE MENU OPTIONS*/}
                 <li>
+                  {doesUserHaveRole(loggedInUser, 2, 3) && (
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
+                    {afeNavigation.map((item) => (
+                      <li key={item.id}>
                         <NavLink
                           className={({ isActive, isPending }) =>
                             isActive
@@ -266,8 +331,8 @@ export default function MainScreen() {
                           }
                           to={item.href}
                         >
-                          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
-                            <item.icon aria-hidden="true" className="size-4 shrink-0 " />
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {item.initial}
                           </span>
                           <span className="">{item.name}</span>
 
@@ -275,19 +340,22 @@ export default function MainScreen() {
                       </li>
                     ))}
                   </ul>
+                  )}
                 </li>
+                {/* USER MENU OPTIONS*/}
+                {doesUserHaveRole(loggedInUser, 4, 5) && (
                 <li>
                   <div className="relative">
                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-white" />
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">System</span>
+                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">Users</span>
                     </div>
                   </div>
 
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {settings.map((setting) => (
+                    {userSettingsNavigation.map((setting) => (
                       <li key={setting.name}>
                         <NavLink
                           className={({ isActive, isPending }) =>
@@ -307,6 +375,42 @@ export default function MainScreen() {
                     ))}
                   </ul>
                 </li>
+                )}
+                {/* LIBRARY CONFIGURATION MENU OPTIONS*/}
+                {doesUserHaveRole(loggedInUser, 8, 9) && (
+                <li>
+                  <div className="relative">
+                    <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">Library & Config</span>
+                    </div>
+                  </div>
+
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {libraryNavigation.map((help) => (
+                      <li key={help.name}>
+                        <NavLink
+                          className={({ isActive, isPending }) =>
+                            isActive
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              : isPending
+                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                          }
+                          to={help.href}>
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {help.initial}
+                          </span>
+                          <span className="">{help.name}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                )}
+                {/* HELP MENU OPTIONS*/}
                 <li>
                   <div className="relative">
                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
@@ -338,6 +442,8 @@ export default function MainScreen() {
                     ))}
                   </ul>
                 </li>
+                {/* ONBOARDING MENU OPTIONS*/}
+                {loggedInUser?.is_super_user && (
                 <li>
                   <div className="relative">
                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
@@ -369,6 +475,7 @@ export default function MainScreen() {
                     ))}
                   </ul>
                 </li>
+                )}
 
               </ul>
             </nav>
