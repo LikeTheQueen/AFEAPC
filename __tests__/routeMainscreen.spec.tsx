@@ -8,7 +8,9 @@ import supabase from 'provider/supabase';
 import {
   loggedInUserNoAFEViewRights,
   loggedInUserRachelGreen,
-  loggedInUserRachelGreenNoRole2
+  loggedInUserRachelGreenNoRole2,
+  loggedInUserRachelGreenCannotEditUsersNoRole4or5,
+  loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9
 } from './test-utils/rachelGreenuser';
 import { loggedInUser, loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
@@ -131,7 +133,7 @@ describe('Mainscreen', async () => {
     });
   });
   });
-describe('Mainscreen User Experience', async () => {
+describe('Mainscreen User Experience with a role for ops 2,4,8 and partners 3,9,5,6', async () => {
   const user = userEvent.setup();
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
@@ -197,13 +199,13 @@ describe('Mainscreen User Experience', async () => {
     })
     onboarding.forEach(item => {
     expect(screen.queryByText(item.name)).not.toBeInTheDocument();
-  });
+    });
   });
   
     });
 describe('Sidebar visibility by permissions', () => {
 
-  describe('Rachel Green - full operator and partner roles', () => {
+  describe('Rachel Green with a role for ops 2,4,8 and partners 3,9,5,6', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
@@ -234,15 +236,30 @@ describe('Sidebar visibility by permissions', () => {
         expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
       });
     });
+    it('can see User Settings navigation', () => {
+      userSettingsNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see Library navigation', () => {
+      libraryNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see Help navigation', () => {
+      help.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
 
-    it('can see onboarding section', () => {
+    it('cannot see onboarding section', () => {
       onboarding.forEach(item => {
         expect(screen.queryByText(item.name)).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('Rachel Green - no operator role 2', () => {
+  describe('Rachel Green with a role for ops 2,4,8 and partners 3,9,5,6 NO operator role 2 - Cannot see Operated AFEs', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
@@ -303,6 +320,116 @@ describe('Sidebar visibility by permissions', () => {
     it('cannot see AFE navigation', () => {
       afeNavigation.forEach(item => {
         expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+
+    it('cannot see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+
+   
+  });
+
+  describe('User with no User Edit Rights', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+    it('can see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+it('can see User Settings navigation', () => {
+      userSettingsNavigation.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+    it('can see Library navigation', () => {
+      libraryNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see Help navigation', () => {
+      help.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+
+    it('cannot see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+
+   
+  });
+
+  describe('User with no User Edit Rights or Manage Address or Configurations Rights', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9,
+                loading: false,
+                isSuperUser: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+    it('can see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see User Settings navigation', () => {
+      userSettingsNavigation.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+    it('can see Library navigation', () => {
+      libraryNavigation.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+    it('can see Help navigation', () => {
+      help.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
       });
     });
 

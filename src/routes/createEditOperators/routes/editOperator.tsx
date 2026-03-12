@@ -271,7 +271,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
 
   return (
     <>
-    {!operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
+    {!operatorToEdit.apc_id || !operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
           <div className="">

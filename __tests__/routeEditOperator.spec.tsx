@@ -401,7 +401,8 @@ describe('View and Edit Operators',() => {
         const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: partnersLinkedOrUnlinked
+            data: partnersLinkedOrUnlinked,
+            message: undefined
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -496,7 +497,8 @@ describe('View and Edit Operators',() => {
         const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: partnersLinkedOrUnlinked
+            data: partnersLinkedOrUnlinked,
+            message: undefined
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -855,4 +857,4 @@ describe('View and Edit Operators',() => {
     expect(partnerAddressInput).toHaveValue('2123 Lane Blvc');
         
     });
-});
+}); 

@@ -54,7 +54,8 @@ describe('Create New Operator',() => {
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     renderWithProviders(<CreateOperator />, {
@@ -147,7 +148,8 @@ describe('Create New Operator',() => {
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     renderWithProviders(<CreateOperator />, {
@@ -240,7 +242,8 @@ describe('Create New Operator',() => {
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     renderWithProviders(<CreateOperator />, {
@@ -332,7 +335,8 @@ describe('Create New Operator',() => {
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -519,7 +523,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -704,7 +709,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -868,7 +874,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -1046,7 +1053,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -1212,7 +1220,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
-      data: partnersLinkedOrUnlinked
+      data: partnersLinkedOrUnlinked,
+      message: undefined
     });
 
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
@@ -1363,4 +1372,5 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     expect(partnerWriteErrorMessage).not.toBeVisible();
  
   });
+
 });

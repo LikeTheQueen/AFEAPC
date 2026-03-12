@@ -11,10 +11,10 @@ describe('Configurations', () => {
         routePath: '/mainscreen/configurations',
         routes: [
           { path: '/mainscreen/configurations', element: <Configurations /> },
-          { path: '/mainscreen/configurations/systemConfigurations', element: <div>System Connections</div> },
-          { path: '/mainscreen/configurations/dataexport', element: <div>Data Export</div> },
-          { path: '/mainscreen/configurations/gllibrary', element: <div>GL Library</div> },
-          { path: '/mainscreen/configurations/partnerlibrary', element: <div>Partner Library</div> }
+          { path: '/mainscreen/configurations/systemConfigurations', element: <div>System Connections Outlet</div> },
+          { path: '/mainscreen/configurations/executeafefilters', element: <div>Data Integration Outlet</div> },
+          { path: '/mainscreen/configurations/glmapping', element: <div>GL Mapping Outlet</div> },
+          { path: '/mainscreen/configurations/partnermapping', element: <div>Partner Mapping Outlet</div> }
         ],
       });
     });
@@ -23,26 +23,35 @@ describe('Configurations', () => {
     });
 
   it('Displays /systemConfigurations in the Outlet when clicked', async () => {
-    await user.click(screen.getByRole('link', { name: /System Connections/i }));
+    const systemConnections = screen.getByRole('link', { name: /System Connections/i });
+    await user.click(systemConnections);
+    const systemConnectionsSublistOption1 = screen.getByRole('link', { name: /Quorum Execute/i });
+    await user.click(systemConnectionsSublistOption1);
+    expect(await screen.findByText('System Connections Outlet')).toBeInTheDocument();
 
-    expect(await screen.findByText('System Connections')).toBeInTheDocument();
   });
 
-  it('Displays /dataexport in the Outlet when clicked', async () => {
-    await user.click(screen.getByRole('link', { name: /Data Export/i }));
+  it('Displays /executeafefilters in the Outlet when clicked', async () => {
+    await user.click(screen.getByRole('link', { name: /Data Integration Parameters/i }));
 
-    expect(await screen.findByText('Data Export')).toBeInTheDocument();
+    const systemConnectionsSublistOption1 = screen.getByRole('link', { name: /Quorum Execute/i });
+    await user.click(systemConnectionsSublistOption1);
+    expect(await screen.findByText('Data Integration Outlet')).toBeInTheDocument();
   });
 
-  it('Displays /gllibrary in the Outlet when clicked', async () => {
+  it('Displays /glmapping in the Outlet when clicked', async () => {
     await user.click(screen.getByRole('link', { name: /GL Library/i }));
 
-    expect(await screen.findByText('GL Library')).toBeInTheDocument();
+    const systemConnectionsSublistOption1 = screen.getByRole('link', { name: /Map GL Codes/i });
+    await user.click(systemConnectionsSublistOption1);
+    expect(await screen.findByText('GL Mapping Outlet')).toBeInTheDocument();
   });
 
-  it('Displays /partnerLibrary in the Outlet when clicked', async () => {
+  it('Displays /partnermaping in the Outlet when clicked', async () => {
     await user.click(screen.getByRole('link', { name: /Partner Library/i }));
 
-    expect(await screen.findByText('Partner Library')).toBeInTheDocument();
+    const systemConnectionsSublistOption1 = screen.getByRole('link', { name: /Map Partner Library/i });
+    await user.click(systemConnectionsSublistOption1);
+    expect(await screen.findByText('Partner Mapping Outlet')).toBeInTheDocument();
   });
 });
