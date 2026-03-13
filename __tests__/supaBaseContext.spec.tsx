@@ -1,7 +1,7 @@
 import { describe, it, vi, beforeEach, afterEach, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { SupabaseProvider, useSupabaseData } from '../src/types/SupabaseContext';
-import { fetchFromSupabase } from '../provider/fetch';
+import { fetchFromSupabase, fetchUserProfileRecordFromSupabase } from '../provider/fetch';
 import { transformAFEs, transformOperator } from '../src/types/transform';
 import supabase from '../provider/supabase';
 import * as fetchModule from '../provider/fetch';
@@ -15,6 +15,7 @@ import '@testing-library/jest-dom';
 vi.mock('../provider/fetch', async () => {
   return {
     fetchFromSupabase: vi.fn(), 
+    fetchUserProfileRecordFromSupabase: vi.fn(),
   };
 });
 

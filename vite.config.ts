@@ -29,11 +29,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
     include: ['__tests__/**/*.{test,spec}.{ts,tsx}'],
+    testTimeout: 30000, 
+    hookTimeout: 30000, 
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
-      all: true,
       include: ['src/**/*.{ts,tsx}'],
     },
   },
