@@ -1,452 +1,401 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router';
 import { vi } from 'vitest';
 import AFEDetailURL from '../src/routes/afeDashboard/routes/afeDetail';
 import userEvent from '@testing-library/user-event';
-import { addAFEHistorySupabase } from '../provider/fetch';
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
-import { useSupabaseData } from '../src/types/SupabaseContext';
-import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "../src/routes/afeDashboard/routes/helpers/helpers";
+import { renderWithProviders } from './test-utils/renderWithOptions';
+import * as XLSX from 'xlsx';
+import { 
+  singleAFEResultSupabase, 
+  singleAFEEstimatesResponse, 
+  singleAFEWellResponse, 
+  loggedInUserRachelGreen, 
+  singleAFEHistoryResponse,
+  loggedInUserRossGeller,
+  singleAFEAttachmentResponse,
+  singleAFEDocResponse,
+  singleAFESignedResponse } from './test-utils/rachelGreenuser';
+// ─── Route config ─────────────────────────────────────────────────────────────
+const afeID = '4b6cebbf-ca88-4e9e-8479-dd50cc13e03W';
+const afeDetailRoute = `/mainscreen/afeDetail/${afeID}`;
+const afeDetailPath = '/mainscreen/afeDetail/:afeID';
 
-// Mocks
-let currentId = 100;
-const mockAFE = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  operator: 'Operator Co',
-  created_at: '2025-05-01',
-  afe_type: 'Drilling',
-  afe_number: 'TESTNum1',
-  description: 'Description here',
-  total_gross_estimate: 100000,
-  version_string: 'v1',
-  supp_gross_estimate: 0,
-  operator_wi: 10,
-  partnerID: 'partner-1',
-  partner_name: 'PartnerName',
-  partner_wi: 25,
-  partner_status: 'New',
-  op_status: 'IAPP',
-  iapp_date: '2025-05-05',
-  last_mod_date: '2025-06-03',
-  legacy_chainID: 1,
-  legacy_afeid: 2,
-  chain_version: 1,
-  source_system_id: 'system-1',
-};
-const mockAFEApproved = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  operator: 'Operator Co',
-  created_at: '2025-05-01',
-  afe_type: 'Drilling',
-  afe_number: 'TESTNum1',
-  description: 'Description here',
-  total_gross_estimate: 100000,
-  version_string: 'v1',
-  supp_gross_estimate: 0,
-  operator_wi: 10,
-  partnerID: 'partner-1',
-  partner_name: 'PartnerName',
-  partner_wi: 25,
-  partner_status: 'Approved',
-  op_status: 'IAPP',
-  iapp_date: '2025-05-05',
-  last_mod_date: '2025-06-03',
-  legacy_chainID: 1,
-  legacy_afeid: 2,
-  chain_version: 1,
-  source_system_id: 'system-1',
-};
-
-const mockAFERejected = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  operator: 'Operator Co',
-  created_at: '2025-05-01',
-  afe_type: 'Drilling',
-  afe_number: 'TESTNum1',
-  description: 'Description here',
-  total_gross_estimate: 100000,
-  version_string: 'v1',
-  supp_gross_estimate: 0,
-  operator_wi: 10,
-  partnerID: 'partner-1',
-  partner_name: 'PartnerName',
-  partner_wi: 25,
-  partner_status: 'Rejected',
-  op_status: 'IAPP',
-  iapp_date: '2025-05-05',
-  last_mod_date: '2025-06-03',
-  legacy_chainID: 1,
-  legacy_afeid: 2,
-  chain_version: 1,
-  source_system_id: 'system-1',
-};
-
-const mockEstimates = [
-  {
-    id: 1,
-    amount_gross: 7777,
-    partner_wi: 15,
-    partner_net_amount: 1166.55,
-    operator_account_number: '9210.212',
-    operator_account_group: '1. DRILLING',
-    operator_account_description: 'DRILLING RIG',
-    partner_account_number: 'PA123',
+// ─── Supabase session ─────────────────────────────────────────────────────────
+const mockSession = {
+  access_token: 'fake-token',
+  refresh_token: 'test-refresh-token',
+  expires_in: 3600,
+  token_type: 'bearer',
+  user: {
+    id: 'test-user-id',
+    email: 'test@example.com',
+    aud: 'authenticated',
+    role: 'authenticated',
+    created_at: '2024-01-01T00:00:00Z',
+    app_metadata: [],
+    user_metadata: {},
   },
-];
+};
 
-const mockHistoryData = [
-  {
-    id: 1,
-    afe_id: mockAFE.id,
-    created_at: new Date().toISOString(),
-    description: 'Initial comment',
-    type: 'action',
-    user_id: {
-      first_name: 'Test',
-      last_name: 'User',
-    },
-  },
-];
-
-//Mock Supabase Context
-vi.mock('../src/types/SupabaseContext', () => ({
-  useSupabaseData: vi.fn(),
-}));
-
-// Mock transform functions
-vi.mock('src/types/transform', () => ({
-  transformEstimatesSupabase: vi.fn(data =>
-    data.map((d: any) => ({
-      ...d,
-      amount_gross: d.amount_gross ?? 0,
-      partner_net_amount: d.partner_net_amount ?? 0,
-      operator_account_group: d.operator_account_group ?? 'Unknown',
-      operator_account_description: d.operator_account_description ?? 'N/A',
-      operator_account_number: d.operator_account_number ?? '0000',
-      partner_account_number: d.partner_account_number ?? 'P-000',
-    }))
-  ),
-  transformAFEHistorySupabase: vi.fn(data =>
-    data.map((d: any) => ({
-      ...d,
-      user: `${d.user_id?.first_name ?? ''} ${d.user_id?.last_name ?? ''}`,
-      created_at: d.created_at ?? new Date().toISOString(),
-    }))
-  ),
-}));
-
-// Mock Supabase fetches and context
+// ─── Mocks ───────────────────────────────────────────────────────────────────
+ 
 vi.mock('../provider/fetch', () => ({
-  fetchFromSupabaseMatchOnString: vi.fn(() => Promise.resolve(mockHistoryData)),
-  fetchEstimatesFromSupabaseMatchOnAFEandPartner: vi.fn(() => Promise.resolve(mockEstimates)),
-  addAFEHistorySupabase: vi.fn((afeID, comment, type) => {
-    currentId++;
-    return Promise.resolve({ id: currentId }); // Fake insert response
-  }),
+  fetchAFEDetails: vi.fn(),
+  fetchAFEHistory: vi.fn(),
+  fetchAFEEstimates: vi.fn(),
+  fetchAFEDocs: vi.fn(),
+  fetchAFEAttachments: vi.fn(),
+  fetchAFESignedNonOp: vi.fn(),
+  fetchAFEWells: vi.fn(),
+  fetchRelatedDocuments: vi.fn(),
+  addAFEHistorySupabase: vi.fn(() => Promise.resolve({ id: 999 })),
+}));
+ 
+vi.mock('src/routes/afeDashboard/routes/helpers/styleHelpers', () => ({
+  setStatusTextColor: vi.fn((status) => status),
+  setStatusBackgroundColor: vi.fn((status) => status),
+  setStatusRingColor: vi.fn((status) => status),
+}));
+ 
+vi.mock('src/routes/afeDashboard/routes/helpers/helpers', () => ({
+  handleOperatorArchiveStatusChange: vi.fn(),
+  handlePartnerArchiveStatusChange: vi.fn(),
+  usePartnerStatusChange: vi.fn(() => ({
+    handlePartnerStatusChange: vi.fn(),
+  })),
 }));
 
-
-vi.mock('src/helpers/styleHelpers', () => ({
-  setStatusTextColor:vi.fn(),
-  setStatusBackgroundColor: vi.fn(),
-  setStatusRingColor: vi.fn(),
+vi.mock('xlsx', () => ({
+  utils: {
+    json_to_sheet: vi.fn(() => ({})),
+    book_new: vi.fn(() => ({})),
+    book_append_sheet: vi.fn(),
+  },
+  writeFile: vi.fn(),
 }));
 
-vi.mock('../src/helpers/helpers', async () => {
-  const actual = await vi.importActual<typeof import('../src/helpers/helpers')>('../src/helpers/helpers');
-  return { ...actual, handlePartnerStatusChange: vi.fn() }
-});
+// ─── Render helper ────────────────────────────────────────────────────────────
+ 
+import { fetchAFEDetails, fetchAFEHistory, fetchAFEEstimates, fetchAFEDocs, fetchAFEAttachments, fetchAFESignedNonOp, fetchAFEWells, fetchRelatedDocuments } from '../provider/fetch';
+ 
+const setupFetchMocks = () => {
+  vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: true, data: singleAFEResultSupabase });
+  vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: singleAFEHistoryResponse });
+  vi.mocked(fetchAFEEstimates).mockResolvedValue({ ok: true, data: singleAFEEstimatesResponse });
+  vi.mocked(fetchAFEDocs).mockResolvedValue({ ok: true, data: singleAFEDocResponse });
+  vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: singleAFEAttachmentResponse });
+  vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: singleAFESignedResponse });
+  vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: singleAFEWellResponse });
+};
 
+const setupFetchMocksNull = () => {
+  vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: false, message: 'Nothing here' });
+  vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEEstimates).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEDocs).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: [] });
+};
+ 
+const renderAFEDetail = () => {
+  setupFetchMocks();
+  return renderWithProviders(<AFEDetailURL />, {
+    routePath: afeDetailRoute,
+    routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+    supabaseOverrides: {
+      loggedInUser: loggedInUserRachelGreen,
+      loading: false,
+      isSuperUser: false,
+      session: mockSession as any,
+    },
+  });
+};
 
+const renderAFEDetailNull = () => {
+  setupFetchMocksNull();
+  return renderWithProviders(<AFEDetailURL />, {
+    routePath: afeDetailRoute,
+    routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+    supabaseOverrides: {
+      loggedInUser: loggedInUserRachelGreen,
+      loading: false,
+      isSuperUser: false,
+      session: mockSession as any,
+    },
+  });
+};
 
-const useSupabaseDataMock = useSupabaseData as ReturnType<typeof vi.fn>;
-const setAFEContext = (afe: any) => {
-  useSupabaseDataMock.mockReturnValue({
-    afes: [afe],
-    refreshData: vi.fn(),
+const renderAFEDetailPartner = () => {
+  setupFetchMocks();
+  return renderWithProviders(<AFEDetailURL />, {
+    routePath: afeDetailRoute,
+    routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+    supabaseOverrides: {
+      loggedInUser: loggedInUserRossGeller,
+      loading: false,
+      isSuperUser: false,
+      session: mockSession as any,
+    },
   });
 };
 
 describe('AFEDetailURL', () => {
-beforeEach(() => {
-  vi.resetAllMocks();
-    useSupabaseDataMock.mockReset();
-    setAFEContext(mockAFE);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+ 
+  it('renders You do not have permission to view this AFE', async () => {
+    renderAFEDetailNull();
+   
+ await waitFor(() => {
+      expect(screen.queryByText(/AFE Number/i)).not.toBeVisible();
+    });
+    
+    const approveButton = document.querySelector('button[name="partnerApprove"]');
+    expect(approveButton).toBeInTheDocument();
+    expect(approveButton).not.toBeVisible();
+    const rejectButton = document.querySelector('button[name="partnerReject"]');
+    expect(rejectButton).toBeInTheDocument();
+    expect(rejectButton).not.toBeVisible();
+    const partnerArchiveButton = document.querySelector('button[name="partnerArchive"]');
+    expect(partnerArchiveButton).toBeInTheDocument();
+    expect(partnerArchiveButton).not.toBeVisible();
+    const operatorArchiveButton = document.querySelector('button[name="operatorArchive"]');
+    expect(operatorArchiveButton).toBeInTheDocument();
+    expect(operatorArchiveButton).not.toBeVisible();
+    expect(screen.getByText(/You do not have permission to view this AFE/i)).toBeInTheDocument();
   });
 
   it('renders AFE details and history comments', async () => {
-    render(
-      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-        <Routes>
-          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
+    renderAFEDetail();
+ 
     await waitFor(() => {
-      // History comment
-      expect(screen.getByText(/Initial comment/i)).toBeInTheDocument();
-
-      // Estimate info
-      expect(screen.getByText(/DRILLING RIG/i)).toBeInTheDocument();
-      expect(screen.getByText(/\$7,777.00/)).toBeInTheDocument();
-      expect(screen.getByText(/\$1,166.55/)).toBeInTheDocument();
-
-      // AFE Header details
-      expect(screen.getByText(/TESTNum1/i)).toBeInTheDocument();
-
-      expect(setStatusTextColor).toBeCalledWith('Viewed');
-      expect(setStatusBackgroundColor).toBeCalledWith('Viewed');
-      expect(setStatusRingColor).toBeCalledWith('Viewed')
+      expect(screen.getByText(/Yes I did/i)).toBeInTheDocument();
+      expect(screen.getByText(/1. DRILLING/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/\$275,000.00/)[0]).toBeInTheDocument();
+      expect(screen.getByText(/DR26NAVAT/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/DRAKE SURVEY-MASON #1/i)[0]).toBeInTheDocument();
     });
+    const approveButton = document.querySelector('button[name="partnerApprove"]');
+    expect(approveButton).toBeInTheDocument();
+    expect(approveButton).not.toBeVisible();
+    const rejectButton = document.querySelector('button[name="partnerReject"]');
+    expect(rejectButton).toBeInTheDocument();
+    expect(rejectButton).not.toBeVisible();
+    const partnerArchiveButton = document.querySelector('button[name="partnerArchive"]');
+    expect(partnerArchiveButton).toBeInTheDocument();
+    expect(partnerArchiveButton).not.toBeVisible();
+    const operatorArchiveButton = document.querySelector('button[name="operatorArchive"]');
+    expect(operatorArchiveButton).toBeInTheDocument();
+    expect(operatorArchiveButton).toBeVisible();
+    expect(screen.queryByText(/You do not have permission to view this AFE/i)).not.toBeVisible();
+  });
+ 
+  it('lets the user add a new comment and updates the UI', async () => {
+    renderAFEDetail();
+    const user = userEvent.setup();
+ 
+    await waitFor(() => {
+      expect(screen.getByText(/Yes I did/i)).toBeInTheDocument();
+    });
+ 
+    const textarea = screen.getAllByPlaceholderText(/add your comment/i);
+    const commentButton = screen.getByRole('button', { name: /comment/i });
+ 
+    await user.type(textarea[0], 'This is a new test comment');
+    await user.click(commentButton);
+ 
+    await waitFor(() => {
+      expect(screen.getAllByText(/This is a new test comment/i).length).toBeGreaterThan(0);
+    });
+ 
     
   });
 
-  it('lets the user add a new comment and updates the UI', async () => {
-  render(
-    <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-      <Routes>
-        <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-      </Routes>
-    </MemoryRouter>
-  );
-
-  const user = userEvent.setup();
-
-  // Wait for initial comment to render
-  await waitFor(() => {
-    expect(screen.getByText(/Initial comment/i)).toBeInTheDocument();
+  it('renders AFE details and history comments for the Partner', async () => {
+    renderAFEDetailPartner();
+ 
+    await waitFor(() => {
+      expect(screen.getByText(/Yes I did/i)).toBeInTheDocument();
+      expect(screen.getByText(/1. DRILLING/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/\$275,000.00/)[0]).toBeInTheDocument();
+      expect(screen.getByText(/DR26NAVAT/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/DRAKE SURVEY-MASON #1/i)[0]).toBeInTheDocument();
+    });
+    const approveButton = document.querySelector('button[name="partnerApprove"]');
+    expect(approveButton).toBeInTheDocument();
+    expect(approveButton).toBeVisible();
+    const rejectButton = document.querySelector('button[name="partnerReject"]');
+    expect(rejectButton).toBeInTheDocument();
+    expect(rejectButton).toBeVisible();
+    const partnerArchiveButton = document.querySelector('button[name="partnerArchive"]');
+    expect(partnerArchiveButton).toBeInTheDocument();
+    expect(partnerArchiveButton).toBeVisible();
+    const operatorArchiveButton = document.querySelector('button[name="operatorArchive"]');
+    expect(operatorArchiveButton).toBeInTheDocument();
+    expect(operatorArchiveButton).not.toBeVisible();
+    expect(screen.queryByText(/You do not have permission to view this AFE/i)).not.toBeVisible();
   });
 
-  const textarea = screen.getByPlaceholderText(/add your comment/i);
-  const commentButton = screen.getByRole('button', { name: /comment/i });
-
-  // Type a new comment
-  await user.type(textarea, 'This is a new test comment');
-
-  // Click the "Comment" button
-  await user.click(commentButton);
-
-  // Wait for the new comment to appear
-  await waitFor(() => {
-    expect(
-  screen.getAllByText(/This is a new test comment/i).some(
-    el => el.tagName.toLowerCase() === 'p'
-  )
-).toBe(true);
-
-  });
-
-  // Confirm backend call
-  expect(addAFEHistorySupabase).toHaveBeenCalledWith(
-    mockAFE.id,
-    'This is a new test comment',
-    'comment'
-  );
-});
-it('lets the user approve the AFE', async () => {
-  render(
-    <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-      <Routes>
-        <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-      </Routes>
-    </MemoryRouter>
-  );
-
+  it('shows the Approve button and calls status functions when clicked', async () => {
+  renderAFEDetailPartner();
   const user = userEvent.setup();
 
-  const approveButton = screen.getByRole('button', { name: /approve/i });
+  await waitFor(() => {
+    const approveButton = document.querySelector('button[name="partnerApprove"]');
+    expect(approveButton).toBeVisible();
+  });
 
-  // Click the "Comment" button
-  await user.click(approveButton);
+  const approveButton = document.querySelector('button[name="partnerApprove"]')!;
+  await user.click(approveButton as HTMLElement);
 
-  // Confirm backend call
-  expect(handlePartnerStatusChange).toHaveBeenCalledWith(
-    mockAFE.id,
-    'New',
-    'Approved',
-    'The partner marked the AFE as approved',
-    'action'
-  );
-  expect(setStatusBackgroundColor).toHaveBeenCalledWith('Approved');
   expect(setStatusTextColor).toHaveBeenCalledWith('Approved');
+  expect(setStatusBackgroundColor).toHaveBeenCalledWith('Approved');
   expect(setStatusRingColor).toHaveBeenCalledWith('Approved');
 });
 
-it('lets the user reject the AFE', async () => {
-  render(
-    <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-      <Routes>
-        <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-      </Routes>
-    </MemoryRouter>
-  );
-
+it('shows the Reject button and calls status functions when clicked', async () => {
+  renderAFEDetailPartner();
   const user = userEvent.setup();
 
-  const rejectButton = screen.getByRole('button', { name: /reject/i });
+  await waitFor(() => {
+    const rejectButton = document.querySelector('button[name="partnerReject"]');
+    expect(rejectButton).toBeVisible();
+  });
 
-  // Click the "Comment" button
-  await user.click(rejectButton);
+  const rejectButton = document.querySelector('button[name="partnerReject"]')!;
+  await user.click(rejectButton as HTMLElement);
 
-  // Confirm backend call
-  expect(handlePartnerStatusChange).toHaveBeenCalledWith(
-    mockAFE.id,
-    'New',
-    'Rejected',
-    'The partner marked the AFE as rejected',
-    'action'
-  );
-  expect(setStatusBackgroundColor).toHaveBeenCalledWith('Rejected');
   expect(setStatusTextColor).toHaveBeenCalledWith('Rejected');
+  expect(setStatusBackgroundColor).toHaveBeenCalledWith('Rejected');
   expect(setStatusRingColor).toHaveBeenCalledWith('Rejected');
 });
-});
 
-
-describe('AFEDetailURL with Null AFE', () => {
+  });
+describe('AFEDetailURL documents', () => {
   beforeEach(() => {
-    useSupabaseDataMock.mockReset();
-    setAFEContext({});
+    vi.clearAllMocks();
   });
 
-
-  it('renders a blank screen without details', async () => {
-    render(
-      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-        <Routes>
-          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-        </Routes>
-      </MemoryRouter>
-    );
+  it('renders the document list when documents are returned', async () => {
+    
+    renderAFEDetail();
 
     await waitFor(() => {
-      // History comment
-      expect(screen.getByText(/add your comment/i)).toBeInTheDocument();
-
-      // AFE Header details
-      expect(screen.getByText(/AFE Type/i)).toBeInTheDocument();
-
-      expect(setStatusTextColor).toBeCalledWith('Viewed');
-      expect(setStatusBackgroundColor).toBeCalledWith('Viewed');
-      expect(setStatusRingColor).toBeCalledWith('Viewed')
+      expect(screen.getByText(/Navigator Corporation AFE for John Ross Exploration Inc/i)).toBeInTheDocument();
     });
-    
   });
 
-  it('lets the user add a new comment and updates the UI even without an AFE', async () => {
-  render(
-    <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-      <Routes>
-        <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-      </Routes>
-    </MemoryRouter>
-  );
+  it('shows the no documents message when there are no documents', async () => {
+    renderAFEDetail(); // default mocks return []
 
+    await waitFor(() => {
+      expect(screen.getByText(/There are no documents for this AFE/i)).toBeVisible();
+    });
+  });
+
+  it('shows Download and View links for pdf documents', async () => {
+    renderAFEDetail();
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Download/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/View/i).length).toBeGreaterThan(0);
+    });
+  });
+
+  it('does not show View link for non-pdf documents', async () => {
+
+    renderAFEDetail();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Book1/i)).toBeInTheDocument();
+    });
+    const book1Item = screen.getByText(/Book1/i).closest('li');
+  const viewLink = book1Item?.querySelector('li[hidden]');
+  expect(viewLink).toBeInTheDocument();
+  });
+});
+describe('AFEDetailURL document actions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls fetchRelatedDocuments when View is clicked on a pdf', async () => {
+    vi.mocked(fetchAFEDocs).mockResolvedValue({ ok: true, data: singleAFEDocResponse } as any);
+    vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: singleAFEAttachmentResponse } as any);
+    vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: singleAFESignedResponse } as any);
+    vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: true, data: singleAFEResultSupabase } as any);
+    vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: singleAFEHistoryResponse } as any);
+    vi.mocked(fetchAFEEstimates).mockResolvedValue({ ok: true, data: singleAFEEstimatesResponse } as any);
+    vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: singleAFEWellResponse } as any);
+    vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [{ uri: 'https://example.com/doc.pdf' }] } as any);
+
+    renderWithProviders(<AFEDetailURL />, {
+      routePath: afeDetailRoute,
+      routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+      supabaseOverrides: {
+        loggedInUser: loggedInUserRachelGreen,
+        loading: false,
+        isSuperUser: false,
+        session: mockSession as any,
+      },
+    });
+
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Navigator Corporation AFE for John Ross Exploration Inc/i)).toBeInTheDocument();
+    });
+
+    const viewLinks = screen.getAllByText(/^View$/i);
+    await user.click(viewLinks[0]);
+    expect(fetchRelatedDocuments).toHaveBeenCalled();
+  });
+
+  it('calls fetchRelatedDocuments when Download is clicked', async () => {
+    vi.mocked(fetchAFEDocs).mockResolvedValue({ ok: true, data: singleAFEDocResponse } as any);
+    vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: [] } as any);
+    vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: [] } as any);
+    vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: true, data: singleAFEResultSupabase } as any);
+    vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: singleAFEHistoryResponse } as any);
+    vi.mocked(fetchAFEEstimates).mockResolvedValue({ ok: true, data: singleAFEEstimatesResponse } as any);
+    vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: singleAFEWellResponse } as any);
+    vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [{ uri: 'https://example.com/doc.pdf' }] } as any);
+
+    renderWithProviders(<AFEDetailURL />, {
+      routePath: afeDetailRoute,
+      routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+      supabaseOverrides: {
+        loggedInUser: loggedInUserRachelGreen,
+        loading: false,
+        isSuperUser: false,
+        session: mockSession as any,
+      },
+    });
+
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/Download/i).length).toBeGreaterThan(0);
+    });
+
+    const downloadLinks = screen.getAllByText(/^Download$/i);
+    await user.click(downloadLinks[0]);
+
+    expect(fetchRelatedDocuments).toHaveBeenCalled();
+  });
+
+  it('calls XLSX writeFile when Export is clicked', async () => {
+  renderAFEDetail();
   const user = userEvent.setup();
 
-  // Wait for initial comment to render
-  const textarea = screen.getByPlaceholderText(/add your comment/i);
-  const commentButton = screen.getByRole('button', { name: /comment/i });
-
-  // Type a new comment
-  await user.type(textarea, 'This is a new test comment');
-
-  // Click the "Comment" button
-  await user.click(commentButton);
-
-  // Wait for the new comment to appear
   await waitFor(() => {
-    expect(
-  screen.getAllByText(/This is a new test comment/i).some(
-    el => el.tagName.toLowerCase() === 'p'
-  )
-).toBe(true);
-
+    expect(screen.getByText(/Export Line Items to Excel/i)).toBeInTheDocument();
   });
 
-  // Confirm backend call
-  expect(addAFEHistorySupabase).toHaveBeenCalledWith(
-    mockAFE.id,
-    'This is a new test comment',
-    'comment'
-  );
+  await user.click(screen.getByText(/Export Line Items to Excel/i));
+
+  expect(XLSX.writeFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx');
 });
-});
-
-
-describe('AFEDetailURL with Approved AFE', () => {
-  beforeEach(() => {
-    useSupabaseDataMock.mockReset();
-    setAFEContext(mockAFEApproved);
-  });
-
-  it('Passes the status of Approved to determine css styling', async () => {
-    render(
-      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-        <Routes>
-          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      // History comment
-      expect(screen.getByText(/Initial comment/i)).toBeInTheDocument();
-
-      // Estimate info
-      expect(screen.getByText(/DRILLING RIG/i)).toBeInTheDocument();
-      expect(screen.getByText(/\$7,777.00/)).toBeInTheDocument();
-      expect(screen.getByText(/\$1,166.55/)).toBeInTheDocument();
-
-      // AFE Header details
-      expect(screen.getByText(/TESTNum1/i)).toBeInTheDocument();
-
-      expect(setStatusTextColor).toBeCalledWith('Approved');
-      expect(setStatusBackgroundColor).toBeCalledWith('Approved');
-      expect(setStatusRingColor).toBeCalledWith('Approved')
-    });
-    
-  });
-
- 
-});
-
-
-describe('AFEDetailURL with Rejected AFE', () => {
-  beforeEach(() => {
-    useSupabaseDataMock.mockReset();
-    setAFEContext(mockAFERejected);
-  });
-
-
-  it('Passes the status of Rejected to determine css styling', async () => {
-    render(
-      <MemoryRouter initialEntries={['/mainscreen/afeDetail/123e4567-e89b-12d3-a456-426614174000']}>
-        <Routes>
-          <Route path="/mainscreen/afeDetail/:afeID" element={<AFEDetailURL />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      // History comment
-      expect(screen.getByText(/Initial comment/i)).toBeInTheDocument();
-
-      // Estimate info
-      expect(screen.getByText(/DRILLING RIG/i)).toBeInTheDocument();
-      expect(screen.getByText(/\$7,777.00/)).toBeInTheDocument();
-      expect(screen.getByText(/\$1,166.55/)).toBeInTheDocument();
-
-      // AFE Header details
-      expect(screen.getByText(/TESTNum1/i)).toBeInTheDocument();
-
-      expect(setStatusTextColor).toBeCalledWith('Rejected');
-      expect(setStatusBackgroundColor).toBeCalledWith('Rejected');
-      expect(setStatusRingColor).toBeCalledWith('Rejected')
-    });
-    
-  });
-
- 
 });

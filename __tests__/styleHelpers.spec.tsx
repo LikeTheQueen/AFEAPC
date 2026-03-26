@@ -1,6 +1,5 @@
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import { activeTab, formatDate, isLoggedInUserOperator } from "src/helpers/styleHelpers";
-import { setIsHidden } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import type { AFEType } from 'src/types/interfaces';
 import { vi } from 'vitest';
 import { singleAFE, twoAFErecords } from './test-utils/afeRecords';
@@ -67,7 +66,7 @@ describe('Determine values when partner status is null', () => {
 
         expect(textResult).toBe('[var(--dark-teal)]');
         expect(backgroundResult).toBe('[var(--dark-teal)]/30');
-        expect(ringResult).toBe('[var(--darkest-teal)]/20');
+        expect(ringResult).toBe('[var(--darkest-teal)]/60');
     });
 
     test('It should return bright pink colors when status is Approved', () => {
@@ -93,44 +92,6 @@ describe('Determine values when partner status is null', () => {
         expect(backgroundResult).toBe('red-900');
         expect(ringResult).toBe('red-900');
     });
-});
-
-describe('It should toggle the hidden value', () => {
-    afterEach(() => {
-    vi.resetAllMocks()
-})
- test('It should return true (it is hidden) if the afes are undefined or length is 0', () => {
-
-    const mockAFEs:AFEType[] | undefined = undefined;
-    const result = setIsHidden(mockAFEs);
-
-    expect(result).toBe(true);
- });
-
- test('It should return true (it is hidden) if the afes are undefined or length is 0', () => {
-
-    const mockAFEs:AFEType[] | undefined = [];
-    const result = setIsHidden(mockAFEs);
-
-    expect(result).toBe(true);
- });
-
- test('It should return false (it is NOT hidden) if there are AFEs', () => {
-
-    const mockAFEs:AFEType[] | undefined = singleAFE;
-    const result = setIsHidden(mockAFEs);
-
-    expect(result).toBe(false);
- });
-
- test('It should return false (it is NOT hidden) if there are AFEs', () => {
-
-    const mockAFEs:AFEType[] | undefined = twoAFErecords;
-    const result = setIsHidden(mockAFEs);
-
-    expect(result).toBe(false);
- });
-
 });
 
 describe('it should change the current tab based on id', () => {

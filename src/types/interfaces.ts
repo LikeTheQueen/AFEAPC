@@ -373,7 +373,7 @@ export interface AFEDocuments {
   storage_path: string;
   filename_display: string;
   id:number;
-  mimeype: string;
+  mimetype: string;
 };
 
 export interface AFEWells {

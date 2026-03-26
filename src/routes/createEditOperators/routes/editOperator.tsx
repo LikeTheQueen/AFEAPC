@@ -89,7 +89,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
         )
     );
   }
-  
+   
   async function handleClickSaveOpName() {
     try {
       const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord, token);
@@ -271,7 +271,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
 
   return (
     <>
-    {!operatorToEdit.apc_id || !operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
+    {operatorToEdit === null || !operatorToEdit.apc_id || !operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
           <div className="">
@@ -491,12 +491,12 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
                         </div>
                       </div>
                       <div className="sm:col-span-2 sm:col-start-1">
-                        <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                        <label htmlFor={`partner-city-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                           City
                         </label>
                         <div className="mt-1">
                           <input
-                            id="city"
+                            id={`partner-city-${partnerIdx}`}
                             name="city"
                             type="text"
                             autoComplete="off"

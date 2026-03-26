@@ -46,7 +46,8 @@ test('Displays a message that there are no unclaimed addresses when the return h
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedNoUnclaimed
+          data: partnersLinkedOrUnlinkedNoUnclaimed,
+          message: undefined
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
@@ -86,7 +87,8 @@ test('Displays a list of 2 unclaimed partner addresses that are NOT checked and 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token' />, {
@@ -131,7 +133,8 @@ test('Displays a list of unclaimed partner addresses with a null value for the O
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
@@ -178,7 +181,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -244,7 +248,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -311,7 +316,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -412,7 +418,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -535,7 +542,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -653,7 +661,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -758,7 +767,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -861,7 +871,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -983,7 +994,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1108,7 +1120,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
   const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
+message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1231,7 +1244,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1295,7 +1309,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1360,7 +1375,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1485,7 +1501,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1652,7 +1669,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
+          message: undefined
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});

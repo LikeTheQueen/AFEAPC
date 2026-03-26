@@ -30,7 +30,7 @@ export default function UserStatusDashboard() {
 
        try{
         const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, false, token);
-      
+        
         if(!userListRaw.ok) {
         throw new Error((userListRaw as any).message ?? 'Unable to fetch users');
           

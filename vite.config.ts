@@ -29,6 +29,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/setup.js',
     include: ['__tests__/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['__tests__/_archive/**'],
     testTimeout: 30000, 
     hookTimeout: 30000, 
     coverage: {

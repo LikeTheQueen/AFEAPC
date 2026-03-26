@@ -136,14 +136,3 @@ export function OperatorApprovalDropdown ({onChange}: DaysProps) {
           </div>
     )
 }
-//Remove AFE test is removed
-/*
-export function setIsHidden<AFEType>(afes: AFEType[] | undefined): boolean {
-    if (afes !== undefined && afes.length > 0) {
-        return false;
-    } else {
-        return true;
-    }
-}
-;
-*/

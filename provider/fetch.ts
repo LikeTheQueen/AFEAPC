@@ -495,7 +495,7 @@ export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:st
 export async function fetchAFEDetails(afeID: string, token: string) {
     
     type TogglePayload = { afeID: string; };
-    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    type ToggleResult  = { ok: true; data: any } | { ok: false; message: string };
    
     return callEdge<TogglePayload, ToggleResult>("fetch_AFE_base_details", { afeID }, token);
     

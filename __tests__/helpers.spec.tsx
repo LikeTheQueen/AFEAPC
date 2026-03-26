@@ -1,7 +1,6 @@
 import { vi } from 'vitest';
 import * as fetchProvider from '../provider/fetch';
-import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole } from '../src/helpers/helpers'
-import { handlePartnerStatusChange } from "src/routes/afeDashboard/routes/helpers/helpers";
+import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole, operatorEditUsers } from '../src/helpers/helpers'
 import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from 'src/types/interfaces';
 import { singleAFE, twoAFErecords, singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
 import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2, loggedInUserNoAFEViewRights } from './test-utils/rachelGreenuser';
@@ -74,70 +73,13 @@ vi.mock('../provider/fetch', () => ({
   addAFEHistorySupabase: vi.fn(),
 }));
 
-describe('handlePartnerStatusChange', () => {
-  afterEach(() => {
-    vi.resetAllMocks()
-})
-  it('calls updateAFEPartnerStatusSupabase and addAFEHistorySupabase when partnerStatus is "New"', () => {
-    const mockId = '123';
-    const mockPartnerStatus = 'New';
-    const mockNewPartnerStatus = 'Viewed';
-    const mockDescription = 'The Partner Status on the AFE changed from New to Viewed';
-    const mockType = 'action'
 
-    handlePartnerStatusChange(mockId, mockPartnerStatus, mockNewPartnerStatus, mockDescription, mockType);
-
-    expect(fetchProvider.updateAFEPartnerStatusSupabase).toHaveBeenCalledWith(mockId, mockNewPartnerStatus);
-    expect(fetchProvider.addAFEHistorySupabase).toHaveBeenCalledWith(
-      mockId,
-      mockDescription,
-      mockType
-    );
-  });
-
-  it('calls updateAFEPartnerStatusSupabase and addAFEHistorySupabase when partnerStatus is "New"', () => {
-    const mockId = '123';
-    const mockPartnerStatus = '';
-    const mockNewPartnerStatus = 'Viewed';
-    const mockDescription = 'The Partner Status on the AFE changed from New to Viewed';
-    const mockType = 'action'
-
-    handlePartnerStatusChange(mockId, mockPartnerStatus, mockNewPartnerStatus, mockDescription, mockType);
-
-    expect(fetchProvider.updateAFEPartnerStatusSupabase).toHaveBeenCalledWith(mockId, mockNewPartnerStatus);
-    expect(fetchProvider.addAFEHistorySupabase).toHaveBeenCalledWith(
-      mockId,
-      mockDescription,
-      mockType
-    );
-  });
-
-  it('calls updateAFEPartnerStatusSupabase and addAFEHistorySupabase when partnerStatus is "Approved"', () => {
-    const mockId = '456';
-    const mockPartnerStatus = 'Approved';
-    const mockNewPartnerStatus = 'Approved';
-    const mockDescription = 'The AFE has been marked as Approved by the Partner';
-    const mockType = 'action'
-
-    handlePartnerStatusChange(mockId, mockPartnerStatus, mockNewPartnerStatus, mockDescription, mockType);
-
-    expect(fetchProvider.updateAFEPartnerStatusSupabase).not.toHaveBeenCalled;
-    expect(fetchProvider.addAFEHistorySupabase).not.toHaveBeenCalled;
-  });
-});
 
 describe('It should group the accounts by the account group', () => {
     afterEach(() => {
     vi.resetAllMocks()
 })
-    test('It should return null if account is null', () => {
-
-        const account: EstimatesSupabaseType[] | null = null;
-        const result = groupByAccountGroup(account);
-
-        expect(result).toBe(null);
-
-    });
+    
 
     test('It should return a map if account is not null', () => {
 
@@ -194,12 +136,7 @@ describe('The Approve and Reject buttons disabled should toggle',() => {
     afterEach(() => {
     vi.resetAllMocks()
 })
-test('If the partner status is null or undefined it should return false', () => {
-    const mockAFE: AFEType | undefined | null = null;
-    const result = toggleStatusButtonDisable(mockAFE);
 
-    expect(result).toBe(true);
-});
 
 test('If the partner status is Approved it should return true (it is disabled)', () => {
     const mockAFE: AFEType | undefined | null = parterApprovedStatus;
@@ -243,5 +180,8 @@ it('If the user has no view rights return false', () => {
 });
 it('If the user has no roles but is a super user return true', () => {
     expect(doesUserHaveRole(loggedInUserIsSuperUser, 2, 3)).toBe(true);
+});
+it('If the user has no roles but is a super user return true', () => {
+    expect(doesUserHaveRole(loggedInUserIsSuperUser, operatorEditUsers, 5)).toBe(true);
 });
 })

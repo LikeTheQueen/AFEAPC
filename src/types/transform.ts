@@ -596,7 +596,7 @@ export const transformAFEDocumentList = (data: any[]) : AFEDocuments[] => {
         storage_path: item.storage_path,
         filename_display: item.filename_display,
         id: item.id,
-        mimeype: item.mimetype
+        mimetype: item.mimetype
     }))
 };
 

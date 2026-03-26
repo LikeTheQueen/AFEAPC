@@ -34,11 +34,11 @@ export default function Profile() {
             if(!userPermissionsRaw.ok) {
               throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
             }
-            console.log('thee should be',userPermissionsRaw);
+            
             const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
             const opPermissions = userPermissionsTransformed.filter(permission => (permission.is_op_permission && permission.user_id===loggedInUser.user_id));
             const partnerPermissions = userPermissionsTransformed.filter(permission => (permission.is_partner_permission && permission.user_id===loggedInUser.user_id));
-    console.log(opPermissions)
+   
             if(isMounted) {
               setOpUserRoleList(opPermissions);
               setPartnerUserRoleList(partnerPermissions);

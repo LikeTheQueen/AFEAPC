@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { addNewUser, deactivateUser, createNewUser } from 'provider/write';
 import { fetchRolesGeneric, fetchListOfOperatorsOrPartnersForUser } from 'provider/fetch';
-import { type UserProfileRecordSupabaseType, type OperatorType, type RoleEntryWrite, type RoleTypesGeneric, type OperatorPartnerAddressType } from 'src/types/interfaces';
+import { type UserProfileRecordSupabaseType, type RoleEntryWrite, type RoleTypesGeneric, type OperatorPartnerAddressType } from 'src/types/interfaces';
 import { transformOperatorPartnerAddress } from '../../../types/transform';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
+import { doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers } from 'src/helpers/helpers';
 import LoadingPage from 'src/routes/loadingPage';
 import { buildAppEmailHTML, sendEmail, handleSendEmail } from 'email/emailBasic';
 import { ToastContainer } from 'react-toastify';
+import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 
-
+ 
 export default function CreateNewUser() {
 
   let userBlank: UserProfileRecordSupabaseType = {
@@ -27,13 +28,13 @@ export default function CreateNewUser() {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? '';
   const [newUser, setNewUser] = useState<UserProfileRecordSupabaseType>(userBlank);
-  const [makeSuperUser, setMakeSuperUser] = useState(false);
   const [operatorsList, setOperatorsList] = useState<OperatorPartnerAddressType[] | []>([]);
-  const [partnersList, setPartnersList] = useState<OperatorPartnerAddressType[] | []>([]);
-  const [roles, setRoles] = useState<RoleEntryWrite[] | []>([]);
-  const [partnerRoles, setPartnerRoles] = useState<RoleEntryWrite[] | []>([]);
+  const [nonOpList, setNonOpList] = useState<OperatorPartnerAddressType[] | []>([]);
+  const [opRoles, setOpRoles] = useState<RoleEntryWrite[] | []>([]);
+  const [nonOpRoles, setNonOpRoles] = useState<RoleEntryWrite[] | []>([]);
   const [rolesGeneric, setRolesGeneric] = useState<RoleTypesGeneric[] | []>([]);
   const [loadingPermissions, setLoadingPermissions] = useState(true);
+  const [userHavePermissions, setUserHavePermissions] = useState(false);
 
   useEffect(() => {
     if (!loggedInUser || token === '') {
@@ -41,11 +42,20 @@ export default function CreateNewUser() {
       return;
     }
 
+    if (loggedInUser && token !== '') {
+      const userPermissionCheck = doesUserHaveRole(loggedInUser,operatorEditUsers,nonOperatorEditUsers);
+      if(!userPermissionCheck) return;
+      setUserHavePermissions(userPermissionCheck);
+    }
+
     let isMounted = true;
     async function getOperatorList() {
+      
       if (!loggedInUser?.user_id) return;
+      
 
       setLoadingPermissions(true);
+      
       try {
         const [opListResult, partnerListResult] = await Promise.all([
           fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 4, 5], token),
@@ -61,7 +71,7 @@ export default function CreateNewUser() {
         if (partnerListResult.ok) {
           const partnerListTransformed = transformOperatorPartnerAddress(partnerListResult.data);
           if (isMounted) {
-            setPartnersList(partnerListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
+            setNonOpList(partnerListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
           }
         }
       } catch (e) {
@@ -86,6 +96,7 @@ export default function CreateNewUser() {
 
   useEffect(() => {
     console.count("CreateNewUser render");
+    
   }, [loggedInUser]);
 
   function handleUserChange(e: { target: { name: any; value: any; }; }) {
@@ -101,11 +112,14 @@ export default function CreateNewUser() {
     })
   };
   const handleSuperToggle = (makeSuper: boolean) => {
-    setMakeSuperUser(makeSuper)
     setNewUser({
       ...newUser,
       is_super_user: makeSuper
-    })
+    });
+    if (makeSuper) {
+      setNonOpRoles([]);
+      setOpRoles([]);
+    }
   };
   const handleCheckboxChange = (
     apc_id: string,
@@ -113,7 +127,7 @@ export default function CreateNewUser() {
     roleValue: number,
     isChecked: boolean
   ) => {
-    setRoles(prevRoles => {
+    setOpRoles(prevRoles => {
       const updatedRoles = [...prevRoles];
       const existingIndex = updatedRoles.findIndex(
         entry => entry.apc_id === apc_id && entry.apc_address_id === apc_address_id && entry.role === roleValue
@@ -137,7 +151,7 @@ export default function CreateNewUser() {
     roleValue: number,
     isChecked: boolean
   ) => {
-    setPartnerRoles(prevRoles => {
+    setNonOpRoles(prevRoles => {
       const updatedRoles = [...prevRoles];
       const existingIndex = updatedRoles.findIndex(
         entry => entry.apc_id === apc_id && entry.apc_address_id === apc_address_id && entry.role === roleValue
@@ -166,9 +180,9 @@ export default function CreateNewUser() {
     );
   };
   const handleSaveNewUser = async () => {
-    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, roles, partnerRoles, newUser.is_super_user, token);
-  }
-
+    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token);
+  };
+console.log(userHavePermissions, 'does the user have permissions')
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -199,6 +213,7 @@ export default function CreateNewUser() {
                 </li>
               </ol>
             </div>
+            {userHavePermissions ? (
             <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-3">
               <div className="px-4 py-6 sm:p-8">
                 <div className="grid max-w-7xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-11">
@@ -257,6 +272,7 @@ export default function CreateNewUser() {
                     <Field className={`flex items-end justify-start sm:col-span-4 mt-2 ${!loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
                       }`}>
                       <Switch
+                        disabled={!loggedInUser?.is_super_user}
                         checked={newUser.is_super_user}
                         onChange={handleSuperToggle}
                         className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
@@ -290,9 +306,10 @@ export default function CreateNewUser() {
                 </div>
                 {loadingPermissions ? (
                   <LoadingPage></LoadingPage>
-                ) : (<>
+                ) : (
+                <>
                   <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] mt-10 pt-5"
-                    hidden={(operatorsList.length > 0 && !makeSuperUser) ? false : true}
+                    hidden={(operatorsList.length > 0 && !newUser.is_super_user) ? false : true}
                   >
                     <div>
                       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Operated AFEs</h2>
@@ -302,7 +319,7 @@ export default function CreateNewUser() {
                     <div className="">
                       <div className="divide-y divide-[var(--darkest-teal)]/40">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/50">
+                          <table key={`operator-table-${newUser.is_super_user}`} className="min-w-full divide-y divide-[var(--darkest-teal)]/50">
                             <thead>
                               <tr>
                                 <th scope="col" className="w-1/4 py-3.5 pr-1 pl-1 text-left sm:pl-0">
@@ -378,7 +395,7 @@ export default function CreateNewUser() {
 
                   </div>
                   <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-2 border-t border-t-[var(--darkest-teal)] pb-5 pt-5 border-b border-b-[var(--dark-teal)]"
-                    hidden={(partnersList.length > 0 && !makeSuperUser) ? false : true}>
+                    hidden={(nonOpList.length > 0 && !newUser.is_super_user) ? false : true}>
                     <div>
                       <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Permissions for Non-Operated AFEs</h2>
                       <p className="mt-1 text-base/6 text-[var(--darkest-teal)] custom-style-long-text">The permissions associated to the user being created.</p>
@@ -387,7 +404,7 @@ export default function CreateNewUser() {
                     <div className="">
                       <div className="divide-y divide-[var(--darkest-teal)]/40">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
-                          <table className="min-w-full divide-y divide-[var(--darkest-teal)]/50 ">
+                          <table key={`partner-table-${newUser.is_super_user}`} className="min-w-full divide-y divide-[var(--darkest-teal)]/50 ">
                             <thead>
                               <tr>
                                 <th scope="col" className="w-1/4 py-3.5 text-left sm:pl-0">
@@ -411,7 +428,7 @@ export default function CreateNewUser() {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
-                              {partnersList?.map((role) => (
+                              {nonOpList?.map((role) => (
                                 <tr key={role.apc_id}>
                                   <td className="w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--dark-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-0 text-start">
                                     {role.name}
@@ -463,7 +480,9 @@ export default function CreateNewUser() {
                   </div>
                 </>)}
               </div>
-              <div className="flex items-center justify-end px-4 py-4 sm:px-8">
+              <div 
+              hidden={!userHavePermissions}
+              className="flex items-center justify-end px-4 py-4 sm:px-8">
                 <button type="button"
                   disabled={(newUser.firstName !== '' && newUser.lastName !== '' && newUser.email !== '') ? false : true}
                   onClick={(e: any) => {
@@ -478,13 +497,19 @@ export default function CreateNewUser() {
                   onClick={(e: any) => {
                     e.preventDefault();
                     handleTestEmailSending();
-                    //handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, roles, partnerRoles, false, token);
+                    //handleNewUser('Rachel', 'Green', 'elizabeh.rider.shaw@gmail.com', 'topSecretPassword25!', false, opRoles, nonOpRoles, false, token);
                   }}
                   className="rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] justify-end">
                   SEND Test EMAIL
                 </button>
               </div>
             </form>
+            ) : (
+              <div className='md:col-span-3'>
+              <NoSelectionOrEmptyArrayMessage message={'You do not have permissions to create new users'}
+              ></NoSelectionOrEmptyArrayMessage>
+              </div>
+            )}
           </div>
         </div>
       </div>

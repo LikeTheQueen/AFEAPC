@@ -56,8 +56,7 @@ export default function UserPermissionDashboard() {
     }
   }, [token, loggedInUser])
 
-  console.log(loggedInUser?.is_super_user, 'is')
-  console.log(!loggedInUser?.is_super_user)
+  
   return (
     <>
     

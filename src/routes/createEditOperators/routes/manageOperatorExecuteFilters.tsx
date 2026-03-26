@@ -68,7 +68,7 @@ export default function OperatorExecuteFilters() {
     const [opAPCID, setOpAPCID] = useState('');
     const [afeFilter, setAFEFilter] = useState<AFEFilterCondition[]>(defaultAFEFilter);
     const [rawJson, setRawJson] = useState(JSON.stringify([], null, 2));
-    const [jsonError, setJsonError] = useState<string | null>(null);
+    const [jsonAFEError, setJsonAFEError] = useState<string | null>(null);
     const [wellColumns, setWellColumns] = useState<string[]>(defaultWellFields);
     const [rawWellJson, setRawWellJson] = useState(() => JSON.stringify([], null, 2));
     const [jsonWellError, setWellJsonError] = useState<string | null>(null);
@@ -81,10 +81,11 @@ export default function OperatorExecuteFilters() {
         try {
             const parsed = JSON.parse(value);
             setAFEFilter(parsed);
-            setJsonError(null);
+            setJsonAFEError(null);
             setSaveChangesDisabled(false);
         } catch (err) {
-            setJsonError("Invalid JSON");
+            setJsonAFEError("Invalid JSON");
+            setSaveChangesDisabled(true);
         }
     };
 
@@ -98,21 +99,22 @@ export default function OperatorExecuteFilters() {
             setSaveChangesDisabled(false);
         } catch (err) {
             setWellJsonError("Invalid JSON");
+            setSaveChangesDisabled(true);
         }
     };
 
     const handleClickSave = async () => {
         try {
             const updateResult = await updateOperatorFilterFields(opAPCID, wellColumns, afeFilter);
-console.log(updateResult,'THE UPDATE RESULT');
+
             if (!updateResult.ok) {
                 throw new Error(updateResult.message as any);
             }
             setUpdateSaved(true);
             setSaveChangesDisabled(true);
-            notifyStandard('That Save worked');
+            notifyStandard(`Line Secured.  Your filters are in place and the integration is running tight.\n\n(TLDR: Operator's AFE Filters and Well Fields ARE saved.)`);
         } catch (error) {
-            console.log(error);
+            notifyStandard(`Flow Disrupted.  Your filters weren’t saved. The line didn’t hold.\n\n(TLDR: Operator's AFE Filters and Well Fields DID NOT save.)`);
             return;
         }
     };
@@ -123,17 +125,22 @@ console.log(updateResult,'THE UPDATE RESULT');
             try {
                 const operatorFilters = await fetchOperatorExecuteFilters(opAPCID);
                 if (!operatorFilters.ok) {
-                    throw new Error(operatorFilters.message);
+                    throw new Error(operatorFilters.message as string);
                 }
                 if (operatorFilters.data !== undefined && operatorFilters.data?.length > 0) {
+                    
                     const record = operatorFilters.data[0];
                     setAFEFilter(record.afe_filter ?? defaultAFEFilter);
                     setWellColumns(record.well_columns ?? defaultWellFields);
                     setRawJson(JSON.stringify(record.afe_filter ?? defaultAFEFilter, null, 2));
                     setRawWellJson(JSON.stringify(record.well_columns ?? defaultWellFields, null, 2));
+                    setJsonAFEError(null);
+                    setWellJsonError(null);
                     
                 }
             } catch (error) {
+                setJsonAFEError(error instanceof Error ? error.message : String(error));
+                setWellJsonError(error instanceof Error ? error.message : String(error));
                 return;
             }
         }; getFilters();
@@ -168,21 +175,21 @@ console.log(updateResult,'THE UPDATE RESULT');
                                     value={rawJson}
                                     onChange={handleJsonChange}
                                     rows={20}
-                                    className={`w-full custom-style-long-text text-base/6 p-2 border rounded-2xl ${jsonError ? "border-red-500" : "border-[var(--darkest-teal)]/30"}`}
+                                    className={`w-full custom-style-long-text text-base/6 p-2 border rounded-2xl ${jsonAFEError ? "border-red-500" : "border-[var(--darkest-teal)]/30"}`}
                                 />
-                                {jsonError && <p className="text-red-500 text-sm mt-1">{jsonError}</p>}
+                                {jsonAFEError && <p data-testid="json-error-afe" className="text-red-500 text-sm mt-1">{jsonAFEError}</p>}
                             </div>
 
                             <div className="col-span-1">
-                                <label htmlFor="afeFilter" className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Well Fields</label>
+                                <label htmlFor="wellFields" className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Well Fields</label>
                                 <textarea
                                     id="wellFields"
                                     value={rawWellJson}
                                     onChange={handleWellJsonChange}
                                     rows={20}
-                                    className={`w-full custom-style-long-text text-base/6 p-2 border rounded-2xl ${jsonError ? "border-red-500" : "border-[var(--darkest-teal)]/30"}`}
+                                    className={`w-full custom-style-long-text text-base/6 p-2 border rounded-2xl ${jsonWellError ? "border-red-500" : "border-[var(--darkest-teal)]/30"}`}
                                 />
-                                {jsonError && <p className="text-red-500 text-sm mt-1">{jsonError}</p>}
+                                {jsonWellError && <p data-testid="json-error-well" className="text-red-500 text-sm mt-1">{jsonWellError}</p>}
                             </div>
                         </div>
                         <div className="text-right mt-4">

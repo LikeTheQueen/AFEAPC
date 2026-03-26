@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import { notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
 
 function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
     const operatorOrPartnerAddress = operatorOrPartnerRecord.street!.concat(' ',
@@ -53,7 +54,7 @@ export default function OperatorViewAndEdit() {
                     loggedInUser!.user_id!, 
                     'OPERATOR_USER_PERMISSIONS', 
                     'OPERATOR_ADDRESS', 
-                    [1, 8, 9], 
+                    [superUserPermission, editOperatorLibrary, editNonOpLibrary], 
                     token
                 );
 
@@ -187,7 +188,7 @@ export default function OperatorViewAndEdit() {
                                                             }}
                                                             className={`sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md px-3 py-2 text-sm leading-6 font-semibold custom-style transition-colors min-w-24
                                     ${!operator.active
-                                                                    ? 'bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)]'
+                                                                    ? 'bg-[var(--dark-teal)] text-white hover:bg-[var(--bright-pink)]'
                                                                     : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
                                                                 }
                                     disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
@@ -217,12 +218,12 @@ export default function OperatorViewAndEdit() {
                                                         notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                     }}
                                                     className={`cursor-pointer disabled:cursor-not-allowed rounded-md px-4 py-2 text-sm leading-6 font-semibold custom-style transition-colors w-full max-w-28
-                            ${!operator.active
-                                                            ? 'bg-[var(--darkest-teal)] text-white hover:bg-[var(--bright-pink)]'
+                                                    ${!operator.active
+                                                            ? 'bg-[var(--dark-teal)] text-white hover:bg-[var(--bright-pink)]'
                                                             : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
                                                         }
-                            disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
-                        `}>
+                                                     disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
+                                                    `}>
                                                     {operator.active ? 'Deactivate' : 'Activate'}
                                                 </button>
                                             </td>

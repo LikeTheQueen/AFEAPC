@@ -910,6 +910,7 @@ export const loggedInUserIsSuperUser: UserProfileRecordSupabaseType = {
     email: 'user@email',
     active: true,
     is_super_user: true,
+    user_id: '13e69340-d14c-45a9-96a8-142795925487',
     operatorRoles: [],
     partnerRoles: [],
 };

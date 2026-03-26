@@ -132,7 +132,9 @@ export default function AFEDetailURL() {
           return;
         }
         if(isMounted) {
-          
+          console.log(documentResponse,'docRe');
+          console.log(attachmentResponse,'attc');
+          console.log(signedAFENonOpResponse,'aidgn');
           const documentTransformed: AFEDocuments[] = transformAFEDocumentList(documentResponse.data);
           const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(attachmentResponse.data);
           const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(signedAFENonOpResponse.data);
@@ -155,6 +157,7 @@ export default function AFEDetailURL() {
           throw new Error((estimatesResponse as any).message ?? "Cannot find AFE Estimates");
         }
         if(isMounted) {
+          console.log(estimatesResponse.data);
           const estimatesTransformed = transformEstimatesSupabase(estimatesResponse.data);
           setEstimates(estimatesTransformed.sort((a, b) => a.operator_account_group.localeCompare(b.operator_account_group)));
         }
@@ -349,6 +352,7 @@ export default function AFEDetailURL() {
                 <div className="flex justify-between max-w-2xl gap-x-1 xl:mx-0 xl:max-w-none">
                   <div className="flex items-center gap-x-4">
                     <button
+                      name="partnerApprove"
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
@@ -365,6 +369,7 @@ export default function AFEDetailURL() {
                       Approve
                     </button>
                     <button
+                    name="partnerReject"
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={(e: any) => {
@@ -380,11 +385,10 @@ export default function AFEDetailURL() {
                       disabled={statusButtonDisabled}>
                       Reject
                     </button>
-                    
-                    
                   </div>
                   <div className="flex items-center gap-x-4">
                     <button
+                    name="partnerArchive"
                       hidden={doesUserHavePartnerViewAFERole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={(e: any) => {
@@ -395,18 +399,18 @@ export default function AFEDetailURL() {
                       >
                       {afeRecord?.partner_archived === true ? 'Un-Archive' : 'Archive'}
                     </button>
-                    
-                    <button
-                      hidden={doesUserHaveOperatorViewAFERole ? false : true}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
-                      onClick={(e: any) => {
-                        handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
-                        setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));
-                        refreshData();
-                      }}
+                      <button
+                        name="operatorArchive"
+                        hidden={doesUserHaveOperatorViewAFERole ? false : true}
+                        className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
+                        onClick={(e: any) => {
+                          handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
+                            setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));
+                          refreshData();
+                        }}
                       >
-                      {afeRecord?.archived === true ? 'Un-Archive' : 'Archive'}
-                    </button>
+                        {afeRecord?.archived === true ? 'Un-Archive' : 'Archive'}
+                      </button>
                     
 
                   </div>
@@ -637,13 +641,13 @@ export default function AFEDetailURL() {
                               aria-label="View Document">
                               <li className="cursor-pointer"
                                 onClick={(e) => {
-                                  handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimeype),
+                                  handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimetype),
                                   insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', token)
                                 }}>
                                 Download
                               </li>
                               <li className="cursor-pointer"
-                                hidden={afeDoc.mimeype === 'pdf' ? false : true}
+                                hidden={afeDoc.mimetype === 'pdf' ? false : true}
                                 onClick={(e) => {
                                   setOpen(true), handleViewDocument(afeDoc.storage_path),
                                   insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', token)

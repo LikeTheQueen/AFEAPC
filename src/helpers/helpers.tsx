@@ -5,7 +5,15 @@ import { toast, type ToastContentProps } from "react-toastify";
 import { Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import type { AddressType, AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, OperatorType, UserProfileRecordSupabaseType } from "src/types/interfaces";
 
-
+export const superUserPermission = 1;
+export const viewOperatedAFEPermission = 2;
+export const viewNonOpAFEPermission = 3;
+export const operatorEditUsers = 4;
+export const nonOperatorEditUsers = 5;
+export const approveRejectNonOpAFEs = 6;
+export const viewOpeatorBilling = 7;
+export const editOperatorLibrary = 8;
+export const editNonOpLibrary = 9;
 
 export function setAFEHistoryMaxID(afeHistories: AFEHistorySupabaseType[] | []) {
   return afeHistories.length;
@@ -224,3 +232,4 @@ const hasPartnerAccess = user.partnerRoles?.some(r => r.role! === partnerMinLeve
 
 return hasOperatorAccess || hasPartnerAccess; 
 };
+

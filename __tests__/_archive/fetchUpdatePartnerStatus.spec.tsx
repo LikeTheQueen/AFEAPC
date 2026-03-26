@@ -1,12 +1,15 @@
 import { vi, test, expect, describe, afterEach } from 'vitest';
-import { addAFEHistorySupabase } from '../provider/fetch';
+import { updateAFEPartnerStatusSupabase } from '../../provider/fetch';
 
-const mockInsert = vi.fn();
+const mockEq = vi.fn();
 
 vi.mock('@supabase/supabase-js', () => {
-  
+  const mockUpdate = vi.fn(() => ({
+    eq: mockEq,
+  }));
+
   const mockFrom = vi.fn(() => ({
-    insert: mockInsert,
+    update: mockUpdate,
   }));
 
   const mockClient = {
@@ -24,16 +27,16 @@ describe('updateAFEPartnerStatusSupabase', () => {
   });
 
   test('returns "success" when update has no error', async () => {
-    mockInsert.mockResolvedValueOnce({ data: [], error: null });
+    mockEq.mockResolvedValueOnce({ data: [], error: null });
 
-    const result = await addAFEHistorySupabase('id','description');
+    const result = await updateAFEPartnerStatusSupabase('id');
     expect(result).toBe('success');
   });
 
   test('returns [] when update has an error', async () => {
-    mockInsert.mockResolvedValueOnce({ data: [], error: 'Error Updating AFE Status' });
+    mockEq.mockResolvedValueOnce({ data: [], error: 'Error Updating AFE Status' });
 
-    const result = await addAFEHistorySupabase('id', 'description');
+    const result = await updateAFEPartnerStatusSupabase('id');
     expect(result).toEqual([]);
   });
 });

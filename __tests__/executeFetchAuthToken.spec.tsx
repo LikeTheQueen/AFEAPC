@@ -16,7 +16,7 @@ describe('Execute Login', () => {
 
     const result = await fetchAuthToken('123', 'abc', '/auth', 'https://api.example.com');
 
-    expect(result).toBe(mockToken);
+    expect(result.data).toBe(mockToken);
     expect(fetch).toHaveBeenCalledWith('https://api.example.com/auth', expect.any(Object));
   });
 
@@ -27,7 +27,7 @@ describe('Execute Login', () => {
 
     const result = await fetchAuthToken('123', 'abc', '/auth', 'https://api.example.com');
 
-    expect(result).toEqual(new Error('Request Failed and could not login'));
+    expect(result.data).toEqual(new Error('Not able to connect: undefined undefined'));
     expect(fetch).toHaveBeenCalled();
   });
 
@@ -36,7 +36,7 @@ describe('Execute Login', () => {
 
     const result = await fetchAuthToken('123', 'abc', '/auth', 'https://api.example.com');
 
-    expect(result).toEqual(new Error('Request Failed and could not login'));
+    expect(result.data).toEqual(new Error('Network error'));
     expect(fetch).toHaveBeenCalled();
   });
 });
