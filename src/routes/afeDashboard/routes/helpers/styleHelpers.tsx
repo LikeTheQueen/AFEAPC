@@ -85,6 +85,7 @@ export function PartnerStatusDropdown ({onChange}: Props) {
     return (
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
           <select
+              aria-label="Select Partner Status"
               id="partnerStatus"
               name="partnerStatus"
               autoComplete="off"
@@ -117,6 +118,7 @@ export function OperatorApprovalDropdown ({onChange}: DaysProps) {
     return (
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
           <select
+              aria-label="Operator Approval Days Ago"
               id="operatorIAPPdaysAgo"
               name="operatorIAPPdaysAgo"
               autoComplete="off"

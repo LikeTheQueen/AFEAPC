@@ -11,6 +11,7 @@ import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
 import { loggedInUserRachelGreenWithUserId, limitedPermissionList, userListActiveOrInactive, updatedPermissions, updatedNonPermissions } from './test-utils/rachelGreenuser';
 import UserStatusDashboard from 'src/routes/createEditUsers/routes/manageUserDashboard';
+import SuperUserStatusDashboard from 'src/routes/createEditUsers/routes/manageUsersSystem';
 
 vi.mock('provider/fetch', () => ({
   fetchUsersForOperator: vi.fn(),
@@ -26,7 +27,7 @@ vi.mock('provider/write', () => ({
 
 
 
-describe('Manage User Active and Inactive standard user',() => {
+describe('Manage User Active and Inactive standard user Standard User Screen',() => {
   
     afterEach(() => {
         vi.resetAllMocks();
@@ -105,7 +106,86 @@ describe('Manage User Active and Inactive standard user',() => {
             });
 });
 
-describe('Manage User Permissions Standard user',() => {
+describe('Manage User Active and Inactive standard user Super User Screen',() => {
+  
+    afterEach(() => {
+        vi.resetAllMocks();
+        vi.clearAllMocks();
+    })
+
+    test('It should show the list of users with the ability to make them active or inactive for the Super User', async () => {
+            const user = userEvent.setup()
+    
+            const mockPermissionsFetch = vi.mocked(fetchProvider.fetchUsersForOperator);
+            mockPermissionsFetch.mockResolvedValue({
+                ok: true,
+                data: userListActiveOrInactive
+            });
+
+            const mockDeactivateUser = vi.mocked(writeProvider.updateUserActiveStatusToInactive);
+            mockDeactivateUser.mockResolvedValue({
+                ok: true,
+                data:{id:'idstring', status: false}
+
+            });
+    
+            renderWithProviders(<SuperUserStatusDashboard />, {
+                              supabaseOverrides: {
+                                loggedInUser: loggedInUserIsSuperUser,
+                                loading: false,
+                                isSuperUser: false,
+                                session: {
+                                access_token: 'test-token',
+                                refresh_token: 'test-refresh-token',
+                                expires_in: 3600,
+                                token_type: 'bearer',
+                                user: {
+                                  id: 'test-user-id',
+                                  email: 'test@example.com',
+                                  aud: 'authenticated',
+                                  role: 'authenticated',
+                                  created_at: '2024-01-01T00:00:00Z',
+                                  app_metadata:[],
+                                  user_metadata:{}
+                                }
+                              },
+                            }
+                });
+    
+                await waitFor(() => {
+                      expect(mockPermissionsFetch).toHaveBeenCalled();
+                    });
+    
+                const tables = screen.getAllByRole('table');
+                expect(tables).toHaveLength(1);
+                expect(screen.getByText(/Easy Test/i)).toBeInTheDocument();
+                expect(screen.getByText(/Liam /i)).toBeInTheDocument();
+
+                const rows = screen.getAllByRole('row');
+                const targetRow = rows.find(row => within(row).queryByText(/Rachel Green/i));
+
+                expect(within(targetRow!).getAllByRole('button', { name: /deactivate user/i })[0]).toBeDisabled();
+                expect(within(targetRow!).getAllByRole('button', { name: /deactivate user/i })[1]).toBeDisabled();
+
+                const activeButton = screen.getAllByRole('button', { name: /deactivate user/i });
+                expect(activeButton).toHaveLength(14);
+
+                const targetRowEasyTest = rows.find(row => within(row).queryByText(/Easy Test/i));
+                const deactivateEasyTestButton = within(targetRowEasyTest!).getAllByRole('button', { name: /deactivate user/i })[0]
+
+                await user.click(deactivateEasyTestButton);
+
+                expect(writeProvider.updateUserActiveStatusToInactive).toHaveBeenCalled();
+
+                const targetRowSaraVear = rows.find(row => within(row).queryByText(/Sara Bear/i));
+                const activateSaraBearButton = within(targetRowSaraVear!).getAllByRole('button', { name: /activate user/i })[0]
+
+                await user.click(activateSaraBearButton);
+                expect(writeProvider.updateUserActiveStatusToActive).toHaveBeenCalled();
+            });
+});
+
+describe('Manage User Permissions Standard user screen',() => {
   
     afterEach(() => {
         vi.resetAllMocks();
@@ -301,7 +381,7 @@ describe('Manage User Permissions Standard user',() => {
     
 });
 
-describe('Manage User Permissions System',() => {
+describe('Manage User Permissions System Super User Screen',() => {
   
     afterEach(() => {
         vi.resetAllMocks();

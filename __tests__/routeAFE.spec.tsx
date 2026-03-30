@@ -11,16 +11,12 @@ import { getByTestId, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import {
-  twoAFErecords,
-  twoOperatedAFErecords,
-  twoNonOperatedAFErecords,
-  loggedInUser,
-  loggedInUserOpNavOilsPartnerJohnRoss,
-  loggedInUserNoOpViewRightsAthena,
-  AFEsFromSupbase,
+  afesReturnedFromSupabase,
+  RachelGreen_AllPermissions_CW_NonOpCW,
+  RossGeller_Op_CW_No_NonOp,
+  MonicaGeller_NoOpRoles_CW_NonOpCW,
   OperatorDropDown,
   PartnerDropdown,
-  afeReturnFromSupabase,
   loggedInUserIsSuperUser
 } from './test-utils/afeRecords';
 
@@ -45,14 +41,14 @@ describe('displaying AFEs', () => {
         vi.clearAllMocks();
     })
 
-  test('Shows Non-Operated AFEs and hides anything related to Operated AFEs for a user that only has Non-Op AFEs in the system or Non Op View Rights', async () => {
+  test('Shows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Rachel Green) logs in', async () => {
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserNoOpViewRightsAthena,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -83,47 +79,158 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
     });
-//Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
-    await screen.findByRole("link", { name: /AO06D111NA/i });
-    expect(screen.queryByRole("link", { name: /PA06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    await screen.findByRole("link", { name: /25D001CA S2/i });
-    await screen.findByRole("link", { name: /26D001CA/i });
-//Operated by Corr Whit with John Ross as partner
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
     expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
     
 
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search', async () => {
+  test('Shows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs', async () => {
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+  
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+   
+  });
+
+  test('Shows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs', async () => {
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: RossGeller_Op_CW_No_NonOp,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+  
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+  });
+
+  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     const { getByText } = renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserNoOpViewRightsAthena,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -146,63 +253,271 @@ describe('displaying AFEs', () => {
 
   await waitFor(() => {
       expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
     });
 
     const numSearch = screen.getByRole('textbox', { name: /search on afe number/i });
-    await user.type(numSearch,'DR26');
+    await user.type(numSearch,'06D111N');
   
     await waitFor(() => {
     expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
     expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+     });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+   
+
+  });
+
+  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search', async () => {
+    const user = userEvent.setup();
+
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    const { getByText } = renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+
+  await waitFor(() => {
+      expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
+    });
+
+    const numSearch = screen.getByRole('textbox', { name: /search on afe number/i });
+    await user.type(numSearch,'06');
+  
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+    
+  });
+
+  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)', async () => {
+    const user = userEvent.setup();
+
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    const { getByText } = renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+
+  await waitFor(() => {
+      expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
+    });
+
+    const partnerStatusSearch = screen.getByRole('combobox', { name: /Select Partner Status/i });
+    await user.selectOptions(partnerStatusSearch,'Approved')
+  
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+     });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+   
+
+  });
+
+  test('Shows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)', async () => {
+    const user = userEvent.setup();
+
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    const { getByText } = renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+
+  await waitFor(() => {
+      expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
+    });
+
+    const partnerStatusSearch = screen.getByRole('combobox', { name: /Select Partner Status/i });
+    await user.selectOptions(partnerStatusSearch,'New')
+  
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
     expect(screen.getByTestId('NonOperatedAFElist')).toBeVisible();
 
     expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
      });
-//Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
 
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
    
 
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search', async () => {
+  test('Shows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     const { getByText } = renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserNoOpViewRightsAthena,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -225,140 +540,57 @@ describe('displaying AFEs', () => {
 
   await waitFor(() => {
       expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
     });
 
-    const numSearch = screen.getByRole('textbox', { name: /search on afe number/i });
-    await user.type(numSearch,'07');
+    const operatorApprovalSearch = screen.getByRole('combobox', { name: /Operator Approval Days Ago/i });
+    await user.selectOptions(operatorApprovalSearch,'1 week ago')
   
     await waitFor(() => {
     expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
     expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
-    expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).toBeVisible();
-
-    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();
-    });
-    
-  });
-
-  test('Shows Non-Operated AFEs and hides anything related to Operated AFEs for a user that has view rights to both', async () => {
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afeReturnFromSupabase
-  });
-    const { getByText } = renderWithProviders(<AFE />, {
-      supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
-        loading: false,
-        isSuperUser: false,
-        session: {
-        access_token: 'test-token',
-        refresh_token: 'test-refresh-token',
-        expires_in: 3600,
-        token_type: 'bearer',
-        user: {
-          id: 'test-user-id',
-          email: 'test@example.com',
-          aud: 'authenticated',
-          role: 'authenticated',
-          created_at: '2024-01-01T00:00:00Z',
-          app_metadata:[],
-          user_metadata:{}
-        }
-      },
-    }
-  });
-  
-    await waitFor(() => {
-    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
-    expect(screen.getByTestId('NoNonOperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('NonOperatedAFElistFilter')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElistFiltered')).not.toBeVisible();
     expect(screen.getByTestId('NonOperatedAFElist')).toBeVisible();
 
     expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-    
+     });
 
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA/i });
     expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /099D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /1199D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
 
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
-    });
-    //Operated by Corr Whit with John Ross as partner
-    await screen.findByRole("link", { name: /06D111CJ/i });
-    await screen.findByRole("link", { name: /25D001CJ S2/i });
-    await screen.findByRole("link", { name: /26D001CJ/i });
-    //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-    
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+   
   });
 
-  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights', async () => {
+  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -395,54 +627,40 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
-    //Operated by Nav Oil with Athena as Partner
-    expect(screen.queryByRole("link", { name: /AO06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
     });
-//Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
-    await screen.findByRole("link", { name: /PA07D111NA/i });
+
+    await screen.findByRole("link", { name: /06D111CJ/i });
+    //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /25D001CA S2/i });
+    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+
   });
 
-  test('Shows no Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and does not have view rights', async () => {
+  test('Shows no Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and does not have view rights (Monica Geller)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserNoOpViewRightsAthena,
+        loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -477,57 +695,44 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
 
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoOperatedAFElist')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();   
     });
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA S2/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
 
     
   });
 
-  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights', async () => {
+  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
+        loggedInUser: RossGeller_Op_CW_No_NonOp,
         loading: false,
         isSuperUser: false,
         session: {
@@ -549,7 +754,8 @@ describe('displaying AFEs', () => {
   });
 
   await waitFor(() => {
-      expect(screen.getByTestId('NonOperatedAFElist')).toBeVisible();
+      expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+      expect(screen.getByTestId('NoNonOperatedAFElist')).toBeVisible();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'Operated AFEs' });
@@ -564,54 +770,39 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
-    //Operated by Nav Oil with Athena as Partner
-    //expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
     });
 
-//Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
+    await screen.findByRole("link", { name: /06D111CJ/i });
+    //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /25D001CA S2/i });
+    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //EXPECT ARCHIVED AFEs NOT to be Visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
   });
 
-  test('Shows 0 Operated AFEs and 5 Non-Op AFE when a user clicks on ALL AFEs and does not have Operated AFE view rights', async () => {
+  test('Shows 0 Operated AFEs and 1 Non-Op AFE when a user clicks on ALL AFEs and does not have Operated AFE view rights (Monica Geller)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserNoOpViewRightsAthena,
+        loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -650,52 +841,92 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
     });
 
-//Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
-    //expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    await screen.findByRole("link", { name: /25D001CA S2/i });
-    await screen.findByRole("link", { name: /26D001CA/i });
-    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
+    //await screen.findByRole("link", { name: /06D111CJ/i });
     expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
+    //await screen.findByRole("link", { name: /25D001CA/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument(); 
     
   });
 
-  test('Shows Operated AFEs and Non-Operated AFEs after user clicks on All AFEs and has view right to both', async () => {
+  test('Shows there are no AFEs to view when the response is empty (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afeReturnFromSupabase
+    ok: false,
+    message:'Error getting AFEs'
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+
+  await waitFor(() => {
+      expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+    });
+
+    const operatedTab = screen.getByRole('button', { name: 'All AFEs' });
+    await user.click(operatedTab);
+
+    await waitFor(() => {
+    expect(screen.getByTestId('NonOperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('NoNonOperatedAFElist')).toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('NonOperatedAFElist')).not.toBeVisible();
+
+    expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
+    expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
+    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    });
+
+    const errorMessage = await screen.findAllByText(/Unable to retrieve AFEs for the user/i);
+    expect(errorMessage).toHaveLength(2);
+    
+  });
+
+  test('Shows Operated AFEs and Non-Operated AFEs after user clicks on All AFEs and has view right to both (Rachel Green)', async () => {
+    const user = userEvent.setup();
+
+    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
+    ok: true,
+    data: afesReturnedFromSupabase
+  });
+    
+  renderWithProviders(<AFE />, {
+      supabaseOverrides: {
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
         isSuperUser: false,
         session: {
@@ -732,44 +963,26 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
-    
-
-    //Operated by Nav Oil with Athena as Partner
-    //expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    
-    //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
     });
-    //Operated by Corr Whit with John Ross as partner
+    
     await screen.findByRole("link", { name: /06D111CJ/i });
-    await screen.findByRole("link", { name: /25D001CJ S2/i });
-    await screen.findByRole("link", { name: /26D001CJ/i });
-    //Operated by Nav Oil with Athena as Partner
-    await screen.findByRole("link", { name: /DR26NAVAT/i });
+    //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /25D001CA S2/i });
+    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
   });
 
   test('Shows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both', async () => {
@@ -777,14 +990,14 @@ describe('displaying AFEs', () => {
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserIsSuperUser,
         loading: false,
-        isSuperUser: true,
+        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -821,55 +1034,40 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
      });
 
-//Operated by Nav Oil with Athena as Partner
-    expect( await screen.findAllByRole("link", { name: /DR26NAVAT/i }));
-    //expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-    //expect( await screen.findAllByRole("link", { name: /25D001CA S2/i }));
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
+    await screen.findAllByRole("link", { name: /06D111CJ/i });
     //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    //expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    //expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    //expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
+    //await screen.findAllByRole("link", { name: /25D001CA S2/i });
+    //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    await screen.findAllByRole("link", { name: /06D111NJ/i });
+    //expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    await screen.findAllByRole("link", { name: /06D111NA/i });
+    //expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    await screen.findAllByRole("link", { name: /06D111JC/i });
+    //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findAllByRole("link", { name: /06D111AN/i });
+    //expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryAllByRole("link", { name: /06D111JA/i })).toHaveLength(0);
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    //expect(screen.queryAllByRole("link", { name: /06D111AC/i })[0]).not.toBeInTheDocument();
    
   });
 
-  test('Shows No Operated AFEs and No Non-Operated AFEs after Super User clicks on All AFEs and has view right to both but fetch returned an error', async () => {
+  test('Shows No Operated AFEs and No Non-Operated AFEs after user (Rachel Green) clicks on All AFEs and has view right to both but fetch returned an error', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: false,
-    data: afeReturnFromSupabase
+    data: afesReturnedFromSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
-        isSuperUser: true,
+        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -904,42 +1102,29 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();
-    
-     
     });
+
+    const errorMessage = await screen.findAllByText(/Unable to retrieve AFEs for the user/i);
+    expect(errorMessage).toHaveLength(2);
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA S2/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
    
     
   });
@@ -949,14 +1134,14 @@ describe('displaying AFEs', () => {
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: false,
-    data: afeReturnFromSupabase
+    message:'No AFEs'
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserOpNavOilsPartnerJohnRoss,
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
-        isSuperUser: true,
+        isSuperUser: false,
         session: {
         access_token: '',
         refresh_token: 'test-refresh-token',
@@ -992,39 +1177,29 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
 
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
     });
+
+    const errorMessage = await screen.findAllByText(/There are no Non-Operated AFEs to View/i);
+    expect(errorMessage).toHaveLength(2);
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA S2/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
    
     
   });
@@ -1034,7 +1209,7 @@ describe('displaying AFEs', () => {
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: false,
-    data: afeReturnFromSupabase
+    message: 'Cannot get AFEs'
   });
     
   renderWithProviders(<AFE />, {
@@ -1076,40 +1251,29 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElistHeader')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElistFilter')).not.toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /DR26NAVAT/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /26D001CJ/i })).not.toBeInTheDocument();
-    
-//ARCHIVED
-//Operated by Nav Oil with Athena as Partner
-    //screen.findByRole("link", { name: /DR26NAVAT/i });
-    expect(screen.queryByRole("link", { name: /A06D111NA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit and Athena is the Partner
-    //screen.findByRole("link", { name: /25D001CA S2/i });
-    //screen.findByRole("link", { name: /26D001CA/i });
-    expect(screen.queryByRole("link", { name: /A25D001CA S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CA/i })).not.toBeInTheDocument();
-//Operated by Corr Whit with John Ross as partner
-    //screen.findByRole("link", { name: /06D111CJ/i });
-    //screen.findByRole("link", { name: /25D001CJ S2/i });
-    //screen.findByRole("link", { name: /26D001CJ/i });
-    expect(screen.queryByRole("link", { name: /A06D111CJ/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A25D001CJ S2/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /A26D001CJ/i })).not.toBeInTheDocument();     
     });
+
+    const errorMessage = await screen.findAllByText(/There are no Non-Operated AFEs to View/i);
+    expect(errorMessage[0]).toBeInTheDocument();
+
+    //await screen.findByRole("link", { name: /06D111CJ/i });
+    expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /25D001CA S2/i });
+    expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NJ/i });
+    expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111NA/i });
+    expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111JC/i });
+    expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AN/i });
+    expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+    //Expect the archived AFE NOT to be visible
+    //await screen.findByRole("link", { name: /06D111JA/i });
+    expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+    //await screen.findByRole("link", { name: /06D111AC/i });
+    expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
    
     
   });

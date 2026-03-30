@@ -73,7 +73,9 @@ export default function AFEDetailURL() {
         const afeDetails = await fetchAFEDetails(afeID, token);
 
         if(!afeDetails.ok) {
-          throw new Error((afeDetails as any).message ?? "Cannot find AFE Details");
+          if (isMounted) setAFELoading(false)
+            return;
+
         }
 
         if (isMounted) {

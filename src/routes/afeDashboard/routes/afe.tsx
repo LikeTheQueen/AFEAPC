@@ -79,8 +79,8 @@ export default function AFE() {
             setAllAFEs(transformedAFEs);
           }
         } catch (err) {
-      setNoNonOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
-      setNoOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support'+err);
+      setNoNonOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support '+err);
+      setNoOpAFEToView('Unable to retrieve AFEs for the user.  Contact AFE Partner Support '+err);
       
         } finally {
           if (!cancelled) {

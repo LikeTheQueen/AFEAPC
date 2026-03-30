@@ -1,9 +1,10 @@
 import type { RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from "src/types/interfaces";
 import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
 import { notifyStandard } from "src/helpers/helpers";
+import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers,nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/helpers/helpers";
 
 export function filterOperatorRolePermissions (roles: RoleEntryWrite[], user_id:string): RoleEntryWrite[] {
-        return roles.filter(item => item.role === 2 || item.role === 4 || item.role === 7 || item.role === 8 ).map(item => ({
+        return roles.filter(item => item.role === viewOperatedAFEPermission || item.role === operatorEditUsers || item.role === viewOperatorBilling || item.role === editOperatorLibrary ).map(item => ({
         user_id: user_id,
         role: item.role,
         apc_id: item.apc_id, 
@@ -13,7 +14,7 @@ export function filterOperatorRolePermissions (roles: RoleEntryWrite[], user_id:
 }
 
 export function filterPartnerRolePermissions (roles: RoleEntryWrite[], user_id:string): RoleEntryWrite[] {
-        return roles.filter(item => item.role === 3 || item.role === 5 || item.role === 6 || item.role === 9 ).map(item => ({
+        return roles.filter(item => item.role === viewNonOpAFEPermission || item.role === nonOperatorEditUsers || item.role === approveRejectNonOpAFEs || item.role === editNonOpLibrary ).map(item => ({
         user_id: user_id,
         role: item.role,
         apc_id: item.apc_id, 

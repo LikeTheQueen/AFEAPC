@@ -11,7 +11,7 @@ export const viewNonOpAFEPermission = 3;
 export const operatorEditUsers = 4;
 export const nonOperatorEditUsers = 5;
 export const approveRejectNonOpAFEs = 6;
-export const viewOpeatorBilling = 7;
+export const viewOperatorBilling = 7;
 export const editOperatorLibrary = 8;
 export const editNonOpLibrary = 9;
 

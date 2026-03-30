@@ -5,14 +5,13 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 import MainScreen from '../src/routes/mainScreen';
 import supabase from 'provider/supabase';
 
-import {
-  loggedInUserNoAFEViewRights,
-  loggedInUserRachelGreen,
-  loggedInUserRachelGreenNoRole2,
-  loggedInUserRachelGreenCannotEditUsersNoRole4or5,
-  loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9
-} from './test-utils/rachelGreenuser';
-import { loggedInUser, loggedInUserIsSuperUser } from './test-utils/afeRecords';
+import { loggedInUserIsSuperUser, 
+  RachelGreen_AllPermissions_CW_NonOpCW,
+  MonicaGeller_NoOpRoles_CW_NonOpCW,
+  ChandlerBing_NoAFEViewRights,
+  JoeyGreen_NoUserEditRights_CW_NonOpCW,
+  RossGeller_Op_CW_No_NonOp
+ } from './test-utils/afeRecords';
 
 vi.mock('provider/supabase');
 
@@ -61,7 +60,7 @@ describe('Mainscreen', async () => {
     },
   ],
       supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreen,
+                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -138,7 +137,7 @@ describe('Mainscreen User Experience with a role for ops 2,4,8 and partners 3,9,
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreen,
+                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -209,7 +208,7 @@ describe('Sidebar visibility by permissions', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreen,
+                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -259,11 +258,11 @@ describe('Sidebar visibility by permissions', () => {
     });
   });
 
-  describe('Rachel Green with a role for ops 2,4,8 and partners 3,9,5,6 NO operator role 2 - Cannot see Operated AFEs', () => {
+  describe('Monica Geller with a role for ops [] and partners 3,9,5,6 Cannot see Operated AFEs', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreenNoRole2,
+                loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -296,7 +295,7 @@ describe('Sidebar visibility by permissions', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserNoAFEViewRights,
+                loggedInUser: ChandlerBing_NoAFEViewRights,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -336,7 +335,7 @@ describe('Sidebar visibility by permissions', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5,
+                loggedInUser: JoeyGreen_NoUserEditRights_CW_NonOpCW,
                 loading: false,
                 isSuperUser: false,
                 session: {
@@ -362,7 +361,7 @@ describe('Sidebar visibility by permissions', () => {
         expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
       });
     });
-it('can see User Settings navigation', () => {
+    it('cannot see User Settings navigation', () => {
       userSettingsNavigation.forEach(item => {
         expect(screen.queryByText(item.name)).not.toBeInTheDocument();
       });
@@ -391,7 +390,7 @@ it('can see User Settings navigation', () => {
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9,
+                loggedInUser: RossGeller_Op_CW_No_NonOp,
                 loading: false,
                 isSuperUser: false,
                 session: {

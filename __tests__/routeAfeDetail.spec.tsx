@@ -50,6 +50,10 @@ vi.mock('../provider/fetch', () => ({
   fetchRelatedDocuments: vi.fn(),
   addAFEHistorySupabase: vi.fn(() => Promise.resolve({ id: 999 })),
 }));
+
+vi.mock('provider/write', () => ({
+  insertAFEHistory: vi.fn().mockResolvedValue({ ok: true, data:{ afe_id:1,  description:'Did',type: 'Viewed' } }),
+}))
  
 vi.mock('src/routes/afeDashboard/routes/helpers/styleHelpers', () => ({
   setStatusTextColor: vi.fn((status) => status),
@@ -86,6 +90,7 @@ const setupFetchMocks = () => {
   vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: singleAFEAttachmentResponse });
   vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: singleAFESignedResponse });
   vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: singleAFEWellResponse });
+  vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [] });
 };
 
 const setupFetchMocksNull = () => {
@@ -96,6 +101,7 @@ const setupFetchMocksNull = () => {
   vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: [] });
   vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: [] });
   vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [] });
 };
  
 const renderAFEDetail = () => {
