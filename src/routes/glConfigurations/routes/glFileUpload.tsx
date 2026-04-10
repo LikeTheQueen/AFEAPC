@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { GLCodeRowData } from 'src/types/interfaces';
 import { writeGLAccountlistFromSourceToDB } from 'provider/write';
-import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
+import { notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
@@ -225,7 +225,7 @@ export default function GLFileUpload() {
         </button>
       </div>
       <ToastContainer />
-      {warnUnsavedChanges(data.length > 0, "You have NOT saved your GL Account Codes to AFE Partner Connections")}
+      {useWarnUnsavedChanges(data.length > 0, "You have NOT saved your GL Account Codes to AFE Partner Connections")}
     </>
   )
 }
