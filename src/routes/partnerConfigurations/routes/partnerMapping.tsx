@@ -5,7 +5,7 @@ import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerMapping, updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
+import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
@@ -569,7 +569,7 @@ export default function PartnerMapping() {
                 )}
             </div>
             <ToastContainer />
-            {warnUnsavedChanges(cumaltivePartnerMapDisplay.length > 0, "You have NOT saved your Partner Mappings")}
+            {useWarnUnsavedChanges(cumaltivePartnerMapDisplay.length > 0, "You have NOT saved your Partner Mappings")}
         </>
     )
 }
