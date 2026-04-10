@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { PartnerRowData } from 'src/types/interfaces';
 import { writePartnerlistFromSourceToDB } from 'provider/write';
-import { notifyStandard, warnUnsavedChanges } from 'src/helpers/helpers';
+import { notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { useSupabaseData } from 'src/types/SupabaseContext';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
@@ -304,7 +304,7 @@ export default function PartnerFileUpload() {
                     </button>
             </div>     
            <ToastContainer />
-          {warnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library")}
+          {useWarnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library")}
     </>
   )
 }

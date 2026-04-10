@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
+import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 
 type EditOperatorProps = {
     operatorToEdit: OperatorRecordWithNonOpAddresses;
