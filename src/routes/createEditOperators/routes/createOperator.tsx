@@ -6,7 +6,7 @@ import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperat
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
+import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import { fetchSourceSystems } from 'provider/fetch';
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle, transformSourceSystemSupabase } from 'src/types/transform';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
@@ -574,7 +574,7 @@ export default function CreateOperator() {
       </div>
     </div>
     <ToastContainer />
-            {warnUnsavedChanges((operator.name !=='' && operator.id !=='' && !showSaved), "You have not saved the Operator")}
+            {useWarnUnsavedChanges((operator.name !=='' && operator.id !=='' && !showSaved), "You have not saved the Operator")}
     </>
   )
 }

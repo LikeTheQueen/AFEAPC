@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useBlocker } from "react-router";
 import { toast, type ToastContentProps } from "react-toastify";
 import { Slide, Zoom, Flip, Bounce } from 'react-toastify';
@@ -76,16 +76,16 @@ export function activeTab(tabList: any[], selected: number | null) {
 
 };
 
-export const warnUnsavedChanges = (showAlert:boolean, message:string) =>{
+export const useWarnUnsavedChanges = (showAlert:boolean, message:string) =>{
         useBlocker(
-            () => {
+            useCallback(() => {
                 if(showAlert) {
                     
                     const confirmLeave = window.confirm(message);
                         return !confirmLeave;
                 }
                 return false;
-            }
+            }, [showAlert, message])
         );
 
         useEffect(() => {

@@ -5,7 +5,7 @@ import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { writeGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, warnUnsavedChanges } from "src/helpers/helpers";
+import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
@@ -120,37 +120,20 @@ export default function GLMapping() {
 
     };
     const saveGLMapping = () => {
+    // Check for duplicate BEFORE entering any setters
+    const exists = cumaltiveGLMap.some(item =>
+        JSON.stringify(item) === JSON.stringify(currentGLMap)
+    );
 
-        setCumaltiveGLMap(prevCumlativeList => {
+    if (exists) {
+        notifyStandard('Duplicate Mapping Detected. This route has already been drilled. Choose a new path before you hit a pressure breach.');
+        return;
+    }
 
-            const exists = prevCumlativeList.some(item =>
-                JSON.stringify(item) === JSON.stringify(currentGLMap)
-            );
-
-            if (exists) {
-                notifyStandard('Duplicate Mapping Detected. This route has already been drilled. Choose a new path before you hit a pressure breach.')
-                return prevCumlativeList;
-            }
-
-            const updatedCumlativeList = [...prevCumlativeList];
-            updatedCumlativeList.push(currentGLMap!)
-            setCurrentGLMap(null)
-            return updatedCumlativeList
-        });
-
-        setRowsToShow(prevMap => {
-            const exists = prevMap.some(item =>
-                JSON.stringify(item) === JSON.stringify(currentGLMap)
-            );
-
-            if (exists) return prevMap;
-
-            const updatedMap = [...prevMap];
-            updatedMap.push(currentGLMap!)
-            return updatedMap;
-        });
-
-    };
+    setCumaltiveGLMap(prev => [...prev, currentGLMap!]);
+    setRowsToShow(prev => [...prev, currentGLMap!]);
+    setCurrentGLMap(null);
+};
     const saveGLMappingRecords = () => {
         if (cumaltiveGLMap.length < 1) return;
         writeGLCodeMapping(cumaltiveGLMap);
@@ -492,6 +475,7 @@ export default function GLMapping() {
                                                                 </p>
                                                                 <div className="m-2 size-6 pt-1 justify-self-end">
                                                                     <button
+                                                                        aria-label="Delete mapping"
                                                                         onClick={() => removeMapping(glCodeIdx)}
                                                                         className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                         <TrashIcon className="size-5" />
@@ -517,6 +501,7 @@ export default function GLMapping() {
                                                         <td className="hidden xl:table-cell justify-self-center">
                                                             <div className="size-6 justify-self-center pt-1 mr-3">
                                                                 <button
+                                                                    aria-label="Delete mapping"
                                                                     onClick={() => removeMapping(glCodeIdx)}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
@@ -544,7 +529,7 @@ export default function GLMapping() {
                 )}
             </div>
             <ToastContainer />
-            {warnUnsavedChanges(cumaltiveGLMap.length > 0, "You have NOT saved your Partner Mappings")}
+            {useWarnUnsavedChanges(cumaltiveGLMap.length > 0, "You have NOT saved your Partner Mappings")}
         </>
     )
 }

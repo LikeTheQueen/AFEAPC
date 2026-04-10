@@ -2,7 +2,7 @@ import { fetchMappedGLAccountCode } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
 import { type GLMappedRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
-import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updateGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
@@ -11,6 +11,7 @@ import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformGLCodeCrosswalk } from "src/types/transform";
+import UniversalPagination from "src/routes/sharedComponents/pagnation";
 
 export default function GLMapping() {
     const { session } = useSupabaseData();
@@ -21,46 +22,14 @@ export default function GLMapping() {
     const [opAPCID, setOpAPCID] = useState('');
     const [partnerAPCID, setPartnerAPCID] = useState('');
 
-    const [rowsLimit] = useState(10);
+    const [rowsLimit, setRowsLimit] = useState(3);
     const [rowsToShow, setRowsToShow] = useState<GLMappedRecord[]>([]);
-    const [customPagination, setCustomPagination] = useState<number[] | []>([]);
-    const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    const nextPage = () => {
-        const startIndex = rowsLimit * (currentPage + 1);
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(currentPage + 1);
-    };
-    const changePage = (value: number) => {
-        const startIndex = value * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        setCurrentPage(value);
-    };
-    const previousPage = () => {
-        const startIndex = (currentPage - 1) * rowsLimit;
-        const endIndex = startIndex + rowsLimit;
-        const newArray = cumaltiveGLMap.slice(startIndex, endIndex);
-        setRowsToShow(newArray);
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        } else {
-            setCurrentPage(0);
-        }
-    };
-
-    useMemo(() => {
-        setCustomPagination(
-            Array(Math.ceil(cumaltiveGLMap.length / rowsLimit)).fill(null)
-        );
-        setTotalPage(
-            Math.ceil(cumaltiveGLMap.length / rowsLimit)
-        )
-    }, [cumaltiveGLMap]);
-
+    const handlePageChange = (paginatedData: GLMappedRecord[], page: number) => {
+                  setRowsToShow(paginatedData);
+                  //setCurrentPage(page);
+          };
+    
     useEffect(() => {
         let isMounted = true;
         async function getAccountCodes() {
@@ -68,16 +37,15 @@ export default function GLMapping() {
             setLoading(true);
             try {
                 const glCodeMapList = await fetchMappedGLAccountCode(opAPCID, partnerAPCID, token);
-                
                 if(!glCodeMapList.ok) {
                     throw new Error((glCodeMapList as any).message ?? "Unable to get the GL Account Code mappings");
                 }
-
                 if (isMounted) {
                     
                     const glCodeMapListFormatted = transformGLCodeCrosswalk(glCodeMapList.data);
                     setCumaltiveGLMap(glCodeMapListFormatted ?? []);
                     setRowsToShow(glCodeMapListFormatted ?? []);
+                    glCodeMapListFormatted.length < rowsLimit ? setRowsLimit(glCodeMapListFormatted.length) : rowsLimit;
 
                 }
             } finally {
@@ -227,7 +195,7 @@ export default function GLMapping() {
                                         </thead>
                                         <tbody>
                                             {rowsToShow.map((glCode, glCodeIdx) => (
-                                                <tr key={glCodeIdx} className={`${glCodeIdx !== cumaltiveGLMap.length - 1 ? 'border-b border-[var(--darkest-teal)]/40 ' : ''} items-center`}>
+                                                <tr key={glCodeIdx} className={`${glCodeIdx !== rowsToShow.length - 1 ? 'border-b border-[var(--darkest-teal)]/40 ' : ''} items-center`}>
                                                     <td>
                                                         {/* Operator GL Code.  Stays put no matter the screen size.  Truncates when small*/}
                                                         <div className="pt-2 pl-3 pr-5 text-sm/6 xl:pr-3">
@@ -249,6 +217,7 @@ export default function GLMapping() {
                                                             </p>
                                                             <div className="m-2 size-6 pt-1 justify-self-end">
                                                                 <button
+                                                                    aria-label="Delete mapping"
                                                                     onClick={() => { removeMapping(glCode.id!) }}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
@@ -274,6 +243,7 @@ export default function GLMapping() {
                                                     <td className="hidden xl:table-cell justify-self-center">
                                                         <div className="size-6 justify-self-center pt-1 mr-3">
                                                             <button
+                                                                aria-label="Delete mapping"
                                                                 onClick={() => { removeMapping(glCode.id!) }}
                                                                 className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                 <TrashIcon className="size-5" />
@@ -287,49 +257,15 @@ export default function GLMapping() {
                                 </div>
 
                             </div>
-                            <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-                                    <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-                                        Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-                                        {currentPage == totalPage - 1
-                                            ? cumaltiveGLMap?.length
-                                            : (currentPage + 1) * rowsLimit}{" "}
-                                        of {cumaltiveGLMap?.length} Mapped GL Codes
-                                    </div>
-                                    <div className="flex">
-                                        <ul
-                                            className="flex justify-center items-center align-center gap-x-2 z-30"
-                                            role="navigation"
-                                            aria-label="Pagination">
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == 0
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={previousPage}>
-                                                <ChevronLeftIcon></ChevronLeftIcon>
-                                            </li>
-                                            {customPagination?.map((data, index) => (
-                                                <li
-                                                    className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${currentPage == index
-                                                            ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                                                            : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                        }`}
-                                                    onClick={() => changePage(index)}
-                                                    key={index}
-                                                >
-                                                    {index + 1}
-                                                </li>
-                                            ))}
-                                            <li
-                                                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${currentPage == totalPage - 1
-                                                        ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                                                        : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                                                    }`}
-                                                onClick={nextPage}>
-                                                <ChevronRightIcon></ChevronRightIcon>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div
+                                    hidden={cumaltiveGLMap.length === 0 ? true : false}
+                                    className="border-t border-[var(--darkest-teal)]/70 w-full flex justify-end sm:justify-between flex-row sm:flex-row gap-5 px-1 items-center pt-2 text-xs/6 2xl:text-sm/6">
+                                    <UniversalPagination
+                                        data={cumaltiveGLMap}
+                                        rowsPerPage={rowsLimit}
+                                        listOfType="Mapped GL Codes"
+                                        onPageChange={handlePageChange}
+                                    />
                                 </div>
                         </div>
                     </div>
