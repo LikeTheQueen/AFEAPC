@@ -32,6 +32,7 @@ useEffect(() => {
             const result = await fetchSystemHistory(minRange,maxRange);
         
             if(result.length > 0 ) {
+              console.log(result)
                 const transformedSystemHistory = transformSystemHistory(result);
                 setSystemHistory(transformedSystemHistory.sort((a,b) => b.id - a.id));
             }
@@ -118,7 +119,7 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter System Changes</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
             <div>
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
+            <label htmlFor="userMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</label>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="userMapID"
@@ -141,7 +142,7 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </div>
             </div>
             <div>
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Action Type</h2>
+            <label htmlFor="actionMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Action Type</label>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="actionMapID"
@@ -164,14 +165,14 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
           </div>
             </div>
             <div>
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
+            <label className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</label>
               <OperatorDropdown
                 value={selectedOperator}
                 onChange={setSelectedOperator}
                 limitedList={true} />
           </div>
           <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
+            <label htmlFor="descriptionSearch" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="descriptionSearch"
@@ -270,7 +271,8 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
       <div
           className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
           <button
-          disabled={systemHistory.length >= totalSystemHistoryRowCount ? true : false}
+            aria-label={systemHistory.length >= totalSystemHistoryRowCount ? "That's Everything!" : "Load More"}
+            disabled={systemHistory.length >= totalSystemHistoryRowCount ? true : false}
             onClick={async (e: any) => {
               e.preventDefault();
               setMaxRange(maxRange+24);

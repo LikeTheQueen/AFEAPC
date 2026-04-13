@@ -1,10 +1,10 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { type AFESourceSystemType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type PartnerRecordToDisown } from 'src/types/interfaces';
+import { type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type PartnerRecordToDisown } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
 import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
+import { notifyStandard } from "src/helpers/helpers";
 
 type EditOperatorProps = {
     operatorToEdit: OperatorRecordWithNonOpAddresses;

@@ -34,6 +34,7 @@ export default function GLLibrary() {
         const glCodeList = await fetchAccountCodesForOperatorOrPartner(opAPCID, partnerAPCID)
 
         if(glCodeList) {
+          console.log(glCodeList)
             setAccountCodes(glCodeList);
         }
     } finally {

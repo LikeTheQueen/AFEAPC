@@ -919,6 +919,17 @@ export const loggedInUserIsSuperUser: UserProfileRecordSupabaseType = {
     partnerRoles: [],
 };
 
+export const userNoUserId: UserProfileRecordSupabaseType = {
+    firstName: 'Tim',
+    lastName: 'Ross',
+    email: 'user@email',
+    active: true,
+    is_super_user: false,
+    user_id: undefined,
+    operatorRoles: [],
+    partnerRoles: [],
+};
+
 export const AFEsFromSupbase: AFEType[] = [
     //Operated by Nav Oil & John Ross Partner NOT ARCHIVED
     {
@@ -2410,7 +2421,7 @@ export const afesReturnedFromSupabase = [
     },
 
     {
-        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb',
+        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbb8989',
         created_at: '2025-10-01T12:00:00.000000+00:00',
         afe_type: 'DRILLING',
         afe_number: '099D111JC',
@@ -2446,7 +2457,7 @@ export const afesReturnedFromSupabase = [
     },
 
     {
-        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb',
+        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbb5656',
         created_at: '2025-10-01T12:00:00.000000+00:00',
         afe_type: 'DRILLING',
         afe_number: '1199D111JC',

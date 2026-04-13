@@ -7,10 +7,7 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 
 import GLMapping from 'src/routes/glConfigurations/routes/glMapping';
 
-import { RachelGreen_AllPermissions_CW_NonOpCW,
-    OperatorDropDown,
-    PartnerDropdown,
-    partnerAccountCodes
+import { RachelGreen_AllPermissions_CW_NonOpCW
  } from './test-utils/afeRecords';
 
  import { nonOpOperatorAccountCodes, operatorAccountCodes } from './test-utils/accountCodeGls';

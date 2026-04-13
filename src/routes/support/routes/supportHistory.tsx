@@ -14,7 +14,7 @@ import { type SupportHistory } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { CheckCircle2, Clock } from "lucide-react";
 
-export default function ContactSupport() {
+export default function SupportHistory() {
   const { loggedInUser } = useSupabaseData();
   const supportEmail = 'elizabeth.shaw@afepartner.com'
 
@@ -36,6 +36,7 @@ export default function ContactSupport() {
       loggedInUser.user_id,
       loggedInUser.is_super_user
     );
+    
     setSupportHistories(supportHistory);
   }, [loggedInUser?.user_id, loggedInUser?.is_super_user]);
 

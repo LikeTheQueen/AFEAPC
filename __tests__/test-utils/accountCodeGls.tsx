@@ -138,4 +138,190 @@ export const mappedGLCodes = [
         "apc_op_account_id": 10,
         "apc_partner_account_id": 119
     }
-]
+];
+
+export const WhitAndCorrOilAccountCodes = [
+    {
+        "account_number": "9210.202",
+        "account_description": "SURFACE LEASE ACQUISITION",
+        "account_group": "1. DRILLING",
+        "id": 98,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.203",
+        "account_description": "SURVEYING",
+        "account_group": "1. DRILLING",
+        "id": 100,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.207",
+        "account_description": "ROAD & SITE COSTS",
+        "account_group": "1. DRILLING",
+        "id": 102,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.208",
+        "account_description": "ROAD USE",
+        "account_group": "1. DRILLING",
+        "id": 104,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.201",
+        "account_description": "LICENCE, FEES, TAXES, & PERMITS",
+        "account_group": "1. DRILLING",
+        "id": 111,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.203",
+        "account_description": "SURVEYING",
+        "account_group": "1. DRILLING",
+        "id": 115,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.207",
+        "account_description": "ROAD & SITE COSTS",
+        "account_group": "1. DRILLING",
+        "id": 117,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.208",
+        "account_description": "ROAD USE",
+        "account_group": "1. DRILLING",
+        "id": 119,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "9210.201",
+        "account_description": "LICENCE, FEES, TAXES, & PERMITS",
+        "account_group": "1. DRILLING",
+        "id": 96,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": false
+    },
+    {
+        "account_number": "9210.202",
+        "account_description": "SURFACE LEASE ACQUISITION",
+        "account_group": "1. DRILLING",
+        "id": 113,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": false
+    }
+];
+
+export const WhitAndCorrOilAccountCodesNonOP = [
+    {
+        "account_number": "5310.202",
+        "account_description": "SURFACE LEASE ACQUISITION",
+        "account_group": "1. DRILLING",
+        "id": 98,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.203",
+        "account_description": "SURVEYING",
+        "account_group": "1. DRILLING",
+        "id": 100,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.207",
+        "account_description": "ROAD & SITE COSTS",
+        "account_group": "1. DRILLING",
+        "id": 102,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.208",
+        "account_description": "ROAD USE",
+        "account_group": "1. DRILLING",
+        "id": 104,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.201",
+        "account_description": "LICENCE, FEES, TAXES, & PERMITS",
+        "account_group": "1. DRILLING",
+        "id": 111,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.203",
+        "account_description": "SURVEYING",
+        "account_group": "1. DRILLING",
+        "id": 115,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.207",
+        "account_description": "ROAD & SITE COSTS",
+        "account_group": "1. DRILLING",
+        "id": 117,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.208",
+        "account_description": "ROAD USE",
+        "account_group": "1. DRILLING",
+        "id": 119,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": true
+    },
+    {
+        "account_number": "5310.201",
+        "account_description": "LICENCE, FEES, TAXES, & PERMITS",
+        "account_group": "1. DRILLING",
+        "id": 96,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": false
+    },
+    {
+        "account_number": "5310.202",
+        "account_description": "SURFACE LEASE ACQUISITION",
+        "account_group": "1. DRILLING",
+        "id": 113,
+        "apc_op_id": "",
+        "apc_part_id": "",
+        "active": false
+    }
+];

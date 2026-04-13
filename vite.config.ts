@@ -21,7 +21,7 @@ export default defineConfig({
   resolve: {
     alias: {
       src: path.resolve(__dirname, 'src'),
-      provider: path.resolve(__dirname, 'provider'),  // ← is this here?
+      provider: path.resolve(__dirname, 'provider'),  
     },
   },
   test: {
@@ -37,6 +37,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/routes/unusedRoutes/**'],
     },
   },
 });

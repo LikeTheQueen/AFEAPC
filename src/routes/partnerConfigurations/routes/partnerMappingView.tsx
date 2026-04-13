@@ -178,6 +178,7 @@ export default function PartnerMappingView() {
                                                                 </p>
                                                                 <div className="m-2 size-6 pt-1 justify-self-end">
                                                                     <button
+                                                                        aria-label="Delete mapping"
                                                                         onClick={() => { removeMapping(partnerIdx), notifyStandard(`Partner pipeline shut in successfully.\n\n(TLDR: Partner Mapping successfully deleted)`) }}
                                                                         className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                         <TrashIcon className="size-5" />
@@ -208,6 +209,7 @@ export default function PartnerMappingView() {
                                                         <td className="hidden xl:table-cell justify-self-center">
                                                             <div className="size-6 justify-self-center pt-1 mr-3">
                                                                 <button
+                                                                    aria-label="Delete mapping"
                                                                     onClick={() => { removeMapping(partnerIdx), notifyStandard(`Partner pipeline shut in successfully.\n\n(TLDR: Partner Mapping successfully deleted)`) }}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />

@@ -28,7 +28,7 @@ export default [
             ]),
             route("missingAFEsupport", "./routes/missingAFEsupport.tsx"),
             route("systemhistory", "./routes/support/routes/systemHistory.tsx"),
-            route("contactsupport", "./routes/contactSupport.tsx"),
+            route("contactsupport", "./routes/support/routes/contactSupport.tsx"),
             route("supporthistory", "./routes/support/routes/supportHistory.tsx"),
 
             route("profile", "./routes/userProfile/routes/profile.tsx"),

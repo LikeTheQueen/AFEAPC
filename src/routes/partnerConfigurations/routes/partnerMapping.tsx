@@ -1,9 +1,9 @@
 import { fetchPartnersFromPartnersCrosswalk, fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
-import { useState, useEffect, useMemo } from "react";
-import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerRowUpdate, type PartnerMappingDisplayRecord } from "src/types/interfaces";
+import { useState, useEffect } from "react";
+import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerMappingDisplayRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
-import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { updatePartnerMapping, updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
+import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/loadingPage";
@@ -46,6 +46,7 @@ export default function PartnerMapping() {
     const [currentPage, setCurrentPage] = useState(0);
     const [hideMappedSourcePartners, setHideMappedSourcePartners] = useState<boolean>(false);
     const [hideMappedAPCPartners, setHideMappedAPCPartners] = useState<boolean>(false);
+    const [errorGettingAPCPartnerList, setErrorGettingAPCPartnerList] = useState<boolean>(false);
 
     const handlePageChange = (paginatedData: PartnerMapDisplay[], page: number) => {
         setRowsToShow(paginatedData);
@@ -61,6 +62,7 @@ export default function PartnerMapping() {
                 const sourcePartList = await fetchPartnersFromSourceSystemInSupabase(opAPCID);
                 const mappedPartnerList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
                 if (isMounted) {
+
                     setSourcePartnerList(sourcePartList ?? []);
                     setExistingPartnerMap(mappedPartnerList ?? []);
                 }
@@ -86,6 +88,7 @@ export default function PartnerMapping() {
                     if (!apcPartList.ok) {
                         throw new Error(apcPartList.message);
                     }
+                    console.log(apcPartList.data,'apc');
                     const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
                     setAPCPartnerList(dataTransformed);
                 }
@@ -93,7 +96,6 @@ export default function PartnerMapping() {
 
                 if (isMounted) {
                     console.error('Failed to load partners:', error);
-
                 }
             } finally {
                 if (isMounted) {
@@ -193,6 +195,7 @@ export default function PartnerMapping() {
     const savePartnerMappingRecords = () => {
         if (cumaltivePartnerMapDisplay.length < 1) return;
         const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(({ apc_partner_id, source_partner_id }) => ({ partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id }))
+        console.log(mappedData, 'the dave partner');
         const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(({
             afe_partner_processed_id,
         }) => (afe_partner_processed_id!));
@@ -355,7 +358,13 @@ export default function PartnerMapping() {
                             {/* Partner Library in AFE Partner Connections */}
                             <div className="text-sm/6 2xl:text-base/7">
                                 <h2 className="truncate  font-semibold text-[var(--darkest-teal)] custom-style border-b border-[var(--darkest-teal)]/40">Partner Library in AFE Partner Connections</h2>
-                                <div className="flex justify-end gap-3 py-3 px-10">
+                                <div className="sm:mt-14" hidden={!errorGettingAPCPartnerList}>
+                                    <NoSelectionOrEmptyArrayMessage
+                                        message={"Unable to get the list of Partners from the AFE Partner Connections Library.  Please contact AFE Partner Connections Support."}
+                                    ></NoSelectionOrEmptyArrayMessage>
+                                </div>
+                                <div hidden={errorGettingAPCPartnerList}
+                                className="flex justify-end gap-3 py-3 px-10">
                                     <SingleCheckbox
                                         value={hideMappedAPCPartners}
                                         onChange={(checked) => setHideMappedAPCPartners(checked)}
@@ -363,7 +372,8 @@ export default function PartnerMapping() {
                                         id={'hideMappedPartnersAFEPC'}>
                                     </SingleCheckbox>
                                 </div>
-                                <div className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
+                                <div hidden={errorGettingAPCPartnerList}
+                                className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] ">
                                     <div className="mt-2 flow-root h-80 overflow-y-auto overflow-x-hidden sm:rounded-xl">
                                         <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                                             <div className="inline-block min-w-full py-2 items-center">
@@ -519,6 +529,7 @@ export default function PartnerMapping() {
                                                         </p>
                                                         <div className="m-2 size-6 pt-1 justify-self-end">
                                                             <button
+                                                                aria-label="Delete mapping"
                                                                 onClick={() => removeMapping(partnerIdx)}
                                                                 className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                 <TrashIcon className="size-5" />
@@ -544,6 +555,7 @@ export default function PartnerMapping() {
                                                 <td className="hidden xl:table-cell justify-self-center">
                                                     <div className="size-6 justify-self-center pt-1 mr-3">
                                                         <button
+                                                            aria-label="Delete mapping"
                                                             onClick={() => removeMapping(partnerIdx)}
                                                             className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                             <TrashIcon className="size-5" />
