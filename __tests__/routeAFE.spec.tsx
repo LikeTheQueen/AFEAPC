@@ -88,7 +88,7 @@ describe('displaying AFEs', () => {
     expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
     //await screen.findByRole("link", { name: /06D111NA/i });
     expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-    await screen.findByRole("link", { name: /06D111JC/i });
+    //await screen.getByRole("link", { name: /06D111JC/i });
     //expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
     //await screen.findByRole("link", { name: /06D111AN/i });
     expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();

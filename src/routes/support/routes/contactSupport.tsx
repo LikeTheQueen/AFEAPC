@@ -13,33 +13,32 @@ export default function ContactSupport() {
   const [focused, setFocused] = useState('');
 
   const handleClickSendEmail = async () => {
+  
+  await handleSendEmail(
+    emailSubject,
+    emailBody,
+    'elizabeth.shaw@afepartner.com',
+    loggedInUser?.email!,
+    loggedInUser?.firstName!,
+    loggedInUser?.email!
+  );
 
-    //Send email to AFE Partner Connections Support
-    handleSendEmail(
-      emailSubject,
-      emailBody,
-      'elizabeth.shaw@afepartner.com',
-      loggedInUser?.email!,
-      loggedInUser?.firstName!,
-      loggedInUser?.email!
-    ).then//Send confirmation email to user  
-    handleSendEmail(
-      'Your Support Ticket has been received',
-      'We have received your support request.',
-      loggedInUser?.email!,
-      "AFE Partner Connections",
-      loggedInUser?.firstName!,
-      "AFE Partner Connections",
-    ).then
-    notifyStandard('Your support ticket’s been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production.')
-    {
-      createSupportTicket(emailSubject,emailBody);
-      setEmailBody('');
-      setEmailSubject('');
-    };
+  await handleSendEmail(
+    'Your Support Ticket has been received',
+    'We have received your support request.',
+    loggedInUser?.email!,
+    "AFE Partner Connections",
+    loggedInUser?.firstName!,
+    "AFE Partner Connections",
+  );
 
-  };
-//className="relative max-w-5xl mx-auto"
+  await createSupportTicket(emailSubject, emailBody);
+  
+  notifyStandard('Your support ticket has been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production.');
+  setEmailBody('');
+  setEmailSubject('');
+};
+
   return (
     <>
       <div className="min-h-screen px-4 sm:px-10 sm:py-16 bg-gradient-to-br from-[var(--darkest-teal)] via-[var(--darkest-teal)] to-[var(--dark-teal)] to-[var(--darkest-teal)]/60">

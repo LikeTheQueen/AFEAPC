@@ -6,7 +6,7 @@ import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updateGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { useSupabaseData } from "src/types/SupabaseContext";

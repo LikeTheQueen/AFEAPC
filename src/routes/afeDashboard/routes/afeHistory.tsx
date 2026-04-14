@@ -8,7 +8,7 @@ import { SingleCheckbox } from 'src/routes/sharedComponents/singleCheckbox';
 import { fetchAFEHistoryCount } from 'provider/fetch';
 import { AFEHistoryBlock } from 'src/routes/sharedComponents/shatedUIBlocks';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { NotificationsGridPreFiltered } from 'src/routes/notifications';
+import { NotificationsGridPreFiltered } from 'src/routes/afeDashboard/routes/notifications';
 
 
 type AFEHistoryProps = {

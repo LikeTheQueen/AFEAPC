@@ -6,7 +6,7 @@ import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } f
 import { writeGLCodeMapping } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { type GLMappingRecord } from 'src/types/interfaces';

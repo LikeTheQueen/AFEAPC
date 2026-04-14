@@ -6,7 +6,7 @@ import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
 import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";

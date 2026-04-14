@@ -3,7 +3,7 @@ import { startTransition, useCallback, useEffect, useMemo, useState } from "reac
 import { formatDateShort } from "src/helpers/styleHelpers";
 import { type Notifications } from "src/types/interfaces";
 import { transformNotifications } from "src/types/transform";
-import UniversalPagination from "./sharedComponents/pagnation";
+import UniversalPagination from "../../sharedComponents/pagnation";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 
 type FilterNotificationProp = {
@@ -114,7 +114,6 @@ const filterNotifications = (notificationsList: Notifications[]) => {
   };
 
 const filteredNotifiations = useMemo(() => {
-  console.log('in the memo called')
   return filterNotifications(notifications);
 },[notifications, selectedUser, selectedAction, afeSearch, descriptionSearch, verSearch]);
 
@@ -122,7 +121,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 'len of noti', notifications.length);
+
   return (
     <>
     <div className="px-4 py-4 sm:px-6 sm:py-6">
@@ -136,7 +135,7 @@ console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
             {/* Filter on the User */}
             <div>
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
+            <label htmlFor="userMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</label>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="userMapID"
@@ -160,7 +159,7 @@ console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 
             </div>
             {/* Filter on the AFE Number */}
             <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Number</h2>
+            <label htmlFor="afeNumberSearch" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Number</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="afeNumberSearch"
@@ -177,7 +176,7 @@ console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 
             </div>
             {/* Filter on the AFE Version */}
             <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Version</h2>
+            <label htmlFor="afeVerSearch" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on the AFE Version</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="afeVerSearch"
@@ -194,7 +193,7 @@ console.log('the total', totalNotificationHistoryRowCount, 'the max', maxRange, 
             </div>
             {/* Filter on the Description */}
             <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
+            <label htmlFor="descriptionSearch" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="descriptionSearch"
@@ -334,7 +333,6 @@ export function NotificationsGridPreFiltered({apc_afe_id}: FilterNotificationPro
             if(result.length > 0 ) {
                 const transformedNotifications = transformNotifications(result);
                 setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
-                console.log(transformedNotifications);
             }
         } finally {
             if(isMounted) {
@@ -400,7 +398,6 @@ const filterNotifications = (notificationsList: Notifications[]) => {
   };
 
 const filteredNotifiations = useMemo(() => {
-  console.log('in the memo calledAFE')
   return filterNotifications(notifications);
 },[notifications, selectedUser, selectedAction, descriptionSearch]);
 
@@ -409,7 +406,8 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-
+console.log(userList, userList.length);
+console.log(actionList, actionList.length);
   return (
     <>
     <div className="px-4 py-4 sm:px-6 sm:py-4 bg-white rounded-lg">
@@ -422,7 +420,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
             <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFE History</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
             <div>
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</h2>
+            <label htmlFor="userMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</label>
              <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
               id="userMapID"
@@ -446,7 +444,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
             </div>
             
             <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on the AFE Action</h2>
+            <label htmlFor="actionMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on the AFE Action</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
               <select
               id="actionMapID"
@@ -469,7 +467,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
           </div>
           </div>
           <div >
-            <h2 className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</h2>
+            <label htmlFor="descriptionSearch" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search the Description</label>
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
                 <input
                   id="descriptionSearch"

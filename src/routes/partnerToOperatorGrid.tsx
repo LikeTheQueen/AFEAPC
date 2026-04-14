@@ -1,7 +1,7 @@
 import { fetchPartnersLinkedOrUnlinkedToOperator, fetchClaimProofPrompt, verifyClaimProof } from 'provider/fetch';
 import { useEffect, useMemo, useState, memo, useRef } from 'react';
 import type { OperatorPartnerAddressWithOpNameType, PartnerRecordToUpdate, ClaimProof } from 'src/types/interfaces';
-import LoadingPage from './loadingPage';
+import LoadingPage from './sharedComponents/loadingPage';
 import { updatePartnerWithOpID } from 'provider/write';
 import NoSelectionOrEmptyArrayMessage from './sharedComponents/noSelectionOrEmptyArrayMessage';
 import { transformOperatorPartnerAddressWithOpName, transformClaimProof } from 'src/types/transform';

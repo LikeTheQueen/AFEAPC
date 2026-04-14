@@ -6,7 +6,7 @@ import { useSupabaseData } from "../../../types/SupabaseContext";
 import PermissionDashboard from "../../sharedComponents/permissionGrid"
 import { fetchUserPermissions } from 'provider/fetch';
 import { transformRoleEntrySupabase } from 'src/types/transform';
-import LoadingPage from 'src/routes/loadingPage';
+import LoadingPage from 'src/routes/sharedComponents/loadingPage';
 
 
 export default function Profile() {

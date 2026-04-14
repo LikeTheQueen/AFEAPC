@@ -10,7 +10,7 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type AFEType } from "src/types/interfaces";
 import { fetchAFEs } from "provider/fetch";
 import { transformAFEs } from "src/types/transform";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";

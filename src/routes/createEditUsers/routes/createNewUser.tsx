@@ -6,7 +6,7 @@ import { transformOperatorPartnerAddress } from '../../../types/transform';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
 import { doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers } from 'src/helpers/helpers';
-import LoadingPage from 'src/routes/loadingPage';
+import LoadingPage from 'src/routes/sharedComponents/loadingPage';
 import { buildAppEmailHTML, sendEmail, handleSendEmail } from 'email/emailBasic';
 import { ToastContainer } from 'react-toastify';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';

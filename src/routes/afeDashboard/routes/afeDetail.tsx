@@ -9,7 +9,7 @@ import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEW
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
 import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "./helpers/helpers";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon} from '@heroicons/react/24/outline';
 import DocumentBrowser from './documentViewer';

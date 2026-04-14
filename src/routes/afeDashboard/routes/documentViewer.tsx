@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import LoadingPage from "../../loadingPage";
+import LoadingPage from "../../sharedComponents/loadingPage";
 
 //import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?worker&url';
 //THIS IS A HACK AND YOU NEED TO UPDATE THE NPM PACKAGE

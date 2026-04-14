@@ -41,7 +41,7 @@ export default [
             route("manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),
             route("manageUserPermissionsSystem", "./routes/createEditUsers/routes/manageUserPermissionsSystem.tsx"),
             
-            route("notifications", "./routes/notifications.tsx"),
+            route("notifications", "./routes/afeDashboard/routes/notifications.tsx"),
             
             
         ]),

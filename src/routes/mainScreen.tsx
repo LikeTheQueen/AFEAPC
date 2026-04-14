@@ -1,6 +1,6 @@
 
 import supabase from "provider/supabase";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Outlet } from "react-router";
 import { NavLink } from "react-router";
 import "../style.css";
@@ -18,22 +18,14 @@ import {
   Bars3Icon,
   BellIcon,
   ClockIcon,
-  Cog6ToothIcon,
   FolderIcon,
-  XMarkIcon,
-  PhoneArrowUpRightIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useSupabaseData } from "../types/SupabaseContext";
-import { DialogTitle } from '@headlessui/react'
 import { doesUserHaveRole } from "src/helpers/helpers";
 
-
-const navigation = [
-  { name: 'AFEs', href: "afe", icon: FolderIcon},
-  { name: 'Archived AFEs', href: "afeArchived", icon: ClockIcon },
-  { name: 'AFE History', href: "notifications", icon: BellIcon },
-]
 //Users that have permission 2 or 3 or a Super User can see these.
 const afeNavigation = [
   { id: 1, name: 'AFEs', href: "afe", initial: 'A' },

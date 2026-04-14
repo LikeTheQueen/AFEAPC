@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 import type { Route } from "./+types/root";
-import LoadingPage from "./routes/loadingPage";
+import LoadingPage from "./routes/sharedComponents/loadingPage";
 import { SupabaseProvider } from "./types/SupabaseContext"; 
 import PageNotFound from "./routes/pageNotFound";
 

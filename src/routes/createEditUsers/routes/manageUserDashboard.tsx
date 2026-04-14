@@ -4,7 +4,7 @@ import { useSupabaseData } from "src/types/SupabaseContext";
 import type { UserFullNameAndEmail } from "src/types/interfaces";
 import UserDashboard from "../../../routes/manageUserGrid";
 import { transformUserNameAndEmail } from "src/types/transform";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 
 
 export default function UserStatusDashboard() {

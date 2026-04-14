@@ -4,7 +4,7 @@ import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
 import PermissionDashboard from "src/routes/sharedComponents/userPermissionsSystem";
 import { transformRoleEntrySupabase } from "src/types/transform";
-import LoadingPage from "src/routes/loadingPage";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 
 export default function UserPermissionDashboard() {
   const { loggedInUser, session } = useSupabaseData();
