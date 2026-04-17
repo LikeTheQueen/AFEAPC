@@ -1,5 +1,6 @@
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
+import * as emailProvider from '../email/emailBasic';
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,7 +11,12 @@ import SupportHistory from 'src/routes/support/routes/supportHistory';
 import { RachelGreen_AllPermissions_CW_NonOpCW, loggedInUserIsSuperUser, userNoUserId
  } from './test-utils/afeRecords';
 
-import { supportHistory } from './test-utils/supportHistory';
+import { supportHistory, singleTicketThreadResponse, orginalTicketUpdatedResponse } from './test-utils/supportHistory';
+
+vi.mock('../email/emailBasic', () => ({
+  handleSendEmail: vi.fn().mockResolvedValue(undefined),
+  sendEmail: vi.fn().mockResolvedValue({ id: 'mock-email-id' }),
+}));
 
 vi.mock('provider/fetch', () => ({
     fetchSupportHistory: vi.fn(),
@@ -120,6 +126,7 @@ describe('View and support tickets',() => {
     });
 
     test('Loads screen and allows user to send comment', async () => {
+      (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
         
         (fetchProvider.fetchSupportHistory as Mock)
                   .mockResolvedValue(supportHistory);
@@ -148,8 +155,22 @@ describe('View and support tickets',() => {
 
         await user.click(commentButton[0]);
         
-
         expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
+
+        await waitFor(() => {
+              
+              expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
+                'New comment on ticket #2',
+                `${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName} has added a new comment: Can I get help on this?`,
+                'elizabeth.shaw@afepartner.com',
+                RachelGreen_AllPermissions_CW_NonOpCW.email,
+                RachelGreen_AllPermissions_CW_NonOpCW.firstName,
+                RachelGreen_AllPermissions_CW_NonOpCW.email,
+                "https://afepartner.com/mainscreen/supporthistory"
+              );
+
+              expect(commentField[0]).toHaveValue('');
+            });
         
     });
 
@@ -167,9 +188,14 @@ describe('View and support tickets',() => {
     });
 
     test('Loads screen and allows Super User to send comment and resolve', async () => {
-        
+        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+        (writeProvider.createSupportTicketThread as Mock)
+          .mockResolvedValueOnce(singleTicketThreadResponse);
         (fetchProvider.fetchSupportHistory as Mock)
                   .mockResolvedValue(supportHistory);
+        (writeProvider.updateSupportTicket as Mock)
+          .mockResolvedValue(orginalTicketUpdatedResponse);
         
                 await setupWithSelectionsSuperUser(user);
                 expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
@@ -201,13 +227,51 @@ describe('View and support tickets',() => {
 
         await user.click(commentButton[0]);
 
-        expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+        await waitFor(() => {
+          expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+        });
+
+      await waitFor(() => {
+
+        expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
+          1,
+          'New comment on ticket #2',
+          `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
+          'eandv3851@gmail.com',
+          'elizabeth.shaw@afepartner.com',
+          loggedInUserIsSuperUser.firstName,
+          'AFE Partner Connections',
+          "https://afepartner.com/mainscreen/supporthistory"
+        );
+
+        expect(commentField[0]).toHaveValue('');
+      });
 
         await user.type(resolutionField[0], 'Nevermind I fix');
 
         await user.click(resolveButton[0]);
 
+        await waitFor(() => {
         expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487","Nevermind I fix");
+        });
+
+        await waitFor(() => {
+
+        expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
+          2,
+          `Ticket Resolved for: ${orginalTicketUpdatedResponse.subject}`,
+          `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has resolved this ticket: ${orginalTicketUpdatedResponse.resolution}`,
+          `${orginalTicketUpdatedResponse.created_by_email}`,
+          'elizabeth.shaw@afepartner.com',
+          loggedInUserIsSuperUser.firstName,
+          loggedInUserIsSuperUser.email,
+          "https://afepartner.com/mainscreen/supporthistory"
+        );
+
+        expect(commentField[0]).toHaveValue('');
+      });
+
+
         
     });
 });

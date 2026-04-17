@@ -1,3 +1,19 @@
+export const ticketCreation = [
+    {
+        "id": 8,
+        "created_at": "2026-04-17T21:55:06.495892+00:00",
+        "created_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+        "subject": "I want to contact you",
+        "message": "About this thing",
+        "active": true,
+        "closed_by": null,
+        "closed_on": null,
+        "resolution": null,
+        "resolution_date": null,
+        "created_by_email": "eandv3851@gmail.com"
+    }
+];
+
 export const supportHistory = [
     {
         "id": 2,
@@ -129,6 +145,46 @@ export const supportHistory = [
         ]
     }
 ];
+
+export const ticketThreadResponse = [
+    {
+        "id": 18,
+        "created_at": "2026-04-17T20:34:33.578765+00:00",
+        "created_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+        "active": true,
+        "comment": "get the return",
+        "comment_date": "2026-04-17T20:34:32.078+00:00",
+        "related_ticket": {
+            "created_by_email": "eandv3851@gmail.com"
+        }
+    }
+];
+
+export const singleTicketThreadResponse = {
+    "id": 25,
+    "created_at": "2026-04-17T21:20:21.234269+00:00",
+    "created_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+    "active": true,
+    "comment": "comment",
+    "comment_date": "2026-04-17T21:20:19.795+00:00",
+    "related_ticket": {
+        "created_by_email": "eandv3851@gmail.com"
+    }
+};
+
+export const orginalTicketUpdatedResponse = {
+    "id": 7,
+    "created_at": "2026-04-13T23:02:49.254279+00:00",
+    "created_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+    "subject": "Testing new logic",
+    "message": "Does this new logic work correctly?",
+    "active": false,
+    "closed_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+    "closed_on": "2026-04-17T21:35:03.529+00:00",
+    "resolution": "assa",
+    "resolution_date": "2026-04-17T21:35:03.529+00:00",
+    "created_by_email": "eandv3851@gmail.com"
+}
 
 export const systemHistory = [
     {

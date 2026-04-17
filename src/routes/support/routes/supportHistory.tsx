@@ -14,10 +14,11 @@ import { type SupportHistory } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { CheckCircle2, Clock } from "lucide-react";
 
+import { supportEmail } from "src/constants/variables";
+
 export default function SupportHistory() {
   const { loggedInUser } = useSupabaseData();
-  const supportEmail = 'elizabeth.shaw@afepartner.com'
-
+  
   const [emailSubject, setEmailSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
 
@@ -82,51 +83,35 @@ export default function SupportHistory() {
     }));
   };
 
-  const handleClickSendEmail = async () => {
-    if (!loggedInUser?.email || !loggedInUser.firstName) return;
-
-    try {
-      // Send email to support
-      await handleSendEmail(
-        emailSubject,
-        emailBody,
-        supportEmail,
-        loggedInUser.email,
-        loggedInUser.firstName,
-        loggedInUser.email
-      );
-
-      // Confirmation email to user
-      await handleSendEmail(
-        "Your Support Ticket has been received",
-        "We have received your support request.",
-        loggedInUser.email,
-        "AFE Partner Connections",
-        loggedInUser.firstName,
-        "AFE Partner Connections"
-      );
-
-      await createSupportTicket(emailSubject, emailBody);
-
-      notifyStandard(
-        "Your support ticket’s been logged and is now in the pipeline. Sit tight while we pressure test the issue and bring it up to production."
-      );
-
-      setEmailBody("");
-      setEmailSubject("");
-      void getHistory();
-    } catch (err) {
-     
-      console.error("Error sending support email / creating ticket:", err);
-      notifyStandard("Something went wrong submitting your support ticket.");
-    }
-  };
-
   const handleComment = async (related_ticket: number) => {
     const comment = commentVal[related_ticket] || "";
     if (!comment.trim()) return;
 
-    await createSupportTicketThread(comment, new Date(), related_ticket);
+    const newCommentResult = await createSupportTicketThread(comment, new Date(), related_ticket);
+    
+    if(!loggedInUser?.is_super_user) {
+    await handleSendEmail(
+        `New comment on ticket #${related_ticket}`,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
+        supportEmail,
+        loggedInUser?.email!,
+        loggedInUser?.firstName!,
+        loggedInUser?.email!,
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+    }
+    if(loggedInUser?.is_super_user) {
+    await handleSendEmail(
+        `New comment on ticket #${related_ticket}`,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
+        newCommentResult.related_ticket.created_by_email,
+        supportEmail,
+        loggedInUser?.firstName!,
+        'AFE Partner Connections',
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+    }
+    
     setCommentVal((prev) => ({
       ...prev,
       [related_ticket]: "",
@@ -136,7 +121,17 @@ export default function SupportHistory() {
 
   const handleCloseTicket = async (id: number, active: boolean) => {
     if (!loggedInUser?.user_id) return;
-    await updateSupportTicket(id, active, loggedInUser.user_id, resolutionVal[id] || "");
+    const originalSupportTicketUpdated = await updateSupportTicket(id, active, loggedInUser.user_id, resolutionVal[id] || "");
+    
+    await handleSendEmail(
+        `Ticket Resolved for: ${originalSupportTicketUpdated.subject}`,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has resolved this ticket: ${originalSupportTicketUpdated.resolution}`,
+        originalSupportTicketUpdated.created_by_email,
+        supportEmail,
+        loggedInUser?.firstName!,
+        loggedInUser?.email!,
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
     void getHistory();
   };
 

@@ -2,18 +2,21 @@ import { handleSendEmail } from "email/emailBasic";
 import { createSupportTicket } from "provider/write";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
-import { notifyStandard } from "src/helpers/helpers";
+import { notifyStandard, notifyFailure } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { AtSymbolIcon } from "@heroicons/react/24/outline";
+import { supportEmail } from "src/constants/variables";
 
 export default function ContactSupport() {
   const { loggedInUser } = useSupabaseData();
   const [emailSubject, setEmailSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
-  const [focused, setFocused] = useState('');
 
   const handleClickSendEmail = async () => {
   
+  const createSupportTicketResult = await createSupportTicket(emailSubject, emailBody, loggedInUser?.email!);
+  console.log(createSupportTicketResult.data)
+  if(createSupportTicketResult.ok) {
   await handleSendEmail(
     emailSubject,
     emailBody,
@@ -32,11 +35,16 @@ export default function ContactSupport() {
     "AFE Partner Connections",
   );
 
-  await createSupportTicket(emailSubject, emailBody);
-  
   notifyStandard('Your support ticket has been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production.');
   setEmailBody('');
   setEmailSubject('');
+  };
+
+  if(!createSupportTicketResult.ok) {
+  notifyFailure(`Unable to create a support ticket.  Try again or contact AFE Patner Support @ ${supportEmail}`);
+  };
+
+
 };
 
   return (
@@ -117,7 +125,7 @@ export default function ContactSupport() {
         </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer icon={false}/>
     </>
   )
 }

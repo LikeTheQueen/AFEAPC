@@ -265,34 +265,34 @@ import type { UUID } from 'crypto';
       return data;
   };
 
-  export const createSupportTicket = async(subject: string, message: string ) => {
+  export const createSupportTicket = async(subject: string, message: string, created_by_email: string ) => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY').insert({
-      subject: subject, message: message
-    }).select()
+      subject: subject, message: message, created_by_email: created_by_email
+    }).select();
     if(error) {
-      return notifyStandard('There was an issue');
+      return {ok: false, data: error.message};
     }
-    return data;
+    return {ok: true, data: data};
   };
 
   export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ) => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY_THREAD').insert({
       comment: comment, comment_date: comment_date, related_ticket: related_ticket
-    }).select()
+    }).select('*, related_ticket(created_by_email)').single();
     if(error) {
       return notifyStandard('There was an issue');
     }
-    return data;
+    return data as any;
   };
 
   export const updateSupportTicket = async(id:number, active: boolean, user_id: string, resolution: string) => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY').update({
       active: active, closed_by: user_id, closed_on: new Date(), resolution: resolution, resolution_date: new Date()
-    }).eq('id',id)
+    }).eq('id',id).select().single();
     if(error) {
       return notifyStandard('There was an issue with closing the Support Ticket');
     }
-    return notifyStandard('The Support Ticket has been closed');
+    return data;
   };
 
   export const insertIntoAFEDocTableNonOpAgreement = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {

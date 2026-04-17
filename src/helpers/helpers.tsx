@@ -141,7 +141,7 @@ export function StandardNotifcation({
 export const notifyStandard = (message:string) => toast(StandardNotifcation, {
     data: message,
     closeButton: false,
-    position: "top-center",
+    position: "top-right",
     autoClose: 4000,
     transition: Flip,
     ariaLabel: "Notification",
@@ -158,8 +158,9 @@ export function FailureNotifcation({
   data, 
 }: ToastContentProps<string>) {
   return (
-    <div className="w-full custom-style rounded-lg shadow-3xl ring-1 ring-[var(--bright-pink)] p-5">
-      <h3 className="text-white text-sm/6 font-normal whitespace-pre-line">{data}</h3>
+    <div className="w-full custom-style rounded-lg shadow-3xl ring-2 ring-white/10 p-5 bg-white">
+      <h3 className="text-[var(--darkest-teal)] text-sm/6 font-bold whitespace-pre-line">ERROR</h3>
+      <h3 className="text-[var(--darkest-teal)] text-sm/6 font-normal whitespace-pre-line">{data}</h3>
         <div className="flex items-center">
                   <div className="flex w-0 flex-1 justify-end">
                     
@@ -186,7 +187,7 @@ export function FailureNotifcation({
     </div>
   );
 };
-export const notifyFailure = (message:string) => toast(FailureNotifcation, {
+export const notifyFailure = (message:string) => toast.error(FailureNotifcation, {
     data: message,
     closeButton: false,
     position: "top-center",

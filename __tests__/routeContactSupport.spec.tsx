@@ -1,13 +1,17 @@
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
 import * as emailProvider from '../email/emailBasic';
-import { notifyStandard } from 'src/helpers/helpers';
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
+import { supportEmail } from 'src/constants/variables';
+
 import ContactSupport from 'src/routes/support/routes/contactSupport';
+
+import { ticketCreation } from './test-utils/supportHistory';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW
  } from './test-utils/afeRecords';
@@ -23,6 +27,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
 
  vi.mock('src/helpers/helpers', () => ({
      notifyStandard: vi.fn(),
+     notifyFailure: vi.fn(),
  }));
  
  const setupWithSelections = async (
@@ -94,7 +99,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
  
      });
 
-     test('User fills in subect and message and tests submit button', async () => {
+     test('User fills in subject and message', async () => {
          await setupWithSelections(user);
 
          expect(screen.getByText('Oh hey there!')).toBeInTheDocument();
@@ -136,7 +141,8 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
 
      });
 
-     test('User fills in subect and message and tests submit button', async () => {
+     test('User fills in subject and message and tests submit button gets okay response', async () => {
+        (writeProvider.createSupportTicket as Mock).mockResolvedValue({ok: true, data:ticketCreation});
         (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
          await setupWithSelections(user);
 
@@ -163,6 +169,10 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          await user.click(submitButton);
 
          await waitFor(() => {
+          expect(writeProvider.createSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email);
+         })
+
+         await waitFor(() => {
       
       expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
         1,
@@ -184,9 +194,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
         RachelGreen_AllPermissions_CW_NonOpCW.firstName,
         'AFE Partner Connections',
       );
-
-    expect(writeProvider.createSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing');
-
      
     expect(notifyStandard).toHaveBeenCalledWith(
       "Your support ticket has been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production."
@@ -194,6 +201,51 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
   
       expect(screen.getByRole('textbox', { name: /subject/i })).toHaveValue('');
       expect(screen.getByRole('textbox', { name: /message/i })).toHaveValue(''); 
+    
+    });
+     });
+
+     test('User fills in subject and message and tests submit button gets error response', async () => {
+        (writeProvider.createSupportTicket as Mock).mockResolvedValue({ok: false, data:'Error'});
+        (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
+         await setupWithSelections(user);
+
+         expect(screen.getByText('Oh hey there!')).toBeInTheDocument();
+         expect(screen.getByText(/So glad you stopped by./i)).toBeInTheDocument();
+
+         const submitButton = screen.getByRole('button', { name: /submit/i });
+         expect(submitButton).toBeDisabled();
+
+         const subjectBox = screen.getByRole('textbox', { name: 'Subject' });
+         expect(subjectBox).toBeInTheDocument();
+
+         const messageBox = screen.getByRole('textbox', { name: 'Message' });
+         expect(messageBox).toBeInTheDocument();
+
+         await user.type(subjectBox, 'I want to contact you');
+         expect(subjectBox).toHaveValue('I want to contact you');
+
+         await user.type(messageBox, 'About this thing');
+         expect(messageBox).toHaveValue('About this thing');
+
+         expect(submitButton).not.toBeDisabled();
+
+         await user.click(submitButton);
+
+         await waitFor(() => {
+          expect(writeProvider.createSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email);
+         })
+
+         await waitFor(() => {
+      
+      expect(emailProvider.handleSendEmail).not.toHaveBeenCalled();
+
+    expect(notifyFailure).toHaveBeenCalledWith(
+      `Unable to create a support ticket.  Try again or contact AFE Patner Support @ ${supportEmail}`
+    );
+  
+      expect(screen.getByRole('textbox', { name: /subject/i })).toHaveValue('I want to contact you');
+      expect(screen.getByRole('textbox', { name: /message/i })).toHaveValue('About this thing'); 
     
     });
      });

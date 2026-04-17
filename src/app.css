@@ -13,6 +13,7 @@
   --toastify-toast-padding: 0px;
   --toastify-toast-width: 500px;
   --toastify-color-progress-light: linear-gradient(to right,#002626, #F61067, #fff, #F61067);
+  --toastify-color-progress-error: linear-gradient(to left,#fff, #002626, #fff, #002626);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
