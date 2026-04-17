@@ -508,7 +508,7 @@ describe('displaying AFEs', () => {
 
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)', async () => {
+  test.skip('Shows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({

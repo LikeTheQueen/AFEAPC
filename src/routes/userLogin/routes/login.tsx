@@ -3,6 +3,8 @@ import supabase from "provider/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { useNavigate } from 'react-router';
 import OTPInput from './otpInput';
+import "../../../style.css";
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -13,6 +15,7 @@ export default function LoginForm() {
   const [session, setSession] = useState<Session | null>()
   const navigate = useNavigate();
   
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
   useEffect(() => {
   const getInitialSession = async () => {
@@ -101,7 +104,7 @@ useEffect(() => {
       <form method="POST" className="space-y-6">
         <div hidden={!hideVerification}>
           <label htmlFor="email" className="block text-base/6 font-medium text-white custom-style">
-            Email
+            Email 
           </label>
           <div className="mt-2">
             <input
@@ -113,15 +116,16 @@ useEffect(() => {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full rounded-md bg-white/5 px-3 py-1.5 custom-style text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
+              className="block w-full rounded-md bg-white/5 px-3 py-1.5 custom-style text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-white/20 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6"
             />
           </div>
         </div>
         <div hidden={!hideVerification}>
           <button
+            name='getVerification'
             type="button"
             onClick={handleLogin}
-            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || email === ''}>
+            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)] disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || !isValidEmail(email)}>
             {isLoading ? 'Sending Verification Code...' : 'Get Verification Code'}
           </button>
         </div>
