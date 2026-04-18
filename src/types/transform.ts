@@ -173,7 +173,7 @@ export const transformExecuteAFEEstimates = (data: any[], docID: string): Execut
 
     })
 };
-
+{/* 
 export const transformUserProfileSupabaseSingle = (item: any): UserProfileSupabaseType => (
     {
     firstName: item.first_name,
@@ -185,7 +185,7 @@ export const transformUserProfileSupabaseSingle = (item: any): UserProfileSupaba
     apc_partner_id: 'should pe =part id',
     user_id: item.user_id
 });
-
+*/ }
 export const transformUserProfileRecordSupabase = (item: any): UserProfileRecordSupabaseType => {
     const crosswalkOperator = item.OPERATOR_USER_CROSSWALK || [];
     const crosswalkPartner = item.PARTNER_USER_CROSSWALK || [];

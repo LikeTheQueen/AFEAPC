@@ -1,5 +1,8 @@
 import type { UUID } from "crypto";
 
+export type ApiResponse<T> =
+  | { ok: true; data: T; message: null }
+  | { ok: false; data: null; message: string };
 //Interface for AFEs pulled from the database
 export interface AFEType {
     id: UUID;

@@ -1064,6 +1064,14 @@ export const partnerAddedtoSupabaseReturn =
         "apc_op_id": "2323232",
         "active": true,
     };
+export const partnerAddedtoSupabaseReturnNoID = 
+   {
+        "id": undefined,
+        "created_at": new Date(),
+        "name": "Corr Mike Oils",
+        "apc_op_id": "2323232",
+        "active": true,
+    };
 
 export const nonOpAddressToCreate: AddressType = {
          street:'1235 Main Street',

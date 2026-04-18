@@ -1,11 +1,7 @@
-
-
 import { useEffect, useState } from 'react'
 import { type RoleEntryRead } from "../../../types/interfaces";
 import { useSupabaseData } from "../../../types/SupabaseContext";
 import PermissionDashboard from "../../sharedComponents/permissionGrid"
-import { fetchUserPermissions } from 'provider/fetch';
-import { transformRoleEntrySupabase } from 'src/types/transform';
 import LoadingPage from 'src/routes/sharedComponents/loadingPage';
 
 
@@ -27,33 +23,14 @@ export default function Profile() {
         async function getUserPermissions() {
           if(!loggedInUser) return;
           setUserPermissionListLoading(true);
-          
-          try{
-            const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
-    
-            if(!userPermissionsRaw.ok) {
-              throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
-            }
-            
-            const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
-            const opPermissions = userPermissionsTransformed.filter(permission => (permission.is_op_permission && permission.user_id===loggedInUser.user_id));
-            const partnerPermissions = userPermissionsTransformed.filter(permission => (permission.is_partner_permission && permission.user_id===loggedInUser.user_id));
-   
-            if(isMounted) {
-              setOpUserRoleList(opPermissions);
-              setPartnerUserRoleList(partnerPermissions);
-              setUserPermissionListLoading(false);
-            }
-          }
-          catch(e) {
-            console.error('Not able to get user permissions ',e);
-          }
-          finally{
-            return;
-          }
+
+          setOpUserRoleList(loggedInUser.operatorRoles);
+          setPartnerUserRoleList(loggedInUser.partnerRoles);
+          setUserPermissionListLoading(false);
         }
         getUserPermissions();
         return () => {
+            
           isMounted = false;
         }
       }, [token, loggedInUser])
@@ -68,7 +45,7 @@ export default function Profile() {
                         <div className="pb-6 grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-3 md:px-6 lg:px-8">
                             <div className="divide-y divide-[var(--darkest-teal)]/40 ">
                                 <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Personal Information</h2>
-                                <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Contact Support your company admin to change your email or permissions.</p>
+                                <p className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">Contact your company admin to change your email or permissions.</p>
                             </div>
                             <div className="md:col-span-2">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">

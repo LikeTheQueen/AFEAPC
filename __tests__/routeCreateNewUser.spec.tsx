@@ -1,6 +1,8 @@
 import CreateNewUser from 'src/routes/createEditUsers/routes/createNewUser';
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
+import * as emailProvider from '../email/emailBasic';
+import { notifyStandard, notifyFailure, doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { getByRole, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -19,9 +21,23 @@ vi.mock('provider/write', () => ({
   updateOperatorFilterFields: vi.fn(),
 }));
 
+vi.mock('../email/emailBasic', () => ({
+  handleSendEmail: vi.fn().mockResolvedValue(undefined),
+  sendEmail: vi.fn().mockResolvedValue({ id: 'mock-email-id' }),
+}));
+
 vi.mock('src/routes/createEditUsers/routes/helpers/helpers', () => ({
   handleNewUser: vi.fn(),
 }));
+
+vi.mock('src/helpers/helpers', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('src/helpers/helpers')>();
+  return {
+    ...actual,
+    notifyStandard: vi.fn(),
+    notifyFailure: vi.fn(),
+  };
+});
 
 vi.mock('react-toastify', () => ({
   toast: vi.fn(),
@@ -31,6 +47,7 @@ vi.mock('react-toastify', () => ({
 
 import { toast } from 'react-toastify';
 import { handleNewUser } from 'src/routes/createEditUsers/routes/helpers/helpers';
+import { supportEmail } from 'src/constants/variables';
 
 describe('Create New User',() => {
   
@@ -41,7 +58,6 @@ describe('Create New User',() => {
 
     test('It should show the create new user page with limited number of Operators to assign permissions to', async () => {
         const user = userEvent.setup()
-
         const mockPartnersFetch = vi.mocked(fetchProvider.fetchListOfOperatorsOrPartnersForUser);
         mockPartnersFetch.mockResolvedValueOnce({
             ok: true,
@@ -58,8 +74,6 @@ describe('Create New User',() => {
             genericRoleList
         );
 
-        
-        
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
                             loggedInUser: loggedInUserRachelGreenWithUserId,
@@ -568,7 +582,67 @@ describe('Create New User',() => {
                 });
 
             expect(screen.getByText(/You do not have permissions to create new users/i)).toBeInTheDocument();
+            expect(screen.getByText(/You do not have permissions to create new users/i)).toBeVisible();
+
+            const fetchErrorMessage = screen.queryByText(`Unable to get available permission grid.  Try again or contact AFE Partner Support: ${supportEmail}`);
+            expect(fetchErrorMessage).not.toBeInTheDocument();
+            
             
         });
+    test('It should show an error when the fetch does not work', async () => {
+        
+        const mockPartnersFetch = vi.mocked(fetchProvider.fetchListOfOperatorsOrPartnersForUser);
+        mockPartnersFetch.mockResolvedValueOnce({
+            ok: true,
+            data: permissionResponseRachel
+        });
+
+        const mockPartnersFetchSecond = vi.mocked(fetchProvider.fetchListOfOperatorsOrPartnersForUser);
+        mockPartnersFetchSecond.mockResolvedValueOnce({
+            ok: false,
+            message: "Error"
+        });
+        
+        vi.mocked(fetchProvider.fetchRolesGeneric).mockResolvedValue(
+            genericRoleList
+        );
+
+        renderWithProviders(<CreateNewUser />, {
+                          supabaseOverrides: {
+                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loading: false,
+                            isSuperUser: false,
+                            session: {
+                            access_token: 'test-token',
+                            refresh_token: 'test-refresh-token',
+                            expires_in: 3600,
+                            token_type: 'bearer',
+                            user: {
+                              id: 'test-user-id',
+                              email: 'test@example.com',
+                              aud: 'authenticated',
+                              role: 'authenticated',
+                              created_at: '2024-01-01T00:00:00Z',
+                              app_metadata:[],
+                              user_metadata:{}
+                            }
+                          },
+                        }
+            });
+
+            await waitFor(() => {
+                  expect(mockPartnersFetch).toHaveBeenCalled();
+                  expect(mockPartnersFetchSecond).toHaveBeenCalled();
+                });
+
+            expect(screen.queryByText(/You do not have permissions to create new users/i)).not.toBeInTheDocument();
+            
+
+            const fetchErrorMessage = screen.getByText(/Unable to get available permission grid./i);
+            expect(fetchErrorMessage).toBeInTheDocument();
+            
+            
+        });
+
 
 });

@@ -15,7 +15,7 @@ export default function ContactSupport() {
   const handleClickSendEmail = async () => {
   
   const createSupportTicketResult = await createSupportTicket(emailSubject, emailBody, loggedInUser?.email!);
-  console.log(createSupportTicketResult.data)
+  
   if(createSupportTicketResult.ok) {
   await handleSendEmail(
     emailSubject,

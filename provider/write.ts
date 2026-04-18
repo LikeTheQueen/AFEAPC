@@ -1,5 +1,5 @@
 import  supabase  from './supabase';
-import type { AddressType, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
@@ -275,24 +275,24 @@ import type { UUID } from 'crypto';
     return {ok: true, data: data};
   };
 
-  export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ) => {
+  export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ): Promise<ApiResponse<{ related_ticket: { created_by_email: string } }>> => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY_THREAD').insert({
       comment: comment, comment_date: comment_date, related_ticket: related_ticket
     }).select('*, related_ticket(created_by_email)').single();
     if(error) {
-      return notifyStandard('There was an issue');
+      return {ok:false, data: null, message: error.message};
     }
-    return data as any;
+    return {ok:true, data: data as any, message: null};
   };
 
-  export const updateSupportTicket = async(id:number, active: boolean, user_id: string, resolution: string) => {
+  export const updateSupportTicket = async(id:number, active: boolean, user_id: string, resolution: string): Promise<ApiResponse<{ subject:string, resolution:string, created_by_email:string }>> => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY').update({
       active: active, closed_by: user_id, closed_on: new Date(), resolution: resolution, resolution_date: new Date()
     }).eq('id',id).select().single();
     if(error) {
-      return notifyStandard('There was an issue with closing the Support Ticket');
+      return {ok:false, data: null, message: error.message};
     }
-    return data;
+   return {ok:true, data: data as any, message: null};
   };
 
   export const insertIntoAFEDocTableNonOpAgreement = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {

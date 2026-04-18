@@ -6,7 +6,6 @@ import { transformOperator,
   transformRolesGeneric, 
   transformRoleEntrySupabase, 
   transformUserProfileRecordSupabase, 
-  transformUserProfileSupabaseSingle, 
   transformRoleEntryPartnerSupabase,
   transformPartnerMapRecordForDisplay,
   transformOperatorPartnerAddressWithOpName,
@@ -16,7 +15,7 @@ import { transformOperator,
   transformGLCodeCrosswalk,
   transformSupportHistory} from 'src/types/transform';
 import  supabase  from './supabase';
-import type { OperatorOrPartnerList } from 'src/types/interfaces';
+import type { OperatorOrPartnerList, ApiResponse } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 
@@ -60,6 +59,7 @@ export const fetchFromSupabase = async (table: string, select: string) => {
     return data;
   };
 //I DON'T THINK THIS SECTION IS NEEDED
+/*Delete NOT Used
 export const fetchUserFromSupabase = async (table: string, select: string, session: string) => {
     const { data, error } = await supabase.from(table).select(select).eq('id', session).maybeSingle();
     if (error || !data) {
@@ -70,7 +70,7 @@ export const fetchUserFromSupabase = async (table: string, select: string, sessi
   };
 
 
-/*Delete NOT Used
+
 export const fetchUserOperatorListFromSupabase = async (equal: UUID) => {
     const { data, error } = await supabase.from("OPERATOR_USER_CROSSWALK").select('apc_op_id(id,name)').eq('user_id',equal).eq('role_id',[2,4]);
     if (error || !data) {
@@ -364,22 +364,21 @@ export const fetchMappedGLAccountCodes = async(apc_op_id: string, apc_part_id:st
 
 export const fetchSupportHistory = async(user_id: string, is_super_user: boolean) => {
   if(is_super_user) {
-    const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))');
+    const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))').order('id', { ascending: false });
     if(error) {
-    console.error('Unable to get Support History');
-    return [];
+    return {ok: false, data: [], message: error.message};
   }
   const transformedSupportHistory = transformSupportHistory(data);
-  return transformedSupportHistory;
+  return {ok: true, data: transformedSupportHistory, message:null};
   }
-  const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))').eq('created_by',user_id);
+  const { data, error } = await supabase.from('SUPPORT_HISTORY').select('*,created_by(id,first_name, last_name),SUPPORT_HISTORY_THREAD!id(*,created_by(id,first_name, last_name))').eq('created_by',user_id).order('id', { ascending: false });
   if(error) {
-    console.error('Unable to get Support History');
-    return [];
+    return {ok: false, data: [], message: error.message};
   }
   const transformedSupportHistory = transformSupportHistory(data);
-  return transformedSupportHistory;
+  return {ok: true, data: transformedSupportHistory, message:null};
 };
+
 export const fetchNotifications = async(minRange: number, maxRange: number, afeSpecificHistory: boolean, apc_afe_id?:string) => {
   if(afeSpecificHistory) {
   const { data, error } = await supabase

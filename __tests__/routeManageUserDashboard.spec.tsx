@@ -419,7 +419,7 @@ describe('Manage User Permissions Standard user screen',() => {
     
                 const tables = screen.getAllByRole('table');
                 expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i));
+                expect(screen.getAllByText(/Mike Rider/i)[0]).toBeInTheDocument();
                 const checkboxes = screen.getAllByRole("checkbox");
                 expect(checkboxes[0]).toBeChecked();
                 
@@ -522,7 +522,7 @@ describe('Manage User Permissions System Super User Screen',() => {
     
                 const tables = screen.getAllByRole('table');
                 expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i));
+                expect(screen.getAllByText(/Mike Rider/i)[0]).toBeInTheDocument();
                 const checkboxes = screen.getAllByRole("checkbox");
                 expect(checkboxes[0]).toBeChecked();
                 

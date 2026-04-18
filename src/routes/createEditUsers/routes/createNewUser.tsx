@@ -5,11 +5,12 @@ import { type UserProfileRecordSupabaseType, type RoleEntryWrite, type RoleTypes
 import { transformOperatorPartnerAddress } from '../../../types/transform';
 import { Field, Label, Switch } from '@headlessui/react';
 import { handleNewUser } from './helpers/helpers';
-import { doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers } from 'src/helpers/helpers';
+import { doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers, notifyFailure } from 'src/helpers/helpers';
 import LoadingPage from 'src/routes/sharedComponents/loadingPage';
-import { buildAppEmailHTML, sendEmail, handleSendEmail } from 'email/emailBasic';
+import { handleSendEmail } from 'email/emailBasic';
 import { ToastContainer } from 'react-toastify';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
+import { supportEmail } from 'src/constants/variables';
 
  
 export default function CreateNewUser() {
@@ -35,8 +36,10 @@ export default function CreateNewUser() {
   const [rolesGeneric, setRolesGeneric] = useState<RoleTypesGeneric[] | []>([]);
   const [loadingPermissions, setLoadingPermissions] = useState(true);
   const [userHavePermissions, setUserHavePermissions] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
+    setLoadingPermissions(true);
     if (!loggedInUser || token === '') {
       setLoadingPermissions(false);
       return;
@@ -52,9 +55,6 @@ export default function CreateNewUser() {
     async function getOperatorList() {
       
       if (!loggedInUser?.user_id) return;
-      
-
-      setLoadingPermissions(true);
       
       try {
         const [opListResult, partnerListResult] = await Promise.all([
@@ -76,16 +76,19 @@ export default function CreateNewUser() {
         }
       } catch (e) {
         console.error('Unable to get permissions', e);
+        setFetchError(true);
+        notifyFailure('Unable to get permissions for the new user.  Please contact AFE Partner Support')
       } finally {
         setLoadingPermissions(false);
         
         return;
       }
-    } getOperatorList();
+    } 
+    getOperatorList();
     return () => {
       isMounted = false;
     }
-  }, [loggedInUser]);
+  }, [loggedInUser, token]);
 
   useEffect(() => {
     async function getGenericRoles() {
@@ -182,7 +185,7 @@ export default function CreateNewUser() {
   const handleSaveNewUser = async () => {
     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token);
   };
-console.log(userHavePermissions, 'does the user have permissions')
+
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -478,6 +481,11 @@ console.log(userHavePermissions, 'does the user have permissions')
                       </div>
                     </div>
                   </div>
+                  <div hidden={loadingPermissions || !fetchError} 
+                  className='md:col-span-3'>
+              <NoSelectionOrEmptyArrayMessage message={`Unable to get available permission grid.  Try again or contact AFE Partner Support: ${supportEmail}`}
+              ></NoSelectionOrEmptyArrayMessage>
+              </div>
                 </>)}
               </div>
               <div 

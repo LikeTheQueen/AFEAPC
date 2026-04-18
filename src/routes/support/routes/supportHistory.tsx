@@ -4,27 +4,26 @@ import { ChatBubbleLeftEllipsisIcon, ClockIcon } from "@heroicons/react/24/outli
 
 import { handleSendEmail } from "email/emailBasic";
 import { fetchSupportHistory } from "provider/fetch";
-import { createSupportTicket, createSupportTicketThread, updateSupportTicket } from "provider/write";
+import { createSupportTicketThread, updateSupportTicket } from "provider/write";
 
-import { notifyStandard } from "src/helpers/helpers";
+import { notifyFailure } from "src/helpers/helpers";
 import { formatDateShort } from "src/helpers/styleHelpers";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { UniversalPaginationForDarkBackground } from "src/routes/sharedComponents/pagnation";
 import { type SupportHistory } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { CheckCircle2, Clock } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 import { supportEmail } from "src/constants/variables";
 
 export default function SupportHistory() {
   const { loggedInUser } = useSupabaseData();
-  
-  const [emailSubject, setEmailSubject] = useState("");
-  const [emailBody, setEmailBody] = useState("");
 
   const [supportHistories, setSupportHistories] = useState<SupportHistory[]>([]);
+  const [supportHistoryError, setSupportHistoryError] = useState<string | null>(null);
   const [rowsToShow, setRowsToShow] = useState<SupportHistory[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [commentVal, setCommentVal] = useState<Record<number, string>>({});
   const [resolutionVal, setResolutionVal] = useState<Record<number, string>>({});
@@ -33,18 +32,26 @@ export default function SupportHistory() {
 
   const getHistory = useCallback(async () => {
     if (!loggedInUser?.user_id) return;
+    setIsLoading(true);
     const supportHistory = await fetchSupportHistory(
       loggedInUser.user_id,
       loggedInUser.is_super_user
     );
     
-    setSupportHistories(supportHistory);
+    if(supportHistory.ok) {
+    setSupportHistories(supportHistory.data);
+    }
+
+    if(!supportHistory.ok) {
+      setSupportHistoryError(supportHistory.message);
+    }
+    setIsLoading(false);
   }, [loggedInUser?.user_id, loggedInUser?.is_super_user]);
 
   useEffect(() => {
     if (!loggedInUser?.user_id) return;
     void getHistory();
-  }, [loggedInUser?.user_id, getHistory]);
+  }, [getHistory]);
 
   // Scroll each visible card to bottom when page data changes
   useEffect(() => {
@@ -88,7 +95,8 @@ export default function SupportHistory() {
     if (!comment.trim()) return;
 
     const newCommentResult = await createSupportTicketThread(comment, new Date(), related_ticket);
-    
+
+    if(newCommentResult.ok) {
     if(!loggedInUser?.is_super_user) {
     await handleSendEmail(
         `New comment on ticket #${related_ticket}`,
@@ -104,7 +112,7 @@ export default function SupportHistory() {
     await handleSendEmail(
         `New comment on ticket #${related_ticket}`,
         `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
-        newCommentResult.related_ticket.created_by_email,
+        newCommentResult.data.related_ticket.created_by_email,
         supportEmail,
         loggedInUser?.firstName!,
         'AFE Partner Connections',
@@ -117,22 +125,38 @@ export default function SupportHistory() {
       [related_ticket]: "",
     }));
     void getHistory();
+  } if(!newCommentResult.ok) {
+    await handleSendEmail(
+        `New comment on ticket #${related_ticket} ERROR`,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment} ERROR: ${newCommentResult.message}`,
+        supportEmail,
+        loggedInUser?.email!,
+        loggedInUser?.firstName!,
+        loggedInUser?.email!,
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+    notifyFailure(`Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`);
+  }
   };
 
   const handleCloseTicket = async (id: number, active: boolean) => {
     if (!loggedInUser?.user_id) return;
     const originalSupportTicketUpdated = await updateSupportTicket(id, active, loggedInUser.user_id, resolutionVal[id] || "");
     
+    if(originalSupportTicketUpdated.ok) {
     await handleSendEmail(
-        `Ticket Resolved for: ${originalSupportTicketUpdated.subject}`,
-        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has resolved this ticket: ${originalSupportTicketUpdated.resolution}`,
-        originalSupportTicketUpdated.created_by_email,
+        `Ticket Resolved for: ${originalSupportTicketUpdated.data.subject}`,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has resolved this ticket: ${originalSupportTicketUpdated.data.resolution}`,
+        originalSupportTicketUpdated.data.created_by_email,
         supportEmail,
         loggedInUser?.firstName!,
         loggedInUser?.email!,
         "https://afepartner.com/mainscreen/supporthistory"
       );
     void getHistory();
+    } if(!originalSupportTicketUpdated.ok) {
+      notifyFailure('The ticket resolution did not save.  Check the Logs');
+    }
   };
 
   return (
@@ -154,10 +178,13 @@ export default function SupportHistory() {
           <div className="px-4 py-6 sm:p-8 sm:col-span-3">
             <div  className="grid grid-cols-1 gap-x-6 gap-y-4">
               {/* No tickets */}
-              <div hidden={rowsToShow.length !== 0} className="sm:col-span-3">
+              <div hidden={isLoading || rowsToShow.length > 0 || supportHistoryError !== null} className="sm:col-span-3">
                 <NoSelectionOrEmptyArrayMessage message="There are no support tickets to view" />
               </div>
-
+              {/* Returned an Error*/}
+              <div hidden={isLoading || supportHistoryError === null} className="sm:col-span-3">
+                <NoSelectionOrEmptyArrayMessage message={supportHistoryError} />
+              </div>
               {/* Tickets */}
               <div hidden={rowsToShow.length === 0}>
                 <ul
@@ -190,7 +217,7 @@ export default function SupportHistory() {
             <div hidden={rowsToShow.length === 0} className="border-t border-white mt-4">
               <UniversalPaginationForDarkBackground
                 data={supportHistories}
-                rowsPerPage={4}
+                rowsPerPage={3}
                 listOfType="Support Tickets"
                 onPageChange={handlePageChange}
               />
