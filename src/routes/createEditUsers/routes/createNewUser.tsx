@@ -176,10 +176,10 @@ export default function CreateNewUser() {
     handleSendEmail(
       `Test Email From ${loggedInUser?.firstName}`,
       'This message is a test to let you know that we say hi',
-      loggedInUser?.email!,
+      loggedInUser?.firstName!,
       "AFE Partner Connections",
       loggedInUser?.firstName!,
-      "Operator for Support",
+      loggedInUser?.email!,
     );
   };
   const handleSaveNewUser = async () => {

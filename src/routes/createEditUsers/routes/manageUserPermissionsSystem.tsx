@@ -26,7 +26,6 @@ export default function UserPermissionDashboard() {
       setUserPermissionListLoading(true);
       
       try{
-        console.log(loggedInUser.is_super_user)
         const userPermissionsRaw = await fetchUserPermissions(true, token);
 
         if(!userPermissionsRaw.ok) {

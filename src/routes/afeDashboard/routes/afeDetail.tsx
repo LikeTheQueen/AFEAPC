@@ -134,9 +134,6 @@ export default function AFEDetailURL() {
           return;
         }
         if(isMounted) {
-          console.log(documentResponse,'docRe');
-          console.log(attachmentResponse,'attc');
-          console.log(signedAFENonOpResponse,'aidgn');
           const documentTransformed: AFEDocuments[] = transformAFEDocumentList(documentResponse.data);
           const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(attachmentResponse.data);
           const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(signedAFENonOpResponse.data);
@@ -159,7 +156,6 @@ export default function AFEDetailURL() {
           throw new Error((estimatesResponse as any).message ?? "Cannot find AFE Estimates");
         }
         if(isMounted) {
-          console.log(estimatesResponse.data);
           const estimatesTransformed = transformEstimatesSupabase(estimatesResponse.data);
           setEstimates(estimatesTransformed.sort((a, b) => a.operator_account_group.localeCompare(b.operator_account_group)));
         }
@@ -180,7 +176,6 @@ export default function AFEDetailURL() {
         }
 
         if(isMounted) {
-          console.log(wellResponse.data,'the well rsponse')
           const wellTransformed = transformAFEWells(wellResponse.data);
           setWells(wellTransformed);
         }

@@ -1,19 +1,21 @@
 import { Link } from "react-router";
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { formatDate } from "src/helpers/styleHelpers";
-import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor, noAFEsToView, PartnerStatusDropdown, OperatorApprovalDropdown } from "./helpers/styleHelpers";
 import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
-import { activeTab } from "src/helpers/styleHelpers";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type AFEType } from "src/types/interfaces";
 import { fetchAFEs } from "provider/fetch";
 import { transformAFEs } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
-import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
-import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { handleSendEmail } from "email/emailBasic";
+import { insertAFEHistory, updateAFEPartnerStatus } from "provider/write";
+import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
+import { ToastContainer } from "react-toastify";
+import { AFECard } from "./helpers/afeCard";
+import { AFEHeader, NoFilteredAFEsToView } from "./helpers/afeHeader";
+import { AFEFilters } from "./helpers/afeFilters";
 
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
@@ -25,16 +27,17 @@ export default function AFE() {
   const token = session?.access_token ?? "";
   const [tabList, setTabList] = useState(tabs);
   const [currentTab, setCurrentTab] = useState(1);
-  const [nonOperatedAFEs, setNonOperatedAFEs] = useState<AFEType[] | []>([]);
-  const [operatedAFEs, setOperatedAFEs] = useState<AFEType[] | []>([]);
-  const [allAFEs, setAllAFEs] = useState<AFEType[] | []>([]);
+  const [nonOperatedAFEs, setNonOperatedAFEs] = useState<AFEType[]>([]);
+  const [operatedAFEs, setOperatedAFEs] = useState<AFEType[]>([]);
+  const [allAFEs, setAllAFEs] = useState<AFEType[]>([]);
   const [afeLoading, setAFELoading] = useState(false);
   const [partnerSearch, setPartnerSearch] = useState('');
   const [operatorSeach, setOperatorSearch] = useState('');
-  const [partnerStatusSearch, setPartnerStatusSearch] = useState('');
+  const [afeStatusSearch, setAFEStatusSearch] = useState('');
   const [operatorApprovedDaysAgo, setOperatorApprovedDaysAgo] = useState(100);
   const [partnerStatusDaysAgo, setPartnerStatusDaysAgo] = useState(100);
   const [afeNumberSearch, setAFENumberSearch] = useState('');
+  const [afeFetchError, setAFEFetchError] = useState(false);
 
   // State for paginated data
   const [rowsToShowOperated, setRowsToShowOperated] = useState<AFEType[]>([]);
@@ -42,94 +45,83 @@ export default function AFE() {
   const [rowsToShowNonOperated, setRowsToShowNonOperated] = useState<AFEType[]>([]);
   const [currentPageNonOperated, setCurrentPageNonOperated] = useState(0);
  
-  
-  const today = new Date();
-  const operatorApprovedcutOffDate = new Date(today);
-  const partnerStatusCutOffDate = new Date(today);
-  operatorApprovedcutOffDate.setDate(operatorApprovedcutOffDate.getDate() - operatorApprovedDaysAgo);
-  operatorApprovedcutOffDate.setHours(0, 0, 0, 0);
-  
-  partnerStatusCutOffDate.setDate(partnerStatusCutOffDate.getDate() - partnerStatusDaysAgo);
-  partnerStatusCutOffDate.setHours(0, 0, 0, 0);
-  
-  function handleTabChange(selected: number){
-    const updateCurrentTab = activeTab(tabs, selected);
-    setCurrentTab(updateCurrentTab.selectedTabId);
-    setTabList(updateCurrentTab.updatedTabs);
-  };
+  const operatorApprovedCutoffDate = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - operatorApprovedDaysAgo);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, [operatorApprovedDaysAgo]);
 
-  useEffect(() => {
-    if(!token || token==='') return;
-      let cancelled = false;
-      async function getAFERecord() {
-        setAFELoading(true);
-        try{
-          const afes = await fetchAFEs(token);
+  const partnerStatusCutOffDate = useMemo(() => {
+  const date = new Date();
+  date.setDate(date.getDate() - partnerStatusDaysAgo);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}, [partnerStatusDaysAgo]);
   
+  const getAFEs = useCallback(async (signal: AbortSignal) => {
+    if(!loggedInUser?.user_id || token === '') return;
+    setAFELoading(true);
+    
+    try{
+          const afes = await fetchAFEs(token, signal);
+
           if(!afes.ok) {
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
           }
-          const transformedAFEs = transformAFEs(afes.data)
-
-          if (!cancelled) {
-            
-            setAllAFEs(transformedAFEs);
+          
+          if(!signal.aborted) {
+            setAllAFEs(transformAFEs(afes.data));
           }
         } catch (err) {
+          if(!signal.aborted) {
+            setAFEFetchError(true);
+          }
       
-      console.error(err);
-    } finally {
-                  if (!cancelled) {
-                      setAFELoading(false);
-                  }
-      } 
-      }; 
-    getAFERecord();
-    return () => {
-              cancelled = true;
-          };
-    }, [token])
+        } finally {
+          if (!signal.aborted) {
+            setAFELoading(false);
+          }
+        } 
+
+  }, [loggedInUser?.user_id, token])
 
   useEffect(() => {
-  function sortAndFilterAFEs() {
-  allAFEs.sort((a,b) => b.sortID - a.sortID)
-  const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
-  const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
-  
-  const opAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedOperatorIds.has(afe.apc_op_id) && afe.archived ===true && !allowedPartnerIds.has(afe.partnerID));
-  setOperatedAFEs(opAFEs);
-  
-  const nonOpAFEs: AFEType[] = (allAFEs ?? []).filter((afe) => allowedPartnerIds.has(afe.partnerID) && afe.partner_archived ===true && !allowedOperatorIds.has(afe.apc_op_id));
-  //&& !allowedOperatorIds.has(afe.apc_op_id)
-  setNonOperatedAFEs(nonOpAFEs);    
-};
-    sortAndFilterAFEs();
+  const controller = new AbortController();
+  void getAFEs(controller.signal);
+  return () => controller.abort();
+}, [getAFEs]);
+
+  useEffect(() => {
+    if (!loggedInUser || !allAFEs) return;
+
+    const sorted = [...allAFEs].sort((a, b) => b.sortID - a.sortID);
+    const allowedOperatorIds = new Set(getViewRoleOperatorIds(loggedInUser));
+    const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
+
+    if(loggedInUser.is_super_user) {
+      const isArchived = sorted.filter(
+        (afe) => afe.archived ===true && afe.partner_archived ===true
+      );
+      setOperatedAFEs(isArchived);
+      setNonOperatedAFEs(isArchived);
+    } else {
+      const opAFEs = sorted.filter(
+        (afe) => 
+          allowedOperatorIds.has(afe.apc_op_id) &&
+        afe.archived === true &&
+        !allowedPartnerIds.has(afe.apc_partner_id)
+      );
+      const nonOpAFEs = sorted.filter(
+        (afe) => 
+          allowedPartnerIds.has(afe.apc_partner_id) &&
+        afe.partner_archived === true &&
+        !allowedOperatorIds.has(afe.apc_op_id)
+      );
+      setOperatedAFEs(opAFEs);
+      setNonOperatedAFEs(nonOpAFEs);
+    }
   },[loggedInUser, allAFEs])
-
-  const filterOperatedAFEs = (opAFEs: AFEType[], partner: string, partnerStatus: string, afeNumberSearch: string) => {
-    return opAFEs.filter(afe => {
-      const matchesAFENumberSearch = afe.afe_number.toUpperCase().includes(afeNumberSearch.toUpperCase()) || afeNumberSearch === '';
-      const matchesPartner = afe.apc_partner_id === partner || partner === '';
-      const matchesPartnerStatus = afe.partner_status === partnerStatus || partnerStatus==='';
-      const afePartnerStatusDate = new Date(afe.partner_status_date);
-      afePartnerStatusDate.setHours(0, 0, 0, 0);
-      const isWithinDateRange = partnerStatusDaysAgo !==100 ? partnerStatusCutOffDate <= afePartnerStatusDate : afe.partner_status_date !==null || afe.partner_status_date === null;
-      return matchesPartner && matchesPartnerStatus && isWithinDateRange && matchesAFENumberSearch;
-    });
-  };
-
-  const filterNonOpAFEs = (nonOpAFEs: AFEType[], operator: string, partnerStatus: string, afeNumberSearch: string) => {
-    return nonOpAFEs.filter(afe => {
-      const matchesAFENumberSearch = afe.afe_number.toUpperCase().includes(afeNumberSearch.toUpperCase()) || afeNumberSearch === '';
-      const matchesOperator = afe.apc_op_id === operator || operator === '';
-      const matchesPartnerStatus = afe.partner_status === partnerStatus || partnerStatus==='';
-      const afeOpApproveDate = new Date(afe.iapp_date);
-      afeOpApproveDate.setHours(0, 0, 0, 0);
-      const isWithinDateRange = operatorApprovedDaysAgo !==100 ? operatorApprovedcutOffDate <= afeOpApproveDate : afe.iapp_date !==null || afe.iapp_date === null;
-
-      return matchesOperator && matchesPartnerStatus && isWithinDateRange && matchesAFENumberSearch;
-    })
-  };
 
   const handleAFENumberSearchChange = useCallback((e: any) => {
     const value = e.target.value;
@@ -144,16 +136,33 @@ export default function AFE() {
     setOperatorApprovedDaysAgo(100);
     setPartnerSearch('');
     setOperatorSearch('');
-    setPartnerStatusSearch('');
+    setAFEStatusSearch('');
   },[])
 
   const filteredOperatedAFEs = useMemo(() => {
-    return filterOperatedAFEs(operatedAFEs, partnerSearch, partnerStatusSearch, afeNumberSearch);
-  }, [operatedAFEs, partnerSearch, partnerStatusSearch, partnerStatusDaysAgo, afeNumberSearch]);
+    return operatedAFEs.filter(afe => {
+      const matchesAFENumberSearch = afe.afe_number.toUpperCase().includes(afeNumberSearch.toUpperCase()) || afeNumberSearch === '';
+      const matchesPartner = afe.apc_partner_id === partnerSearch || partnerSearch === '';
+      const matchesPartnerStatus = afe.partner_status === afeStatusSearch || afeStatusSearch ==='';
+      const afePartnerStatusDate = new Date(afe.partner_status_date);
+      afePartnerStatusDate.setHours(0, 0, 0, 0);
+      const isWithinDateRange = partnerStatusDaysAgo !==100 ? partnerStatusCutOffDate <= afePartnerStatusDate : afe.partner_status_date !==null || afe.partner_status_date === null;
+      return matchesPartner && matchesPartnerStatus && isWithinDateRange && matchesAFENumberSearch;
+    });
+  }, [operatedAFEs, partnerSearch, afeStatusSearch, partnerStatusDaysAgo, afeNumberSearch]);
 
   const filteredNonOperatedAFEs = useMemo(() => {
-    return filterNonOpAFEs(nonOperatedAFEs, operatorSeach, partnerStatusSearch, afeNumberSearch);
-  }, [nonOperatedAFEs, operatorSeach, partnerStatusSearch, operatorApprovedDaysAgo, afeNumberSearch]);
+    return nonOperatedAFEs.filter(afe => {
+      const matchesAFENumberSearch = afe.afe_number.toUpperCase().includes(afeNumberSearch.toUpperCase()) || afeNumberSearch === '';
+      const matchesOperator = afe.apc_op_id === operatorSeach || operatorSeach === '';
+      const matchesPartnerStatus = afe.partner_status === afeStatusSearch || afeStatusSearch ==='';
+      const afeOpApproveDate = new Date(afe.iapp_date);
+      afeOpApproveDate.setHours(0, 0, 0, 0);
+      const isWithinDateRange = operatorApprovedDaysAgo !==100 ? operatorApprovedCutoffDate <= afeOpApproveDate : afe.iapp_date !==null || afe.iapp_date === null;
+
+      return matchesOperator && matchesPartnerStatus && isWithinDateRange && matchesAFENumberSearch;
+    });
+  }, [nonOperatedAFEs, operatorSeach, afeStatusSearch, operatorApprovedDaysAgo, afeNumberSearch]);
 
   const handlePageChangeOperatedAFEs = (paginatedData: AFEType[], page: number) => {
           setRowsToShowOperated(paginatedData);
@@ -173,8 +182,18 @@ export default function AFE() {
         {}
         <select
           value={tabList.find((tab) => tab.current)?.id || ''}
-          onChange={e => {handleTabChange(parseInt(e.target.value, 10)), handleFilterReset()}}
+          onChange={e => {handleFilterReset(), 
+            handleTabChanged(
+              {
+                selected: parseInt(e.target.value, 10),
+                tabs: tabs,
+                onTabChange: (currentTab)=>setCurrentTab(currentTab),
+                onTabListChange: (tabs)=>setTabList(tabs)
+              }
+            )
+          }}
           aria-label="Select a tab"
+          name="MobileMenu"
           className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 custom-style text-[var(--dark-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--darkest-teal)]">
           {tabs.map((tab) => (
             <option key={tab.id} value={tab.id}>{tab.name}</option>
@@ -192,12 +211,21 @@ export default function AFE() {
             {tabList.map((item, index) => (
                 <Button
                 key={item.id}
-                onClick={e => {handleTabChange(item.id), handleFilterReset()}}
+                onClick={e => {handleFilterReset(),
+                  handleTabChanged(
+              {
+                selected: item.id,
+                tabs: tabs,
+                onTabChange: (currentTab)=>setCurrentTab(currentTab),
+                onTabListChange: (tabs)=>setTabList(tabs)
+              }
+            )
+                }}
                 className={`flex-1 text-center px-4 py-3 custom-style transition-colors ease-in-out duration-300
       
       ${item.current
           ? 'bg-[var(--darkest-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-4 font-medium shadow-sm z-10'
-          : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal'}
+          : 'bg-white text-[var(--darkest-teal)] transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold font-normal cursor-pointer'}
           ${index !== 0 ? 'border-l border-[var(--darkest-teal)]' : ''}
           ${index === 0 ? 'rounded-tl-md' : ''}
           ${index === tabList.length - 1 ? 'rounded-tr-md' : ''}
@@ -210,249 +238,102 @@ export default function AFE() {
       </div>
       </div>
     {afeLoading ? (<div className="mt-60"><LoadingPage></LoadingPage></div>) : (<>
-    
-    {/* Non-Operated AFEs */}
-    <div hidden = {currentTab ===2} className="py-0 px-4 sm:px-8">
-      {/* No Non-Operated AFEs to view */}
-      <div className="mt-0 mb-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
-      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Non-Operated AFEs</h2>
-        <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
-      <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined) ? true : false} >
-      {
-      noAFEsToView('There are no Non-Operated AFEs to view')
-      }
-    </div>
-    
+    <div className="py-0 px-4 sm:px-8">
+      {/*AFE Page Header for all tabs.  Tab 2 is Operated AFEs*/}
+      <AFEHeader
+      afeLength={currentTab === 2 ? operatedAFEs.length : nonOperatedAFEs.length}
+      afeFetchError={afeFetchError}
+      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
+      >
+      </AFEHeader>
+      {/*AFE Filters - Hidden on view all AFE */}
+      <div hidden={currentTab === 3}>
+        <AFEFilters
+      afeLength={currentTab === 2 ? operatedAFEs.length : nonOperatedAFEs.length}
+      afeNumberSearch={afeNumberSearch}
+      onAFENumberChange={handleAFENumberSearchChange}
+      operatorSearch={operatorSeach}
+      onOperatorChange={setOperatorSearch}
+      partnerSearch={partnerSearch}
+      onPartnerChange={setPartnerSearch}
+      afeStatusSearch={afeStatusSearch}
+      onAFEStatusSearchChange={setAFEStatusSearch}
+      daysAgo={currentTab === 2 ? partnerStatusDaysAgo : operatorApprovedDaysAgo}
+      onDaysAgoChange={currentTab === 2 ? setPartnerStatusDaysAgo : setOperatorApprovedDaysAgo}
+      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
+      ></AFEFilters> 
       </div>
-      {/* Filter Non-Op AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
-      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
-      hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined && currentTab===1) ? false : true} >
-      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
-        <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
-      <input
-        id="afeNumber"
-        name="afeNumber"
-        type="text"
-        placeholder="DC26001"
-        autoComplete="off"
-        value={afeNumberSearch}
-        onChange={handleAFENumberSearchChange}
-        autoFocus={true}
-        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-      />
-    </div>
-      <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Operator Name</h2>
-      <OperatorDropdown
-      value={operatorSeach}
-      onChange={setOperatorSearch}
-      limitedList={false}>
-      </OperatorDropdown>
-    </div>
-    <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Your AFE Status</h2>
-      <PartnerStatusDropdown
-      onChange={setPartnerStatusSearch}>
-      </PartnerStatusDropdown>
-    </div>
-    <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Op Approval Date</h2>
-      <OperatorApprovalDropdown
-      onChange={setOperatorApprovedDaysAgo}>
-      </OperatorApprovalDropdown>
-    </div>
+      {/*No AFE Message when filtered or [] On all Tabs, for Tab 2 it's operated*/}
+      <div hidden ={ afeFetchError ? true : (
+        currentTab === 2 ? 
+        ((filteredOperatedAFEs.length > 0 ) ? true : false)
+      : ((filteredNonOperatedAFEs.length > 0 ) ? true : false) )} >
+      <NoFilteredAFEsToView
+      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
+      >        
+      </NoFilteredAFEsToView>
       </div>
-      </div>
-      <div hidden ={(filteredNonOperatedAFEs.length > 0 || nonOperatedAFEs.length < 1) ? true : false}>
-      {
-      noAFEsToView('There are no Non-Operated AFEs to view')
-      }
-      </div>
-      {/* The list of AFEs - Hidden if there are no AFEs or undefined */}
-      <div hidden ={(nonOperatedAFEs.length>0 && nonOperatedAFEs !== undefined && filteredNonOperatedAFEs.length > 0) ? false : true} >
-      <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="NonOperatedAFElist">
+      {/*Non Operated AFEs List.  Hidden on tab 2 or if there are no AFEs*/}
+      <div hidden ={ (nonOperatedAFEs.length < 1 || filteredNonOperatedAFEs.length < 1) || currentTab === 2 ? true : false} >
+      <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="Non-OperatedAFElist">
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
-        to={`/mainscreen/afeDetail/${afe.id}`}
+        aria-label={`AFE ${afe.afe_number} ${afe.version_string ?? ""}`.trim()}
+        to={`../afeDetail/${afe.id}`}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
        
-          <div className="flex w-full items-center justify-between p-3 pt-3">
-            <div className="flex-1 truncate">
-              <div className="flex items-center justify-between">
-                <h3 className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Operator: </span>{afe.operator}</h3>
-                <span className={`shrink-0 rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm/6 font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}>
-                  {afe.partner_status}
-                </span>
-              </div>
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Approved by Operator: </span>{formatDate(afe.iapp_date)}</p>
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
-              <div className="flex flex-row items-center justify-between">
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
-              <p className="truncate text-sm/6 font-semibold text-[var(--darkest-teal)]/80">AFE Number: {afe.afe_number} {afe.version_string}</p>
-            </div>
-            
-            </div>
-            
-          </div>
-          <div className="-mt-px flex divide-x divide-[var(--darkest-teal)]/40">
-              <div className="flex w-0 flex-1">
-                <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Gross:</span>
-                  { afe.supp_gross_estimate > 0 ?
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.supp_gross_estimate) :
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)
-                  }
-                </div>
-              </div>
-              <div className="flex w-0 flex-1">
-                <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Partner WI:</span>
-                   {afe.partner_wi.toFixed(6)}%
-                </div>
-              </div>
-              <div className="-ml-px flex w-0 flex-1">
-                <div
-                  className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Net:</span>
-                  { afe.supp_gross_estimate > 0 ?
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.supp_gross_estimate*afe.partner_wi)/100) :
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)
-                  }
-                </div>
-              </div>
-          </div>
+          <AFECard 
+          operatedAFE={false}
+          afe={afe}
+          >
+          </AFECard>
         </Link>
       ))}
     </ul>
+    <div className="mt-4 text-xs/6 2xl:text-sm/6">
     <UniversalPagination
             data={filteredNonOperatedAFEs}
             rowsPerPage={6}
-            listOfType="Operated AFEs"
+            listOfType="Non-Operated AFEs"
             onPageChange={handlePageChangeNonOperatedAFEs}
           />
+          </div>
+          <div className="h-4"></div>
+          
     </div>
-    </div>
-       {/* Operated AFEs */}
-    <div hidden = {currentTab ===1} className="py-0 px-4 sm:px-8">
-      {/* No Operated AFEs to view */}
-      <div className="mt-0 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
-    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Operated AFEs</h2>
-      <p className="mt-1 text-center text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">AFEs older than 45 days can be found on the Historical AFE tab, unless the partner status is New.  AFEs can be archived from the AFE.</p>
-      <div hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined) ? true : false}>
-      {
-      noAFEsToView('There are no Operated AFEs to view')
-      }
+    {/*Operated AFEs Header.  Hidden on tab 1 and 2 or if there are no AFEs*/}
+    <div hidden ={afeFetchError || currentTab !== 3 || (currentTab === 3 && filteredOperatedAFEs.length > 0 ) || (currentTab === 3 && operatedAFEs.length > 0) ? true : false}>
+      <NoFilteredAFEsToView
+      mode={'Operated'}
+      >        
+      </NoFilteredAFEsToView>
+      
       </div>
-      </div>
-      {/* Filter Operated AFEs - Hide if there aren't any AFEs to filter - Show a No AFEs Message if the filter returns no AFEs */}
-      <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70"
-      hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined && currentTab===2) ? false : true} >
-      <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
-      <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Search on AFE Number</h2>
-      <input
-        id="afeNumber"
-        name="afeNumber"
-        type="text"
-        placeholder="DC26001"
-        autoComplete="off"
-        value={afeNumberSearch}
-        onChange={handleAFENumberSearchChange}
-        autoFocus={true}
-        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--dark-teal)] placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-      />
+    {/*No AFE Message when filtered or [] On all Tabs, hidden on all tabs except 3 and only for Operated AFEs*/}
+    <div hidden={currentTab !==3}>
+      <AFEHeader
+      afeLength={operatedAFEs.length}
+      afeFetchError={afeFetchError}
+      mode={'Operated'}
+      >
+      </AFEHeader>
+
     </div>
-      <div >
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Name</h2>
-      <PartnerDropdown
-      value={partnerSearch}
-      onChange={setPartnerSearch}
-      limitedList={false}>
-      </PartnerDropdown>
-    </div>
-    <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Status</h2>
-      <PartnerStatusDropdown
-      onChange={setPartnerStatusSearch}>
-      </PartnerStatusDropdown>
-    </div>
-    <div>
-      <h2 className="text-sm/6 sm:text-base/7 text-[var(--darkest-teal)] custom-style">Filter on Partner Change</h2>
-      <OperatorApprovalDropdown
-      onChange={setPartnerStatusDaysAgo}>
-      </OperatorApprovalDropdown>
-    </div>
-    
-      </div>
-      </div>
-      <div hidden ={(filteredOperatedAFEs.length>0 || operatedAFEs.length < 1) ? true : false}>
-      {
-      noAFEsToView('There are no Operated AFEs to view')
-      }
-      </div>
-      {/* The list of AFEs - Hidden if there are no AFEs or undefined */}
-      <div  hidden ={(operatedAFEs.length>0 && operatedAFEs !== undefined && filteredOperatedAFEs.length>0) ? false : true} >
+    <div  hidden ={ (operatedAFEs.length < 1 && filteredOperatedAFEs.length < 1) || currentTab === 1 ? true : false } >
     <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="OperatedAFElist">
       {rowsToShowOperated?.map((afe) => (
         <Link key={afe.id} 
-        to={`/mainscreen/afeDetail/${afe.id}`}
+        to={`../afeDetail/${afe.id}`}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
-          
-          <div className="flex w-full items-center justify-between p-3 pt-3">
-            <div className="flex-1 truncate">
-              <div className="flex items-end justify-between">
-                <h3 className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Partner Status & Date: </span>{afe.partner_status_date!==null ? formatDate(afe.partner_status_date) : formatDate(afe.created_at)}</h3>
-                <span className={`shrink-0 rounded-full bg-${setStatusBackgroundColor(afe.partner_status)} px-1.5 py-0.5 text-sm/6 font-semibold text-${setStatusTextColor(afe.partner_status)} ring-1 ring-${setStatusRingColor(afe.partner_status)} ring-inset`}>
-                  {afe.partner_status}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <h3 className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Partner: </span>{afe.partner_name}</h3>
-              </div>
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
-              <div className="flex flex-row items-center justify-between">
-              <p className="truncate text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
-              <p className="truncate text-sm/6 font-semibold text-[var(--darkest-teal)]/80">AFE Number: {afe.afe_number} {afe.version_string}</p>
-            </div>
-            </div>
-          </div>
-          <div className="-mt-px flex divide-x divide-[var(--darkest-teal)]/40">
-              <div className="flex w-0 flex-1">
-                <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Gross:</span>
-                  { afe.supp_gross_estimate > 0 ?
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.supp_gross_estimate) :
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format(afe.total_gross_estimate)
-                 }
-                </div>
-              </div>
-              <div className="flex w-0 flex-1">
-                <div
-                  className="relative -mr-px inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Partner WI:</span>
-                   {afe.partner_wi.toFixed(6)}%
-                </div>
-              </div>
-              <div className="-ml-px flex w-0 flex-1">
-                <div
-                  className="relative inline-flex flex-wrap w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 px-1 text-sm/6 font-semibold text-[var(--darkest-teal)]/80">
-                  <span>Net:</span>
-                  { afe.supp_gross_estimate > 0 ?
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.supp_gross_estimate*afe.partner_wi)/100) :
-                  Intl.NumberFormat("en-US",{ style: "currency", currency: "USD" } ).format((afe.total_gross_estimate*afe.partner_wi)/100)
-                  }
-                </div>
-              </div>
-          </div>
+          <AFECard 
+          operatedAFE={true}
+          afe={afe}
+          >
+          </AFECard>
         </Link>
       ))}
     </ul>
+    <div className="mt-4 text-xs/6 2xl:text-sm/6">
           <UniversalPagination
             data={filteredOperatedAFEs}
             rowsPerPage={6}
@@ -460,9 +341,14 @@ export default function AFE() {
             onPageChange={handlePageChangeOperatedAFEs}
           />
           </div>
-    </div>
+          
+          <div className="h-4"></div>
+          
+          </div>
+      </div>
     </>
     )}
+    <ToastContainer/>
     </>
     
   )

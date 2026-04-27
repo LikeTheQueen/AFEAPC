@@ -20,19 +20,19 @@ export default function ContactSupport() {
   await handleSendEmail(
     emailSubject,
     emailBody,
-    'elizabeth.shaw@afepartner.com',
-    loggedInUser?.email!,
+    'person',
     loggedInUser?.firstName!,
-    loggedInUser?.email!
+    loggedInUser?.email!,
+    supportEmail
   );
 
   await handleSendEmail(
     'Your Support Ticket has been received',
     'We have received your support request.',
-    loggedInUser?.email!,
-    "AFE Partner Connections",
     loggedInUser?.firstName!,
+    supportEmail,
     "AFE Partner Connections",
+    loggedInUser?.email!,
   );
 
   notifyStandard('Your support ticket has been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production.');

@@ -518,12 +518,12 @@ export async function fetchAFEEstimates(afeID: string, partnerID: string, apc_op
     
   };
 
-export async function fetchAFEs(token: string) {
+export async function fetchAFEs(token: string, signal?: AbortSignal) {
     
     type TogglePayload = { };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_AFEs", { }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFEs", { }, token, signal);
     
   };
 

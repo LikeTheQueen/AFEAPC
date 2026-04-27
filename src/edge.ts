@@ -2,7 +2,8 @@
 export async function callEdge<TReq, TRes>(
   name: string,
   payload: TReq,
-  token: string
+  token: string,
+  signal?: AbortSignal
 ): Promise<TRes> {
   const base = import.meta.env.VITE_SUPABASE_URL;
   const res = await fetch(`${base}/functions/v1/${name}`, {
@@ -13,6 +14,7 @@ export async function callEdge<TReq, TRes>(
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY!,
     },
     body: JSON.stringify(payload),
+    signal
   });
 
   if (!res.ok) throw new Error(await res.text());

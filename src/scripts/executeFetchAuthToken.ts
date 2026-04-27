@@ -14,7 +14,7 @@ export default async function fetchAuthToken(ID: string, Key: string, urlPath: s
       const jsonResponse = await response.json();
       return {ok: true, data: jsonResponse.AuthenticationToken};
     }
-    console.log(response)
+    
     
     throw new Error(`Not able to connect: ${response.status} ${response.statusText}`)
 

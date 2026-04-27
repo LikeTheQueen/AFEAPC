@@ -67,18 +67,18 @@ export function noAFEsToView(message: string) {
     )
 };
 type Props = {
+    value: string;
     onChange: (status: string) => void;
 }
 
 type DaysProps = {
+    value: number;
     onChange: (daysAgo: number) => void;
 }
-export function PartnerStatusDropdown ({onChange}: Props) {
-    const [partnerStatus, setPartnerStatus] = useState<string>('');
-
+export function PartnerStatusDropdown ({onChange, value}: Props) {
+    
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const status = e.target.value;
-        setPartnerStatus(status);
         onChange?.(status);
     };
 
@@ -89,7 +89,7 @@ export function PartnerStatusDropdown ({onChange}: Props) {
               id="partnerStatus"
               name="partnerStatus"
               autoComplete="off"
-              value={partnerStatus}
+              value={value}
               onChange={handleChange}
               className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
               <option></option>
@@ -106,23 +106,21 @@ export function PartnerStatusDropdown ({onChange}: Props) {
     )
 };
 
-export function OperatorApprovalDropdown ({onChange}: DaysProps) {
-    const [operatorApproveDaysAgo, setOperatorApproveDaysAgo] = useState<number>(0);
+export function DaysAgoDropdown ({onChange, value}: DaysProps) {
 
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const days = parseInt(e.target.value, 10);
-        setOperatorApproveDaysAgo(days);
         onChange?.(days);
     };
 
     return (
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0">
           <select
-              aria-label="Operator Approval Days Ago"
-              id="operatorIAPPdaysAgo"
-              name="operatorIAPPdaysAgo"
+              aria-label="Approval Days Ago"
+              id="IAPPdaysAgo"
+              name="IAPPdaysAgo"
               autoComplete="off"
-              value={operatorApproveDaysAgo}
+              value={value}
               onChange={handleChange}
               className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
               <option value='100'></option>

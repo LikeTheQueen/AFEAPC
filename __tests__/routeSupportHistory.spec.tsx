@@ -14,7 +14,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW, loggedInUserIsSuperUser, userNoU
 
 import { supportHistory, singleTicketThreadResponse, orginalTicketUpdatedResponse } from './test-utils/supportHistory';
 import { supportEmail } from 'src/constants/variables';
-import { data } from 'react-router';
 
 vi.mock('../email/emailBasic', () => ({
   handleSendEmail: vi.fn().mockResolvedValue(undefined),
@@ -174,10 +173,10 @@ describe('View and support tickets',() => {
               expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
                 'New comment on ticket #2',
                 `${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName} has added a new comment: Can I get help on this?`,
-                'elizabeth.shaw@afepartner.com',
-                RachelGreen_AllPermissions_CW_NonOpCW.email,
+                'Support Team',
                 RachelGreen_AllPermissions_CW_NonOpCW.firstName,
                 RachelGreen_AllPermissions_CW_NonOpCW.email,
+                supportEmail,
                 "https://afepartner.com/mainscreen/supporthistory"
               );
 
@@ -319,9 +318,9 @@ describe('View and support tickets',() => {
           'New comment on ticket #2',
           `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
           'eandv3851@gmail.com',
-          'elizabeth.shaw@afepartner.com',
-          loggedInUserIsSuperUser.firstName,
           'AFE Partner Connections',
+          supportEmail,
+          'eandv3851@gmail.com',
           "https://afepartner.com/mainscreen/supporthistory"
         );
 
@@ -343,9 +342,9 @@ describe('View and support tickets',() => {
           `Ticket Resolved for: ${orginalTicketUpdatedResponse.subject}`,
           `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has resolved this ticket: ${orginalTicketUpdatedResponse.resolution}`,
           `${orginalTicketUpdatedResponse.created_by_email}`,
-          'elizabeth.shaw@afepartner.com',
-          loggedInUserIsSuperUser.firstName,
-          loggedInUserIsSuperUser.email,
+          supportEmail,
+          'AFE Partner Connections',
+          'eandv3851@gmail.com',
           "https://afepartner.com/mainscreen/supporthistory"
         );
 
@@ -407,9 +406,9 @@ describe('View and support tickets',() => {
           'New comment on ticket #2',
           `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
           'eandv3851@gmail.com',
-          'elizabeth.shaw@afepartner.com',
-          loggedInUserIsSuperUser.firstName,
           'AFE Partner Connections',
+          supportEmail,
+          'eandv3851@gmail.com',
           "https://afepartner.com/mainscreen/supporthistory"
         );
 

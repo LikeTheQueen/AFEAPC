@@ -159,7 +159,6 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       setClaimProofPartnerDocIDValid(true),
       setVerificationErrorMessage(null)
     };
-console.log(loggedInUser);
     if (loading) return <LoadingPage/>
     return (
         <>

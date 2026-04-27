@@ -264,7 +264,6 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   };
   async function handleClickDisownPartner(partnerIdx: number, id: string) {
   await handleDisownPartner(partnerIdx,id);
-  console.log(partnerListToDisown,'THE LIST TO DISOWN')
   await updatePartnerWithOpIDChange();
   };
 

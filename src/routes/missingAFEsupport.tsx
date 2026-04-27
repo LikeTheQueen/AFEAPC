@@ -33,7 +33,6 @@ useEffect(() => {
             if(result.length > 0 ) {
                 const transformedSystemHistory = transformSystemHistory(result);
                 setSystemHistory(transformedSystemHistory);
-                console.log(transformedSystemHistory);
             }
         } finally {
             if(isMounted) {

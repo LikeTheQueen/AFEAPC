@@ -68,10 +68,10 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
         await handleSendEmail(
           `A signed AFE has been uploaded by ${userName} at ${apc_partner_name}`,
           `This message is to let you know that ${apc_partner_name} has uploaded a signed copy of the AFE.  The AFE Number is ${afe_number} (${afe_version})`,
+          'there',
+          `${apc_partner_name}`,
+          'AFE Partner Connections',
           loggedInUserEmail,
-          "AFE Partner Connections",
-          'AFE Operator',
-          apc_partner_name,
           `https://www.afepartner.com/mainscreen/afeDetail/${apc_afe_id}`,
           'View AFE'
         );

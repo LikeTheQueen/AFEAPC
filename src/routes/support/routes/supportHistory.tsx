@@ -29,7 +29,7 @@ export default function SupportHistory() {
   const [resolutionVal, setResolutionVal] = useState<Record<number, string>>({});
 
   const scrollRefs = useRef<Record<number, HTMLDivElement | null>>({});
-
+ 
   const getHistory = useCallback(async () => {
     if (!loggedInUser?.user_id) return;
     setIsLoading(true);
@@ -101,10 +101,10 @@ export default function SupportHistory() {
     await handleSendEmail(
         `New comment on ticket #${related_ticket}`,
         `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
-        supportEmail,
-        loggedInUser?.email!,
+        'Support Team',
         loggedInUser?.firstName!,
         loggedInUser?.email!,
+        supportEmail,
         "https://afepartner.com/mainscreen/supporthistory"
       );
     }
@@ -113,9 +113,9 @@ export default function SupportHistory() {
         `New comment on ticket #${related_ticket}`,
         `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
         newCommentResult.data.related_ticket.created_by_email,
-        supportEmail,
-        loggedInUser?.firstName!,
         'AFE Partner Connections',
+        supportEmail,
+        newCommentResult.data.related_ticket.created_by_email,
         "https://afepartner.com/mainscreen/supporthistory"
       );
     }
@@ -128,11 +128,11 @@ export default function SupportHistory() {
   } if(!newCommentResult.ok) {
     await handleSendEmail(
         `New comment on ticket #${related_ticket} ERROR`,
-        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment} ERROR: ${newCommentResult.message}`,
-        supportEmail,
-        loggedInUser?.email!,
+        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
+        'Support Team',
         loggedInUser?.firstName!,
         loggedInUser?.email!,
+        supportEmail,
         "https://afepartner.com/mainscreen/supporthistory"
       );
     notifyFailure(`Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`);
@@ -149,8 +149,8 @@ export default function SupportHistory() {
         `${loggedInUser?.firstName} ${loggedInUser?.lastName} has resolved this ticket: ${originalSupportTicketUpdated.data.resolution}`,
         originalSupportTicketUpdated.data.created_by_email,
         supportEmail,
-        loggedInUser?.firstName!,
-        loggedInUser?.email!,
+        'AFE Partner Connections',
+        originalSupportTicketUpdated.data.created_by_email,
         "https://afepartner.com/mainscreen/supporthistory"
       );
     void getHistory();

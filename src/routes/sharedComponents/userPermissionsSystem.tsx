@@ -39,9 +39,7 @@ useEffect(() => {
   setPartnerRoles(partnerRoles);
 }, [partnerRoles]);
  
-console.log(readOnly,'read')
-console.log(loggedInUser?.is_super_user, 'is')
-  console.log(!loggedInUser?.is_super_user)
+
   const groupByUserThenOperatorRole = useMemo(() => {
     const grouped = new Map<string, GroupedData>();
     const filterInactiveUser = opRoles.filter(role => role.user_active === true);

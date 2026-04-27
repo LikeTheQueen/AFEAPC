@@ -88,7 +88,7 @@ export default function PartnerMapping() {
                     if (!apcPartList.ok) {
                         throw new Error(apcPartList.message);
                     }
-                    console.log(apcPartList.data,'apc');
+                    
                     const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
                     setAPCPartnerList(dataTransformed);
                 }
@@ -195,7 +195,6 @@ export default function PartnerMapping() {
     const savePartnerMappingRecords = () => {
         if (cumaltivePartnerMapDisplay.length < 1) return;
         const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(({ apc_partner_id, source_partner_id }) => ({ partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id }))
-        console.log(mappedData, 'the dave partner');
         const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(({
             afe_partner_processed_id,
         }) => (afe_partner_processed_id!));

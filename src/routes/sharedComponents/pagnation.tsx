@@ -29,7 +29,6 @@ export default function UniversalPagination<T>({
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
 
         if(data.length < rowsPerPage*(currentPage+1) && currentPage !==0) {
-            console.log(Math.ceil(data.length/rowsPerPage)-1);
             setCurrentPage(Math.ceil(data.length/rowsPerPage)-1);
         } 
 

@@ -50,7 +50,6 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
       }; getAFEHistoryRowCount();
       
     },[historyAFEs])
-    console.log(totalAFEHistoryCount,'total oount')
 
     useEffect(() => {
         if (onlyShowRecentFileHistory) {

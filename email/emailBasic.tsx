@@ -7,11 +7,11 @@ interface EmailResponse {
 
 export interface AppEmailParams {
   subject: string;
-  firstName: string;
   messageBody: string;
+  salutationTo: string;
   supportContactName: string;
-  fromAddress: string;
-  toAddress?: string;      
+  sentFromSignature: string;
+  sendToEmailAddress?: string;      
   ctaUrl?: string;
   ctaUrlText?: string;         
 }
@@ -19,11 +19,11 @@ export interface AppEmailParams {
 export function buildAppEmailHTML(params: AppEmailParams): string {
   const {
     subject,
-    firstName,
     messageBody,
+    salutationTo,
     supportContactName,
-    fromAddress,
-    toAddress,
+    sentFromSignature,
+    sendToEmailAddress,
     ctaUrl = "https://afepartner.com",
     ctaUrlText = "Visit afepartner.com"
   } = params;
@@ -67,7 +67,7 @@ export function buildAppEmailHTML(params: AppEmailParams): string {
             <td style="padding: 30px 40px; color:#333333; font-size:15px; line-height:1.6;">
               
               <p style="margin:0 0 15px 0; font-size:16px;">
-                Hi ${firstName},
+                Hi ${salutationTo},
               </p>
 
               <p style="margin:0 0 25px 0;">
@@ -80,7 +80,7 @@ export function buildAppEmailHTML(params: AppEmailParams): string {
 
               <p style="margin:0;">
                 Your digital AFE courier,<br/>
-                ${fromAddress}
+                ${sentFromSignature}
               </p>
 
             </td>
@@ -93,8 +93,8 @@ export function buildAppEmailHTML(params: AppEmailParams): string {
                 <a href="${ctaUrl}" style="color:#F61067; text-decoration:none;">${ctaUrlText}</a>
               </p>
               ${
-                toAddress
-                  ? `<p style="margin:0; font-size:12px;">This message was sent to ${toAddress}.</p>`
+                sendToEmailAddress
+                  ? `<p style="margin:0; font-size:12px;">This message was sent to ${sendToEmailAddress}.</p>`
                   : ""
               }
             </td>
@@ -126,8 +126,6 @@ export const sendEmail = async (
     })
 
     if (error) throw error
-    
-    console.log('Email sent:', data)
     return data as EmailResponse
   } catch (error) {
     console.error('Error sending email:', error)
@@ -138,27 +136,27 @@ export const sendEmail = async (
 export const handleSendEmail = async (
   subject: string, 
   message: string, 
-  sendTo: string,
-  sentFrom: string,
-  sentFromfirstName: string,
-  supportContact: string,   
+  salutationTo: string,
+  supportContact: string,
+  sentFromSignature: string,
+  sendToEmailAddress: string, 
   ctaUrl?: string, 
   ctaUrlText?: string
 ) => {
     
     const html = buildAppEmailHTML({
       subject: subject,
-      firstName: sentFromfirstName,
       messageBody: message,
+      salutationTo: salutationTo,
       supportContactName: supportContact,
-      fromAddress: sentFrom,
-      toAddress: sendTo,
+      sentFromSignature: sentFromSignature,
+      sendToEmailAddress: sendToEmailAddress,
       ctaUrl: ctaUrl,
       ctaUrlText: ctaUrlText
     });
     
     await sendEmail(
-    sendTo,
+    sendToEmailAddress,
     subject,
     html
   )

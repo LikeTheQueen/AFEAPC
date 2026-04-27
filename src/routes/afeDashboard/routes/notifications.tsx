@@ -406,8 +406,6 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-console.log(userList, userList.length);
-console.log(actionList, actionList.length);
   return (
     <>
     <div className="px-4 py-4 sm:px-6 sm:py-4 bg-white rounded-lg">

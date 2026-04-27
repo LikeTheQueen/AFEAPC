@@ -178,10 +178,10 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
         1,
         'I want to contact you',
         'About this thing',
-        'elizabeth.shaw@afepartner.com',
-        RachelGreen_AllPermissions_CW_NonOpCW.email,
+        'person',
         RachelGreen_AllPermissions_CW_NonOpCW.firstName,
         RachelGreen_AllPermissions_CW_NonOpCW.email,
+        supportEmail
       );
 
       // Confirmation email sent second
@@ -189,10 +189,10 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
         2,
         'Your Support Ticket has been received',
         'We have received your support request.',
-        RachelGreen_AllPermissions_CW_NonOpCW.email,
-        'AFE Partner Connections',
         RachelGreen_AllPermissions_CW_NonOpCW.firstName,
+        supportEmail,
         'AFE Partner Connections',
+        RachelGreen_AllPermissions_CW_NonOpCW.email,
       );
      
     expect(notifyStandard).toHaveBeenCalledWith(

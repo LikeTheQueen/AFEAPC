@@ -32,7 +32,7 @@ useEffect(() => {
             const result = await fetchSystemHistory(minRange,maxRange);
         
             if(result.length > 0 ) {
-              console.log(result)
+              
                 const transformedSystemHistory = transformSystemHistory(result);
                 setSystemHistory(transformedSystemHistory.sort((a,b) => b.id - a.id));
             }

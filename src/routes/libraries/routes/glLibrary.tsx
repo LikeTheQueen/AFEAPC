@@ -34,7 +34,7 @@ export default function GLLibrary() {
         const glCodeList = await fetchAccountCodesForOperatorOrPartner(opAPCID, partnerAPCID)
 
         if(glCodeList) {
-          console.log(glCodeList)
+          
             setAccountCodes(glCodeList);
         }
     } finally {
@@ -56,7 +56,6 @@ export default function GLLibrary() {
     if (partnerAPCID === '') return;
     getAccountCodes();
   }, [partnerAPCID]);
- console.log(partnerAPCID)
   return (
     <>
       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
