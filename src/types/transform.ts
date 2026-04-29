@@ -199,8 +199,10 @@ export const transformUserProfileRecordSupabase = (item: any): UserProfileRecord
         role:c.role, 
         apc_id: c.apc_id.id, 
         apc_name:c.apc_id.name, 
+        apc_op_id: null,
+        apc_name_active: c.apc_id.active,
         apc_address_id:c.apc_address_id.id,
-        apc_address:c.apc_address_id,
+        apc_address: transformAddressSupabase(c.apc_address_id),
         active: c.active,
         user_id: item.id,
         user_firstname: item.first_name, 
@@ -212,9 +214,11 @@ export const transformUserProfileRecordSupabase = (item: any): UserProfileRecord
         id: c.id, 
         role:c.role, 
         apc_id: c.apc_id.id, 
-        apc_name:c.apc_id.name, 
+        apc_name:c.apc_id.name,
+        apc_op_id: c.apc_id.apc_op_id,
+        apc_name_active: c.apc_id.active, 
         apc_address_id:c.apc_address_id.id,
-        apc_address:c.apc_address_id,
+        apc_address: transformAddressSupabase(c.apc_address_id),
         active: c.active,
         user_id: item.id,
         user_firstname: item.first_name, 
@@ -452,6 +456,7 @@ export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
 
     is_op_permission: item.is_op_permission,
     is_partner_permission: item.is_partner_permission,
+    apc_op_id: item.apc_id.apc_op_id ?? null,
     }));
 };
 
@@ -476,6 +481,7 @@ export const transformRoleEntryPartnerSupabase = (data: any[]): RoleEntryRead[] 
 
     is_op_permission: item.is_op_permission,
     is_partner_permission: item.is_partner_permission,
+    apc_op_id: item.apc_id.apc_op_id ?? null,
     }));
 };
 

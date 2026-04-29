@@ -86,7 +86,6 @@ describe('It should group the accounts by the account group', () => {
         const account: EstimatesSupabaseType[] | null = singleEstimateRecord;
         const result = groupByAccountGroup(account);
 
-        console.log(typeof(result));
         expect(result).toBeInstanceOf(Map)
 
     });

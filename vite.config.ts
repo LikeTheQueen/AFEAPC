@@ -3,9 +3,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from 'path';
-//import react from '@vitejs/plugin-react';
-
-
 
 export default defineConfig({
   server: { proxy: { "/functions/v1": "http://127.0.0.1:54321" }
@@ -31,13 +28,14 @@ export default defineConfig({
     include: ['__tests__/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['__tests__/_archive/**'],
     testTimeout: 30000, 
-    hookTimeout: 30000, 
+    hookTimeout: 30000,
+    fileParallelism: false, 
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/routes/unusedRoutes/**'],
+      exclude: ['src/routes/unusedRoutes/**', 'src/scripts/**'],
     },
   },
 });

@@ -3,6 +3,25 @@ import { cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import * as matchers from '@testing-library/jest-dom/matchers';
 import "../src/app.css"
+import '@testing-library/jest-dom';
+//import react from '@vitejs/plugin-react';
+class MockDataTransfer {
+  constructor() {
+    this.data = {};
+  }
+  setData(format, value) { this.data[format] = value; }
+  getData(format) { return this.data[format] || ''; }
+}
+
+class MockClipboardEvent extends Event {
+  constructor(type, init) {
+    super(type, init);
+    this.clipboardData = init?.clipboardData || new MockDataTransfer();
+  }
+}
+
+global.ClipboardEvent = MockClipboardEvent;
+global.DataTransfer = MockDataTransfer;
 
 // DOMMatrix polyfill - must be at top level for pdfjs-dist
 global.DOMMatrix = class DOMMatrix {

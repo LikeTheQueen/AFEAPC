@@ -148,6 +148,10 @@ const renderAFEDetailPartner = () => {
 
 describe('AFEDetailURL', () => {
   beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('Not implemented: navigation')) return;
+    console.error(msg, ...args);
+  });
     vi.clearAllMocks();
   });
  

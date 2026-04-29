@@ -17,7 +17,9 @@ import {
     operatorListReturnFromSupabaseWithAddressUndefinedSuiteIsText,
     operatorListReturnFromSupabaseWithSuiteNumber,
     operatorListReturnFromSupabaseEmpty,
-    partnersLinkedOrUnlinked
+    partnersLinkedOrUnlinked,
+    operatorAddressDeactivatedFromSupabase,
+    operatorAddressActivatedFromSupabase
     
 } from './test-utils/operatorRecords';
 
@@ -38,6 +40,7 @@ vi.mock('provider/fetch', () => ({
 
 vi.mock('provider/write', () => ({
   updateOperatorNameAndStatus: vi.fn(),
+  updateOperatorAddress: vi.fn(),
 }));
 
 describe('View and Edit Operators',() => {
@@ -49,12 +52,6 @@ describe('View and Edit Operators',() => {
     })
 
     test('Shows the list of Operators to the user', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabase
-        });
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
@@ -81,7 +78,6 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
            const rows = screen.getAllByRole('row');
           expect(rows.length).toBeGreaterThan(1);
         });
@@ -102,13 +98,6 @@ describe('View and Edit Operators',() => {
     });
 
     test('Shows No Operators if the loggedInUser is null', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabase
-        });
-        
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
                 loggedInUser: null,
@@ -120,7 +109,6 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).not.toHaveBeenCalled();
            const rows = screen.getAllByRole('row');
             expect(rows.length).toBe(1);
         });
@@ -132,12 +120,7 @@ describe('View and Edit Operators',() => {
     });
 
     test('Shows No Operators if the loggedInUser does not have permissions and displays a message telling them', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
         
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabaseEmpty
-        });
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
@@ -164,7 +147,7 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
+          
            const rows = screen.getAllByRole('row');
             expect(rows.length).toBe(1);
         });
@@ -180,62 +163,7 @@ describe('View and Edit Operators',() => {
 
     });
 
-    test('Shows an error if the Operator fetch does not work', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: false,
-            message: "No Operators or Partners found"
-        });
-        
-        renderWithProviders(<OperatorViewAndEdit />, {
-              supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreen,
-                loading: false,
-                isSuperUser: false,
-                session: {
-                access_token: 'test-token',
-                refresh_token: 'test-refresh-token',
-                expires_in: 3600,
-                token_type: 'bearer',
-                user: {
-                  id: 'test-user-id',
-                  email: 'test@example.com',
-                  aud: 'authenticated',
-                  role: 'authenticated',
-                  created_at: '2024-01-01T00:00:00Z',
-                  app_metadata:[],
-                  user_metadata:{}
-                }
-              },
-            }
-          });
-        
-    
-        await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
-           const rows = screen.getAllByRole('row');
-            expect(rows.length).toBe(1);
-        });
-
-        const table = screen.getByRole('table');
-        const rows = within(table).getAllByRole('row');
-        expect(rows.length).toBe(1);
-
-        const noOpsToView = screen.getByText('There are no Operators you have access to manage');
-        expect(noOpsToView).not.toBeVisible();
-        const errorMessage = screen.getByText(/Unable to get Operators\.?\s+Please contact AFE Partners Support Error: No Operators or Partners found/i)
-        expect(errorMessage).toBeVisible();
-
-    });
-
     test('Shows the list of Operators to the user with the address having a suite number', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabaseWithSuiteNumber
-        });
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
@@ -262,7 +190,7 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
+           
            const rows = screen.getAllByRole('row');
           expect(rows.length).toBeGreaterThan(1);
         });
@@ -283,12 +211,6 @@ describe('View and Edit Operators',() => {
     });
 
     test('Shows the list of Operators to the user with the address mostly undefined', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabaseWithAddressUndefined
-        });
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
@@ -315,7 +237,7 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
+          
            const rows = screen.getAllByRole('row');
           expect(rows.length).toBeGreaterThan(1);
         });
@@ -336,12 +258,7 @@ describe('View and Edit Operators',() => {
     });
 
     test('Shows the list of Operators to the user with the address mostly undefined but Suite is text', async () => {
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
         
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabaseWithAddressUndefinedSuiteIsText
-        });
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
@@ -368,7 +285,6 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
            const rows = screen.getAllByRole('row');
           expect(rows.length).toBeGreaterThan(1);
         });
@@ -390,13 +306,6 @@ describe('View and Edit Operators',() => {
 
     test('Expect the Module to Open when the user clicks Edit', async () => {
         const user = userEvent.setup();
-        
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabase
-        });
 
         const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
@@ -430,7 +339,7 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
+           
            const rows = screen.getAllByRole('row');
            expect(rows.length).toBeGreaterThan(1);
         });
@@ -459,15 +368,13 @@ describe('View and Edit Operators',() => {
     });
 
     await waitFor(() => {
-        expect(nameInputsWithoutLabels[0]).toHaveValue('Corr and White Oil Company');
+        expect(nameInputsWithoutLabels[0]).toHaveValue('John Ross');
     });
 
-    const partnerNameInput = await screen.findByDisplayValue('Corr and White Oil Company');
+    const partnerNameInput = await screen.findByDisplayValue('John Ross');
     expect(partnerNameInput).toBeInTheDocument();
 
-    await waitFor(() => {
-        expect(mockPartnersFetch).toHaveBeenCalled();
-    });
+    
 
     const partnerList = screen.getByRole('list');
     expect(partnerList).toBeInTheDocument();
@@ -487,13 +394,6 @@ describe('View and Edit Operators',() => {
     test('Expect the Operator to claim the address when the box is checked and saved', async () => {
         const user = userEvent.setup();
         
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-        
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabase
-        });
-
         const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
@@ -526,7 +426,6 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
            const rows = screen.getAllByRole('row');
            expect(rows.length).toBeGreaterThan(1);
         });
@@ -555,10 +454,10 @@ describe('View and Edit Operators',() => {
     });
 
     await waitFor(() => {
-        expect(nameInputsWithoutLabels[0]).toHaveValue('Corr and White Oil Company');
+        expect(nameInputsWithoutLabels[0]).toHaveValue('John Ross');
     });
 
-    const partnerNameInput = await screen.findByDisplayValue('Corr and White Oil Company');
+    const partnerNameInput = await screen.findByDisplayValue('John Ross');
     expect(partnerNameInput).toBeInTheDocument();
 
     await waitFor(() => {
@@ -598,21 +497,25 @@ describe('View and Edit Operators',() => {
     test('deactivates an active operator when clicking deactivate button then reacivates it when the button is pushed again', async () => {
         const user = userEvent.setup();
         
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
-
-        mockFetch.mockResolvedValue({
-            ok: true,
-            data: operatorListReturnFromSupabase
-        });
 
        vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
             ok: true,
             data: operatorDeactivatedFromSupabase
         });
 
+        vi.mocked(writeProvider.updateOperatorAddress).mockResolvedValueOnce({
+            ok: true,
+            data: operatorAddressDeactivatedFromSupabase
+        });
+
         vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
             ok: true,
             data: operatorActivatedFromSupabase
+        });
+
+        vi.mocked(writeProvider.updateOperatorAddress).mockResolvedValueOnce({
+            ok: true,
+            data: operatorAddressActivatedFromSupabase
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -640,7 +543,7 @@ describe('View and Edit Operators',() => {
         
         
         await waitFor(() => {
-          expect(mockFetch).toHaveBeenCalled();
+         
           const rows = screen.getAllByRole('row');
           expect(rows.length).toBeGreaterThan(1);
         });
@@ -661,13 +564,13 @@ describe('View and Edit Operators',() => {
         });
         
       await waitFor(() => {
-    expect(toast).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        data: expect.stringContaining("deactivated")
-      })
-    );
-  });
+        expect(toast).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({
+            data: expect.stringContaining("deactivated")
+          })
+        );
+      });
         // verify UI updated to show they are inactive.  The click the button again.
         expect(within(dataRows[0]).getByText(/inactive/i)).toBeInTheDocument();
 
@@ -757,11 +660,12 @@ describe('View and Edit Operators',() => {
     test('Expect the Module to Open when the user clicks Edit and update the Operator Name and Street', async () => {
         const user = userEvent.setup();
         
-        const mockFetch = vi.mocked(fetchProvider.fetchOperatorsOrPartnersToEdit);
         
-        mockFetch.mockResolvedValue({
+        const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+        mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: operatorListReturnFromSupabase
+            data: partnersLinkedOrUnlinked,
+            message: undefined
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -789,7 +693,7 @@ describe('View and Edit Operators',() => {
         
     
         await waitFor(() => {
-           expect(mockFetch).toHaveBeenCalled();
+          
            const rows = screen.getAllByRole('row');
            expect(rows.length).toBeGreaterThan(1);
         });

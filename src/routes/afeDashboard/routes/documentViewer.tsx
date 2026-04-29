@@ -64,8 +64,7 @@ export default function DocumentBrowser( {file}:{file:string}) {
   function nextPage() {
     changePage(1);
   }
-console.log('NUM PAGE', numPages,'CURRENT', pageNumber, 'MIN PAGE', minPageNumber, 'MAX PAGE', maxPageNumber)
-console.log(window.scrollY,'SCROLL')  
+ console.log(pageNumber)
 return (
     <>
     {docToView.url==='' ? (
@@ -93,7 +92,8 @@ return (
                         ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
                         : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
                       }`}
-                    onClick={previousPage}>
+                    onClick={previousPage}
+                    aria-label={'Previous Page'}>
                     <ChevronLeftIcon className="w-5 h-5"></ChevronLeftIcon>
                   </li>
                   {createArrayWithArrayFrom(numPages).map((pageNum) => (
@@ -103,6 +103,7 @@ return (
                           : "border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)]"
                         }`}
                       onClick={() => setPage(pageNum)}
+                      aria-label={`page ${pageNum}`}
                       key={pageNum}>
                       {pageNum}
                     </li>
@@ -112,7 +113,8 @@ return (
                         ? "border-[var(--darkest-teal)]/30 bg-white/50 text-[var(--darkest-teal)]/30 pointer-events-none"
                         : "cursor-pointer border-[var(--darkest-teal)]/30 bg-white text-[var(--darkest-teal)]/90 hover:border-[var(--bright-pink)] hover:border-2 "
                       }`}
-                    onClick={nextPage}>
+                    onClick={nextPage}
+                    aria-label={'Next Page'}>
                     <ChevronRightIcon className="w-5 h-5"></ChevronRightIcon>
                   </li>
                 </ul>

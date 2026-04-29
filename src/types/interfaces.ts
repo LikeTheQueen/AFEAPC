@@ -123,6 +123,7 @@ export interface AFEType {
   
   export interface RoleEntryRead extends RoleEntryWrite{
     apc_name: string;
+    apc_name_active?: boolean;
     apc_address: AddressType | null;
     user_id: string;
     user_firstname: string;
@@ -131,6 +132,7 @@ export interface AFEType {
     user_active: boolean;
     is_op_permission: boolean;
     is_partner_permission: boolean;
+    apc_op_id: string | null;
   }
 
   export interface PartnerRoleEntryWrite{
@@ -156,8 +158,6 @@ export interface AFEType {
     active: boolean;
     operatorRoles: RoleEntryRead[];
     partnerRoles: RoleEntryRead[];
-    //operators: string[];
-    //partners: string[];
     user_id?: UUID | null;
     is_super_user: boolean;
   }
@@ -199,7 +199,7 @@ export interface AFEType {
     system: string;
   }
 
-//Interface for Addresses pulled from Supabse
+//Interface for Addresses pulled from Supabase
   export interface AddressType {
     id: number;
     street: string;

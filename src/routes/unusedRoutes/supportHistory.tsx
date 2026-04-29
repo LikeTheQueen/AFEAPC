@@ -5,7 +5,7 @@ import executeAFECall from "src/scripts/executeReadWritePromise";
 
 import React, { useEffect, useState } from 'react'
 import supabase from "provider/supabase";
-import { useSupabaseData } from "../types/SupabaseContext";
+import { useSupabaseData } from "../../types/SupabaseContext";
 import { testExecuteConnection } from "provider/fetch";
 
 const baseURL = '/api';

@@ -15,6 +15,8 @@ export const loggedInUserSuperUser: UserProfileRecordSupabaseType = {
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -43,6 +45,7 @@ export const loggedInUserSuperUser: UserProfileRecordSupabaseType = {
     partnerRoles: [
         {
         apc_name: 'John Ross',
+        apc_op_id: apc_part_id_John,
         apc_address: {
             address_active: true,
             id: 10,

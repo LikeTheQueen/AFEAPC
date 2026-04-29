@@ -38,6 +38,177 @@ export const operatorListReturnFromSupabase = [
     }
 ];
 
+export const operatorListReturnFromSupabaseMultiSelect = [
+    {
+        "apc_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company",
+            "active": true,
+            "partner": [
+                {
+                    "id": 45,
+                    "zip": "89899",
+                    "city": "Houston",
+                    "state": "Texas",
+                    "suite": "5678",
+                    "active": true,
+                    "apc_id": {
+                        "id": "9e96df60-9fa3-4330-8318-972504f1af66",
+                        "name": "Corr and White Oil Company",
+                        "active": true
+                    },
+                    "street": "2121 Lane Blvc",
+                    "country": "United States",
+                    "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d"
+                }
+            ]
+        },
+        "address": {
+            "id": 66,
+            "zip": "90078",
+            "city": "Houston",
+            "state": "Texas",
+            "suite": "",
+            "active": true,
+            "street": "6789 S Blvd",
+            "country": "United States"
+        }
+    },
+    {
+        "apc_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0w",
+            "name": "Athena Minerals",
+            "active": true,
+            "partner": [
+                {
+                    "id": 46,
+                    "zip": "89899",
+                    "city": "Houston",
+                    "state": "Texas",
+                    "suite": "5678",
+                    "active": true,
+                    "apc_id": {
+                        "id": "9e96df60-9fa3-4330-8318-972504f1af66",
+                        "name": "Corr and White Oil Company",
+                        "active": true
+                    },
+                    "street": "2121 Lane Blvc",
+                    "country": "United States",
+                    "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d"
+                }
+            ]
+        },
+        "address": {
+            "id": 67,
+            "zip": "90078",
+            "city": "Houston",
+            "state": "Texas",
+            "suite": "",
+            "active": true,
+            "street": "6789 S Blvd",
+            "country": "United States"
+        }
+    }
+];
+
+export const partnerListReturnedToMultiSelect = [
+    {
+        "apc_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_name": "Athena Minerals Inc.",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "d09da985-e6be-48cd-8f52-c639353792c2",
+        "apc_name": "Corr and Whit Oil",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "dcfb31dd-1f04-45b0-8b70-5512c1fd4b24",
+        "apc_name": "Corr and Whit Oil",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "996917a3-415a-4e9d-a7a9-c04c6050fd3f",
+        "apc_name": "Corr and Whit Oil Partner",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "ecb2c585-9225-4957-98ce-d4315af4e47b",
+        "apc_name": "Corr and Whit Oils Company",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "9e96df60-9fa3-4330-8318-972504f1af66",
+        "apc_name": "Corr and White Oil Company",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "77cea5bb-5adf-40d6-a945-9aef30dd3b69",
+        "apc_name": "Denver 3",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "03559b6a-a1c5-43b3-8623-78d9acf2697a",
+        "apc_name": "Denver Oil 2",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "3d721e36-a900-4506-a120-2be2793bb163",
+        "apc_name": "Denver Oil 2",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "55817490-5603-4a65-9223-24c1f078dd81",
+        "apc_name": "Energy Oil Company",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "2606ec4f-7849-41bc-8b3d-85d96f1c6948",
+        "apc_name": "Fortnite Oil",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_name": "John Ross Exploration Inc",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "db863d3c-606e-4fa6-b044-812d1f3cf6eb",
+        "apc_name": "Last Company",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+        "apc_name": "McKenzie Oil",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "e21bc803-be42-47d5-ab2d-6fe85ed15659",
+        "apc_name": "McKenzie Oil Energy",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "c99bacdd-8ee2-40b2-bbf2-2830a0b314d1",
+        "apc_name": "Third Wheel Energy Co.",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "a6606212-9c6a-44b2-9a8c-a04e48ea6f1f",
+        "apc_name": "Third Wheel Oil and Gas",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "74d7066b-d046-452d-8e04-ae3059e38dec",
+        "apc_name": "Thorton Oil and Company",
+        "apc_address": {}
+    },
+    {
+        "apc_id": "3ab29a40-8ef0-4778-95fd-6c427b56496a",
+        "apc_name": "Whit and Corr Oil",
+        "apc_address": {}
+    }
+];
+
 export const operatorListReturnFromSupabaseEmpty = [];
 
 export const operatorListReturnFromSupabaseWithSuiteNumber = [
@@ -261,6 +432,18 @@ export const operatorDeactivatedFromSupabase =
     id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
     name: "Corr and Whit Oils Company",
     active: false,
+};
+
+export const operatorAddressDeactivatedFromSupabase = 
+    {
+    id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+    active: false,
+};
+
+export const operatorAddressActivatedFromSupabase = 
+    {
+    id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+    active: true,
 };
 
 export const operatorActivatedFromSupabase = 

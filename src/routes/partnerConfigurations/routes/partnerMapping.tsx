@@ -1,11 +1,11 @@
 import { fetchPartnersFromPartnersCrosswalk, fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerMappingDisplayRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
+import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
@@ -31,8 +31,7 @@ interface PartnerMapDisplay {
 };
 
 export default function PartnerMapping() {
-    const { loggedInUser, session } = useSupabaseData();
-    const token = session?.access_token ?? "";
+    const { loggedInUser } = useSupabaseData();
 
     const [apcPartnerList, setAPCPartnerList] = useState<OperatorPartnerAddressType[] | []>([]);
     const [sourcePartnerList, setSourcePartnerList] = useState<PartnerRowData[] | []>([]);
@@ -53,61 +52,71 @@ export default function PartnerMapping() {
         setCurrentPage(page);
     };
 
+    const getPartnersList = useCallback(async (signal: AbortSignal) => {
+        if(opAPCID === '' || !loggedInUser?.user_id) return;
+        setLoading(true);
+
+        try{
+
+            const [sourcePartList, mappedPartnerList] = await Promise.all([
+                fetchPartnersFromSourceSystemInSupabase(opAPCID),
+                fetchPartnersFromPartnersCrosswalk(opAPCID)
+            ]);
+
+            if(sourcePartList.ok && mappedPartnerList.ok && !signal.aborted) {
+                setSourcePartnerList(sourcePartList.data ?? []);
+                setExistingPartnerMap(mappedPartnerList.data ?? []);
+            }
+        } catch (err) {
+            if(!signal.aborted) {
+            setErrorGettingAPCPartnerList(true);
+          }
+        } finally {
+            if (!signal.aborted) {
+                setLoading(false);
+            }
+        }
+    }, [loggedInUser?.user_id, opAPCID]);
+
+    const getPartnerLibrary = useCallback(async (signal: AbortSignal) => {
+        setLoading(true);
+
+        try {
+            const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
+
+            if (!apcPartList.ok) {
+                throw new Error(apcPartList.message);
+            }
+
+            if (!signal.aborted) {
+                const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
+                setAPCPartnerList(dataTransformed);
+            }
+        } catch (err) {
+            if (!signal.aborted) {
+
+            }
+
+        } finally {
+            if (!signal.aborted) {
+                setLoading(false);
+            }
+        }
+
+    }, [loggedInUser?.user_id])
+
     useEffect(() => {
         if (opAPCID === '') return;
-        let isMounted = true;
-        async function getPartnerLists() {
-            setLoading(true);
-            try {
-                const sourcePartList = await fetchPartnersFromSourceSystemInSupabase(opAPCID);
-                const mappedPartnerList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
-                if (isMounted) {
-
-                    setSourcePartnerList(sourcePartList ?? []);
-                    setExistingPartnerMap(mappedPartnerList ?? []);
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
-        }
-        getPartnerLists();
-        return () => {
-            isMounted = false;
-        };
-    }, [opAPCID]);
+        const controller = new AbortController();
+        void getPartnersList(controller.signal);
+        return () => controller.abort();
+    }, [getPartnersList]);
 
     useEffect(() => {
-        let isMounted = true;
-        async function getPartnerLists() {
-            setLoading(true);
-            try {
-                const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
-                if (isMounted) {
-                    if (!apcPartList.ok) {
-                        throw new Error(apcPartList.message);
-                    }
-                    
-                    const dataTransformed = transformOperatorPartnerAddressWithOpName(apcPartList.data);
-                    setAPCPartnerList(dataTransformed);
-                }
-            } catch (error) {
-
-                if (isMounted) {
-                    console.error('Failed to load partners:', error);
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
-        }
-        getPartnerLists();
-        return () => {
-            isMounted = false;
-        };
-    }, [loggedInUser]);
+        const controller = new AbortController();
+        void getPartnerLibrary(controller.signal);
+        return () => controller.abort();
+    }, [getPartnerLibrary]);
 
     const toggleSourcePartner = (
         sourcePartner: PartnerRowData
@@ -164,43 +173,42 @@ export default function PartnerMapping() {
 
     };
     const savePartnerMapping = () => {
-
-        setCumlativePartnerDisplay(prevCumlativeList => {
-            const exists = prevCumlativeList.some(item =>
+        const exists = cumaltivePartnerMapDisplay.some(item =>
                 JSON.stringify(item) === JSON.stringify(currentPartnerMapDisplay)
             );
-
-            if (exists) {
-                notifyStandard('Duplicate Mapping Detected. This route has already been drilled. Choose a new path before you hit a pressure breach.')
-                return prevCumlativeList;
+        if (exists) {
+                notifyFailure('Duplicate Mapping Detected. This route has already been drilled. Choose a new path before you hit a pressure breach.');
+                return;
             }
-            const updatedCumlativeList = [...prevCumlativeList];
-            updatedCumlativeList.push(currentPartnerMapDisplay!)
-            setCurrentPartnerMapDisplay(null)
-            return updatedCumlativeList;
-        });
 
-        setRowsToShow(prevMap => {
-            const exists = prevMap.some(item =>
-                JSON.stringify(item) === JSON.stringify(currentPartnerMapDisplay)
-            );
-
-            if (exists) return prevMap;
-
-            const updatedMap = [...prevMap];
-            updatedMap.push(currentPartnerMapDisplay!)
-            return updatedMap;
-        });
+        setCumlativePartnerDisplay(prevCumlativeList => [...prevCumlativeList, currentPartnerMapDisplay!]);
+        setRowsToShow(prevMap => [...prevMap,currentPartnerMapDisplay!]);
+        setCurrentPartnerMapDisplay(null);
     };
-    const savePartnerMappingRecords = () => {
+    const savePartnerMappingRecords = async () => {
         if (cumaltivePartnerMapDisplay.length < 1) return;
-        const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(({ apc_partner_id, source_partner_id }) => ({ partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id }))
-        const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(({
-            afe_partner_processed_id,
-        }) => (afe_partner_processed_id!));
-        updatePartnerProcessedMapValue(mappedPartnerUpdate, true);
-        writePartnerMappingsToDB(mappedData);
+
+        const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(
+            ({ apc_partner_id, source_partner_id }) => ({ 
+                partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id 
+            })
+        );
+
+        const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(
+            ({ afe_partner_processed_id }) => (afe_partner_processed_id!));
+        
+        const [mappingResult, processedResult] = await Promise.all([
+            updatePartnerProcessedMapValue(mappedPartnerUpdate, true),
+            writePartnerMappingsToDB(mappedData)
+        ]);    
+        
+        if (mappingResult?.ok && processedResult?.ok) {
+        notifyStandard(`Partner Mappings have been saved. Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`);
         setCumlativePartnerDisplay([]);
+        setRowsToShow([]);
+    } else {
+        notifyFailure(`Flow Blocked, the connection never came online.\n\n(TLDR: Partner Mappings NOT saved)`);
+    }
     };
     const removeMapping = (index: number) => {
         setCumlativePartnerDisplay(prevMap => {
@@ -469,7 +477,7 @@ export default function PartnerMapping() {
                                     hidden={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
                                     disabled={(cumaltivePartnerMapDisplay.length > 0 && opAPCID !== '') ? false : true}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] min-w-64"
-                                    onClick={(e) => { savePartnerMappingRecords(), notifyStandard(`Partner Mappings have been saved.  Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`) }}>
+                                    onClick={(e) => { savePartnerMappingRecords() }}>
                                     Save Mappings
                                 </button>
                             </div>
@@ -579,7 +587,7 @@ export default function PartnerMapping() {
                     </div>
                 )}
             </div>
-            <ToastContainer />
+            <ToastContainer icon={false} />
             {useWarnUnsavedChanges(cumaltivePartnerMapDisplay.length > 0, "You have NOT saved your Partner Mappings")}
         </>
     )

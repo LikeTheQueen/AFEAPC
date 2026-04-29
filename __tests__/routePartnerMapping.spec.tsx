@@ -185,7 +185,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
@@ -230,9 +232,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-            .mockResolvedValue(operatorMappedLibrary);
+            .mockResolvedValue({ ok: true, data: operatorMappedLibrary});
 
         await setupWithSelections(user);
 
@@ -267,7 +269,10 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
         .mockResolvedValue({ok: true, data: partnerListInAPC, message: undefined});
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-        .mockResolvedValue(operatorPartnerLibrary);
+        .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        .mockResolvedValue({ ok: true, data: []});
+        
         
         await setupWithSelections(user);
         
@@ -312,7 +317,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
@@ -366,7 +373,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
         .mockResolvedValue({ok: true, data: partnerListInAPC, message: undefined});
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-        .mockResolvedValue(operatorPartnerLibrary);
+        .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
         
         await setupWithSelections(user);
         
@@ -426,7 +435,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
@@ -476,7 +487,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
@@ -537,7 +550,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
@@ -598,7 +613,9 @@ describe('View and edit the partner mappings',() => {
         (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-            .mockResolvedValue(operatorPartnerLibrary);
+            .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
+        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+            .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 

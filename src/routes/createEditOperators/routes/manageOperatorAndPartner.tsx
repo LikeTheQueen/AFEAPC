@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses } from "src/types/interfaces";
+import { type AddressType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type RoleEntryRead } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformOperatorPartnerAddressRecord } from "src/types/transform";
 import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
@@ -12,8 +12,9 @@ import { notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
+import type { L } from "vitest/dist/chunks/reporters.d.79o4mouw.js";
 
-function addressDisplay(operatorOrPartnerRecord: OperatorPartnerAddressType) {
+function addressDisplay(operatorOrPartnerRecord: AddressType) {
     const operatorOrPartnerAddress = operatorOrPartnerRecord.street!.concat(' ',
         `${operatorOrPartnerRecord.suite === undefined || operatorOrPartnerRecord.suite === '' ? '' : '#'+operatorOrPartnerRecord.suite.concat(' ')}`,
         `${operatorOrPartnerRecord.city === undefined ? '' : operatorOrPartnerRecord.city.concat(', ')}`,
@@ -27,76 +28,39 @@ export default function OperatorViewAndEdit() {
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [loadingOperators, setLoadingOperators] = useState(false);
-    const [operatorsList, setOperatorsList] = useState<OperatorRecordWithNonOpAddresses[]>([]);
     const [operatorToEdit, setOperatorToEdit] = useState<OperatorRecordWithNonOpAddresses | null>(null);
     const [operatorResultErrorMessage, setOperatorResultErrorMessage] = useState<string | null>(null);
+    const [filteredOperators, setFilteredOperators] = useState<RoleEntryRead[] | []>([]);
     const [open, setOpen] = useState(false);
     
     // State for paginated data
-    const [rowsToShow, setRowsToShow] = useState<OperatorRecordWithNonOpAddresses[]>([]);
+    const [rowsToShow, setRowsToShow] = useState<RoleEntryRead[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const maxRowsToShow = (5);
 
     useEffect(() => {
-        if (!loggedInUser || token === '') {
-            return;
-        }
+        if(!loggedInUser) return;
+    
+        const operatorList = (loggedInUser.operatorRoles ?? [])
+        .filter(operator => operator.role === superUserPermission || operator.role === editOperatorLibrary);
+        setFilteredOperators(operatorList.sort((a, b) => a.apc_name.localeCompare(b.apc_name)));
+    
+      },[loggedInUser]);
 
-        let isMounted = true;
-
-        async function getOperatorList() {
-            if (isMounted) {
-            setLoadingOperators(true);
-            }
-
-            try {
-                const opListResult = await fetchOperatorsOrPartnersToEdit(
-                    loggedInUser!.user_id!, 
-                    'OPERATOR_USER_PERMISSIONS', 
-                    'OPERATOR_ADDRESS', 
-                    [superUserPermission, editOperatorLibrary, editNonOpLibrary], 
-                    token
-                );
-
-                if (!opListResult.ok) {
-                   throw new Error(opListResult.message); 
-                }
-                
-            const opListTransformed = transformOperatorPartnerAddressRecord(opListResult.data);
-                    
-            if (isMounted) {
-                        setOperatorsList(opListTransformed.sort((a, b) => a.name.localeCompare(b.name)));
-                    } 
-
-            } catch (e) {
-                console.error('Unable to get Operators or Permissions', e);
-                setOperatorResultErrorMessage(e as string);
-            } finally {
-                if (isMounted) {
-                setLoadingOperators(false);
-            }
-            }
-        }
-        getOperatorList();
-        return () => {
-            isMounted = false;
-        }
-    }, [loggedInUser]);
-
-    async function handleClickActivateOrDeactivateOperator(operatorIdx: number) {
+    async function handleClickActivateOrDeactivateOperator(operator_apc_id: string) {
         // Calculate the actual index in the full list based on current page
-        const actualIndex = currentPage * maxRowsToShow + operatorIdx;
-        const operatorToUpdate = operatorsList[actualIndex];
+        const actualIndex = filteredOperators.findIndex(operator => operator.apc_id === operator_apc_id);
+        const operatorToUpdate = filteredOperators[actualIndex];
 
         if (!operatorToUpdate.apc_id || !operatorToUpdate.apc_address_id) return;
 
         const updatedOperator = {
             ...operatorToUpdate,
             active: !operatorToUpdate.active,
-            address_active: !operatorToUpdate.address_active
+            address_active: !operatorToUpdate.apc_address?.address_active
         };
 
-        setOperatorsList(prevOperatorsList =>
+        setFilteredOperators(prevOperatorsList =>
             prevOperatorsList.map((operator, index) =>
                 index === actualIndex
                     ? updatedOperator
@@ -104,6 +68,7 @@ export default function OperatorViewAndEdit() {
             )
         );
 
+{/* 
         try {
             const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
                 updateOperatorNameAndStatus(updatedOperator, token),
@@ -120,12 +85,47 @@ export default function OperatorViewAndEdit() {
         } catch (error) {
             console.error("Failed to change Operator status:", error);
         }
-    }
+            */}
+    };
 
-    const handlePageChange = (paginatedData: OperatorRecordWithNonOpAddresses[], page: number) => {
+    const handlePageChange = (paginatedData: RoleEntryRead[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
+
+    const handleEditClick = (operator: RoleEntryRead) => {
+        const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id);
+        console.log(nonOperatedAddresses);
+
+        const operatorToEdit: OperatorRecordWithNonOpAddresses = {
+            apc_id: operator.apc_id,
+            name: operator.apc_name,
+            apc_address_id: operator.apc_address_id,
+            street: operator.apc_address?.street,
+            suite: operator.apc_address?.suite,
+            city: operator.apc_address?.city,
+            address_active: operator.apc_address?.address_active!,
+            active: operator.active,
+            partners: nonOperatedAddresses?.map((item: RoleEntryRead) => ({
+                apc_id: item.apc_id,
+                name: item.apc_name,
+                active: item.active,
+                id: item.id,
+                street: item.apc_address?.street,
+                suite: (item.apc_address?.suite === null ? '' : item.apc_address?.suite),
+                city: item.apc_address?.city,
+                state: item.apc_address?.state,
+                zip: item.apc_address?.zip,
+                country: item.apc_address?.country,
+                address_active: item.apc_address?.address_active!
+            })) ?? []
+
+        };
+        setOperatorToEdit(operatorToEdit);
+        setOpen(true);
+
+        console.log(operatorToEdit)
+    }
 
     return (
         <>
@@ -158,24 +158,24 @@ export default function OperatorViewAndEdit() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[var(--darkest-teal)]/30 bg-white">
-                                    {rowsToShow.map((operator, operatorIdx) => (
+                                    {rowsToShow.map((operator) => (
                                         <tr key={operator.apc_id}>
                                             <td className="text-base leading-7 text-start align-middle py-4 pr-3 pl-4 font-semibold text-[var(--darkest-teal)] custom-style">
-                                                {operator.name}
+                                                {operator.apc_name}
                                                 <dl className="font-normal">
                                                     <dt className="sr-only">Address</dt>
                                                     <dd className="mt-1 truncate text-sm leading-6 text-[var(--darkest-teal)] custom-style-long-text">
-                                                        {addressDisplay(operator)}
+                                                        {addressDisplay(operator.apc_address!)}
                                                     </dd>
                                                     <dt className="sr-only">Status</dt>
                                                     <dd className="mt-1 flex justify-between items-center gap-2">
                                                         <span
-                                                            hidden={!operator.active}
+                                                            hidden={!operator.apc_name_active}
                                                             className="inline-flex items-center rounded-full bg-[var(--bright-pink)] px-3 py-2 text-sm leading-6 font-semibold text-white custom-style">
                                                             Active
                                                         </span>
                                                         <span
-                                                            hidden={operator.active}
+                                                            hidden={operator.apc_name_active}
                                                             className="inline-flex items-center rounded-full bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm leading-6 font-medium text-[var(--darkest-teal)] custom-style ring-1 ring-[var(--darkest-teal)]/20 ring-inset shadow-lg">
                                                             Inactive
                                                         </span>
@@ -183,17 +183,16 @@ export default function OperatorViewAndEdit() {
                                                             disabled={(!operator.apc_id && !operator.apc_address_id)}
                                                             onClick={async (e) => {
                                                                 e.preventDefault();
-                                                                handleClickActivateOrDeactivateOperator(operatorIdx);
-                                                                notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
+                                                                handleClickActivateOrDeactivateOperator(operator.apc_id);
+                                                                notifyStandard(`Operator name and billing address have been ${operator.apc_name_active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                             }}
                                                             className={`sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md px-3 py-2 text-sm leading-6 font-semibold custom-style transition-colors min-w-24
-                                    ${!operator.active
+                                                                ${!operator.apc_name_active
                                                                     ? 'bg-[var(--dark-teal)] text-white hover:bg-[var(--bright-pink)]'
                                                                     : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
                                                                 }
-                                    disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
-                                `}>
-                                                            {operator.active ? 'Deactivate' : 'Activate'}
+                                                                disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0`}>
+                                                            {operator.apc_name_active ? 'Deactivate' : 'Activate'}
                                                         </button>
                                                     </dd>
                                                 </dl>
@@ -203,7 +202,7 @@ export default function OperatorViewAndEdit() {
                                                 <button
                                                     type="button"
                                                     disabled={operator.apc_id === null || operator.apc_id === ''}
-                                                    onClick={(e) => { setOperatorToEdit(operator); setOpen(true); }}
+                                                    onClick={(e) => { handleEditClick(operator); }}
                                                     className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-4 py-2 text-sm leading-6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style transition-colors w-full max-w-28">
                                                     Edit
                                                 </button>
@@ -214,37 +213,37 @@ export default function OperatorViewAndEdit() {
                                                     disabled={(!operator.apc_id && !operator.apc_address_id)}
                                                     onClick={async (e) => {
                                                         e.preventDefault();
-                                                        handleClickActivateOrDeactivateOperator(operatorIdx);
-                                                        notifyStandard(`Operator name and billing address have been ${operator.active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
+                                                        handleClickActivateOrDeactivateOperator(operator.apc_id);
+                                                        notifyStandard(`Operator name and billing address have been ${operator.apc_name_active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                     }}
                                                     className={`cursor-pointer disabled:cursor-not-allowed rounded-md px-4 py-2 text-sm leading-6 font-semibold custom-style transition-colors w-full max-w-28
-                                                    ${!operator.active
+                                                    ${!operator.apc_name_active
                                                             ? 'bg-[var(--dark-teal)] text-white hover:bg-[var(--bright-pink)]'
                                                             : 'bg-white text-[var(--darkest-teal)] border border-[var(--darkest-teal)] hover:bg-[var(--bright-pink)] hover:text-white hover:border-[var(--bright-pink)]'
                                                         }
                                                      disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:border-0
                                                     `}>
-                                                    {operator.active ? 'Deactivate' : 'Activate'}
+                                                    {operator.apc_name_active ? 'Deactivate' : 'Activate'}
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
-                                <div hidden={operatorsList.length < 1} className="w-full sm:w-7/8">
+                                <div hidden={filteredOperators.length < 1} className="w-full sm:w-7/8">
                             <UniversalPagination
-                                data={operatorsList}
+                                data={filteredOperators}
                                 rowsPerPage={maxRowsToShow}
                                 listOfType="Operators"
                                 onPageChange={handlePageChange}
                             />
                             </div>
-                            <div hidden={(operatorsList.length === 0 && operatorResultErrorMessage === null) ? false : true } className="w-full sm:w-7/8">
+                            <div hidden={(filteredOperators.length === 0 && operatorResultErrorMessage === null) ? false : true } className="w-full sm:w-7/8">
                                 <NoSelectionOrEmptyArrayMessage
                                     message={'There are no Operators you have access to manage'}
                                 ></NoSelectionOrEmptyArrayMessage>
                             </div>
-                            <div hidden={(operatorsList.length === 0 && operatorResultErrorMessage !== null) ? false : true } className="w-full sm:w-7/8">
+                            <div hidden={(filteredOperators.length === 0 && operatorResultErrorMessage !== null) ? false : true } className="w-full sm:w-7/8">
                                 <NoSelectionOrEmptyArrayMessage
                                     message={'Unable to get Operators. Please contact AFE Partners Support '+operatorResultErrorMessage}
                                 ></NoSelectionOrEmptyArrayMessage>

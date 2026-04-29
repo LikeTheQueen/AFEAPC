@@ -402,6 +402,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     operatorRoles: [
         {
         apc_name: 'Corr and Whit Oils',
+        apc_op_id: apc_op_id,
         apc_address: {
             address_active: true,
             id: 66,
@@ -427,6 +428,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'Corr and Whit Oils',
+        apc_op_id: apc_op_id,
         apc_address: {
             address_active: true,
             id: 66,
@@ -452,6 +454,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'Corr and Whit Oils',
+        apc_op_id: apc_op_id,
         apc_address: {
             address_active: true,
             id: 66,
@@ -479,6 +482,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     partnerRoles: [
         {
         apc_name: 'John Ross',
+        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
         apc_address: {
             address_active: true,
             id: 10,
@@ -504,6 +508,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
+        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
         apc_address: {
             address_active: true,
             id: 10,
@@ -529,6 +534,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
+        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
         apc_address: {
             address_active: true,
             id: 10,
@@ -554,6 +560,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
+        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
         apc_address: {
             address_active: true,
             id: 10,
@@ -579,6 +586,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
+        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
         apc_address: {
             address_active: true,
             id: 7,
@@ -607,6 +615,7 @@ export const loggedInUser: UserProfileRecordSupabaseType = {
 };
 
 //User has no view rights to Operated and Non Op view rights to Athena can approve
+/////DOES THIS NED TOBE FIXED
 export const loggedInUserNoOpViewRightsAthena: UserProfileRecordSupabaseType = {
     firstName: 'Jane',
     lastName: 'Athena',
@@ -614,298 +623,19 @@ export const loggedInUserNoOpViewRightsAthena: UserProfileRecordSupabaseType = {
     active: true,
     is_super_user: false,
     operatorRoles: [],
-    partnerRoles: [
-        {
-        apc_name: 'Athena Minerals',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 35,
-        role: 3,
-        active: true,
-        apc_id: apc_part_id_Athena,
-        apc_address_id: 7
-    },
-    {
-        apc_name: 'Athena Minerals',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 72,
-        role: 9,
-        active: true,
-        apc_id: apc_part_id_Athena,
-        apc_address_id: 7
-    },
-    {
-        apc_name: 'Athena Minerals',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 74,
-        role: 5,
-        active: true,
-        apc_id: apc_part_id_Athena,
-        apc_address_id: 7
-    },
-    {
-        apc_name: 'Athena Minerals',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 185,
-        role: 6,
-        active: true,
-        apc_id: apc_part_id_Athena,
-        apc_address_id: 7
-    }
-    
-    ],
+    partnerRoles:[],
 };
 
 //User has view rights to operated AFEs for Nav Oils and Non Op view rights to John Ross and can Approve NonOp AFEs
+//DOES THIS NEED TI VE FIXED
 export const loggedInUserOpNavOilsPartnerJohnRoss: UserProfileRecordSupabaseType = {
     firstName: 'Tim',
     lastName: 'Ross',
     email: 'user@email',
     active: true,
     is_super_user: false,
-    operatorRoles: [
-        {
-        apc_name: 'Nav Oils',
-        apc_address: {
-            address_active: true,
-            id: 51,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 46,
-        role: 2,
-        active: true,
-        apc_id: apc_op_id_Navz,
-        apc_address_id: 51
-    },
-    {
-        apc_name: 'Nav Oils',
-        apc_address: {
-            address_active: true,
-            id: 51,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 49,
-        role: 4,
-        active: true,
-        apc_id: apc_op_id_Navz,
-        apc_address_id: 51
-    },
-    {
-        apc_name: 'Nav Oils',
-        apc_address: {
-            address_active: true,
-            id: 51,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 52,
-        role: 8,
-        active: true,
-        apc_id: apc_op_id_Navz,
-        apc_address_id: 51
-    }
-    ],
-    partnerRoles: [
-        {
-        apc_name: 'John Ross',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 35,
-        role: 3,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 72,
-        role: 9,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 74,
-        role: 5,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 185,
-        role: 6,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    }
-    
-    ],
+    operatorRoles: [],
+    partnerRoles: [],
 };
 
 export const loggedInUserIsSuperUser: UserProfileRecordSupabaseType = {
@@ -2112,6 +1842,7 @@ export const apc_partner_id_Athena   = '475e4d12-8a0b-4264-933d-d960936852b2'; /
  
 // ── Company Name Labels ────────────────────────────────────────────────────────
 export const apc_name_CW       = 'Corr and Whit Oils';
+export const apc_name_CWCO      = 'Corr and Whit Oils Company';
 export const apc_name_Nav      = 'Navigator Corporation';
 export const apc_name_JohnRoss = 'John Ross Exploration Inc';
 export const apc_name_Athena   = 'Athena Minerals Inc.';
@@ -3128,46 +2859,46 @@ const address_Athena: AddressType = {
 // Partner roles:  3 = view, 5 = edit, 6 = approve/reject, 9 = library
 
 const buildOpRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
-    { id: startId + 1, role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
-    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 1, role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
 ];
 
 const buildOpRolesNoAFEViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
-    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId,     role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
 ];
 
 const buildOpRolesNoUserEditRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
-    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
 ];
 
 const buildOpViewOnlyRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
 ];
 
-const buildPartnerRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 1, role: 5, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+const buildPartnerRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number, apc_op_id: string) => [
+    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 1, role: 5, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
 const buildPartnerRolesAFEOnlyViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
 const buildPartnerRolesNoAFEViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 5, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId,     role: 5, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
 const buildPartnerRolesNoUserEditRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
-    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+    { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
 // ── CW (Operator) / John Ross (Partner) Users ──────────────────────────────────
@@ -3181,7 +2912,24 @@ export const RachelGreen_AllPermissions_CW_NonOpCW: UserProfileRecordSupabaseTyp
     is_super_user: false,
     user_id: user_id_RachelGreen,
     operatorRoles: buildOpRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
-    partnerRoles:  buildPartnerRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110),
+    partnerRoles:  buildPartnerRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110, apc_op_id_CW),
+};
+
+export const RachelGreen_AllPermissions_CW_NonOpCWAthena: UserProfileRecordSupabaseType = {
+    firstName: 'Rachel',
+    lastName: 'Green',
+    email: 'rachel.green@corrwhitoils.com',
+    active: true,
+    is_super_user: false,
+    user_id: user_id_RachelGreen,
+    operatorRoles: [
+        ...buildOpRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
+        ...buildOpRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 100),
+    ],
+    partnerRoles:  [
+    ...buildPartnerRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CWCO, address_partner_CW, apc_address_id_partner_CW, 110, apc_op_id_CW),
+    ...buildPartnerRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 120, apc_op_id_CW),
+        ],
 };
 
 //No user edit rights
@@ -3204,7 +2952,7 @@ export const MonicaGeller_NoOpRoles_CW_NonOpCW: UserProfileRecordSupabaseType = 
     is_super_user: false,
     user_id: user_id_MonicaGeller,
     operatorRoles: [],
-    partnerRoles:  buildPartnerRoles(user_id_MonicaGeller, 'Monica', 'Geller', 'monica.geller@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 120),
+    partnerRoles:  buildPartnerRoles(user_id_MonicaGeller, 'Monica', 'Geller', 'monica.geller@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 120, apc_op_id_CW),
 };
 
 //Chandler Bing does NOT have any AFE view Rights
@@ -3242,7 +2990,7 @@ export const MichaelScott_AllPermissions_Nav_Athena: UserProfileRecordSupabaseTy
     is_super_user: false,
     user_id: user_id_MichaelScott,
     operatorRoles: buildOpRoles(user_id_MichaelScott, 'Michael', 'Scott', 'michael.scott@navigatorcorp.com', apc_op_id_Nav, apc_name_Nav, address_Nav, apc_address_id_Nav, 200),
-    partnerRoles:  buildPartnerRoles(user_id_MichaelScott, 'Michael', 'Scott', 'michael.scott@navigatorcorp.com', apc_partner_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 210),
+    partnerRoles:  buildPartnerRoles(user_id_MichaelScott, 'Michael', 'Scott', 'michael.scott@navigatorcorp.com', apc_partner_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 210, apc_op_id_Nav),
 };
 
 // No operator roles: can only see AFEs where Nav is the partner
@@ -3254,7 +3002,7 @@ export const JimHalpert_NoOpRoles_Nav_Athena: UserProfileRecordSupabaseType = {
     is_super_user: false,
     user_id: user_id_JimHalpert,
     operatorRoles: [],
-    partnerRoles:  buildPartnerRoles(user_id_JimHalpert, 'Jim', 'Halpert', 'jim.halpert@navigatorcorp.com', apc_partner_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 220),
+    partnerRoles:  buildPartnerRoles(user_id_JimHalpert, 'Jim', 'Halpert', 'jim.halpert@navigatorcorp.com', apc_partner_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 220, apc_op_id_Athena),
 };
 
 // No partner roles: can only see AFEs where Nav is the operator
@@ -3280,7 +3028,7 @@ export const TonySoprano_AllPermissions_JohnRoss_CW: UserProfileRecordSupabaseTy
     is_super_user: false,
     user_id: user_id_TonySoprano,
     operatorRoles: buildOpRoles(user_id_TonySoprano, 'Tony', 'Soprano', 'tony.soprano@johnrossexploration.com', apc_op_id_JohnRoss, apc_name_JohnRoss, address_JohnRoss, apc_address_id_JohnRoss, 300),
-    partnerRoles:  buildPartnerRoles(user_id_TonySoprano, 'Tony', 'Soprano', 'tony.soprano@johnrossexploration.com', apc_partner_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 310),
+    partnerRoles:  buildPartnerRoles(user_id_TonySoprano, 'Tony', 'Soprano', 'tony.soprano@johnrossexploration.com', apc_partner_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 310, apc_op_id_JohnRoss),
 };
 
 // No operator roles: can only see AFEs where John Ross is the partner
@@ -3292,7 +3040,7 @@ export const WalterWhite_NoOpRoles_JohnRoss_CW: UserProfileRecordSupabaseType = 
     is_super_user: false,
     user_id: user_id_WalterWhite,
     operatorRoles: [],
-    partnerRoles:  buildPartnerRoles(user_id_WalterWhite, 'Walter', 'White', 'walter.white@johnrossexploration.com', apc_partner_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 320),
+    partnerRoles:  buildPartnerRoles(user_id_WalterWhite, 'Walter', 'White', 'walter.white@johnrossexploration.com', apc_partner_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 320, apc_op_id_CW),
 };
 
 // No partner roles: can only see AFEs where John Ross is the operator
@@ -3318,7 +3066,7 @@ export const LeslieKnope_AllPermissions_Athena_Nav: UserProfileRecordSupabaseTyp
     is_super_user: false,
     user_id: user_id_LeslieKnope,
     operatorRoles: buildOpRoles(user_id_LeslieKnope, 'Leslie', 'Knope', 'leslie.knope@athenaminerals.com', apc_op_id_Athena, apc_name_Athena, address_Athena, apc_address_id_Athena, 400),
-    partnerRoles:  buildPartnerRoles(user_id_LeslieKnope, 'Leslie', 'Knope', 'leslie.knope@athenaminerals.com', apc_partner_id_Nav, apc_name_Nav, address_Nav, apc_address_id_Nav, 410),
+    partnerRoles:  buildPartnerRoles(user_id_LeslieKnope, 'Leslie', 'Knope', 'leslie.knope@athenaminerals.com', apc_partner_id_Nav, apc_name_Nav, address_Nav, apc_address_id_Nav, 410, apc_op_id_Athena),
 };
 
 // No operator roles: can only see AFEs where Athena is the partner
@@ -3330,7 +3078,7 @@ export const RonSwanson_NoOpRoles_Athena_Nav: UserProfileRecordSupabaseType = {
     is_super_user: false,
     user_id: user_id_RonSwanson,
     operatorRoles: [],
-    partnerRoles:  buildPartnerRoles(user_id_RonSwanson, 'Ron', 'Swanson', 'ron.swanson@athenaminerals.com', apc_partner_id_Nav, apc_name_Nav, address_Nav, apc_address_id_Nav, 420),
+    partnerRoles:  buildPartnerRoles(user_id_RonSwanson, 'Ron', 'Swanson', 'ron.swanson@athenaminerals.com', apc_partner_id_Nav, apc_name_Nav, address_Nav, apc_address_id_Nav, 420, apc_op_id_Nav),
 };
 
 // No partner roles: can only see AFEs where Athena is the operator

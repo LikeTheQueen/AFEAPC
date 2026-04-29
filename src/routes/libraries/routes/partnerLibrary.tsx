@@ -32,8 +32,8 @@ export default function PartnerLibrary() {
     try {
         const partnerList = await fetchPartnersFromSourceSystemInSupabase(opAPCID)
 
-        if(partnerList) {
-            setPartnerList(partnerList);
+        if(partnerList.ok) {
+            setPartnerList(partnerList.data);
         }
     } finally {
         setLoading(false);

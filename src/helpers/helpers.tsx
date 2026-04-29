@@ -137,7 +137,7 @@ export function StandardNotifcation({
         </div>  
     </div>
   );
-}
+};
 export const notifyStandard = (message:string) => toast(StandardNotifcation, {
     data: message,
     closeButton: false,
@@ -227,9 +227,9 @@ if (user.is_super_user) return true;
 //Check that there are roles
 if (!user?.operatorRoles.length && !user?.partnerRoles.length) return false;
 // Check operator roles
-const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorMinLevel) ?? false;  
+const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorMinLevel && r.active) ?? false;  
   // Check partner roles
-const hasPartnerAccess = user.partnerRoles?.some(r => r.role! === partnerMinLevel) ?? false;
+const hasPartnerAccess = user.partnerRoles?.some(r => r.role! === partnerMinLevel && r.active) ?? false;
 
 return hasOperatorAccess || hasPartnerAccess; 
 };

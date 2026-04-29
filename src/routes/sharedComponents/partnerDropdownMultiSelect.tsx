@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllPartners } from "provider/fetch";
-import type { OperatorOrPartnerList } from "src/types/interfaces";
+import type { RoleEntryRead } from "src/types/interfaces";
+import { editNonOpLibrary, superUserPermission } from "src/helpers/helpers";
 
 type Props = {
   onChange?: (id: string[]) => void;
-  limitedList: boolean;
   initialSelectedIds?: string[];
   isDisabled: boolean;
   
 };
 
-export function PartnerDropdownMultiSelect({ onChange, limitedList, initialSelectedIds = [], isDisabled }: Props) {
+export function PartnerDropdownMultiSelect({ onChange, initialSelectedIds = [], isDisabled }: Props) {
   const { loggedInUser } = useSupabaseData();
   const [partnerAPCIDMulti, setPartnerAPCIDMulti] = useState<string[]>(initialSelectedIds);
-  const [filteredPartners, setFilteredPartners] = useState<OperatorOrPartnerList[] | []>([]);
+  const [filteredPartners, setFilteredPartners] = useState<RoleEntryRead[] | []>([]);
 
     function handleCheckboxChange(apcId: string, isChecked: boolean) {
     const updatedIds = isChecked
@@ -25,64 +24,20 @@ export function PartnerDropdownMultiSelect({ onChange, limitedList, initialSelec
     onChange?.(updatedIds);  
     };
     
-    async function filterPartnersList() {
-        if(limitedList!==true) {
-            async function getPartners() {
-            const partnerList: OperatorOrPartnerList[] = await fetchAllPartners();
-            setFilteredPartners(partnerList);
-            return;
-             };
-       getPartners();
-        } else {
-        if (!loggedInUser) {
-        setFilteredPartners([]);
-        return;
-      }
-        
-        const partnerList: OperatorOrPartnerList[] = (loggedInUser.partnerRoles ?? [])
-            .filter(partner => partner.role === 9 || partner.role === 1)
-            .map(({ apc_id, apc_name, apc_address }) => ({ apc_id, apc_name, apc_address }));
-    
-            setFilteredPartners(partnerList);
-            return;
-        }
-        };
-  
-  
-  useEffect(() => {
-          if (!loggedInUser) return;
-          filterPartnersList();
-          if (filteredPartners.length === 1) {
-              
-              setPartnerAPCIDMulti(prevOpAPCID => {
-            const updatedOpAPCID = [...prevOpAPCID];
-            const existingIndex = updatedOpAPCID.findIndex(
-                entry => entry === filteredPartners[0].apc_id
-            );
-            if(existingIndex > -1) {
-                updatedOpAPCID.splice(existingIndex,1);
-            } else {
-                updatedOpAPCID.push(filteredPartners[0].apc_id);
-            }
-            return updatedOpAPCID;
-        })
-          }
-      }, [loggedInUser])
+    useEffect(() => {
+    if(!loggedInUser) return;
 
-  function selectAll() {
-    const all = filteredPartners.map((o) => o.apc_id);
-    setPartnerAPCIDMulti(all);
-    onChange?.(all);
-  }
-  function clearAll() {
-    setPartnerAPCIDMulti([]);
-    onChange?.([]);
-  }
-  
+    const nonOpOperatorList = (loggedInUser.partnerRoles ?? [])
+    .filter(nonOpOperator => (nonOpOperator.role === superUserPermission || nonOpOperator.role === editNonOpLibrary) && nonOpOperator.apc_name_active);
+    setFilteredPartners(nonOpOperatorList.sort((a, b) => a.apc_name.localeCompare(b.apc_name)));
+
+  },[loggedInUser]);
+
   return (
     <> 
   <div className="rounded-lg max-h-50 min-h-50 overflow-y-auto shadow-xl outline-1 -outline-offset-1 outline-[var(--dark-teal)] p-2">
-  <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">partner(s):</h1>
+  <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">Non-Op(s):</h1>
+  <p hidden={filteredPartners.length > 0} className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">You do not have permissions to edit libraries for any Non-Op Addresses</p>
   {filteredPartners.map((option) => (
     <label 
       key={option.apc_id}

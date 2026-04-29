@@ -39,7 +39,7 @@ vi.mock('../src/scripts/executeAFEgetDocHandle', async (importOriginal) => {
           });
   
       const result = await processAFEDocIDsToDocHandle(items, 'authToken123', 1, 2000, 5);
-      console.log(result)
+
       expect(result).toEqual([docHandle]);
       //expect(fetchExecuteAFEDocHandle).toHaveBeenCalledTimes(1);
     });
@@ -90,7 +90,7 @@ vi.mock('../src/scripts/executeAFEgetDocHandle', async (importOriginal) => {
           });
   
       const result = await processAFEDocIDsToDocHandle(items, 'authToken123', 1, 2000, 5);
-      console.log(result)
+
       expect(result).toEqual([{ Rows: docHandle, docHandle }]);
       //expect(fetchExecuteAFEDocHandle).toHaveBeenCalledTimes(1);
     });

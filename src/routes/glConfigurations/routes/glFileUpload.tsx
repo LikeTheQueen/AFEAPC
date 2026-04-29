@@ -153,7 +153,6 @@ export default function GLFileUpload() {
               <div className='grow m-2 '>
                 <OperatorDropdownMultiSelect
                   onChange={(ids) => { setOpAPCIDArray(ids) }}
-                  limitedList={true}
                   initialSelectedIds={[]}
                   isDisabled={selectListDisabled}
                 />
@@ -161,7 +160,6 @@ export default function GLFileUpload() {
               <div className='grow m-2'>
                 <PartnerDropdownMultiSelect
                   onChange={(ids) => { setPartnerAPCIDArray(ids) }}
-                  limitedList={true}
                   initialSelectedIds={[]}
                   isDisabled={selectListDisabled}
                 />

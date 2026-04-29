@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import   SupportHistory   from '../../src/routes/supportHistory';
+import   SupportHistory   from '../../src/routes/unusedRoutes/supportHistory';
 
 describe('SupportHistory', () => {
     test('Renders the Support History Screen', () => {

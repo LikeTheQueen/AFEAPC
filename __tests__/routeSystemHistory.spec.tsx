@@ -1,7 +1,7 @@
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
 import { vi, type Mock } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
@@ -146,7 +146,9 @@ describe('View System History',() => {
         
         expect(loadMoreButton[0]).not.toBeDisabled();
         
+        await act(async () => {
         await user.click(loadMoreButton[0]);
+        });
 
         expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0,47);
         await waitFor(() => {
@@ -195,7 +197,9 @@ describe('View System History',() => {
         expect(within(filterOnActionTyep).getByRole('option', { name: /gl mapping created/i })).toBeInTheDocument();
         expect(within(filterOnActionTyep).getByRole('option', { name: /gl code created/i })).toBeInTheDocument();
 
+        await act(async () => {
         await user.click(loadMoreButton[0]);
+        });
 
         expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0, 47);
         await waitFor(() => {

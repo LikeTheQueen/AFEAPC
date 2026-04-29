@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
+import { editOperatorLibrary, superUserPermission } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllOperators, fetchOperatorsOrPartnersToEdit } from "provider/fetch";
-import type { OperatorOrPartnerList, OperatorPartnerRecord } from "src/types/interfaces";
-import { transformOperatorPartnerRecord } from "src/types/transform";
+import type { RoleEntryRead } from "src/types/interfaces";
 
 type Props = {
   onChange?: (id: string[]) => void;
-  limitedList: boolean;
   initialSelectedIds?: string[];
   isDisabled: boolean;
 };
 
-export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSelectedIds = [], isDisabled }: Props) {
-  const { loggedInUser, session } = useSupabaseData();
-  const token = session?.access_token ?? "";
+export function OperatorDropdownMultiSelect({ onChange, initialSelectedIds = [], isDisabled }: Props) {
+  const { loggedInUser } = useSupabaseData();
   const [opAPCIDMulti, setOpAPCIDMulti] = useState<string[]>(initialSelectedIds);
-  const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
-  const [operatorsList, setOperatorsList] = useState<OperatorPartnerRecord[] | []>([]);
+  const [filteredOperators, setFilteredOperators] = useState<RoleEntryRead[] | []>([]);
   
   function handleCheckboxChange(apcId: string, isChecked: boolean) {
     const updatedIds = isChecked
@@ -26,49 +22,22 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
     setOpAPCIDMulti(updatedIds);
     onChange?.(updatedIds);  
     };
-
-  useEffect(() => {
-          if (!loggedInUser || token==='') return;
-          let isMounted = true;
-          async function populateOperatorList() {
-            if(!loggedInUser?.user_id) return;
-
-            try{
-              const opListResult = await fetchOperatorsOrPartnersToEdit(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1,8,9], token);
-
-              if(opListResult.ok) {
-                const opListTransformed = transformOperatorPartnerRecord(opListResult.data);
-
-                if(isMounted) {
-                  setOperatorsList(opListTransformed);
-                }
-              }
-
-            } catch(e) {
-          console.error('Unable to get Operators or Permissions',e);
-           } finally {
-                return;
-            }
-          }
-          populateOperatorList();
-      }, [loggedInUser])
-
-  function selectAll() {
-    const all = operatorsList.map((o) => o.apc_id!);
-    setOpAPCIDMulti(all);
-    onChange?.(all);
-  }
-  function clearAll() {
-    setOpAPCIDMulti([]);
-    onChange?.([]);
-  }
   
+  useEffect(() => {
+    if(!loggedInUser) return;
+
+    const operatorList = (loggedInUser.operatorRoles ?? [])
+    .filter(operator => (operator.role === superUserPermission || operator.role === editOperatorLibrary) && operator.apc_name_active);
+    setFilteredOperators(operatorList.sort((a, b) => a.apc_name.localeCompare(b.apc_name)));
+
+  },[loggedInUser]);
+
   return (
     <>
   <div className="rounded-lg max-h-50 min-h-50 overflow-y-auto shadow-xl outline-1 -outline-offset-1 outline-[var(--dark-teal)] p-2 ">
   <h1 className="mt-1 text-sm/6 text-[var(--darkest-teal)] custom-style px-3 font-semibold">Operator(s):</h1>
-  
-  {operatorsList.map((option) => (
+  <p hidden={filteredOperators.length > 0} className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">You do not have permissions to edit libraries for any Operators</p>
+  {filteredOperators.map((option) => (
     <label 
       key={option.apc_id}
       className="flex items-start gap-2 p-2 hover:bg-[var(--darkest-teal)]/20 ">
@@ -107,17 +76,17 @@ export function OperatorDropdownMultiSelect({ onChange, limitedList, initialSele
           </div>
           <div className="text-sm/6">
             <label htmlFor="operator" className="text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-              {option.name}
+              {option.apc_name}
             </label>
             <p id="operator-address" className="text-sm/6 text-[var(--darkest-teal)] custom-style-long-text">
-             {option.street} {option.suite} {option.city}, {option.state} {option.zip}
+             {option.apc_address?.street} {option.apc_address?.suite} {option.apc_address?.city}, {option.apc_address?.state} {option.apc_address?.zip}
             </p>
           </div>
         </div>
     </label>
   ))}
+
   </div>
-  
     </>
   );
 }

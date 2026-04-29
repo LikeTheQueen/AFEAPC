@@ -19,4 +19,4 @@ export async function callEdge<TReq, TRes>(
 
   if (!res.ok) throw new Error(await res.text());
   return res.json() as Promise<TRes>;
-}
+};

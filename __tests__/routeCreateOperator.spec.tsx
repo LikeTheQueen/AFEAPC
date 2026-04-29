@@ -1545,6 +1545,8 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSaveOpNonOpAdddress);
 
     expect(nonOpRecordError).toBeVisible();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 0)); 
     
  
   });

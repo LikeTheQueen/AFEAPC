@@ -3,7 +3,7 @@ import * as writeProvider from "provider/write";
 import * as emailProvider from '../email/emailBasic';
 import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
@@ -119,317 +119,328 @@ const setupWithSelectionsNoUserID = async (
   }); 
 };
 
-describe('View and support tickets',() => {
-    let user: ReturnType<typeof userEvent.setup>;
+describe('View and edit support tickets', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
-    beforeEach(() => {
+  beforeEach(() => {
     user = userEvent.setup();
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+      if (typeof msg === 'string' && (
+        msg.includes('not wrapped in act') ||
+        msg.includes('not configured to support act')
+      )) return;
+      console.error(msg, ...args);
+    });
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+    vi.resetAllMocks();
+    vi.clearAllMocks();
+
+  });
+
+  test('Loads screen and allows user to send comment', async () => {
+    (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
+    (writeProvider.createSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+
+    await setupWithSelections(user);
+    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
+      expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
     });
 
-    afterEach(() => {
-        vi.resetAllMocks();
-        vi.clearAllMocks();
+    const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
+    expect(commentField[0]).toBeInTheDocument();
 
+    await user.type(commentField[0], 'Can I get help on this?');
+
+    const commentButton = screen.getAllByRole('button', { name: /comment/i });
+
+    expect(commentButton[0]).not.toBeDisabled();
+    expect(commentButton[1]).toBeDisabled();
+
+    await act(async () => {
+      await user.click(commentButton[0]);
     });
 
-    test('Loads screen and allows user to send comment', async () => {
-      (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
-      (writeProvider.createSupportTicketThread as Mock)
-          .mockResolvedValueOnce({ok: true, data: singleTicketThreadResponse, message: null});
-        
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:true, data:supportHistory, message:null});
-        
-                await setupWithSelections(user);
-                expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
 
-        expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+      expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
+        'New comment on ticket #2',
+        `${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName} has added a new comment: Can I get help on this?`,
+        'Support Team',
+        RachelGreen_AllPermissions_CW_NonOpCW.firstName,
+        RachelGreen_AllPermissions_CW_NonOpCW.email,
+        supportEmail,
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
 
-        await waitFor(() => {
-          expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
-          expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
-          expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
-        });
+      expect(commentField[0]).toHaveValue('');
+    });
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-        const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
-        expect(commentField[0]).toBeInTheDocument();
+  });
 
-        await user.type(commentField[0], 'Can I get help on this?');
+  test('Error saving comment', async () => {
+    (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
+    (writeProvider.createSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: false, data: null, message: 'Error Message' });
 
-        const commentButton = screen.getAllByRole('button', { name: /comment/i });
-        
-        expect(commentButton[0]).not.toBeDisabled();
-        expect(commentButton[1]).toBeDisabled();
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
 
-        await user.click(commentButton[0]);
-        
-        await waitFor(() => {
-        expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
-        });
+    await setupWithSelections(user);
+    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
 
-        await waitFor(() => {
-              
-              expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
-                'New comment on ticket #2',
-                `${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName} has added a new comment: Can I get help on this?`,
-                'Support Team',
-                RachelGreen_AllPermissions_CW_NonOpCW.firstName,
-                RachelGreen_AllPermissions_CW_NonOpCW.email,
-                supportEmail,
-                "https://afepartner.com/mainscreen/supporthistory"
-              );
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
 
-              expect(commentField[0]).toHaveValue('');
-            });
-        
+    await waitFor(() => {
+      expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
+      expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
     });
 
-    test('Error saving comment', async () => {
-      (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
-      (writeProvider.createSupportTicketThread as Mock)
-          .mockResolvedValueOnce({ok: false, data: null, message: 'Error Message'});
-        
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:true, data:supportHistory, message:null});
-        
-                await setupWithSelections(user);
-                expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
+    expect(commentField[0]).toBeInTheDocument();
 
-        expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+    await user.type(commentField[0], 'Can I get help on this?');
 
-        await waitFor(() => {
-          expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
-          expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
-          expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
-        });
+    const commentButton = screen.getAllByRole('button', { name: /comment/i });
 
-        const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
-        expect(commentField[0]).toBeInTheDocument();
+    expect(commentButton[0]).not.toBeDisabled();
+    expect(commentButton[1]).toBeDisabled();
 
-        await user.type(commentField[0], 'Can I get help on this?');
-
-        const commentButton = screen.getAllByRole('button', { name: /comment/i });
-        
-        expect(commentButton[0]).not.toBeDisabled();
-        expect(commentButton[1]).toBeDisabled();
-
-        await user.click(commentButton[0]);
-        
-        await waitFor(() => {
-        expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
-        });
-
-        expect(notifyFailure).toHaveBeenCalledWith(
-              `Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`
-            );
-        
+    await act(async () => {
+      await user.click(commentButton[0]);
     });
 
-    test('No calls for support tickets are made if the user is not logged in', async () => {
-        
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:true, data:supportHistory, message:null});
-        
-                await setupWithSelectionsNoUserID(user);
-                expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(0);
-
-        expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
-        expect(screen.getByText('There are no support tickets to view')).toBeInTheDocument();
-        expect(screen.getByText('There are no support tickets to view')).not.toBeVisible();
-
+    await waitFor(() => {
+      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
     });
 
-    test('Shows an error when the call for Support Tickets fails', async () => {
-        
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:false, data:[], message: 'Error Message in the test'});
-        
-        await setupWithSelections(user);
-        
-        await waitFor(() => {
-        expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
-          });
-        
-          expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
-        
-        screen.debug();
-        
-        await waitFor(() => {
-        expect(screen.getByText('There are no support tickets to view')).toBeInTheDocument();
-        expect(screen.getByText('There are no support tickets to view')).not.toBeVisible();
-        });
-        expect(screen.getByText('Error Message in the test')).toBeInTheDocument();
-        expect(screen.getByText('Error Message in the test')).toBeVisible();
+    expect(notifyFailure).toHaveBeenCalledWith(
+      `Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`
+    );
+    await new Promise(resolve => setTimeout(resolve, 0));
 
+  });
+
+  test('No calls for support tickets are made if the user is not logged in', async () => {
+
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+
+    await setupWithSelectionsNoUserID(user);
+    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(0);
+
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+    expect(screen.getByText('There are no support tickets to view')).toBeInTheDocument();
+    expect(screen.getByText('There are no support tickets to view')).not.toBeVisible();
+
+  });
+
+  test('Shows an error when the call for Support Tickets fails', async () => {
+
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: false, data: [], message: 'Error Message in the test' });
+
+    await setupWithSelections(user);
+
+    await waitFor(() => {
+      expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
     });
 
-    test('Loads screen and allows Super User to send comment and resolve', async () => {
-        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-        (writeProvider.createSupportTicketThread as Mock)
-          .mockResolvedValueOnce({ok: true, data: singleTicketThreadResponse, message: null});
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:true, data:supportHistory, message:null});
-        (writeProvider.updateSupportTicket as Mock)
-          .mockResolvedValue({ok:true, data:orginalTicketUpdatedResponse, message:null});
-        
-                await setupWithSelectionsSuperUser(user);
-                expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
 
-        expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('There are no support tickets to view')).toBeInTheDocument();
+      expect(screen.getByText('There are no support tickets to view')).not.toBeVisible();
+    });
+    expect(screen.getByText('Error Message in the test')).toBeInTheDocument();
+    expect(screen.getByText('Error Message in the test')).toBeVisible();
 
-        await waitFor(() => {
-          expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
-          expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
-          expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
-        });
+  });
 
-        const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
-        const resolutionField = screen.getAllByRole('textbox', { name: 'Resolution' });
+  test('Loads screen and allows Super User to send comment and resolve', async () => {
+    (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+    (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+    (writeProvider.createSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (writeProvider.updateSupportTicket as Mock)
+      .mockResolvedValue({ ok: true, data: orginalTicketUpdatedResponse, message: null });
 
-        expect(commentField[0]).toBeInTheDocument();
-        expect(resolutionField[0]).toBeInTheDocument();
+    await setupWithSelectionsSuperUser(user);
+    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
 
-        await user.type(commentField[0], 'Can I get more details');
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
 
-        const commentButton = screen.getAllByRole('button', { name: /comment/i });
-        const resolveButton = screen.getAllByRole('button', { name: /close ticket/i });
-
-        expect(resolveButton[0]).not.toBeDisabled();
-        
-        expect(commentButton[0]).not.toBeDisabled();
-        expect(commentButton[1]).toBeDisabled();
-
-        await user.click(commentButton[0]);
-
-        await waitFor(() => {
-          expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
-        });
-
-      await waitFor(() => {
-
-        expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
-          1,
-          'New comment on ticket #2',
-          `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
-          'eandv3851@gmail.com',
-          'AFE Partner Connections',
-          supportEmail,
-          'eandv3851@gmail.com',
-          "https://afepartner.com/mainscreen/supporthistory"
-        );
-
-        expect(commentField[0]).toHaveValue('');
-      });
-
-        await user.type(resolutionField[0], 'Nevermind I fix');
-
-        await user.click(resolveButton[0]);
-
-        await waitFor(() => {
-        expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487","Nevermind I fix");
-        });
-
-        await waitFor(() => {
-
-        expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
-          2,
-          `Ticket Resolved for: ${orginalTicketUpdatedResponse.subject}`,
-          `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has resolved this ticket: ${orginalTicketUpdatedResponse.resolution}`,
-          `${orginalTicketUpdatedResponse.created_by_email}`,
-          supportEmail,
-          'AFE Partner Connections',
-          'eandv3851@gmail.com',
-          "https://afepartner.com/mainscreen/supporthistory"
-        );
-
-        expect(commentField[0]).toHaveValue('');
-      });
-
-
-        
+    await waitFor(() => {
+      expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
+      expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
     });
 
-    test('Loads screen and allows Super User to send comment but resolve fails', async () => {
-        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-        (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-        (writeProvider.createSupportTicketThread as Mock)
-          .mockResolvedValueOnce({ok: true, data: singleTicketThreadResponse, message: null});
-        (fetchProvider.fetchSupportHistory as Mock)
-                  .mockResolvedValue({ok:true, data:supportHistory, message:null});
-        (writeProvider.updateSupportTicket as Mock)
-          .mockResolvedValue({ok:false, data: null, message: 'Returned Error'});
-        
-                await setupWithSelectionsSuperUser(user);
-                expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
+    const resolutionField = screen.getAllByRole('textbox', { name: 'Resolution' });
 
-        expect(screen.getByText('Support History')).toBeInTheDocument();
-        expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+    expect(commentField[0]).toBeInTheDocument();
+    expect(resolutionField[0]).toBeInTheDocument();
 
-        await waitFor(() => {
-          expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
-          expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
-          expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
-        });
+    await user.type(commentField[0], 'Can I get more details');
 
-        const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
-        const resolutionField = screen.getAllByRole('textbox', { name: 'Resolution' });
+    const commentButton = screen.getAllByRole('button', { name: /comment/i });
+    const resolveButton = screen.getAllByRole('button', { name: /close ticket/i });
 
-        expect(commentField[0]).toBeInTheDocument();
-        expect(resolutionField[0]).toBeInTheDocument();
+    expect(resolveButton[0]).not.toBeDisabled();
 
-        await user.type(commentField[0], 'Can I get more details');
+    expect(commentButton[0]).not.toBeDisabled();
+    expect(commentButton[1]).toBeDisabled();
 
-        const commentButton = screen.getAllByRole('button', { name: /comment/i });
-        const resolveButton = screen.getAllByRole('button', { name: /close ticket/i });
-
-        expect(resolveButton[0]).not.toBeDisabled();
-        
-        expect(commentButton[0]).not.toBeDisabled();
-        expect(commentButton[1]).toBeDisabled();
-
-        await user.click(commentButton[0]);
-
-        await waitFor(() => {
-          expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
-        });
-
-      await waitFor(() => {
-
-        expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
-          1,
-          'New comment on ticket #2',
-          `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
-          'eandv3851@gmail.com',
-          'AFE Partner Connections',
-          supportEmail,
-          'eandv3851@gmail.com',
-          "https://afepartner.com/mainscreen/supporthistory"
-        );
-
-        expect(commentField[0]).toHaveValue('');
-      });
-
-        await user.type(resolutionField[0], 'Nevermind I fix');
-
-        await user.click(resolveButton[0]);
-
-        await waitFor(() => {
-        expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487","Nevermind I fix");
-        });
-
-        expect(notifyFailure).toHaveBeenCalledWith(
-              `The ticket resolution did not save.  Check the Logs`
-            );
-
-        
-
-
-        
+    await act(async () => {
+      await user.click(commentButton[0]);
     });
+
+    await waitFor(() => {
+      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+
+      expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
+        1,
+        'New comment on ticket #2',
+        `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
+        'eandv3851@gmail.com',
+        'AFE Partner Connections',
+        supportEmail,
+        'eandv3851@gmail.com',
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+
+      expect(commentField[0]).toHaveValue('');
+    });
+
+    await user.type(resolutionField[0], 'Nevermind I fix');
+
+    await act(async () => {
+      await user.click(resolveButton[0]);
+    });
+
+    await waitFor(() => {
+      expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix");
+
+      expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
+        2,
+        `Ticket Resolved for: ${orginalTicketUpdatedResponse.subject}`,
+        `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has resolved this ticket: ${orginalTicketUpdatedResponse.resolution}`,
+        `${orginalTicketUpdatedResponse.created_by_email}`,
+        supportEmail,
+        'AFE Partner Connections',
+        'eandv3851@gmail.com',
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+
+      expect(commentField[0]).toHaveValue('');
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+  });
+
+  test('Loads screen and allows Super User to send comment but resolve fails', async () => {
+    (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+    (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
+    (writeProvider.createSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+    (fetchProvider.fetchSupportHistory as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (writeProvider.updateSupportTicket as Mock)
+      .mockResolvedValue({ ok: false, data: null, message: 'Returned Error' });
+
+    await setupWithSelectionsSuperUser(user);
+    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+
+    expect(screen.getByText('Support History')).toBeInTheDocument();
+    expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText(/This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going/i)).toBeInTheDocument();
+      expect(screen.getByText(/I have this issue you see/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Nov 29, 2025/i)[0]).toBeInTheDocument();
+    });
+
+    const commentField = screen.getAllByRole('textbox', { name: 'Add your comment' });
+    const resolutionField = screen.getAllByRole('textbox', { name: 'Resolution' });
+
+    expect(commentField[0]).toBeInTheDocument();
+    expect(resolutionField[0]).toBeInTheDocument();
+
+    await user.type(commentField[0], 'Can I get more details');
+
+    const commentButton = screen.getAllByRole('button', { name: /comment/i });
+    const resolveButton = screen.getAllByRole('button', { name: /close ticket/i });
+
+    expect(resolveButton[0]).not.toBeDisabled();
+
+    expect(commentButton[0]).not.toBeDisabled();
+    expect(commentButton[1]).toBeDisabled();
+
+    await act(async () => {
+      await user.click(commentButton[0]);
+    });
+
+    await waitFor(() => {
+      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+    });
+
+    await waitFor(() => {
+
+      expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
+        1,
+        'New comment on ticket #2',
+        `${loggedInUserIsSuperUser.firstName} ${loggedInUserIsSuperUser.lastName} has added a new comment: Can I get more details`,
+        'eandv3851@gmail.com',
+        'AFE Partner Connections',
+        supportEmail,
+        'eandv3851@gmail.com',
+        "https://afepartner.com/mainscreen/supporthistory"
+      );
+
+      expect(commentField[0]).toHaveValue('');
+    });
+
+    await user.type(resolutionField[0], 'Nevermind I fix');
+
+    await act(async () => {
+      await user.click(resolveButton[0]);
+    });
+
+    await waitFor(() => {
+      expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix");
+    });
+
+    expect(notifyFailure).toHaveBeenCalledWith(
+      `The ticket resolution did not save.  Check the Logs`
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+  });
+
 });

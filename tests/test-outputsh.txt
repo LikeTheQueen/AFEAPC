@@ -1,0 +1,130 @@
+
+[1m[46m RUN [49m[22m [36mv3.1.2 [39m[90mC:/Users/Queen Elizabeth/Desktop/AFE Partner/AFE Partner Connect/my-react-router-app[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:30204) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows user to send comment[33m 1714[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mError saving comment[33m 1438[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mNo calls for support tickets are made if the user is not logged in[32m 51[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mShows an error when the call for Support Tickets fails[32m 107[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows Super User to send comment and resolve[33m 2137[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows Super User to send comment but resolve fails[33m 2652[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 09:25:33
+[2m   Duration [22m 14.85s[2m (transform 1.01s, setup 889ms, collect 2.30s, tests 8.10s, environment 1.55s, prepare 574ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    2.99 |    40.93 |   11.51 |    2.99 |                   
+ src               |       0 |        0 |       0 |       0 |                   
+  edge.ts          |       0 |        0 |       0 |       0 | 1-22              
+  entry.client.tsx |       0 |        0 |       0 |       0 | 1-12              
+  root.tsx         |       0 |        0 |       0 |       0 | 1-73              
+  routes.ts        |       0 |        0 |       0 |       0 | 1-49              
+ src/blocks        |       0 |        0 |       0 |       0 |                   
+  ...tingLines.tsx |       0 |        0 |       0 |       0 | 1-501             
+  LiquidEther.tsx  |       0 |        0 |       0 |       0 | 1-1248            
+  StarBorder.tsx   |       0 |        0 |       0 |       0 | 1-53              
+ ...ions/FuzzyText |       0 |        0 |       0 |       0 |                   
+  FuzzyText.tsx    |       0 |        0 |       0 |       0 | 1-214             
+ src/constants     |     100 |      100 |     100 |     100 |                   
+  variables.tsx    |     100 |      100 |     100 |     100 |                   
+ src/helpers       |    6.14 |       25 |   16.66 |    6.14 |                   
+  helpers.tsx      |       0 |        0 |       0 |       0 | 1-235             
+  styleHelpers.tsx |   25.67 |    33.33 |      20 |   25.67 | ...58,60-65,78-82 
+ src/routes        |       0 |        0 |       0 |       0 |                   
+  footer.tsx       |       0 |        0 |       0 |       0 | 1-157             
+  landing.tsx      |       0 |        0 |       0 |       0 | 1-243             
+  ...rSupabase.tsx |       0 |        0 |       0 |       0 | 1-28              
+  mainScreen.tsx   |       0 |        0 |       0 |       0 | 1-556             
+  ...eUserGrid.tsx |       0 |        0 |       0 |       0 | 1-180             
+  ...FEsupport.tsx |       0 |        0 |       0 |       0 | 1-281             
+  pageNotFound.tsx |       0 |        0 |       0 |       0 | 1-35              
+  ...ratorGrid.tsx |       0 |        0 |       0 |       0 | 1-349             
+  ...gurations.tsx |       0 |        0 |       0 |       0 | 1-22              
+ ...shboard/routes |       0 |        0 |       0 |       0 |                   
+  afe.tsx          |       0 |        0 |       0 |       0 | 1-390             
+  afeDetail.tsx    |       0 |        0 |       0 |       0 | 1-705             
+  ...storicals.tsx |       0 |        0 |       0 |       0 | 1-355             
+  afeHistory.tsx   |       0 |        0 |       0 |       0 | 1-289             
+  ...entViewer.tsx |       0 |        0 |       0 |       0 | 1-126             
+  ...fications.tsx |       0 |        0 |       0 |       0 | 1-576             
+ ...routes/helpers |       0 |        0 |       0 |       0 |                   
+  afeCard.tsx      |       0 |        0 |       0 |       0 | 1-70              
+  afeFilters.tsx   |       0 |        0 |       0 |       0 | 1-88              
+  afeHeader.tsx    |       0 |        0 |       0 |       0 | 1-46              
+  helpers.tsx      |       0 |        0 |       0 |       0 | 1-137             
+  styleHelpers.tsx |       0 |        0 |       0 |       0 | 1-138             
+ ...erators/routes |       0 |        0 |       0 |       0 |                   
+  ...eOperator.tsx |       0 |        0 |       0 |       0 | 1-580             
+  editOperator.tsx |       0 |        0 |       0 |       0 | 1-777             
+  ...ndPartner.tsx |       0 |        0 |       0 |       0 | 1-300             
+  ...teFilters.tsx |       0 |        0 |       0 |       0 | 1-209             
+  ...egrations.tsx |       0 |        0 |       0 |       0 | 1-3               
+ ...itUsers/routes |       0 |        0 |       0 |       0 |                   
+  ...teNewUser.tsx |       0 |        0 |       0 |       0 | 1-527             
+  ...Dashboard.tsx |       0 |        0 |       0 |       0 | 1-79              
+  ...rmissions.tsx |       0 |        0 |       0 |       0 | 1-76              
+  ...onsSystem.tsx |       0 |        0 |       0 |       0 | 1-76              
+  ...ersSystem.tsx |       0 |        0 |       0 |       0 | 1-78              
+ ...routes/helpers |       0 |        0 |       0 |       0 |                   
+  helpers.tsx      |       0 |        0 |       0 |       0 | 1-126             
+ ...rations/routes |       0 |        0 |       0 |       0 |                   
+  glFileUpload.tsx |       0 |        0 |       0 |       0 | 1-231             
+  glMapping.tsx    |       0 |        0 |       0 |       0 | 1-535             
+  ...ppingView.tsx |       0 |        0 |       0 |       0 | 1-277             
+ ...braries/routes |       0 |        0 |       0 |       0 |                   
+  glLibrary.tsx    |       0 |        0 |       0 |       0 | 1-174             
+  ...erLibrary.tsx |       0 |        0 |       0 |       0 | 1-165             
+ ...ntPages/routes |       0 |        0 |       0 |       0 |                   
+  ...gurations.tsx |       0 |        0 |       0 |       0 | 1-182             
+ ...rations/routes |       0 |        0 |       0 |       0 |                   
+  ...ileUpload.tsx |       0 |        0 |       0 |       0 | 1-310             
+  ...erMapping.tsx |       0 |        0 |       0 |       0 | 1-586             
+  ...ppingView.tsx |       0 |        0 |       0 |       0 | 1-245             
+ ...aredComponents |    3.14 |    37.03 |    9.52 |    3.14 |                   
+  fileUpload.tsx   |       0 |        0 |       0 |       0 | 1-164             
+  loadingPage.tsx  |       0 |        0 |       0 |       0 | 1-16              
+  ...ayMessage.tsx |     100 |      100 |     100 |     100 |                   
+  ...rDropdown.tsx |       0 |        0 |       0 |       0 | 1-68              
+  ...ltiSelect.tsx |       0 |        0 |       0 |       0 | 1-123             
+  pagnation.tsx    |   37.43 |       75 |   16.66 |   37.43 | ...70-173,195,204 
+  ...rDropdown.tsx |       0 |        0 |       0 |       0 | 1-65              
+  ...ltiSelect.tsx |       0 |        0 |       0 |       0 | 1-137             
+  ...ssionGrid.tsx |       0 |        0 |       0 |       0 | 1-491             
+  ...dUIBlocks.tsx |       0 |        0 |       0 |       0 | 1-28              
+  ...eCheckbox.tsx |       0 |        0 |       0 |       0 | 1-196             
+  tabChange.tsx    |       0 |        0 |       0 |       0 | 1-18              
+  testExecute.tsx  |       0 |        0 |       0 |       0 | 1-109             
+  ...uteManual.tsx |       0 |        0 |       0 |       0 | 1-203             
+  ...ardSystem.tsx |       0 |        0 |       0 |       0 | 1-180             
+  ...onsSystem.tsx |       0 |        0 |       0 |       0 | 1-490             
+ ...support/routes |   46.76 |     87.5 |   85.71 |   46.76 |                   
+  ...ctSupport.tsx |       0 |        0 |       0 |       0 | 1-131             
+  ...rtHistory.tsx |     100 |    90.74 |     100 |     100 | 34,94-95,143-144  
+  ...emHistory.tsx |       0 |        0 |       0 |       0 | 1-289             
+ ...erLogin/routes |       0 |        0 |       0 |       0 |                   
+  login.tsx        |       0 |        0 |       0 |       0 | 1-191             
+  otpInput.tsx     |       0 |        0 |       0 |       0 | 1-85              
+ ...Profile/routes |       0 |        0 |       0 |       0 |                   
+  profile.tsx      |       0 |        0 |       0 |       0 | 1-106             
+ src/scripts       |       0 |        0 |       0 |       0 |                   
+  ...sRetryFunc.ts |       0 |        0 |       0 |       0 | 1-23              
+  ...oDocHandle.ts |       0 |        0 |       0 |       0 | 1-42              
+  ...hAuthToken.ts |       0 |        0 |       0 |       0 | 1-25              
+  ...uteAFEData.ts |       0 |        0 |       0 |       0 | 1-109             
+  ...EDocHandle.ts |       0 |        0 |       0 |       0 | 1-33              
+  ...EEstimates.ts |       0 |        0 |       0 |       0 | 1-36              
+  ...teHoldCode.ts |       0 |        0 |       0 |       0 | 1-396             
+  executeLogout.ts |       0 |        0 |       0 |       0 | 1-24              
+  ...itePromise.ts |       0 |        0 |       0 |       0 | 1-37              
+ src/types         |    9.98 |       50 |    2.63 |    9.98 |                   
+  ...seContext.tsx |   20.75 |       50 |      50 |   20.75 | 21-67,72-73       
+  interfaces.ts    |     100 |      100 |     100 |     100 |                   
+  transform.ts     |    6.52 |      100 |       0 |    6.52 | ...65-677,680-687 
+-------------------|---------|----------|---------|---------|-------------------

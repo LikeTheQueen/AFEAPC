@@ -1,21 +1,30 @@
 import { useState, useEffect } from 'react';
 import supabase from "provider/supabase";
 import type { Session } from "@supabase/supabase-js";
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import OTPInput from './otpInput';
 import "../../../style.css";
+import { resendOTPCoolDown } from 'src/constants/variables';
+import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
+import { ToastContainer } from 'react-toastify';
+import { useSearchParams } from 'react-router';
+import { otpLength } from 'src/constants/variables';
+import { writeToFunctionLogs } from 'provider/write';
 
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [otp, setOTP] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [hideVerification, setHideVerification] = useState(true)
-  const [session, setSession] = useState<Session | null>()
+  const [email, setEmail] = useState('');
+  const [otp, setOTP] = useState<string[]>(Array(otpLength).fill(''));
+  const [errorSupabase, setErrorSupabase] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hideVerification, setHideVerification] = useState(true);
+  const [session, setSession] = useState<Session | null>();
+  const [resendCooldown, setResendCooldown] = useState(0);
+
   const navigate = useNavigate();
-  
-  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const [searchParams] = useSearchParams()
+  const from = searchParams.get('redirectTo') ?? '/mainscreen/afe'
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   useEffect(() => {
   const getInitialSession = async () => {
@@ -42,14 +51,18 @@ export default function LoginForm() {
 
 useEffect(() => {
     if (session) {
-      navigate('/mainscreen/afe') 
+      navigate(from, { replace: true });
     }
-  }, [session])
-  
-  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
+  }, [session, navigate, from]);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  const sendOTP = async() => {
+    setIsLoading(true);
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -57,37 +70,51 @@ useEffect(() => {
         options: {
           shouldCreateUser: false,
         },
-      })
-      if (error) throw error
-     setError(error)
-      
+      });
+
+      if (error) throw error;
+
+      setHideVerification(false);
+      setResendCooldown(resendOTPCoolDown);
+     
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.name : 'An error occurred')
+      setErrorSupabase(error instanceof Error ? error.message : 'An error occurred');
+      notifyFailure(error instanceof Error ? error.message : 'Unable to send OTP email.  Are you sure you are an authorized user?');
+      writeToFunctionLogs('Send User OTP Email',error instanceof Error ? error.message : 'An error occurred', error as JSON, 'ERROR', `${email} trying to logon`)
     } finally {
       setIsLoading(false)
-      setHideVerification(false)
     }
-  }
-  const handleOTP = async(pin: string) => {
-   // e.preventDefault()
-    setIsLoading(true)
-    setError(null)
+  };
+  
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    await sendOTP();
+  };
 
+  const handleOTP = async(pin: string) => {
+    setIsLoading(true)
+    
     try {
-      const { data: { session }, error } = await supabase.auth.verifyOtp({
+      const { error } = await supabase.auth.verifyOtp({
         email: email,
         token: pin,
         type: 'email',
         
-      })
-      if (error) throw error
+      });
+
+      if (error) throw error;
       
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.name : 'An error occurred')
+      setErrorSupabase(error instanceof Error ? error.name : 'An error occurred');
+      notifyFailure(error instanceof Error ? error.message : 'Invalid or expired code.');
+      setOTP(Array(otpLength).fill(''));
+      writeToFunctionLogs('User Enter OTP',error instanceof Error ? error.message : 'An error occurred', error as JSON, 'ERROR', `${email} trying to logon`)
     } finally {
       setIsLoading(false)
     }
-  }
+  };
+
+  if (session === undefined) return null;
 
   return (
     <>
@@ -125,16 +152,30 @@ useEffect(() => {
             name='getVerification'
             type="button"
             onClick={handleLogin}
-            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)] disabled:text-[var(--darkest-teal)]/40" disabled={isLoading || !isValidEmail(email)}>
-            {isLoading ? 'Sending Verification Code...' : 'Get Verification Code'}
+            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-white disabled:text-[var(--darkest-teal)]/40 disabled:cursor-not-allowed" 
+            disabled={isLoading || !isValidEmail(email) || resendCooldown > 0}>
+            {resendCooldown > 0 ? `Request Verification Code Again in ${resendCooldown}s`: 'Get Verification Code'}
+          </button>
+        </div>
+        <div hidden={resendCooldown <= 0 || (resendCooldown > 0 && !hideVerification)}>
+          <button
+            name='enterOTP'
+            type="button"
+            onClick={(e) => setHideVerification(false)}
+            className="flex w-full justify-center rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)] disabled:text-[var(--darkest-teal)]/40" 
+            //disabled={isLoading || !isValidEmail(email)}
+            >
+            I Have the Verification Code
           </button>
         </div>
         <div hidden={hideVerification}>
             <label htmlFor="otp" className="text-lg/6 font-medium text-white custom-style align-center">
             Verification Code
           </label>
-            <p className="mb-10 mt-2 text-base/6 text-white custom-style-info">If your email address is associated to an active user you will be sent a verification code.  Enter that below.</p>
-            <OTPInput length={6} onComplete={handleOTP} />
+            <p className="mt-6 text-base/6 text-white custom-style-long-text">If your email address is associated to an active user you will be sent a verification code.</p>
+            <br></br>
+            <p className="mb-10 text-base/6 text-white custom-style-long-text">Check with your orgamozation's admin if you have questions.</p>
+            <OTPInput otp={otp} length={otpLength} onComplete={handleOTP} onPinChange={(otp) => setOTP(otp)} onHideVerification={(hideVerification => setHideVerification(hideVerification))} />
         </div>
         
       </form>
@@ -144,6 +185,7 @@ useEffect(() => {
       
     </div>
   </div>
+  <ToastContainer icon={false}></ToastContainer>
   </>
   )
 }

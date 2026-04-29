@@ -6,7 +6,7 @@ import { handleSendEmail } from "email/emailBasic";
 import { fetchSupportHistory } from "provider/fetch";
 import { createSupportTicketThread, updateSupportTicket } from "provider/write";
 
-import { notifyFailure } from "src/helpers/helpers";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { formatDateShort } from "src/helpers/styleHelpers";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { UniversalPaginationForDarkBackground } from "src/routes/sharedComponents/pagnation";
@@ -225,7 +225,7 @@ export default function SupportHistory() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer icon={false}/>
     </>
   );
 }

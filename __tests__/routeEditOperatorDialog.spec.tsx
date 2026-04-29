@@ -6,13 +6,14 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2 } from './test-utils/rachelGreenuser'
+import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
 import { operatorRecordNullValues, CorrWhitOilsOperatorRecord, CorrWhitOilsOperatorRecordUpdated, CorrWhitOilsWithOnePartnerOperatorRecord } from './test-utils/operatorRecordsFormatted'
 
 vi.mock('provider/write', () => ({
   updateOperatorNameAndStatus: vi.fn(),
   updateOperatorAddress: vi.fn(),
   updatePartnerNameAndStatus: vi.fn(),
+  updatePartnerAddress: vi.fn(),
 }));
 
 describe('Edit Operators',() => {
@@ -111,6 +112,10 @@ describe('Edit Operators',() => {
                   ok: true,
                   data: {id: 'record-d', active: true, name: 'CMS Co'}
               });
+      vi.mocked(writeProvider.updatePartnerAddress).mockResolvedValueOnce({
+                  ok: true,
+                  data: {id: 'record-d', active: true}
+              });
 
       renderWithProviders(<EditOperator token='test-token' operatorToEdit={CorrWhitOilsWithOnePartnerOperatorRecord} />, {
                       supabaseOverrides: {
@@ -137,8 +142,7 @@ describe('Edit Operators',() => {
 
         const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
         const operatorCityInput = screen.getAllByRole('textbox', { name: /city/i });
-        screen.debug();
-        console.log(operatorCityInput[1]);
+       
         expect(operatorNameInput[1]).toHaveValue('Corr Partner Name');
         expect(operatorCityInput[1]).toHaveValue('Dallas');
         await user.clear(operatorNameInput[1]);
@@ -154,6 +158,7 @@ describe('Edit Operators',() => {
 
         await waitFor(() => {
           expect(writeProvider.updatePartnerNameAndStatus).toHaveBeenCalled();
+          expect(writeProvider.updatePartnerAddress).toHaveBeenCalled();
         });
 
     });

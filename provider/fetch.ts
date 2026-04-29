@@ -28,7 +28,7 @@ export const fetchSourceSystems = async() => {
 };
 
 export const fetchUserProfileRecordFromSupabase = async(session: string) => {
-  const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name),apc_address_id(id, street, suite, city, state, zip, country)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name), apc_address_id(id, street, suite, city, state, zip, country)),is_super_user ')
+  const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name, active),apc_address_id(id, street, suite, city, state, zip, country,active)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name,active, apc_op_id), apc_address_id(id, street, suite, city, state, zip, country, active)),is_super_user ')
   .eq('id', session)
   .eq('PARTNER_USER_PERMISSIONS.active', true)
   .eq('OPERATOR_USER_PERMISSIONS.active', true)
@@ -38,6 +38,7 @@ export const fetchUserProfileRecordFromSupabase = async(session: string) => {
       console.error(`Error fetching user profile:`, error);
       return null;
     }
+    console.log(data);
     return transformUserProfileRecordSupabase(data);
 };
 
@@ -218,13 +219,14 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 };
 
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
-  if(apc_op_id==='') return;
   const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('id, source_id, street, suite, city, state, zip, country, active, name')
   .eq('apc_op_id',apc_op_id);
-  if (error || !data) {
-      console.error(`Error fetching Partners:`, error);
-      return [];
+  if (error) {
+      return {ok: false, data:[]};
     }
+  if(!data) {
+    return {ok: true, data:[]};
+  }
     const dataTransformed = transformPartnerSourceSystemAddress(data);
     const sourcePartListSorted = dataTransformed.sort((a,b) => {
                         if (a.name === undefined && b.name === undefined) {
@@ -238,7 +240,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
                         }
                         return (a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
                     });
-    return sourcePartListSorted;
+    return {ok: true, data:sourcePartListSorted};
 };
 
  export const fetchPartnersFromPartnersCrosswalk = async(apc_op_id: string) => {
@@ -246,12 +248,14 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   .eq('operator',apc_op_id)
   .eq('active', true);
   
-  if (error || !data) {
-      console.error(`Error fetching Partners from Crosswalk:`, error);
-      return [];
+  if (error) {
+      return {ok: false, data:[]};
     }
+  if(!data) {
+    return {ok: true, data:[]};
+  }
     const mappedData = transformPartnerMapRecordForDisplay(data);
-    return mappedData;
+    return {ok: true, data:mappedData};
 };
 
  export const fetchAllOperators = async() => {
@@ -594,12 +598,12 @@ export async function fetchAFEWells(source_system_id: string, apc_op_id:string, 
     return callEdge<TogglePayload, ToggleResult>("fetch_AFE_wells", { source_system_id, apc_op_id }, token);
   };
 
-export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, roles: number[], token: string) {
+export async function fetchOperatorsOrPartnersToEdit(loggedinUserId: string, table: string, addressTable: string, roles: number[], token: string, signal?: AbortSignal) {
     
     type TogglePayload = { loggedinUserId: string; table: string; addressTable: string; roles: number[]; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable, roles }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_Operators_And_Partners", { loggedinUserId, table, addressTable, roles }, token, signal);
   };
 
 export async function verifyClaimProof(afe_doc_id: string, partner_doc_id: string, id: number, token: string) {

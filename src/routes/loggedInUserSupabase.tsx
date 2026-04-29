@@ -6,11 +6,10 @@ import { useSupabaseData } from "../types/SupabaseContext";
 
 //const { session } = useSupabaseData();
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  //const { supabase } = createClient
-  
   const { data, error } = await supabase.auth.getUser()
   if (error || !data?.user) {
-    return redirect('/login')
+    const url = new URL(request.url)
+    throw redirect(`/login?redirectTo=${encodeURIComponent(url.pathname)}`)
   }
 
   return data

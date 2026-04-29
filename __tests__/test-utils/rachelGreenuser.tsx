@@ -18,11 +18,13 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
                 street: '6789 S Blvd',
-                suite: '',
+                suite: '45',
                 city: 'Houston',
                 state: 'Texas',
                 zip: '90078',
@@ -43,6 +45,8 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -68,11 +72,13 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
                 street: '6789 S Blvd',
-                suite: '',
+                suite: '45',
                 city: 'Houston',
                 state: 'Texas',
                 zip: '90078',
@@ -95,7 +101,9 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     partnerRoles: [
         {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_op_id_CW,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -120,7 +128,9 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -145,7 +155,9 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -170,7 +182,202 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
+            address_active: true,
+            id: 10,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 185,
+        role: 6,
+        active: true,
+        apc_id: apc_part_id_John,
+        apc_address_id: 10
+    }
+    
+    ],
+};
+
+export const loggedInUserRachelGreenNoAddress: UserProfileRecordSupabaseType = {
+    firstName: 'Rachel',
+    lastName: 'Green',
+    email: 'elizabeth.rider.shaw@gmail.com',
+    active: true,
+    is_super_user: false,
+    operatorRoles: [
+        {
+            apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
+            apc_address: {
+                address_active: true,
+                id: 66,
+                street: '6789 S Blvd',
+                suite: '45',
+                city: 'Houston',
+                state: 'Texas',
+                zip: '90078',
+                country: 'United States'
+            },
+            user_id: userID1,
+            user_firstname: 'Rachel',
+            user_lastName: 'Green',
+            user_email: 'elizabeth.rider.shaw@gmail.com',
+            user_active: true,
+            is_op_permission: true,
+            is_partner_permission: false,
+            id: 120,
+            role: 2,
+            active: true,
+            apc_id: apc_op_id_CW,
+            apc_address_id: 66
+        },
+        {
+            apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
+            apc_address: {
+                address_active: true,
+                id: 66,
+                street: '6789 S Blvd',
+                suite: '',
+                city: 'Houston',
+                state: 'Texas',
+                zip: '90078',
+                country: 'United States'
+            },
+            user_id: userID1,
+            user_firstname: 'Rachel',
+            user_lastName: 'Green',
+            user_email: 'elizabeth.rider.shaw@gmail.com',
+            user_active: true,
+            is_op_permission: true,
+            is_partner_permission: false,
+            id: 120,
+            role: 4,
+            active: true,
+            apc_id: apc_op_id_CW,
+            apc_address_id: 66
+        },
+        {
+            apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
+            apc_address: null,
+            user_id: userID1,
+            user_firstname: 'Rachel',
+            user_lastName: 'Green',
+            user_email: 'elizabeth.rider.shaw@gmail.com',
+            user_active: true,
+            is_op_permission: true,
+            is_partner_permission: false,
+            id: 120,
+            role: 8,
+            active: true,
+            apc_id: apc_op_id_CW,
+            apc_address_id: 66
+        },
+    ],
+    partnerRoles: [
+        {
+        apc_name: 'John Ross',
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
+            address_active: true,
+            id: 10,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 35,
+        role: 3,
+        active: true,
+        apc_id: apc_part_id_John,
+        apc_address_id: 10
+    },
+    {
+        apc_name: 'John Ross',
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
+            address_active: true,
+            id: 10,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 72,
+        role: 9,
+        active: true,
+        apc_id: apc_part_id_John,
+        apc_address_id: 10
+    },
+    {
+        apc_name: 'John Ross',
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
+            address_active: true,
+            id: 10,
+            street: '2900 S Emerson St',
+            suite:'878',
+            city: 'Englewood',
+            state: 'CO',
+            zip: '80093',
+            country: 'United States'
+        },
+        user_id: userID1,
+        user_firstname: 'Rachel',
+        user_lastName: 'Green',
+        user_email: 'elizabeth.rider.shaw@gmail.com',
+        user_active: true,
+        is_op_permission: false,
+        is_partner_permission: true,
+        id: 74,
+        role: 5,
+        active: true,
+        apc_id: apc_part_id_John,
+        apc_address_id: 10
+    },
+    {
+        apc_name: 'John Ross',
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -207,6 +414,8 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -232,6 +441,8 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -257,6 +468,8 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -284,7 +497,9 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
     partnerRoles: [
         {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -309,7 +524,9 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -334,7 +551,9 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -359,7 +578,9 @@ export const loggedInUserRachelGreenWithUserId: UserProfileRecordSupabaseType = 
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -396,7 +617,9 @@ export const loggedInUserRossGeller: UserProfileRecordSupabaseType = {
     partnerRoles: [
         {
         apc_name: 'Athena',
-        apc_address: {
+        apc_op_id: apc_part_id_Athena,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -421,7 +644,9 @@ export const loggedInUserRossGeller: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'Athena',
-        apc_address: {
+        apc_op_id: apc_part_id_Athena,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -446,7 +671,9 @@ export const loggedInUserRossGeller: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'Athena',
-        apc_address: {
+        apc_op_id: apc_part_id_Athena,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -471,7 +698,9 @@ export const loggedInUserRossGeller: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'Athena',
-        apc_address: {
+        apc_op_id: apc_part_id_Athena,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -507,6 +736,8 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -515,7 +746,8 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
                 city: 'Houston',
                 state: 'Texas',
                 zip: '90078',
-                country: 'United States'
+                country: 'United States',
+            
             },
             user_id: userID1,
             user_firstname: 'Rachel',
@@ -532,6 +764,8 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -559,7 +793,9 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
     partnerRoles: [
         {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -584,7 +820,9 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -609,7 +847,9 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -634,7 +874,9 @@ export const loggedInUserRachelGreenNoRole2: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -670,6 +912,8 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -695,6 +939,8 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -722,7 +968,9 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
     partnerRoles: [
         {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -747,7 +995,9 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -772,7 +1022,9 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -808,6 +1060,8 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9: UserProfile
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -836,7 +1090,9 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9: UserProfile
     partnerRoles: [
         {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -861,7 +1117,9 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9: UserProfile
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -897,6 +1155,8 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -922,6 +1182,8 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
         },
         {
             apc_name: 'Corr and Whit Oils Company',
+            apc_op_id: apc_op_id_CW,
+            apc_name_active: true,
             apc_address: {
                 address_active: true,
                 id: 66,
@@ -949,7 +1211,9 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     partnerRoles: [
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -974,7 +1238,9 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',
@@ -999,7 +1265,9 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     },
     {
         apc_name: 'John Ross',
-        apc_address: {
+        apc_op_id: apc_part_id_John,
+        apc_name_active: true,
+            apc_address: {
             address_active: true,
             id: 10,
             street: '2900 S Emerson St',

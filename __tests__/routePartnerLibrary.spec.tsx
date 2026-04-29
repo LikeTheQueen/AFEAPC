@@ -138,7 +138,7 @@ describe('View and edit the partner mappings',() => {
 
     test('Fetches the partners and allows users to delete a partner', async () => {
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-          .mockResolvedValue(operatorPartnerLibrary4Records);
+          .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
 
         await setupWithSelections(user);
         expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);
@@ -154,8 +154,6 @@ describe('View and edit the partner mappings',() => {
       await user.click(within(partnerRow).getByRole('button'));
       });
 
-    
-    
     test.skip('Select Op Account Codes after Non Op Call', async () => {
         (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
           .mockResolvedValueOnce(WhitAndCorrOilAccountCodes)
@@ -186,7 +184,7 @@ describe('View and edit the partner mappings',() => {
 
     test('Fetches account codes and allows users to bring one back from the dead', async () => {
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
-          .mockResolvedValue(operatorPartnerLibrary4Records);
+          .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
 
         await setupWithSelections(user);
        expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);

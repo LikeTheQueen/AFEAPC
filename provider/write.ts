@@ -189,12 +189,11 @@ import type { UUID } from 'crypto';
   };
 
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
-    const { data, error } = await supabase.from('PARTNERS_CROSSWALK').insert(partnerRecords).select();
+    const { error } = await supabase.from('PARTNERS_CROSSWALK').insert(partnerRecords);
     if (error) {
-        console.error(`Error adding the Operator's Partner Maps`, error, data);
-        return null;
+        return {ok:false, message: error.message};
       }
-      return data;
+      return {ok:true};
   };
   
   export const updatePartnerProcessedMapping = async(partnerSourceID: string[], mapValue: boolean) => {
@@ -208,13 +207,12 @@ import type { UUID } from 'crypto';
   };
 
   export const updatePartnerProcessedMapValue = async(id: number[], mapValue: boolean) => {
-   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('id',id).select();
+   const {error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('id',id);
     
     if (error) {
-        console.error(`Error updating the Partners Processed Table`, error, data);
-        return null;
+        return {ok:false, message: error.message};
       }
-      return data;
+      return {ok:true};
   };
 
   export const updatePartnerProcessedStatus = async(id: number, status: boolean) => {

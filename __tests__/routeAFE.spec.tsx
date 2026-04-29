@@ -6,8 +6,10 @@ vi.mock('../provider/supabase', () => ({
 import AFE from '../src/routes/afeDashboard/routes/afe';
 import { formatDate, formatDateShort } from "../src/helpers/styleHelpers";
 import * as fetchProvider from '../provider/fetch';
+import * as writeProvider from "provider/write";
+import * as emailProvider from '../email/emailBasic';
 import { vi, type Mock } from 'vitest';
-import { getByTestId, screen, waitFor } from '@testing-library/react';
+import { cleanup, getByTestId, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import {
@@ -20,6 +22,7 @@ import {
   PartnerDropdown,
   loggedInUserIsSuperUser
 } from './test-utils/afeRecords';
+import { rachelGreenAllRolesActive } from './test-utils/routeCreateEditUsersHelpersVariables';
 
 vi.mock('../provider/fetch', () => ({
   updateAFEPartnerStatusSupabase: vi.fn(),
@@ -29,26 +32,37 @@ vi.mock('../provider/fetch', () => ({
   fetchAllPartners: vi.fn(),
 }));
 
+vi.mock('provider/write', () => ({
+  updateAFEPartnerStatus: vi.fn().mockResolvedValue({ ok: true, data: null }),
+  insertAFEHistory: vi.fn(),
+}));
+
+vi.mock('../email/emailBasic', () => ({
+  handleSendEmail: vi.fn().mockResolvedValue(undefined),
+  sendEmail: vi.fn().mockResolvedValue({ id: 'mock-email-id' }),
+}));
+
 
 describe('displaying AFEs', () => {
   beforeEach(() => {
-    // Set default mocks that all tests can use
-    (fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
-    (fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
+    cleanup();
+    vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
+    vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
+    vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afesReturnedFromSupabase });
+    console.log('fetchAFEs mock set:', vi.mocked(fetchProvider.fetchAFEs).getMockImplementation());
+    vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });
   });
 
-    afterEach(() => {
+    afterEach(async() => {
         vi.resetAllMocks();
         vi.clearAllMocks();
+        cleanup();
+        await new Promise(resolve => setTimeout(resolve, 200));
     })
 
   test('Show all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
@@ -146,10 +160,6 @@ describe('displaying AFEs', () => {
   test('Show all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
@@ -247,10 +257,6 @@ describe('displaying AFEs', () => {
   test('Hides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RossGeller_Op_CW_No_NonOp,
@@ -342,14 +348,12 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
     
+    await new Promise(resolve => setTimeout(resolve, 200));
 
   });
 
   test('Shows Non-Operated AFEs when a user (Rachel Green) logs in', async () => {
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
@@ -380,6 +384,7 @@ describe('displaying AFEs', () => {
     await waitFor(() => {
     expect(screen.getByTestId('Non-OperatedAFElistHeader')).toBeVisible();
     });
+    
     await waitFor(() => {
 
       expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
@@ -398,10 +403,7 @@ describe('displaying AFEs', () => {
   });
 
   test('Shows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs', async () => {
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
@@ -450,10 +452,7 @@ describe('displaying AFEs', () => {
   });
 
   test('Shows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs', async () => {
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RossGeller_Op_CW_No_NonOp,
@@ -502,10 +501,6 @@ describe('displaying AFEs', () => {
   test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
@@ -566,20 +561,29 @@ describe('displaying AFEs', () => {
       //EXPECT ARCHIVED AFEs NOT to be Visible
       expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
       expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+      expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).toBeVisible();
     });
 
-    expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).toBeVisible();
+    
 
   });
 
   test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+    (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
+      ok: true,
+      data: { id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb', status: 'Viewed'}
+    });
+
+    (emailProvider.handleSendEmail as Mock).mockImplementation(() => 
+  Promise.resolve({ ok: true })
+);
     renderWithProviders(<AFE />, {
+      routes: [
+      { path: '/', element: <AFE /> },
+      { path: '/afeDetail/:afeID', element: <div>AFE Detail</div> },
+    ],
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
         loading: false,
@@ -640,16 +644,34 @@ describe('displaying AFEs', () => {
       expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
       expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
     });
+
+    await user.click(screen.getByRole("link", { name: /06D111JC/i }));
+
+    await waitFor(() => {
+      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
+      expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
+        'Your AFE has been viewed by Rachel at Corr and Whit Oils',
+        'This message is to let you know that your AFE has been viewed!',
+        'John Ross Exploration Inc',
+        'Corr and Whit Oils',
+        "AFE Partner Connections",
+        RachelGreen_AllPermissions_CW_NonOpCW.email,
+        `https://www.afepartner.com/mainscreen/afeDetail/2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb`,
+        'View AFE'
+      )
+    });
+
+    await waitFor(() => {
+  expect(screen.getByText('AFE Detail')).toBeInTheDocument();
+});
+await new Promise(resolve => setTimeout(resolve, 150));
     
   });
 
   test('Shows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
@@ -719,10 +741,7 @@ describe('displaying AFEs', () => {
   test('Shows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
@@ -840,10 +859,7 @@ describe('displaying AFEs', () => {
   test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
+     
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
@@ -1013,12 +1029,11 @@ describe('displaying AFEs', () => {
   test('Shows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both', async () => {
     const user = userEvent.setup();
 
-    (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
-    ok: true,
-    data: afesReturnedFromSupabase
-  });
-    
   renderWithProviders(<AFE />, {
+    routes: [
+      { path: '/', element: <AFE /> },
+      { path: '/afeDetail/:afeID', element: <div>AFE Detail</div> },
+    ],
       supabaseOverrides: {
         loggedInUser: loggedInUserIsSuperUser,
         loading: false,
@@ -1086,6 +1101,17 @@ describe('displaying AFEs', () => {
       //expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
       //expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
     });
+
+    
+      await user.click(screen.getAllByRole("link", { name: /06D111JC/i })[0]);
+   
+
+    await waitFor(() => {
+  expect(screen.getByText('AFE Detail')).toBeInTheDocument();
+});
+
+expect(writeProvider.updateAFEPartnerStatus).not.toHaveBeenCalled();
+await new Promise(resolve => setTimeout(resolve, 150));
    
   });
 

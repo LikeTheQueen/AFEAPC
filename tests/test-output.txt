@@ -1,0 +1,1412 @@
+
+[1m[46m RUN [49m[22m [36mv3.1.2 [39m[90mC:/Users/Queen Elizabeth/Desktop/AFE Partner/AFE Partner Connect/my-react-router-app[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:23156) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a message that there are no unclaimed addresses when the return has zero unclaimed addresses[33m 358[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of 2 unclaimed partner addresses that are NOT checked and Save button is disabled[32m 220[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses with a null value for the Operator ID.  Checkbox and Save buttons are disabled[32m 127[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt[33m 417[2mms[22m[39m
+[90mstdout[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that the claim proof id was not returned
+[22m[39m[33mtrue[39m
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that the claim proof id was not returned
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that there is not an AFE record to test against[32m 274[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID.  Clicks cancel and save again to refresh screen
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID.  Clicks cancel and save again to refresh screen
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that the claim proof id was not returned[33m 1850[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID.  Clicks cancel and save again to refresh screen[33m 1462[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID for AFE and UUID for Partner
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info[33m 2080[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters UUID for AFE and non UUID for Partner
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID for AFE and UUID for Partner[33m 2702[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info and is VERIFIED
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info and is VERIFIED
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters UUID for AFE and non UUID for Partner[33m 1247[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters incorrect info NO VERIFICATION
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info and is VERIFIED[33m 1834[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses then unchecks first address to claim and save second with opID
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses then unchecks first address to claim and save second with opID
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters incorrect info NO VERIFICATION[33m 1813[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses then unchecks first address to claim and save second with opID[33m 1864[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID[32m 176[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is VERIFIED
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is VERIFIED
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID[32m 163[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is VERIFIED[33m 1877[2mms[22m[39m
+[90mstderr[2m | __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22m[2mLink Partner Addresses to Operator[2m > [22m[2mDisplays a message that there are no unclaimed addresses when there is an error with the return
+[22m[39mFailed to load partners: Error: Row Level Security
+    at loadPartnersToOperatorsList [90m(C:\Users\Queen Elizabeth\Desktop\AFE Partner\AFE Partner Connect\my-react-router-app\[39msrc\routes\partnerToOperatorGrid.tsx:46:19[90m)[39m
+
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED[33m 1829[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a message that there are no unclaimed addresses when there is an error with the return[32m 46[2mms[22m[39m
+ [32m✓[39m __tests__/routepartnerToOperatorGrid.spec.tsx[2m > [22mLink Partner Addresses to Operator[2m > [22mDisplays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED[32m 141[2mms[22m[39m
+(node:26296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created[33m 3184[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays Fetch error message when Source System List cannot be found[33m 2784[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Checking SAVE disabled when inputs are entered out of order[33m 2826[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Verfies the return of Operator created maps correctly and ID is included in NonOp record[33m 4228[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Verfies the return of Operator created but is missing the mapped IDs to create an address records[33m 4054[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Errors out creating the Operator Record and wil not allows save for Partner Record[33m 3795[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Verfies the return of Operator created maps correctly and ID is included in NonOp record but error writing Partner record[33m 3940[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Errors out creating the Operator Address Record [33m 3816[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays the values of the Operator that is being created; Returned Opeator does not have an ID and shows error message[33m 3814[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateOperator.spec.tsx[2m > [22mCreate New Operator[2m > [22mDisplays an error when the Operator Non Op Address does not return correctly[33m 3976[2mms[22m[39m
+(node:20048) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'23e69340-d14c-45a9-96a8-142795925488'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab[33m 1114[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'33e69340-d14c-45a9-96a8-142795925489'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions[33m 783[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs when a user (Rachel Green) logs in
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs when a user (Rachel Green) logs in
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs when a user (Rachel Green) logs in
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs when a user (Rachel Green) logs in
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs when a user (Rachel Green) logs in
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions[33m 981[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'23e69340-d14c-45a9-96a8-142795925488'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs
+[22m[39m[33m0[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs when a user (Rachel Green) logs in[33m 7127[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'33e69340-d14c-45a9-96a8-142795925489'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs[33m 514[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs[33m 314[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)[33m 7123[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search[33m 9523[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)[33m 12802[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)[33m 674[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)
+[22m[39m[33m4[39m OPERATED [33m3[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)[33m 7526[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'33e69340-d14c-45a9-96a8-142795925489'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)
+[22m[39m[33m4[39m OPERATED [33m0[39m NONOP
+[33m4[39m OPERATED [33m0[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)[33m 720[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39m[33m10[39m OPERATED [33m10[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39m[33m10[39m OPERATED [33m10[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both
+[22m[39m[33m10[39m OPERATED [33m10[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)[33m 8643[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [90mundefined[39m, token: [32m''[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both[33m 4572[2mms[22m[39m
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39mfetchAFEs mock set: [36m[Function (anonymous)][39m
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+getAFEs called { userId: [32m'13e69340-d14c-45a9-96a8-142795925487'[39m, token: [32m'test-token'[39m }
+[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+[90mstdout[2m | __tests__/routeAFE.spec.tsx[2m > [22m[2mdisplaying AFEs[2m > [22m[2mShows No Operated AFEs and No Non-Operated AFEs when there is no Session
+[22m[39m[33m0[39m OPERATED [33m0[39m NONOP
+
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows No Operated AFEs and No Non-Operated AFEs when there is no Session[33m 420[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFE.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows No Operated AFEs and No Non-Operated AFEs when there is no Session[33m 675[2mms[22m[39m
+(node:15956) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShow all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab[33m 766[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShow all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions[33m 552[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mHides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions[33m 515[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs when a user (Rachel Green) logs in[32m 238[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs[32m 188[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs[32m 83[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)[33m 492[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search[33m 411[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)[33m 372[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)[33m 321[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)[33m 357[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)[33m 533[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)[33m 3818[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both[33m 1253[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows No Operated AFEs and No Non-Operated AFEs when there is no Session[32m 218[2mms[22m[39m
+ [32m✓[39m __tests__/routeAFEHistoricals.spec.tsx[2m > [22mdisplaying AFEs[2m > [22mShows No Operated AFEs and No Non-Operated AFEs when there is no Session[33m 469[2mms[22m[39m
+(node:3436) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows the list of Operators to the user[33m 409[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows No Operators if the loggedInUser is null[32m 69[2mms[22m[39m
+[90mstderr[2m | __tests__/routeEditOperator.spec.tsx[2m > [22m[2mView and Edit Operators[2m > [22m[2mShows an error if the Operator fetch does not work
+[22m[39mUnable to get Operators or Permissions Error: No Operators or Partners found
+    at getOperatorList [90m(C:\Users\Queen Elizabeth\Desktop\AFE Partner\AFE Partner Connect\my-react-router-app\[39msrc\routes\createEditOperators\routes\manageOperatorAndPartner.tsx:62:26[90m)[39m
+
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows No Operators if the loggedInUser does not have permissions and displays a message telling them[32m 86[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows an error if the Operator fetch does not work[32m 92[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows the list of Operators to the user with the address having a suite number[32m 149[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows the list of Operators to the user with the address mostly undefined[32m 148[2mms[22m[39m
+[90mstderr[2m | __tests__/routeEditOperator.spec.tsx[2m > [22m[2mView and Edit Operators[2m > [22m[2mExpect the Module to Open when the user clicks Edit
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows the list of Operators to the user with the address mostly undefined but Suite is text[32m 153[2mms[22m[39m
+[90mstderr[2m | __tests__/routeEditOperator.spec.tsx[2m > [22m[2mView and Edit Operators[2m > [22m[2mExpect the Operator to claim the address when the box is checked and saved
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mExpect the Module to Open when the user clicks Edit[33m 915[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mExpect the Operator to claim the address when the box is checked and saved[33m 1329[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mdeactivates an active operator when clicking deactivate button then reacivates it when the button is pushed again[33m 373[2mms[22m[39m
+[90mstderr[2m | __tests__/routeEditOperator.spec.tsx[2m > [22m[2mView and Edit Operators[2m > [22m[2mExpect the Module to Open when the user clicks Edit and update the Operator Name and Street
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows the list of Operators to the user but with buttons disabled when IDs are missing[32m 193[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperator.spec.tsx[2m > [22mView and Edit Operators[2m > [22mExpect the Module to Open when the user clicks Edit and update the Operator Name and Street[33m 2567[2mms[22m[39m
+(node:24032) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mShows a list of Operators and APC Partners to the user for mapping[32m 227[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and returns an empty array since no partners are loaded[33m 393[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mError getting the list of APC Partners[32m 194[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, create map, save map[33m 1520[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFilters out already mapped Partners for both Operator and APC[33m 1966[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, create map, save map, with address mostly undefined[33m 1426[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, create map, save map: User attempts to create the save map twice[33m 2140[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map[33m 2752[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map of multiples[33m 2133[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping MOBILE and save map[33m 2372[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping DESKTOP and save map[33m 2423[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMapping.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, clear all mappings[33m 2112[2mms[22m[39m
+(node:2536) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should show the create new user page with limited number of Operators to assign permissions to
+[22m[39mCreateNewUser render: 1
+
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should save the new user information, allow the user to click the save button and get back a response
+[22m[39mCreateNewUser render: 2
+
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should show the create new user page with limited number of Operators to assign permissions to[33m 466[2mms[22m[39m
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should save the new user information with active and permissions, allow the user to click the save button and get back a response
+[22m[39mCreateNewUser render: 3
+
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should save the new user information, allow the user to click the save button and get back a response[33m 1185[2mms[22m[39m
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should save the new user information with inactive and permissions by selecting and deslecting, allow the user to click the save button and get back a response
+[22m[39mCreateNewUser render: 4
+
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should save the new user information with active and permissions, allow the user to click the save button and get back a response[33m 1765[2mms[22m[39m
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should save the new user information with active as a super user and not show other permission options, allow the user to click the save button and get back a response
+[22m[39mCreateNewUser render: 5
+
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should save the new user information with inactive and permissions by selecting and deslecting, allow the user to click the save button and get back a response[33m 2797[2mms[22m[39m
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should show message the user does not have permissions
+[22m[39mCreateNewUser render: 6
+
+[90mstdout[2m | __tests__/routeCreateNewUser.spec.tsx[2m > [22m[2mCreate New User[2m > [22m[2mIt should show an error when the fetch does not work
+[22m[39mCreateNewUser render: 7
+
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should save the new user information with active as a super user and not show other permission options, allow the user to click the save button and get back a response[33m 2586[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should show message the user does not have permissions[32m 23[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateNewUser.spec.tsx[2m > [22mCreate New User[2m > [22mIt should show an error when the fetch does not work[32m 46[2mms[22m[39m
+(node:21364) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows a list of Operators and Partners to the user for mapping[32m 86[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mDisplays warning when the account lists are null[33m 472[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping and save mapping[33m 1335[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and save mapping[33m 1337[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and clears mapping[33m 1250[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping and save mapping if there is not account group or descriptions[33m 1266[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping and save mapping if there is not account group or descriptions[33m 1335[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and save mapping if there is not account group or descriptions[33m 1210[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to select and unselect accounts, to create mapping and save mapping[33m 2221[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create multiple mappings and save mapping[33m 2658[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create multiple mappings, delete one and save mapping[33m 2108[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMapping.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches account codes when both dropdowns are selected allows user to create multiple mappings, delete one MOBILE and save mapping[33m 2405[2mms[22m[39m
+(node:30664) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Active and Inactive standard user Standard User Screen[2m > [22mIt should show the create new user page with limited number of Operators to assign permissions to[33m 1220[2mms[22m[39m
+[90mstderr[2m | __tests__/routeManageUserDashboard.spec.tsx[2m > [22m[2mManage User Active and Inactive standard user Super User Screen[2m > [22m[2mIt should show and error if cannot get users
+[22m[39mNot able to get users  Error: error
+    at getUsersToEdit [90m(C:\Users\Queen Elizabeth\Desktop\AFE Partner\AFE Partner Connect\my-react-router-app\[39msrc\routes\createEditUsers\routes\manageUsersSystem.tsx:35:15[90m)[39m
+
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Active and Inactive standard user Super User Screen[2m > [22mIt should show the list of users with the ability to make them active or inactive for the Super User[33m 1050[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Active and Inactive standard user Super User Screen[2m > [22mIt should not show users if there is no user access token[32m 57[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Active and Inactive standard user Super User Screen[2m > [22mIt should show and error if cannot get users[32m 64[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Permissions Standard user screen[2m > [22mIt should allow user to toggle permissions standard user[33m 2432[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Permissions Standard user screen[2m > [22mIt should allow user to toggle permissions Super User[33m 2050[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Permissions System Super User Screen[2m > [22mIt should allow user to toggle permissions Super User[33m 2269[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageUserDashboard.spec.tsx[2m > [22mManage User Permissions System Super User Screen[2m > [22mIt should allow user to toggle permissions Standard[33m 1593[2mms[22m[39m
+(node:9796) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show [] in the filters for the Operators AFEs and Well Fields when no Operator is selected[32m 141[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show the AFE Filters and Well Fields when an Operator is selected for that Operator[32m 267[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show the DEFAULT AFE Filters and Well Fields when an Operator is selected for an Operator that does not have defined values[32m 158[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show empty arrays when the response fails and an error message.[32m 145[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show [] in the filters for the Operators AFEs and Well Fields when no Operator is selected and invalid JSON message when user clears[32m 122[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON[33m 350[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and save response[33m 364[2mms[22m[39m
+ [32m✓[39m __tests__/routeManageOperatorExecuteFilters.spec.tsx[2m > [22mExecute Filters for Operator[2m > [22mIt should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and save response[33m 312[2mms[22m[39m
+(node:8428) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows user to send comment[33m 1387[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mError saving comment[33m 887[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mNo calls for support tickets are made if the user is not logged in[32m 29[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mShows an error when the call for Support Tickets fails[32m 49[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows Super User to send comment and resolve[33m 1628[2mms[22m[39m
+ [32m✓[39m __tests__/routeSupportHistory.spec.tsx[2m > [22mView and edit support tickets[2m > [22mLoads screen and allows Super User to send comment but resolve fails[33m 1631[2mms[22m[39m
+(node:30184) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstdout[2m | __tests__/routeAfeDetail.spec.tsx
+[22m[39mWarning: Please use the `legacy` build in Node.js environments.
+
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mrenders You do not have permission to view this AFE[32m 292[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mrenders AFE details and history comments[33m 352[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mlets the user add a new comment and updates the UI[33m 1024[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mrenders AFE details and history comments for the Partner[32m 296[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mshows the Approve button and calls status functions when clicked[32m 265[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL[2m > [22mshows the Reject button and calls status functions when clicked[32m 274[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL documents[2m > [22mrenders the document list when documents are returned[32m 126[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL documents[2m > [22mshows the no documents message when there are no documents[32m 107[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL documents[2m > [22mshows Download and View links for pdf documents[32m 148[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL documents[2m > [22mdoes not show View link for non-pdf documents[32m 128[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL document actions[2m > [22mcalls fetchRelatedDocuments when View is clicked on a pdf[32m 230[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL document actions[2m > [22mcalls fetchRelatedDocuments when Download is clicked[32m 217[2mms[22m[39m
+ [32m✓[39m __tests__/routeAfeDetail.spec.tsx[2m > [22mAFEDetailURL document actions[2m > [22mcalls XLSX writeFile when Export is clicked[32m 175[2mms[22m[39m
+(node:30664) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mDisplays /afe in the Outlet when clicked[33m 645[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mDisplays /afeHistory in the Outlet when clicked[33m 458[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mDisplays /configurations in the Outlet when clicked[33m 482[2mms[22m[39m
+[90mstderr[2m | __tests__/routeMainscreen.spec.tsx[2m > [22m[2mMainscreen[2m > [22m[2mCloses the sidebar when the X button is clicked
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routeMainscreen.spec.tsx[2m > [22m[2mMainscreen[2m > [22m[2mCloses the sidebar when the X button is clicked
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mOpens the sidebar when the hamburger button is clicked[32m 250[2mms[22m[39m
+[90mstderr[2m | __tests__/routeMainscreen.spec.tsx[2m > [22m[2mMainscreen[2m > [22m[2mCloses the sidebar when a nav link is clicked
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+[90mstderr[2m | __tests__/routeMainscreen.spec.tsx[2m > [22m[2mMainscreen[2m > [22m[2mCloses the sidebar when a nav link is clicked
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mCloses the sidebar when the X button is clicked[33m 579[2mms[22m[39m
+[90mstderr[2m | __tests__/routeMainscreen.spec.tsx[2m > [22m[2mMainscreen User Experience with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22m[2mCalls supabase signOut when Sign out is clicked
+[22m[39mHeadless UI has polyfilled `Element.prototype.getAnimations` for your tests.
+Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.
+
+Example usage:
+```js
+import { mockAnimationsApi } from 'jsdom-testing-mocks'
+mockAnimationsApi()
+```
+
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen[2m > [22mCloses the sidebar when a nav link is clicked[33m 1287[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen User Experience with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mDisplays the logged in users name in the header[32m 33[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen User Experience with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mCalls supabase signOut when Sign out is clicked[33m 374[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mMainscreen User Experience with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mrenders all main navigation items[32m 61[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mRachel Green with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mcan see AFE navigation[32m 32[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mRachel Green with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mcan see User Settings navigation[32m 36[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mRachel Green with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mcan see Library navigation[32m 38[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mRachel Green with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mcan see Help navigation[32m 32[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mRachel Green with a role for ops 2,4,8 and partners 3,9,5,6[2m > [22mcannot see onboarding section[32m 32[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mMonica Geller with a role for ops [] and partners 3,9,5,6 Cannot see Operated AFEs[2m > [22mcan still see AFE navigation via partner roles[32m 39[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no AFE view rights[2m > [22mcannot see AFE navigation[32m 31[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no AFE view rights[2m > [22mcannot see onboarding section[32m 30[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights[2m > [22mcan see AFE navigation[32m 29[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights[2m > [22mcannot see User Settings navigation[32m 28[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights[2m > [22mcan see Library navigation[32m 28[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights[2m > [22mcan see Help navigation[32m 36[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights[2m > [22mcannot see onboarding section[32m 41[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights or Manage Address or Configurations Rights[2m > [22mcan see AFE navigation[32m 27[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights or Manage Address or Configurations Rights[2m > [22mcan see User Settings navigation[32m 19[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights or Manage Address or Configurations Rights[2m > [22mcan see Library navigation[32m 19[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights or Manage Address or Configurations Rights[2m > [22mcan see Help navigation[32m 33[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mUser with no User Edit Rights or Manage Address or Configurations Rights[2m > [22mcannot see onboarding section[32m 27[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mLogged in Super User[2m > [22mcan see AFE navigation[32m 43[2mms[22m[39m
+ [32m✓[39m __tests__/routeMainscreen.spec.tsx[2m > [22mSidebar visibility by permissions[2m > [22mLogged in Super User[2m > [22mcan see onboarding section[32m 53[2mms[22m[39m
+(node:6920) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould naviagte to login page on login button click and allow user to input email address[33m 918[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould call signInWithOtp with correct email[33m 981[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould call signInWithOtp with incorrect email[33m 582[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould show screen for user to input verification code error response[33m 1656[2mms[22m[39m
+[90mstderr[2m | __tests__/loginButton.spec.tsx[2m > [22m[2mUsers should be able to navigate to the login button from the landing page[2m > [22m[2mShould show screen for user to input verification code no response pastes code in
+[22m[39mThe current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+The current testing environment is not configured to support act(...)
+
+[90mstderr[2m | __tests__/loginButton.spec.tsx[2m > [22m[2mUsers should be able to navigate to the login button from the landing page[2m > [22m[2mShould show screen for user to input verification code no response pastes code in
+[22m[39mAn update to LoginForm inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould show screen for user to input verification code no response[33m 3329[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould show screen for user to input verification code no response pastes code in[33m 862[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould redirect to main screen after successful OTP[32m 44[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mLoginForm — resend cooldown timer[2m > [22mshows resend button with countdown immediately after sending code[33m 321[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mLoginForm — resend cooldown timer[2m > [22mcounts down each second[33m 443[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mLoginForm — resend cooldown timer[2m > [22menables resend button after 30 seconds[33m 466[2mms[22m[39m
+ [32m✓[39m __tests__/loginButton.spec.tsx[2m > [22mLoginForm — resend cooldown timer[2m > [22mresets cooldown when resend is clicked[33m 548[2mms[22m[39m
+(node:27328) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeNotifications.spec.tsx[2m > [22mAFE Notifications history[2m > [22mLoads the srceen for the user[32m 157[2mms[22m[39m
+ [32m✓[39m __tests__/routeNotifications.spec.tsx[2m > [22mAFE Notifications history[2m > [22mFetches AFE Notifications for the user and allows them to filter and load more[33m 1458[2mms[22m[39m
+ [32m✓[39m __tests__/routeNotifications.spec.tsx[2m > [22mAFE Notifications History PreFiltered[2m > [22mLoads the srceen for the user[32m 35[2mms[22m[39m
+ [32m✓[39m __tests__/routeNotifications.spec.tsx[2m > [22mAFE Notifications History PreFiltered[2m > [22mFetches the mapped account codes when a user selects the dropdowns and let user delete one[33m 921[2mms[22m[39m
+(node:28732) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/routeSystemHistory.spec.tsx[2m > [22m[2mView System History[2m > [22m[2mLoads screen and allows user to load more
+[22m[39mAn update to SystemHistories inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to SystemHistories inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | __tests__/routeSystemHistory.spec.tsx[2m > [22m[2mView System History[2m > [22m[2mLoads screen and allows user to load more
+[22m[39mThe current testing environment is not configured to support act(...)
+
+[90mstderr[2m | __tests__/routeSystemHistory.spec.tsx[2m > [22m[2mView System History[2m > [22m[2mLoads screen and allows user to load more and then filter
+[22m[39mAn update to SystemHistories inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to SystemHistories inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | __tests__/routeSystemHistory.spec.tsx[2m > [22m[2mView System History[2m > [22m[2mLoads screen and allows user to load more and then filter
+[22m[39mThe current testing environment is not configured to support act(...)
+
+ [32m✓[39m __tests__/routeSystemHistory.spec.tsx[2m > [22mView System History[2m > [22mLoads screen and allows user to load more[33m 455[2mms[22m[39m
+ [32m✓[39m __tests__/routeSystemHistory.spec.tsx[2m > [22mView System History[2m > [22mLoads screen and allows user to load more and then filter[33m 1862[2mms[22m[39m
+(node:14708) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mLoads screen and waits for user selection[32m 96[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mShows a list of mapped Partners to the user[33m 336[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mShows a message if there are no mapped partners[32m 173[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mShows a message if response is undefined[32m 185[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mUser deletes a partner mapping[33m 1594[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerMappingView.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mUser deletes a partner mapping[33m 1575[2mms[22m[39m
+(node:28936) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeGLLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mLoads screen and waits for user selection[32m 90[2mms[22m[39m
+ [32m✓[39m __tests__/routeGLLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches account codes and allows users to delete one Op account codes[33m 541[2mms[22m[39m
+ [32m✓[39m __tests__/routeGLLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches account codes and allows users to delete one Non Op[33m 409[2mms[22m[39m
+ [32m✓[39m __tests__/routeGLLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mSelect Op Account Codes after Non Op Call[33m 482[2mms[22m[39m
+ [32m✓[39m __tests__/routeGLLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches account codes and allows users to bring one back from the dead[33m 542[2mms[22m[39m
+(node:27728) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeContactSupport.spec.tsx[2m > [22mContact Support[2m > [22mShows the user a form to submit ticket[32m 84[2mms[22m[39m
+ [32m✓[39m __tests__/routeContactSupport.spec.tsx[2m > [22mContact Support[2m > [22mUser fills in subject and message[33m 2012[2mms[22m[39m
+ [32m✓[39m __tests__/routeContactSupport.spec.tsx[2m > [22mContact Support[2m > [22mUser fills in subject and message and tests submit button gets okay response[33m 1256[2mms[22m[39m
+ [32m✓[39m __tests__/routeContactSupport.spec.tsx[2m > [22mContact Support[2m > [22mUser fills in subject and message and tests submit button gets error response[33m 1163[2mms[22m[39m
+(node:23928) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return white when the status does NOT match anything[32m 2[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return white when the status is null[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return white when the status is undefined[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return dark teal colors when status is New[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return dark teal colors when status is Viewed[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return bright pink colors when status is Approved[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mDetermine values when partner status is null[2m > [22mIt should return red colors when status is Rejected[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should change the current tab based on id[2m > [22mThe tabs should return with the same value when there is no selected ID passed[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should change the current tab based on id[2m > [22mThe tabs should return an updated value with current being id 2 and not id 1[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should format the date[2m > [22mit should return an empty string if the date is null[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should format the date[2m > [22mit should return a formatted date[32m 25[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should format the date[2m > [22mit should return a formatted date with a given string[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should format the date[2m > [22mit should return a formatted date with a given string[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should determine if the logged in user is associated to the Operator of the AFE[2m > [22mIt should return true if the logged in user is associated to the operator on the AFE[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should determine if the logged in user is associated to the Operator of the AFE[2m > [22mIt should return true if there is an undefined op value[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should determine if the logged in user is associated to the Operator of the AFE[2m > [22mIt should return true if there is an undefined partner op value[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/styleHelpers.spec.tsx[2m > [22mit should determine if the logged in user is associated to the Operator of the AFE[2m > [22mIt should return false if the logged in user is NOT associated to the operator[32m 0[2mms[22m[39m
+(node:27036) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routePartnerLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mLoads screen and waits for user selection[32m 97[2mms[22m[39m
+ [32m✓[39m __tests__/routePartnerLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches the partners and allows users to delete a partner[33m 485[2mms[22m[39m
+ [2m[90m↓[39m[22m __tests__/routePartnerLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mSelect Op Account Codes after Non Op Call
+ [32m✓[39m __tests__/routePartnerLibrary.spec.tsx[2m > [22mView and edit the partner mappings[2m > [22mFetches account codes and allows users to bring one back from the dead[33m 513[2mms[22m[39m
+(node:26276) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeUserProfile.spec.tsx[2m > [22mUser Profile[2m > [22mShows the user profile Rachel Green[33m 697[2mms[22m[39m
+ [32m✓[39m __tests__/routeUserProfile.spec.tsx[2m > [22mUser Profile[2m > [22mShows the user profile Monica Geller[32m 299[2mms[22m[39m
+ [32m✓[39m __tests__/routeUserProfile.spec.tsx[2m > [22mUser Profile[2m > [22mShows the user profile Ross Geller[32m 277[2mms[22m[39m
+ [32m✓[39m __tests__/routeUserProfile.spec.tsx[2m > [22mUser Profile[2m > [22mNo logged in user[32m 19[2mms[22m[39m
+(node:16460) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return true (to disable save button) when Operator and Address is not valid and there is NOT error message[32m 3[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return true (to disable save button) when Operator is not valid and Address is valid and there is NOT error message[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return true (to disable save button) when Operator is valid and Address is Not valid and there is NOT error message[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return true (to disable save button) when Operator is valid and Address is valid and there is an error message[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return true (to disable save button) when Operator is valid but has an ID and Address is valid and there is NOT error message[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator correctly[2m > [22mIt should return false (to disable save button) when Operator is valid and Address is valid and there is NOT error message[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator Non Op record correctly[2m > [22mIt should return true (to disable button) when there is not an operator ID and the address is not valid[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator Non Op record correctly[2m > [22mIt should return true (to disable button) when there is not an operator ID and the address is not valid[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/createOperatorHelpers.spec.tsx[2m > [22mShould toggle the disabled button to create the Operator Non Op record correctly[2m > [22mIt should return false (to disable button) when there is an operator ID and the address is valid[32m 0[2mms[22m[39m
+(node:21216) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeEditOperatorDialog.spec.tsx[2m > [22mEdit Operators[2m > [22mIt should show No Operator Message when the Operator to Edit is null[32m 59[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperatorDialog.spec.tsx[2m > [22mEdit Operators[2m > [22mIt should show the Operator address and save changes[33m 1826[2mms[22m[39m
+ [32m✓[39m __tests__/routeEditOperatorDialog.spec.tsx[2m > [22mEdit Operators[2m > [22mIt should show the Operator Non Op address and save changes[33m 1575[2mms[22m[39m
+(node:29628) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mDetermining the max HistoryID[2m > [22mIt should set the maxID to 0 when afeHistories is empty[32m 3[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mDetermining the max HistoryID[2m > [22mIt should set the maxID to 0 when afeHistories is 1[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mDetermining the max HistoryID[2m > [22mIt should set the maxID to 0 when afeHistories is 3[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mIt should group the accounts by the account group[2m > [22mIt should return a map if account is not null[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mIt should calculate the partners WI[2m > [22mIt should return an amount when the gross amount and wi are present[32m 29[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mIt should calculate the partners WI[2m > [22mIt should return an error when WI is undefiend[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mIt should calculate the partners WI[2m > [22mIt should return an error when gross is undefiend[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mIt should calculate the partners WI[2m > [22mIt should return an error when WI and gross is undefiend[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mThe Approve and Reject buttons disabled should toggle[2m > [22mIf the partner status is Approved it should return true (it is disabled)[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mThe Approve and Reject buttons disabled should toggle[2m > [22mIf the partner status is Rejected it should return true (it is disabled)[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mThe Approve and Reject buttons disabled should toggle[2m > [22mIf the partner status is New it should return false (it is NOT disabled)[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mThe Approve and Reject buttons disabled should toggle[2m > [22mIf the partner status is Viewed it should return false (it is NOT disabled)[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mUser Permissions to view AFEs[2m > [22mIf the user can view Operated and Non Operated AFEs return true[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mUser Permissions to view AFEs[2m > [22mIf the user can view Non Operated AFEs return true[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mUser Permissions to view AFEs[2m > [22mIf the user has no view rights return false[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mUser Permissions to view AFEs[2m > [22mIf the user has no roles but is a super user return true[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/helpers.spec.tsx[2m > [22mUser Permissions to view AFEs[2m > [22mIf the user has no roles but is a super user return true[32m 0[2mms[22m[39m
+(node:29968) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/routeglMappingView.spec.tsx[2m > [22m[2mView and Edit Operators[2m > [22m[2mFetches the mapped account codes when a user selects the dropdowns and let user delete one
+[22m[39mFailed to deactivate mapping: TypeError: Cannot read properties of undefined (reading 'ok')
+    at removeMapping [90m(C:\Users\Queen Elizabeth\Desktop\AFE Partner\AFE Partner Connect\my-react-router-app\[39msrc\routes\glConfigurations\routes\glMappingView.tsx:85:22[90m)[39m
+
+ [32m✓[39m __tests__/routeglMappingView.spec.tsx[2m > [22mView and Edit Operators[2m > [22mShows a list of Operators and Partners to the user for mapping[32m 73[2mms[22m[39m
+ [32m✓[39m __tests__/routeglMappingView.spec.tsx[2m > [22mView and Edit Operators[2m > [22mFetches the mapped account codes when a user selects the dropdowns and let user delete one[33m 657[2mms[22m[39m
+(node:21580) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/supaBaseContext.spec.tsx[2m > [22mSupabaseProvider[2m > [22mprovides afes, operators, loading, and session to consumers[32m 58[2mms[22m[39m
+ [32m✓[39m __tests__/supaBaseContext.spec.tsx[2m > [22mSupabaseProvider[2m > [22mthrows error if useSupabaseData is used outside of provider[32m 9[2mms[22m[39m
+(node:2016) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/fetchRolesGeneric.spec.tsx[2m > [22m[2mfetchRolesGeneric[2m > [22m[2mreturns empty array on error
+[22m[39mError fetching Roles: { message: [32m'DB error'[39m }
+
+[90mstderr[2m | __tests__/fetchRolesGeneric.spec.tsx[2m > [22m[2mfetchRolesGeneric[2m > [22m[2mreturns empty array when data is null
+[22m[39mError fetching Roles: [1mnull[22m
+
+[90mstderr[2m | __tests__/fetchRolesGeneric.spec.tsx[2m > [22m[2mfetchUserProfileRecordFromSupabase[2m > [22m[2mreturns empty array on error
+[22m[39mError fetching user profile: { message: [32m'DB error'[39m }
+
+[90mstderr[2m | __tests__/fetchRolesGeneric.spec.tsx[2m > [22m[2mfetchUserProfileRecordFromSupabase[2m > [22m[2mreturns empty array when data is null
+[22m[39mError fetching user profile: [1mnull[22m
+
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchRolesGeneric[2m > [22mreturns empty array on error[32m 4[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchRolesGeneric[2m > [22mreturns empty array when data is null[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchRolesGeneric[2m > [22mreturns transformed roles on success[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchUserProfileRecordFromSupabase[2m > [22mreturns empty array on error[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchUserProfileRecordFromSupabase[2m > [22mreturns empty array when data is null[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRolesGeneric.spec.tsx[2m > [22mfetchUserProfileRecordFromSupabase[2m > [22mreturns transformed user on success[32m 0[2mms[22m[39m
+(node:30380) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeConfigurations.spec.tsx[2m > [22mConfigurations[2m > [22mDisplays /systemConfigurations in the Outlet when clicked[33m 691[2mms[22m[39m
+ [32m✓[39m __tests__/routeConfigurations.spec.tsx[2m > [22mConfigurations[2m > [22mDisplays /executeafefilters in the Outlet when clicked[33m 617[2mms[22m[39m
+ [32m✓[39m __tests__/routeConfigurations.spec.tsx[2m > [22mConfigurations[2m > [22mDisplays /glmapping in the Outlet when clicked[33m 485[2mms[22m[39m
+ [32m✓[39m __tests__/routeConfigurations.spec.tsx[2m > [22mConfigurations[2m > [22mDisplays /partnermaping in the Outlet when clicked[33m 436[2mms[22m[39m
+(node:27756) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeCreateEdiUsersHelpers.spec.tsx[2m > [22mShould return the correct permissions for filtering Operated vs Non Operated permissions[2m > [22mIt should filter out the list of Operated Permissions[32m 3[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateEdiUsersHelpers.spec.tsx[2m > [22mIt should return the active roles correctly[2m > [22mReturn Rachel Green active roles[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateEdiUsersHelpers.spec.tsx[2m > [22mReturn Role Index[2m > [22mIt should return the correct role id[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/routeCreateEdiUsersHelpers.spec.tsx[2m > [22mReturn Role Index[2m > [22mIt should return undefined for a role that does not exist[32m 0[2mms[22m[39m
+(node:20164) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/fetchSelect.spec.tsx[2m > [22mfetchSourceSystems[2m > [22mreturns ok:false and empty data on error[32m 4[2mms[22m[39m
+ [32m✓[39m __tests__/fetchSelect.spec.tsx[2m > [22mfetchSourceSystems[2m > [22mreturns ok:true and data on success[32m 1[2mms[22m[39m
+ [32m✓[39m __tests__/fetchSelect.spec.tsx[2m > [22mfetchPartnersLinkedOrUnlinkedToOperator[2m > [22mreturns ok:false and empty data on error[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/fetchSelect.spec.tsx[2m > [22mfetchPartnersLinkedOrUnlinkedToOperator[2m > [22mreturns ok:true and data on success[32m 0[2mms[22m[39m
+(node:28500) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routePageNotFound.spec.tsx[2m > [22mPage not Found[2m > [22mDisplays the stack trace when provided[32m 97[2mms[22m[39m
+ [32m✓[39m __tests__/routePageNotFound.spec.tsx[2m > [22mPage not Found[2m > [22mDisplays message via FuzzyText when stack is undefined[32m 17[2mms[22m[39m
+(node:5628) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/writeExecuteAFE.spec.tsx[2m > [22m[2mWrite Execute AFE Data to Supabase[2m > [22m[2mreturns error when update has an error
+[22m[39mError Writing AFEs Error Writing AFEs
+
+[90mstderr[2m | __tests__/writeExecuteAFE.spec.tsx[2m > [22m[2mWrite Execute AFE Estimates to Supabase[2m > [22m[2mreturns error when update has an error
+[22m[39mError Writing AFE Estimates Error Writing AFE Estimates
+
+ [32m✓[39m __tests__/writeExecuteAFE.spec.tsx[2m > [22mWrite Execute AFE Data to Supabase[2m > [22mreturns "success" when update has no error[32m 2[2mms[22m[39m
+ [32m✓[39m __tests__/writeExecuteAFE.spec.tsx[2m > [22mWrite Execute AFE Data to Supabase[2m > [22mreturns error when update has an error[32m 2[2mms[22m[39m
+ [32m✓[39m __tests__/writeExecuteAFE.spec.tsx[2m > [22mWrite Execute AFE Estimates to Supabase[2m > [22mreturns "success" when update has no error[32m 0[2mms[22m[39m
+ [32m✓[39m __tests__/writeExecuteAFE.spec.tsx[2m > [22mWrite Execute AFE Estimates to Supabase[2m > [22mreturns error when update has an error[32m 0[2mms[22m[39m
+(node:20224) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/routeLoadingPage.spec.tsx[2m > [22mLoading Page[2m > [22mShows the laoding page[32m 48[2mms[22m[39m
+(node:29068) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/fetchRecordFromSupabaseMatch.spec.tsx[2m > [22m[2mfetchFromSupabaseMatchOnString[2m > [22m[2mreturns [] when insert has an error
+[22m[39mError fetching AFE: Error Updating AFE Status
+
+ [32m✓[39m __tests__/fetchRecordFromSupabaseMatch.spec.tsx[2m > [22mfetchFromSupabaseMatchOnString[2m > [22mreturns record when update has no error[32m 3[2mms[22m[39m
+ [32m✓[39m __tests__/fetchRecordFromSupabaseMatch.spec.tsx[2m > [22mfetchFromSupabaseMatchOnString[2m > [22mreturns [] when insert has an error[32m 1[2mms[22m[39m
+(node:29136) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [2m[90m↓[39m[22m __tests__/routeLogin.spec.tsx[2m > [22mUsers should be able to navigate to the login button from the landing page[2m > [22mShould naviagte to login page on NavLink click
+(node:2016) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/fetchFromSupabaseGenericSuccessful.spec.tsx[2m > [22mAPI Tests[2m > [22mshould fetch table successfully[32m 3[2mms[22m[39m
+(node:30160) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[90mstderr[2m | __tests__/fetchFromSupabaseGenericUnsuccessful.spec.tsx[2m > [22m[2mAPI Tests[2m > [22m[2mShould return null if there is an error
+[22m[39mError fetching table: An error occurred
+
+ [32m✓[39m __tests__/fetchFromSupabaseGenericUnsuccessful.spec.tsx[2m > [22mAPI Tests[2m > [22mShould return null if there is an error[32m 3[2mms[22m[39m
+(node:14140) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m __tests__/app.spec.tsx[2m > [22mA truthy statement[2m > [22mshould be equal to 2[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m38 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (39)[39m
+[2m      Tests [22m [1m[32m287 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (289)[39m
+[2m   Start at [22m 13:34:13
+[2m   Duration [22m 357.22s[2m (transform 4.06s, setup 15.85s, collect 32.12s, tests 245.17s, environment 43.75s, prepare 6.01s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   68.88 |    87.41 |   74.84 |   68.88 |                   
+ src               |       0 |        0 |       0 |       0 |                   
+  edge.ts          |       0 |      100 |       0 |       0 | 2-22              
+  entry.client.tsx |       0 |        0 |       0 |       0 | 1-12              
+  root.tsx         |       0 |        0 |       0 |       0 | 1-73              
+  routes.ts        |       0 |        0 |       0 |       0 | 1-49              
+ src/blocks        |    0.86 |      100 |       0 |    0.86 |                   
+  ...tingLines.tsx |    2.17 |      100 |       0 |    2.17 | 230-501           
+  LiquidEther.tsx  |    0.29 |      100 |       0 |    0.29 | 57-1248           
+  StarBorder.tsx   |    7.69 |      100 |       0 |    7.69 | 13-51             
+ ...ions/FuzzyText |       0 |        0 |       0 |       0 |                   
+  FuzzyText.tsx    |       0 |        0 |       0 |       0 | 1-214             
+ src/constants     |     100 |      100 |     100 |     100 |                   
+  variables.tsx    |     100 |      100 |     100 |     100 |                   
+ src/helpers       |   88.56 |    91.56 |      72 |   88.56 |                   
+  helpers.tsx      |   85.27 |    88.67 |      65 |   85.27 | ...78-179,198-203 
+  styleHelpers.tsx |   97.29 |    96.66 |     100 |   97.29 | 11-12             
+ src/routes        |   75.46 |    84.18 |   75.47 |   75.46 |                   
+  footer.tsx       |   78.76 |      100 |   16.66 |   78.76 | ...54,61-67,74-80 
+  landing.tsx      |   99.51 |    85.71 |   33.33 |   99.51 | 86                
+  ...rSupabase.tsx |       0 |        0 |       0 |       0 | 1-28              
+  mainScreen.tsx   |   95.46 |    70.68 |   93.33 |   95.46 | ...22,424,455,457 
+  ...eUserGrid.tsx |    90.6 |    82.14 |   71.42 |    90.6 | 30-37,52-59       
+  ...FEsupport.tsx |       0 |        0 |       0 |       0 | 1-281             
+  pageNotFound.tsx |     100 |      100 |     100 |     100 |                   
+  ...ratorGrid.tsx |   99.34 |    97.33 |     100 |   99.34 | 122-123           
+  ...gurations.tsx |       0 |        0 |       0 |       0 | 1-22              
+ ...shboard/routes |   95.96 |    91.68 |   81.94 |   95.96 |                   
+  afe.tsx          |   97.64 |       95 |     100 |   97.64 | 201-209           
+  afeDetail.tsx    |   95.25 |       84 |      85 |   95.25 | ...99-502,505-508 
+  ...storicals.tsx |     100 |    95.41 |     100 |     100 | 27,70,144,161,184 
+  afeHistory.tsx   |   95.83 |    91.66 |   57.14 |   95.83 | 96-100,239-242    
+  ...entViewer.tsx |   65.65 |    71.42 |   28.57 |   65.65 | ...,93,99-107,111 
+  ...fications.tsx |   99.21 |    98.59 |   88.23 |   99.21 | 101-102,382-383   
+ ...routes/helpers |   72.19 |    93.67 |   68.42 |   72.19 |                   
+  afeCard.tsx      |     100 |    86.66 |     100 |     100 | 24,26             
+  afeFilters.tsx   |     100 |      100 |     100 |     100 |                   
+  afeHeader.tsx    |     100 |    85.71 |     100 |     100 | 19                
+  helpers.tsx      |   19.67 |       80 |   28.57 |   19.67 | ...,90-91,109-137 
+  styleHelpers.tsx |   90.35 |      100 |    87.5 |   90.35 | 55-66             
+ ...erators/routes |   90.89 |    73.61 |   69.64 |   90.89 |                   
+  ...eOperator.tsx |   98.06 |    89.36 |     100 |   98.06 | ...89-191,205-206 
+  editOperator.tsx |   81.11 |       50 |   51.72 |   81.11 | ...87-590,759-764 
+  ...ndPartner.tsx |   97.37 |    84.48 |      80 |   97.37 | ...17-118,121-122 
+  ...teFilters.tsx |     100 |    93.33 |     100 |     100 | 142-143           
+  ...egrations.tsx |       0 |        0 |       0 |       0 | 1-3               
+ ...itUsers/routes |   93.76 |       80 |    90.9 |   93.76 |                   
+  ...teNewUser.tsx |   96.25 |    92.45 |   85.71 |   96.25 | ...76-184,506-509 
+  ...Dashboard.tsx |   81.96 |    54.54 |     100 |   81.96 | 20-22,35-37,44-49 
+  ...rmissions.tsx |   86.66 |    61.53 |     100 |   86.66 | 18-20,32-33,45-47 
+  ...onsSystem.tsx |   86.66 |    61.53 |     100 |   86.66 | 18-20,32-33,45-47 
+  ...ersSystem.tsx |     100 |    86.66 |     100 |     100 | 27,35             
+ ...routes/helpers |   47.36 |      100 |   66.66 |   47.36 |                   
+  helpers.tsx      |   47.36 |      100 |   66.66 |   47.36 | 26-98,103-108     
+ ...rations/routes |   75.33 |    88.82 |    92.3 |   75.33 |                   
+  glFileUpload.tsx |       0 |        0 |       0 |       0 | 1-231             
+  glMapping.tsx    |     100 |    93.38 |     100 |     100 | ...11,138,201,210 
+  ...ppingView.tsx |   97.98 |    78.43 |    87.5 |   97.98 | 41-42,86-88       
+ ...braries/routes |     100 |    96.87 |     100 |     100 |                   
+  glLibrary.tsx    |     100 |    97.14 |     100 |     100 | 31                
+  ...erLibrary.tsx |     100 |    96.55 |     100 |     100 | 30                
+ ...ntPages/routes |    89.5 |    92.59 |   55.55 |    89.5 |                   
+  ...gurations.tsx |    89.5 |    92.59 |   55.55 |    89.5 | 51-61,67-75       
+ ...rations/routes |   70.58 |    92.57 |   96.15 |   70.58 |                   
+  ...ileUpload.tsx |       0 |        0 |       0 |       0 | 1-310             
+  ...erMapping.tsx |   99.43 |    90.53 |     100 |   99.43 | 206-208           
+  ...ppingView.tsx |     100 |      100 |     100 |     100 |                   
+ ...aredComponents |   63.13 |    85.45 |      60 |   63.13 |                   
+  fileUpload.tsx   |   59.68 |       50 |   16.66 |   59.68 | ...,45-94,150-153 
+  loadingPage.tsx  |     100 |      100 |     100 |     100 |                   
+  ...ayMessage.tsx |     100 |      100 |     100 |     100 |                   
+  ...rDropdown.tsx |    92.3 |       75 |   66.66 |    92.3 | 20-23             
+  ...ltiSelect.tsx |       0 |        0 |       0 |       0 | 1-123             
+  pagnation.tsx    |   80.21 |    81.08 |      20 |   80.21 | ...70-173,195,204 
+  ...rDropdown.tsx |      92 |    66.66 |   66.66 |      92 | 18-19,29-31       
+  ...ltiSelect.tsx |       0 |        0 |       0 |       0 | 1-137             
+  ...ssionGrid.tsx |     100 |    94.02 |     100 |     100 | 49,99,204,210     
+  ...dUIBlocks.tsx |   83.33 |      100 |      50 |   83.33 | 25-28             
+  ...eCheckbox.tsx |   28.48 |      100 |      50 |   28.48 | 72-113,119-194    
+  tabChange.tsx    |     100 |      100 |     100 |     100 |                   
+  testExecute.tsx  |       0 |        0 |       0 |       0 | 1-109             
+  ...uteManual.tsx |       0 |        0 |       0 |       0 | 1-203             
+  ...ardSystem.tsx |    90.6 |    87.09 |   71.42 |    90.6 | 30-37,52-59       
+  ...onsSystem.tsx |     100 |    88.67 |     100 |     100 | ...04,211-222,356 
+ ...support/routes |     100 |    94.17 |     100 |     100 |                   
+  ...ctSupport.tsx |     100 |      100 |     100 |     100 |                   
+  ...rtHistory.tsx |     100 |    90.74 |     100 |     100 | 34,94-95,143-144  
+  ...emHistory.tsx |     100 |    97.56 |     100 |     100 | 17                
+ ...erLogin/routes |   98.64 |    84.21 |     100 |   98.64 |                   
+  login.tsx        |   99.37 |     82.5 |     100 |   99.37 | 33                
+  otpInput.tsx     |   96.77 |    88.23 |     100 |   96.77 | 48-49             
+ ...Profile/routes |     100 |    85.71 |     100 |     100 |                   
+  profile.tsx      |     100 |    85.71 |     100 |     100 | 10,24             
+ src/scripts       |       0 |        0 |       0 |       0 |                   
+  ...sRetryFunc.ts |       0 |        0 |       0 |       0 | 1-23              
+  ...oDocHandle.ts |       0 |        0 |       0 |       0 | 1-42              
+  ...hAuthToken.ts |       0 |        0 |       0 |       0 | 1-25              
+  ...uteAFEData.ts |       0 |        0 |       0 |       0 | 1-109             
+  ...EDocHandle.ts |       0 |        0 |       0 |       0 | 1-33              
+  ...EEstimates.ts |       0 |        0 |       0 |       0 | 1-36              
+  ...teHoldCode.ts |       0 |        0 |       0 |       0 | 1-396             
+  executeLogout.ts |       0 |        0 |       0 |       0 | 1-24              
+  ...itePromise.ts |       0 |        0 |       0 |       0 | 1-37              
+ src/types         |   61.75 |    87.67 |    62.5 |   61.75 |                   
+  ...seContext.tsx |   98.11 |    82.35 |     100 |   98.11 | 52                
+  interfaces.ts    |     100 |      100 |     100 |     100 |                   
+  transform.ts     |   57.38 |    89.28 |   58.33 |   57.38 | ...67-576,623-645 
+-------------------|---------|----------|---------|---------|-------------------

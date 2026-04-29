@@ -185,7 +185,6 @@ export default function PartnerFileUpload() {
                                         <div className='grow m-3 '>
                                             <OperatorDropdownMultiSelect 
                                                 onChange={(ids) => {setOpAPCIDArray(ids)} }
-                                                limitedList={true}
                                                 initialSelectedIds={[]}
                                                 isDisabled={isDisabled}
                                             />

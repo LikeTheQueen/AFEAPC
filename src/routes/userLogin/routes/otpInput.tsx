@@ -1,19 +1,23 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import { otpLength } from 'src/constants/variables';
+import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
 
 type InputProps = {
+  otp: string[];
   length?: number;
   onComplete: (pin: string) => void;
+  onPinChange: (newPin: string[]) => void;
+  onHideVerification: (value: boolean) => void;
 };
 
-const OTPInput = ({ length = 4, onComplete }: InputProps) => {  
+const OTPInput = ({ otp, length = otpLength, onComplete, onPinChange, onHideVerification }: InputProps) => {  
 const inputRef = useRef<HTMLInputElement[]>(Array(length).fill(null));
-const [OTP, setOTP] = useState<string[]>(Array(length).fill(''));
 
 const handlePaste = (e: any) => {
     e.preventDefault(); 
 
     const pastedData = e.clipboardData.getData('text');
-    const newPin = [...OTP]; 
+    const newPin = [...otp]; 
 
     for (let i = 0; i < pastedData.length && i < newPin.length; i++) {
       newPin[i] = pastedData[i]; 
@@ -21,7 +25,8 @@ const handlePaste = (e: any) => {
     if (newPin.every((digit) => digit !== '')) {
       onComplete(newPin.join(''));
     }
-    setOTP(newPin);
+    
+    onPinChange(newPin);
     
     const lastFilledIndex = Math.min(pastedData.length - 1, newPin.length - 1);
     if (inputRef.current[lastFilledIndex]) {
@@ -30,9 +35,10 @@ const handlePaste = (e: any) => {
   };
 
 const handleTextChange = (input: string, index: number) => {
-    const newPin = [...OTP];
+    const newPin = [...otp];
     newPin[index] = input;
-    setOTP(newPin);
+    
+    onPinChange(newPin);
 
     if (input.length === 1 && index < length - 1) {
       inputRef.current[index + 1].focus();
@@ -49,13 +55,15 @@ const handleTextChange = (input: string, index: number) => {
 
 
   return (
+    <>
     <div className="grid grid-cols-6 gap-3">
       {Array.from({ length }, (_, index) => (
         <input
+          aria-label='OTP'
           key={index}
           type="text"
           maxLength={1}
-          value={OTP[index]}
+          value={otp[index]}
           onChange={(e) => handleTextChange(e.target.value, index)}
           onPaste={index === 0 ? handlePaste : undefined}
           ref={(ref) => {(inputRef.current[index] = ref as HTMLInputElement)}}
@@ -63,6 +71,14 @@ const handleTextChange = (input: string, index: number) => {
         />
       ))}
     </div>
+     <button
+            name='backToEmail'
+            type="button"
+            onClick={(e) => {onHideVerification(true), onPinChange(Array(length).fill(''))}}
+            className="mt-10 w-1/3 inline-flex items-center justify-around gap-x-1.5 rounded-md bg-[var(--bright-pink)] px-3 py-1.5 text-base/6 font-semibold text-white shadow-xs custom-style hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:bg-[var(--darkest-teal)] disabled:text-[var(--darkest-teal)]/40" >
+             <ArrowUturnLeftIcon aria-hidden="true" className="size-5"></ArrowUturnLeftIcon> BACK
+          </button>
+    </>
   );
 };
 
