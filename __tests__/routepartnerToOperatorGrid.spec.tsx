@@ -31,7 +31,6 @@ import {
 
 vi.mock('../provider/write', () => ({
   updatePartnerWithOpID: vi.fn(),
-  
 }));
 
 describe('Link Partner Addresses to Operator',() => {

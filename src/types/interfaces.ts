@@ -124,7 +124,7 @@ export interface AFEType {
   export interface RoleEntryRead extends RoleEntryWrite{
     apc_name: string;
     apc_name_active?: boolean;
-    apc_address: AddressType | null;
+    apc_address: AddressType;
     user_id: string;
     user_firstname: string;
     user_lastName: string;

@@ -49,7 +49,6 @@ describe('displaying AFEs', () => {
     vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
     vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
     vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afesReturnedFromSupabase });
-    console.log('fetchAFEs mock set:', vi.mocked(fetchProvider.fetchAFEs).getMockImplementation());
     vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });
   });
 

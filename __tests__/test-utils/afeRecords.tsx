@@ -2805,7 +2805,7 @@ const address_CW: AddressType = {
     street: '6789 S Blvd',
     suite: '',
     city: 'Houston',
-    state: 'TX',
+    state: 'Texas',
     zip: '90078',
     country: 'United States',
 };
@@ -2825,7 +2825,7 @@ const address_Nav: AddressType = {
     address_active: true,
     id: apc_address_id_Nav,
     street: '100 Navigator Way',
-    suite: '500',
+    suite: '45',
     city: 'Dallas',
     state: 'TX',
     zip: '75201',

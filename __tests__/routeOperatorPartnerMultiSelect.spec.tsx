@@ -79,7 +79,7 @@ describe('PartnerDropdownMultiSelect', () => {
     
     // Check first operator
     await user.click(checkboxes[0]);
-    expect(onChange).toHaveBeenCalledWith(['712abc45-def0-4321-9876-abcdef012345']);
+    expect(onChange).toHaveBeenCalledWith(['475e4d12-8a0b-4264-933d-d960936852b2']);
 
     // Uncheck first operator
     await user.click(checkboxes[0]);
@@ -102,8 +102,8 @@ describe('PartnerDropdownMultiSelect', () => {
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes[0]).toBeChecked();
-    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+    expect(checkboxes[0]).not.toBeChecked();
   });
 
   test('disables checkboxes when isDisabled is true for Non-Op', async () => {
@@ -186,7 +186,7 @@ describe('OperatorDropdownMultiSelect', () => {
     
     // Check first operator
     await user.click(checkboxes[0]);
-    expect(onChange).toHaveBeenCalledWith(['3b34a78a-13ad-40b5-aecd-268d56dd5e0d']);
+    expect(onChange).toHaveBeenCalledWith(['626390b5-6f63-4caa-a0aa-b333a15eaf59']);
 
     // Uncheck first operator
     await user.click(checkboxes[0]);
@@ -208,8 +208,8 @@ describe('OperatorDropdownMultiSelect', () => {
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes[0]).toBeChecked();
-    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+    expect(checkboxes[0]).not.toBeChecked();
   });
 
   test('disables checkboxes when isDisabled is true', async () => {

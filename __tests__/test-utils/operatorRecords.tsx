@@ -427,12 +427,33 @@ export const operatorActivatedSentToSupabase =
      "zip": "90078",
 };
 
-export const operatorDeactivatedFromSupabase = 
+export const operatorDeactivatedFromSupabase = [
     {
-    id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
-    name: "Corr and Whit Oils Company",
-    active: false,
-};
+        "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+        "created_at": "2025-10-06T20:14:39.997772+00:00",
+        "name": "Corr and Whit Oils Company",
+        "base_url": null,
+        "key": null,
+        "docID": null,
+        "source_system": 1,
+        "active": false,
+        "created_by": null
+    }
+];
+
+export const operatorNameChangedFromSupabase = [
+    {
+        "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+        "created_at": "2025-10-06T20:14:39.997772+00:00",
+        "name": "Corr Mike Oils",
+        "base_url": null,
+        "key": null,
+        "docID": null,
+        "source_system": 1,
+        "active": true,
+        "created_by": null
+    }
+];
 
 export const operatorAddressDeactivatedFromSupabase = 
     {
@@ -446,12 +467,19 @@ export const operatorAddressActivatedFromSupabase =
     active: true,
 };
 
-export const operatorActivatedFromSupabase = 
+export const operatorActivatedFromSupabase = [
     {
-    id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
-    name: "Corr and Whit Oils Company",
-    active: true,
-};
+        "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+        "created_at": "2025-10-06T20:14:39.997772+00:00",
+        "name": "Corr and Whit Oils Company",
+        "base_url": null,
+        "key": null,
+        "docID": null,
+        "source_system": 1,
+        "active": true,
+        "created_by": null
+    }
+];
 
 export const partnersLinkedOrUnlinked = [
     {

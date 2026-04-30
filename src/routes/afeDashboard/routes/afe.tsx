@@ -207,7 +207,7 @@ export default function AFE() {
 
         }
   };
-console.log(loggedInUser)
+
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-4">

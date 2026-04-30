@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type AddressType, type OperatorPartnerAddressType, type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type RoleEntryRead } from "src/types/interfaces";
+import { type OperatorRecordWithNonOpAddresses, type RoleEntryRead } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformOperatorPartnerAddressRecord } from "src/types/transform";
 import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
@@ -12,16 +12,15 @@ import { notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
-import type { L } from "vitest/dist/chunks/reporters.d.79o4mouw.js";
 
-function addressDisplay(operatorOrPartnerRecord: AddressType) {
-    const operatorOrPartnerAddress = operatorOrPartnerRecord.street!.concat(' ',
-        `${operatorOrPartnerRecord.suite === undefined || operatorOrPartnerRecord.suite === '' ? '' : '#'+operatorOrPartnerRecord.suite.concat(' ')}`,
-        `${operatorOrPartnerRecord.city === undefined ? '' : operatorOrPartnerRecord.city.concat(', ')}`,
-        `${operatorOrPartnerRecord.state === undefined ? '' : operatorOrPartnerRecord.state.concat(' ')}`,
-        `${operatorOrPartnerRecord.zip === undefined ? '' : operatorOrPartnerRecord.zip.concat(' ')}`,
-        `${operatorOrPartnerRecord.country === undefined ? '' : operatorOrPartnerRecord.country}`);
-    return operatorOrPartnerAddress;
+function addressDisplay(addressRecord: RoleEntryRead) {
+    const addressRecordDisplay = addressRecord.apc_address?.street.concat(' ',
+        `${addressRecord.apc_address?.suite === undefined || addressRecord.apc_address?.suite === '' ? '' : '#'+addressRecord.apc_address?.suite.concat(' ')}`,
+        `${addressRecord.apc_address?.city.concat(', ')}`,
+        `${addressRecord.apc_address?.state.concat(' ')}`,
+        `${addressRecord.apc_address?.zip.concat(' ')}`,
+        `${addressRecord.apc_address?.country}`);
+    return addressRecordDisplay;
 }
 
 export default function OperatorViewAndEdit() {
@@ -68,24 +67,19 @@ export default function OperatorViewAndEdit() {
             )
         );
 
-{/* 
         try {
-            const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
-                updateOperatorNameAndStatus(updatedOperator, token),
-                updateOperatorAddress(updatedOperator, token)
-            ]);
 
-            if (!operatorStatusChange.ok) {
-                throw new Error(operatorStatusChange.message as any).message;
+            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.active, updatedOperator.apc_id);
+            
+            if (!operatorStatusChangeResult.ok) {
+                throw new Error(operatorStatusChangeResult.message);
             }
-            if (!operatorAddressStatusChange.ok) {
-                throw new Error(operatorAddressStatusChange.message as any).message;
-            }
+
+            console.log(operatorStatusChangeResult)
 
         } catch (error) {
             console.error("Failed to change Operator status:", error);
         }
-            */}
     };
 
     const handlePageChange = (paginatedData: RoleEntryRead[], page: number) => {
@@ -94,8 +88,8 @@ export default function OperatorViewAndEdit() {
     };
 
     const handleEditClick = (operator: RoleEntryRead) => {
-        const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id);
-        console.log(nonOperatedAddresses);
+        const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id && (nonOp.role === superUserPermission || nonOp.role === editNonOpLibrary));
+        
 
         const operatorToEdit: OperatorRecordWithNonOpAddresses = {
             apc_id: operator.apc_id,
@@ -123,8 +117,6 @@ export default function OperatorViewAndEdit() {
         };
         setOperatorToEdit(operatorToEdit);
         setOpen(true);
-
-        console.log(operatorToEdit)
     }
 
     return (
@@ -165,7 +157,7 @@ export default function OperatorViewAndEdit() {
                                                 <dl className="font-normal">
                                                     <dt className="sr-only">Address</dt>
                                                     <dd className="mt-1 truncate text-sm leading-6 text-[var(--darkest-teal)] custom-style-long-text">
-                                                        {addressDisplay(operator.apc_address!)}
+                                                        {addressDisplay(operator)}
                                                     </dd>
                                                     <dt className="sr-only">Status</dt>
                                                     <dd className="mt-1 flex justify-between items-center gap-2">

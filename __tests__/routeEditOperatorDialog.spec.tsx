@@ -1,5 +1,4 @@
 import EditOperator from 'src/routes/createEditOperators/routes/editOperator';
-import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
@@ -8,6 +7,7 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 
 import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
 import { operatorRecordNullValues, CorrWhitOilsOperatorRecord, CorrWhitOilsOperatorRecordUpdated, CorrWhitOilsWithOnePartnerOperatorRecord } from './test-utils/operatorRecordsFormatted'
+import { operatorNameChangedFromSupabase } from './test-utils/operatorRecords';
 
 vi.mock('provider/write', () => ({
   updateOperatorNameAndStatus: vi.fn(),
@@ -55,7 +55,8 @@ describe('Edit Operators',() => {
       const user = userEvent.setup();  
       vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
                   ok: true,
-                  data: {id: 'record-d', active: true, name: 'Corr Mike Oils'}
+                  data: operatorNameChangedFromSupabase,
+                  message: undefined
               });
       vi.mocked(writeProvider.updateOperatorAddress).mockResolvedValueOnce({
                   ok: true,

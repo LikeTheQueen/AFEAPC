@@ -42,7 +42,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
             setPartnerNameUpdate(falseArray);
         }
         setOperatorAndPartners();
-    }, [])
+    }, []);
   
   function handleOperatorAddressChange(e: { target: { name: any; value: any; }; }) {
     setOperatorRecord({
@@ -50,14 +50,14 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
       [e.target.name]: e.target.value
     });
     setSaveOpAddressChange(true);
-  }
+  };
   function handleOperatorNameChange(e: { target: { name: any; value: any; }; }) {
     setOperatorRecord({
       ...operatorRecord,
       [e.target.name]: e.target.value
     });
     setSaveOpNameChange(true);
-  }
+  };
 
   function handlePartnerNameChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
     setPartnerList(prevPartnerList => 
@@ -73,7 +73,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
             ? true : item
         )
     );
-  }
+  };
   function handlePartnerAddressChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
     setPartnerList(prevPartnerList => 
     prevPartnerList.map((partner, index) =>  
@@ -88,11 +88,11 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
             ? true : item
         )
     );
-  }
+  };
    
   async function handleClickSaveOpName() {
     try {
-      const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord, token);
+      const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord.name, operatorRecord.active,operatorRecord.apc_id!);
       
       if(!operatorToEdit.ok) {
         throw new Error(operatorToEdit.message as any).message
@@ -101,7 +101,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
     } catch (error) {
       console.error("Failed to update Operator:", error);
     }
-  }
+  };
   async function handleClickSaveOpAddress() {
     try {
       const operatorAddress = await updateOperatorAddress(operatorRecord, token);
@@ -113,7 +113,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
     } catch (error) {
       console.error("Failed to update Operator Address:", error);
     }
-  }
+  };
   async function handleClickActivateOrDeactivateOperator() {
     if(!operatorRecord.apc_id || !operatorRecord.apc_address_id) return;
 
@@ -129,23 +129,20 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
         address_active: !operatorRecord.address_active
     })
 
-    try {
-        const [operatorStatusChange, operatorAddressStatusChange] = await Promise.all([
-            updateOperatorNameAndStatus(updatedOperator, token),
-            updateOperatorAddress(updatedOperator, token)
-        ])
+   try {
 
-      if(!operatorStatusChange.ok) {
-        throw new Error(operatorStatusChange.message as any).message
-      }
-      if(!operatorAddressStatusChange.ok) {
-        throw new Error(operatorAddressStatusChange.message as any).message
-      }
-      
-    } catch (error) {
-      console.error("Failed to change Operator status:", error);
-    }
-  }
+            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.name, updatedOperator.active, updatedOperator.apc_id!);
+            
+            if (!operatorStatusChangeResult.ok) {
+                throw new Error(operatorStatusChangeResult.message);
+            }
+
+            console.log(operatorStatusChangeResult)
+
+        } catch (error) {
+            console.error("Failed to change Operator status:", error);
+        }
+  };
   async function handleClickSavePartnerName(partnerRecord: OperatorPartnerRecord, partnerIdx: number) {
     try {
       const partnerToEdit = await updatePartnerNameAndStatus(partnerRecord, token);
@@ -163,7 +160,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
     } catch (error) {
       console.error("Failed to update Partner:", error);
     }
-  }
+  };
   async function handleClickSavePartnerAddress(partnerRecord: OperatorPartnerRecord, partnerIdx: number) {
     try {
       const partnerAddress = await updatePartnerAddress(partnerRecord, token);
@@ -181,7 +178,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
     } catch (error) {
       console.error("Failed to update Partner Address:", error);
     }
-  }
+  };
   async function handleClickActivateOrDeactivatePartner( partnerIdx: number) {
     
   const partnerToUpdate = partnerList[partnerIdx];
@@ -214,7 +211,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   } catch (error) {
       console.error("Failed to change Operator status:", error);
     }
-  }
+  };
   async function handleDisownPartner(partnerIdx: number, id: string) {
     setPartnerListToDisown(prevPartnerListToDisown => {
             const updatedPartnerListToDisown = [...prevPartnerListToDisown];
@@ -247,7 +244,7 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   );
   
  
-  }
+  };
   function handleNewAddressChange(e: { target: { name: any; value: any; }; }) {
     setNewPartnerAddress({
       ...newPartnerAddress,

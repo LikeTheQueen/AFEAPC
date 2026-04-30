@@ -18,7 +18,22 @@ import type { UUID } from 'crypto';
         return null;
       }
     return;
-  }
+  };
+
+  export const updateOperatorNameAndStatus = async (operatorName: string, activeStatus: boolean, apc_id:string) => {
+    
+  const { data, error } = await supabase
+    .from('OPERATORS')
+    .update({name: operatorName, active: activeStatus})
+    .eq('id',apc_id)
+    .select();
+    if (error) {
+        return {ok: false, data: [], message: error.message};
+      }
+      
+  return {ok:true, data: data, message: undefined};
+};
+
   export const addOperatorSupabase = async (name: string, source_system:number) => {
     const { data, error } = await supabase.from('OPERATORS')
     .insert({name: name, source_system: source_system, active:true})
@@ -437,7 +452,7 @@ export async function updateUserActiveStatusToActive(user_id: string, token: str
     
     return callEdge<TogglePayload, ToggleResult>("reactivate_user", { user_id }, token);
   };
-
+{/* 
 export async function updateOperatorNameAndStatus(operator: OperatorPartnerRecord, token: string) {
     
     type TogglePayload = { operator: OperatorPartnerRecord; };
@@ -445,6 +460,7 @@ export async function updateOperatorNameAndStatus(operator: OperatorPartnerRecor
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operator }, token);
   };
+  */}
 
 export async function updateOperatorAddress(operatorAddress: OperatorPartnerRecord, token: string) {
     
