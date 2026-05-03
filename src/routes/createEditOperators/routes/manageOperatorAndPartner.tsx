@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { type OperatorRecordWithNonOpAddresses, type RoleEntryRead } from "src/types/interfaces";
+import { type RoleEntryRead } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { transformOperatorPartnerAddressRecord } from "src/types/transform";
-import { fetchOperatorsOrPartnersToEdit } from "provider/fetch";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { updateOperatorAddress, updateOperatorNameAndStatus } from "provider/write";
+import { updateOperatorNameAndStatus } from "provider/write";
 import { ToastContainer } from "react-toastify";
-import { notifyStandard } from "src/helpers/helpers";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
@@ -26,11 +24,10 @@ function addressDisplay(addressRecord: RoleEntryRead) {
 export default function OperatorViewAndEdit() {
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
-    const [loadingOperators, setLoadingOperators] = useState(false);
-    const [operatorToEdit, setOperatorToEdit] = useState<OperatorRecordWithNonOpAddresses | null>(null);
-    const [operatorResultErrorMessage, setOperatorResultErrorMessage] = useState<string | null>(null);
     const [filteredOperators, setFilteredOperators] = useState<RoleEntryRead[] | []>([]);
     const [open, setOpen] = useState(false);
+    const [opToEdit, setOpToEdit] = useState<RoleEntryRead>();
+    const [relatedNonOpAddresses, setRelatedNonOpAddresses] = useState<RoleEntryRead[]>([]);
     
     // State for paginated data
     const [rowsToShow, setRowsToShow] = useState<RoleEntryRead[]>([]);
@@ -51,14 +48,14 @@ export default function OperatorViewAndEdit() {
         const actualIndex = filteredOperators.findIndex(operator => operator.apc_id === operator_apc_id);
         const operatorToUpdate = filteredOperators[actualIndex];
 
-        if (!operatorToUpdate.apc_id || !operatorToUpdate.apc_address_id) return;
+        if (!operatorToUpdate.apc_id) return;
 
         const updatedOperator = {
             ...operatorToUpdate,
-            active: !operatorToUpdate.active,
+            apc_name_active: !operatorToUpdate.apc_name_active,
             address_active: !operatorToUpdate.apc_address?.address_active
         };
-
+        
         setFilteredOperators(prevOperatorsList =>
             prevOperatorsList.map((operator, index) =>
                 index === actualIndex
@@ -69,16 +66,16 @@ export default function OperatorViewAndEdit() {
 
         try {
 
-            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.active, updatedOperator.apc_id);
+            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id);
             
             if (!operatorStatusChangeResult.ok) {
                 throw new Error(operatorStatusChangeResult.message);
             }
 
-            console.log(operatorStatusChangeResult)
+            notifyStandard(`Operator name and billing address have been ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}.)`);
 
         } catch (error) {
-            console.error("Failed to change Operator status:", error);
+            notifyFailure(`Operator name and billing address have been ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}.)`);
         }
     };
 
@@ -88,34 +85,9 @@ export default function OperatorViewAndEdit() {
     };
 
     const handleEditClick = (operator: RoleEntryRead) => {
-        const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id && (nonOp.role === superUserPermission || nonOp.role === editNonOpLibrary));
-        
-
-        const operatorToEdit: OperatorRecordWithNonOpAddresses = {
-            apc_id: operator.apc_id,
-            name: operator.apc_name,
-            apc_address_id: operator.apc_address_id,
-            street: operator.apc_address?.street,
-            suite: operator.apc_address?.suite,
-            city: operator.apc_address?.city,
-            address_active: operator.apc_address?.address_active!,
-            active: operator.active,
-            partners: nonOperatedAddresses?.map((item: RoleEntryRead) => ({
-                apc_id: item.apc_id,
-                name: item.apc_name,
-                active: item.active,
-                id: item.id,
-                street: item.apc_address?.street,
-                suite: (item.apc_address?.suite === null ? '' : item.apc_address?.suite),
-                city: item.apc_address?.city,
-                state: item.apc_address?.state,
-                zip: item.apc_address?.zip,
-                country: item.apc_address?.country,
-                address_active: item.apc_address?.address_active!
-            })) ?? []
-
-        };
-        setOperatorToEdit(operatorToEdit);
+        const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id && (nonOp.role === superUserPermission || nonOp.role === editNonOpLibrary)) ?? [];
+        setOpToEdit(operator);
+        setRelatedNonOpAddresses(nonOperatedAddresses);
         setOpen(true);
     }
 
@@ -230,19 +202,14 @@ export default function OperatorViewAndEdit() {
                                 onPageChange={handlePageChange}
                             />
                             </div>
-                            <div hidden={(filteredOperators.length === 0 && operatorResultErrorMessage === null) ? false : true } className="w-full sm:w-7/8">
+                            <div hidden={(filteredOperators.length === 0 ) ? false : true } className="w-full sm:w-7/8">
                                 <NoSelectionOrEmptyArrayMessage
                                     message={'There are no Operators you have access to manage'}
                                 ></NoSelectionOrEmptyArrayMessage>
                             </div>
-                            <div hidden={(filteredOperators.length === 0 && operatorResultErrorMessage !== null) ? false : true } className="w-full sm:w-7/8">
-                                <NoSelectionOrEmptyArrayMessage
-                                    message={'Unable to get Operators. Please contact AFE Partners Support '+operatorResultErrorMessage}
-                                ></NoSelectionOrEmptyArrayMessage>
-                            </div>
                         </div>
                     </div>
-                    <Dialog open={open} onClose={() => { setOpen(false); setOperatorToEdit(null); }} className="relative z-50">
+                    <Dialog open={open} onClose={() => { setOpen(false); setOpToEdit(undefined); }} className="relative z-50">
                         <DialogBackdrop
                             transition
                             className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-closed:opacity-0 dark:bg-gray-900/50" />
@@ -262,7 +229,7 @@ export default function OperatorViewAndEdit() {
                                                     <div className="ml-3 mt-4 flex items-center">
                                                         <button
                                                             type="button"
-                                                            onClick={() => { setOpen(false), setOperatorToEdit(null) }}
+                                                            onClick={() => { setOpen(false) }}
                                                             className="relative rounded-md text-[var(--darkest-teal)]/70 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
                                                             <span className="absolute -inset-2.5" />
                                                             <span className="sr-only">Close panel</span>
@@ -273,8 +240,9 @@ export default function OperatorViewAndEdit() {
                                             </div>
                                             <div className="relative mt-2 flex-1 px-4 sm:px-6">
                                                 <EditOperator
-                                                    operatorToEdit={operatorToEdit!}
                                                     token={token}
+                                                    opToEdit={opToEdit!}
+                                                    NonOpAddress={relatedNonOpAddresses}
                                                 ></EditOperator>
                                             </div>
                                         </div>

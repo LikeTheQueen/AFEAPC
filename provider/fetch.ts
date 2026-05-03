@@ -1,21 +1,16 @@
 
-import { transformOperator, 
-  transformOperatorasPartnerAddress, 
-  transformOperatorPartnerAddress, 
-  transformOperatorPartnerAddressSuperUser, 
+import { 
   transformRolesGeneric, 
   transformRoleEntrySupabase, 
   transformUserProfileRecordSupabase, 
-  transformRoleEntryPartnerSupabase,
   transformPartnerMapRecordForDisplay,
-  transformOperatorPartnerAddressWithOpName,
   transformPartnerSourceSystemAddress,
   transformOperatorForDropDown,
   transformGLCodes,
   transformGLCodeCrosswalk,
   transformSupportHistory} from 'src/types/transform';
 import  supabase  from './supabase';
-import type { OperatorOrPartnerList, ApiResponse } from 'src/types/interfaces';
+import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 

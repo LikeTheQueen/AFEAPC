@@ -196,7 +196,9 @@ export default function AFE() {
     if(partnerStatusChange.ok) {
           await handleEmailNotifcation(afe.partner_name, afe.operator,`https://www.afepartner.com/mainscreen/afeDetail/${afe.id}`,'View AFE');
           await insertAFEHistory(afe.id, 'The Partner Status on the AFE changed from New to Viewed','action', token);
-        } else {
+        }
+         
+    if(!partnerStatusChange.ok) {
           writeToFunctionLogs(
             'Update Partner Status',
             partnerStatusChange.message,

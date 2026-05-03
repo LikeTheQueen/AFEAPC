@@ -2,6 +2,7 @@ import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import { DaysAgoDropdown, PartnerStatusDropdown } from "./styleHelpers";
 import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 
+
 type AFEFiltersProps = {
     afeLength: number,
     afeNumberSearch: string;

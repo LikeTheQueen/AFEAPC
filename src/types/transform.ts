@@ -460,30 +460,6 @@ export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
     }));
 };
 
-export const transformRoleEntryPartnerSupabase = (data: any[]): RoleEntryRead[] => {
-    return data 
-    .map(item => ({
-    id: item.role_id, 
-    role: item.role, 
-    active: item.role_active,
-
-    apc_id: item.apc_id, 
-    apc_name: item.apc_name, 
-    apc_address_id: item.apc_address_id, 
-    
-    apc_address: null, 
-
-    user_id: item.user_id, 
-    user_firstname: item.first_name, 
-    user_lastName: item.last_name, 
-    user_email: item.email,
-    user_active: item.user_active,
-
-    is_op_permission: item.is_op_permission,
-    is_partner_permission: item.is_partner_permission,
-    apc_op_id: item.apc_id.apc_op_id ?? null,
-    }));
-};
 
 export const transformOperatorPartnerAddressWithOpName = (data: any[]): OperatorPartnerAddressWithOpNameType[] => {
     return data

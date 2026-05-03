@@ -1,5 +1,5 @@
 import  supabase  from './supabase';
-import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
@@ -21,7 +21,7 @@ import type { UUID } from 'crypto';
   };
 
   export const updateOperatorNameAndStatus = async (operatorName: string, activeStatus: boolean, apc_id:string) => {
-    
+    console.log(activeStatus,apc_id,operatorName)
   const { data, error } = await supabase
     .from('OPERATORS')
     .update({name: operatorName, active: activeStatus})
@@ -32,7 +32,46 @@ import type { UUID } from 'crypto';
       }
       
   return {ok:true, data: data, message: undefined};
-};
+  };
+
+  export const updateOperatorAddress = async (operatorAddress: AddressType) => {
+      const { error } = await supabase
+      .from('OPERATOR_ADDRESS')
+      .update({street: operatorAddress.street, suite: operatorAddress.suite, city: operatorAddress.city, state: operatorAddress.state, zip: operatorAddress.zip, country: operatorAddress.country, active: operatorAddress.address_active})
+      .eq('id',operatorAddress.id)
+      .select();
+      if (error) {
+          return {ok: false, message: error.message};
+        }
+        
+    return {ok:true, message: undefined};
+  };
+
+  export const updatePartnerNameAndStatus = async (partnerRecord: RoleEntryRead) => {
+    const { data, error } = await supabase
+    .from('PARTNERS')
+    .update({name: partnerRecord.apc_name, active: partnerRecord.apc_name_active})
+    .eq('id',partnerRecord.apc_id)
+    .select();
+    if (error) {
+         return {ok: false, data: [], message: error.message};
+      }
+console.log(data);
+  return {ok:true, data: data, message: undefined};
+  };
+
+  export const updatePartnerAddress = async (partnerAddress: AddressType) => {
+      const { data, error } = await supabase
+      .from('PARTNER_ADDRESS')
+      .update({street: partnerAddress.street, suite: partnerAddress.suite, city: partnerAddress.city, state: partnerAddress.state, zip: partnerAddress.zip, country: partnerAddress.country, active: partnerAddress.address_active})
+      .eq('id',partnerAddress.id)
+      .select();
+      if (error) {
+          return {ok: false, data: [], message: error.message};
+        }
+        
+    return {ok:true, data: data, message: undefined};
+  };
 
   export const addOperatorSupabase = async (name: string, source_system:number) => {
     const { data, error } = await supabase.from('OPERATORS')
@@ -46,7 +85,7 @@ import type { UUID } from 'crypto';
       return {ok: true, data: data, message: undefined};
   };
 
-  export const addPartnerSupabase = async (name: string, apc_op_id:string) => {
+  export const addPartnerSupabase = async (name: string, apc_op_id:string, address: AddressType) => {
     const { data, error } = await supabase.from('PARTNERS')
     .insert({name: name, active:true, apc_op_id:apc_op_id})
     .select()
@@ -54,7 +93,22 @@ import type { UUID } from 'crypto';
     if (error) {
         return {ok: false, data: null, message: error.message};
       }
-      return {ok: true, data: data, message: undefined};
+      const apc_id = data.id;
+      const { data: dataAddress, error: errorAdress } = await supabase.from('PARTNER_ADDRESS')
+    .insert({apc_id: apc_id, 
+      apc_op_id: apc_op_id,
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country })
+    .select()
+    .single();
+    if (errorAdress) {
+         return { ok: false, data:null, message: errorAdress.message};
+      }
+      return {ok: true, data:dataAddress, message: undefined};
   };
 
   export const addOperatorAdressSupabase = async (apc_id: string, address: AddressType) => {
@@ -460,7 +514,7 @@ export async function updateOperatorNameAndStatus(operator: OperatorPartnerRecor
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operator }, token);
   };
-  */}
+  
 
 export async function updateOperatorAddress(operatorAddress: OperatorPartnerRecord, token: string) {
     
@@ -469,6 +523,8 @@ export async function updateOperatorAddress(operatorAddress: OperatorPartnerReco
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Address", { operatorAddress }, token);
   };
+  */}
+  {/* 
 
 export async function updatePartnerAddress(partnerAddress: OperatorPartnerRecord, token: string) {
     
@@ -485,4 +541,5 @@ export async function updatePartnerNameAndStatus(partnerRecord: OperatorPartnerR
     
     return callEdge<TogglePayload, ToggleResult>("update_Partner_Name_and_Status", { partnerRecord }, token);
   };
+  */}
   

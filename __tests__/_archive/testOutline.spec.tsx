@@ -1,5 +1,6 @@
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,11 +15,16 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
  } from './test-utils/afeRecords';
 
  vi.mock('provider/fetch', () => ({
-   fetchMappedGLAccountCode: vi.fn(),
+   testExecuteConnection: vi.fn(),
  }));
  
  vi.mock('provider/write', () => ({
      updateGLCodeMapping: vi.fn(),
+ }));
+
+ vi.mock('src/helpers/helpers', () => ({
+     notifyStandard: vi.fn(),
+     notifyFailure: vi.fn(),
  }));
  
  const setupWithSelections = async (
@@ -95,5 +101,9 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
              (fetchProvider.fetchMappedGLAccountCode as Mock)
                  .mockResolvedValue({ ok: true, data: [] });
              await setupWithSelections(user);
+
+             expect(notifyStandard).toHaveBeenCalledWith(
+      "Your support ticket has been logged and is now in the pipeline.  Sit tight while we pressure test the issue and bring it up to production."
+    );
      });
     });

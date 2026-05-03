@@ -1,29 +1,21 @@
 import OperatorViewAndEdit from 'src/routes/createEditOperators/routes/manageOperatorAndPartner';
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
-import { vi, type Mock } from 'vitest';
+import { vi } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
 import {
-    operatorListReturnFromSupabase,
     operatorDeactivatedFromSupabase,
     operatorDectivatedSentToSupabase,
-    operatorActivatedSentToSupabase,
     operatorActivatedFromSupabase,
     operatorListReturnFromSupabaseWithoutIDs,
-    operatorListReturnFromSupabaseWithAddressUndefined,
-    operatorListReturnFromSupabaseWithAddressUndefinedSuiteIsText,
-    operatorListReturnFromSupabaseWithSuiteNumber,
-    operatorListReturnFromSupabaseEmpty,
     partnersLinkedOrUnlinked,
-    operatorAddressDeactivatedFromSupabase,
-    operatorAddressActivatedFromSupabase
     
 } from './test-utils/operatorRecords';
 
-import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2 } from './test-utils/rachelGreenuser'
+import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
 
 vi.mock('react-toastify', () => ({
   toast: vi.fn(),
@@ -93,8 +85,6 @@ describe('View and Edit Operators',() => {
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).not.toBeVisible();
-        const errorMessage = screen.getByText(/Unable to get Operators\.?\s+Please contact AFE Partners Support/i)
-        expect(errorMessage).not.toBeVisible();
 
     });
 
@@ -159,8 +149,6 @@ describe('View and Edit Operators',() => {
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).toBeVisible();
-        const errorMessage = screen.getByText(/Unable to get Operators\.?\s+Please contact AFE Partners Support/i)
-        expect(errorMessage).not.toBeVisible();
 
     });
 
@@ -206,8 +194,6 @@ describe('View and Edit Operators',() => {
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).not.toBeVisible();
-        const errorMessage = screen.getByText(/Unable to get Operators\.?\s+Please contact AFE Partners Support/i)
-        expect(errorMessage).not.toBeVisible();
 
     });
 
@@ -411,20 +397,10 @@ describe('View and Edit Operators',() => {
             message: undefined
         });
 
-        vi.mocked(writeProvider.updateOperatorAddress).mockResolvedValueOnce({
-            ok: true,
-            data: operatorAddressDeactivatedFromSupabase
-        });
-
         vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
             ok: true,
             data: operatorActivatedFromSupabase,
             message: undefined
-        });
-
-        vi.mocked(writeProvider.updateOperatorAddress).mockResolvedValueOnce({
-            ok: true,
-            data: operatorAddressActivatedFromSupabase
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -472,6 +448,7 @@ describe('View and Edit Operators',() => {
                 operatorDectivatedSentToSupabase.apc_id,
             );
         });
+        
         
       await waitFor(() => {
         expect(toast).toHaveBeenCalledWith(
@@ -563,8 +540,6 @@ describe('View and Edit Operators',() => {
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).not.toBeVisible();
-        const errorMessage = screen.getByText(/Unable to get Operators\.?\s+Please contact AFE Partners Support/i)
-        expect(errorMessage).not.toBeVisible();
 
     });
 

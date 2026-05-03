@@ -27,7 +27,7 @@ export default function TestExecuteManual() {
       if (!testNewExecuteConnection.ok) {
         setHideWarning(false);
         setResponseError(testNewExecuteConnection.message);
-        notifyStandard(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
+        notifyFailure(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`);
       } else {
         setDisabledTextFields(true);
         setHideSuccess(false);
@@ -96,6 +96,7 @@ export default function TestExecuteManual() {
                     <input
                       disabled={disabledTextFields}
                       id={'executeKey'}
+                      name={"executeKey"}
                       type={hideKey ? "password" : "text"}
                       autoComplete="off"
                       value={executeKey}
@@ -103,7 +104,7 @@ export default function TestExecuteManual() {
                       onChange={handleKeyChange}
                       className="col-start-1 row-start-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
                     />
-                    <span className="col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-[var(--dark-teal)] sm:size-4" onClick={toggleMode}>
+                    <span aria-label="Toggle key visibility" className="col-start-1 row-start-1 mr-3 size-5 self-center justify-self-end text-[var(--dark-teal)] sm:size-4" onClick={toggleMode}>
                       {
                         hideKey ? <EyeSlashIcon aria-hidden="true" className="size-5 shrink-0 " /> : <EyeIcon aria-hidden="true" className="size-5 shrink-0 " />
                       }

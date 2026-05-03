@@ -22,7 +22,7 @@ import {
   PartnerDropdown,
   loggedInUserIsSuperUser
 } from './test-utils/afeRecords';
-import { rachelGreenAllRolesActive } from './test-utils/routeCreateEditUsersHelpersVariables';
+
 
 vi.mock('../provider/fetch', () => ({
   updateAFEPartnerStatusSupabase: vi.fn(),
@@ -35,6 +35,7 @@ vi.mock('../provider/fetch', () => ({
 vi.mock('provider/write', () => ({
   updateAFEPartnerStatus: vi.fn().mockResolvedValue({ ok: true, data: null }),
   insertAFEHistory: vi.fn(),
+  writeToFunctionLogs: vi.fn(),
 }));
 
 vi.mock('../email/emailBasic', () => ({
@@ -667,6 +668,87 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
   });
 
+  test('Write to function logs when the Partner Status is not updated', async () => {
+    const user = userEvent.setup();
+
+    (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
+      ok: false,
+      message: 'Unable to update Partner Status'
+    });
+
+    (emailProvider.handleSendEmail as Mock).mockImplementation(() => 
+  Promise.resolve({ ok: true })
+);
+    renderWithProviders(<AFE />, {
+      routes: [
+      { path: '/', element: <AFE /> },
+      { path: '/afeDetail/:afeID', element: <div>AFE Detail</div> },
+    ],
+      supabaseOverrides: {
+        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loading: false,
+        isSuperUser: false,
+        session: {
+        access_token: 'test-token',
+        refresh_token: 'test-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: {
+          id: 'test-user-id',
+          email: 'test@example.com',
+          aud: 'authenticated',
+          role: 'authenticated',
+          created_at: '2024-01-01T00:00:00Z',
+          app_metadata:[],
+          user_metadata:{}
+        }
+      },
+    }
+  });
+
+  await waitFor(() => {
+    expect(fetchProvider.fetchAFEs).toHaveBeenCalled();
+  });
+
+  await waitFor(() => {
+      expect(screen.getByTestId('Non-OperatedAFElistFilter')).toBeVisible();
+    });
+
+    await waitFor(() => {
+
+      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
+      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+
+      //EXPECT ARCHIVED AFEs NOT to be Visible
+      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+    });
+
+    
+    await user.click(screen.getByRole("link", { name: /06D111JC/i }));
+
+    await waitFor(() => {
+      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
+      expect(writeProvider.writeToFunctionLogs).toHaveBeenCalledWith(
+        'Update Partner Status',
+        'Unable to update Partner Status',
+        null,
+        'ERROR',
+        `AFE Homepage by ${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName}`
+      );
+    });
+
+    await waitFor(() => {
+  expect(screen.getByText('AFE Detail')).toBeInTheDocument();
+});
+await new Promise(resolve => setTimeout(resolve, 150));
+    
+  });
+
   test('Shows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
@@ -1114,7 +1196,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
    
   });
 
-  test('Shows No Operated AFEs and No Non-Operated AFEs when there is no Session', async () => {
+  test('Shows No Operated AFEs and No Non-Operated AFEs when there is no logged in user', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({

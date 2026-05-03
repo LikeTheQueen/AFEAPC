@@ -18,7 +18,7 @@ export default function TestExecuteEstablishedConnection() {
       
       if(!textConnectionResult.ok) {
         setHideWarning(false);
-        notifyStandard(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`); 
+        notifyFailure(`API Integration failed.  This well isn't producing.\n\n(TLDR: Failed connection)`); 
       }
       
       if(textConnectionResult.ok) {

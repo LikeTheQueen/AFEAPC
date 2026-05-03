@@ -21,8 +21,3 @@ export function AFEHistoryBlock({ user, created_at, description}: AFEHistoryRowP
     )
 };
 
-export function Paragraph(message: string) {
-    return (
-        <p>{message}</p>
-    )
-}

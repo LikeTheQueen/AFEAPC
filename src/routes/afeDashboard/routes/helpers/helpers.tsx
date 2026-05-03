@@ -1,7 +1,7 @@
 import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
 import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
 import { insertAFEHistory } from '../../../../../provider/write'
-import { notifyStandard } from "src/helpers/helpers";
+import { notifyStandard, superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/helpers/helpers";
 import { handleSendEmail } from "email/emailBasic";
 import { useSupabaseData } from "src/types/SupabaseContext";
 
@@ -94,14 +94,14 @@ export function handleOperatorArchiveStatusChange(id: string, archivedStatus: bo
 export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
     if (!user) return;
     return user?.operatorRoles
-      .filter(role => role.role === 2 || role.role === 1)
+      .filter(role => role.role === viewOperatedAFEPermission || role.role === superUserPermission)
       .map(role => role.apc_id);
 };
 
 export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | null) {
     if (!user) return;
     return user?.partnerRoles
-      .filter(role => role.role === 3 || role.role === 1)
+      .filter(role => role.role === viewNonOpAFEPermission || role.role === superUserPermission)
       .map(role => role.apc_id);
 };
 

@@ -1,195 +1,314 @@
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { type OperatorPartnerRecord, type OperatorRecordWithNonOpAddresses, type PartnerRecordToDisown } from 'src/types/interfaces';
+import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { insertPartnerRecord, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID } from 'provider/write';
+import { addOperatorPartnerAddressSupabase, addPartnerSupabase, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
-import { notifyStandard } from "src/helpers/helpers";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
+import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
+import { transformPartnerSingle } from 'src/types/transform';
 
 type EditOperatorProps = {
-    operatorToEdit: OperatorRecordWithNonOpAddresses;
     token: string;
+    opToEdit: RoleEntryRead;
+    NonOpAddress: RoleEntryRead[];
 };
 
-export default function EditOperator({operatorToEdit, token} : EditOperatorProps) {
+export default function EditOperator({token, opToEdit, NonOpAddress} : EditOperatorProps) {
+    //Imported variables
+    const [opRecordToEdit, setOpRecordToEdit] = useState<RoleEntryRead>(opToEdit);
+    const [relatedNonOpAddress, setRelatedNonOpAddress] = useState<RoleEntryRead[]>(NonOpAddress);  
     
+    //Track if there are changes to the Operator Name and Address
     const [saveOpNameChange, setSaveOpNameChange] = useState(false);
     const [saveOpAddressChange, setSaveOpAddressChange] = useState(false);
-    const [operatorRecord, setOperatorRecord] = useState<OperatorRecordWithNonOpAddresses>(operatorToEdit);
 
-    const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);
-    const [partnerAddressUpdate, setPartnerAddressUpdate] = useState<boolean[] | []>([]);
-    const [partnerNameUpdate, setPartnerNameUpdate] = useState<boolean[] | []>([]);
+    //Track Changes to the NonOp Name and Address
+    const [nonOpAddressUpdate, setNonOpAddressUpdate] = useState<boolean[] | []>([]);
+    const [nonOpNameUpdate, setNonOpNameUpdate] = useState<boolean[] | []>([]);
+
+    //Add a New Address
+    const [newNonOpAddress, setNewNonOpAddress] = useState<Partial<RoleEntryRead>>({
+      apc_name: '',
+      apc_name_active: true,
+      apc_op_id: opToEdit.apc_id,
+      apc_address: {
+        id: 0,
+        street: '',
+        suite:'',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+        address_active: true,
+      } as AddressType,
+    });
+    const [saveNewNonOpAddress, setSaveNewNonOpAddress] = useState(false);
+
+    //Disown the Non Op Address
+    const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);    
     const [partnerListToDisown, setPartnerListToDisown] = useState<PartnerRecordToDisown[]>([]);
 
-    const [newPartnerAddress, setNewPartnerAddress] = useState<OperatorPartnerRecord | null>(null);
-    const [saveNewPartnerAddress, setSaveNewPartnerAddress] = useState(false);
-
+    
 //Use Effect to set the Operator Record that is being edited, the Partner List and the array to know which Partner may have changed    
     useEffect(() => {
-        if(!operatorToEdit) return;
+        if(!opToEdit) return;
 
         async function setOperatorAndPartners() {
-            
-            if(!operatorToEdit) return;
 
-            setOperatorRecord(operatorToEdit);
-            setPartnerList(operatorToEdit.partners);
+            const falseArray = new Array(relatedNonOpAddress.length).fill(false);
 
-            const falseArray = new Array(operatorToEdit.partners.length).fill(false);
-
-            setPartnerAddressUpdate(falseArray);
-            setPartnerNameUpdate(falseArray);
+            setNonOpAddressUpdate(falseArray);
+            setNonOpNameUpdate(falseArray);
         }
         setOperatorAndPartners();
-    }, []);
-  
-  function handleOperatorAddressChange(e: { target: { name: any; value: any; }; }) {
-    setOperatorRecord({
-      ...operatorRecord,
-      [e.target.name]: e.target.value
-    });
-    setSaveOpAddressChange(true);
-  };
-  function handleOperatorNameChange(e: { target: { name: any; value: any; }; }) {
-    setOperatorRecord({
-      ...operatorRecord,
-      [e.target.name]: e.target.value
-    });
-    setSaveOpNameChange(true);
-  };
+    }, [opToEdit]);
 
-  function handlePartnerNameChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
-    setPartnerList(prevPartnerList => 
+  function handleOperatorNameChange(e: { target: { name: any; value: any; }; }) {
+    
+    setSaveOpNameChange(true);
+    setOpRecordToEdit({
+      ...opRecordToEdit,
+      [e.target.name]: e.target.value
+    })
+    
+  };
+  function handleOperatorAddressChange(e: { target: { name: any; value: any; }; }) {
+    
+    setSaveOpAddressChange(true);
+    setOpRecordToEdit({
+      ...opRecordToEdit,
+      apc_address: {
+        ...opRecordToEdit.apc_address,
+        [e.target.name]: e.target.value
+    }
+    })
+  };
+  function handleNonOpNameChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
+    setNonOpNameUpdate(prevnonOpNameUpdate =>
+        prevnonOpNameUpdate.map((item, index) =>
+        index === partnerIdx
+            ? true : item
+        )
+    );
+    
+    setRelatedNonOpAddress(prevPartnerList => 
     prevPartnerList.map((partner, index) =>  
       index === partnerIdx 
         ? { ...partner, [e.target.name]: e.target.value }
         : partner
         )
     );
-    setPartnerNameUpdate(prevPartnerNameUpdate =>
-        prevPartnerNameUpdate.map((item, index) =>
+    
+  };
+  function handleNonOpAddressChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
+    setNonOpAddressUpdate(prevnonOpAddressUpdate =>
+        prevnonOpAddressUpdate.map((item, index) =>
         index === partnerIdx
             ? true : item
+        )
+    );
+    setRelatedNonOpAddress(prevPartnerList => 
+    prevPartnerList.map((partner, index) =>  
+      index === partnerIdx 
+        ? { ...partner, apc_address: {
+          ...partner.apc_address,
+          [e.target.name]: e.target.value }
+        }
+        : partner
         )
     );
   };
-  function handlePartnerAddressChange(e: { target: { name: any; value: any; }; }, partnerIdx: number) {
-    setPartnerList(prevPartnerList => 
-    prevPartnerList.map((partner, index) =>  
-      index === partnerIdx 
-        ? { ...partner, [e.target.name]: e.target.value }
-        : partner
-        )
-    );
-    setPartnerAddressUpdate(prevPartnerAddressUpdate =>
-        prevPartnerAddressUpdate.map((item, index) =>
-        index === partnerIdx
-            ? true : item
-        )
+  function handleNewNonOpName(e: { target: { name: any; value: any; }; }) {
+    
+    const updated = {
+       ...newNonOpAddress,
+      [e.target.name]: e.target.value
+    };
+    setNewNonOpAddress(updated);
+    setSaveNewNonOpAddress(isValidNewRecord(updated));
+    
+  };
+  function handleNewNonOpAddressChange(e: { target: { name: any; value: any; }; }) {
+    
+    const updated = {
+        ...newNonOpAddress,
+        apc_address: {
+            ...newNonOpAddress.apc_address,
+            [e.target.name]: e.target.value
+        } as AddressType,
+    };
+    setNewNonOpAddress(updated);
+    setSaveNewNonOpAddress(isValidNewRecord(updated));
+  };
+  //Check if new record is valid before allowing for a save
+  function isValidNewRecord(record: Partial<RoleEntryRead>): boolean {
+    return !!(
+      record.apc_name &&
+      record.apc_address?.street &&
+      record.apc_address?.city &&
+      record.apc_address?.state &&
+      record.apc_address?.zip &&
+      record.apc_address?.country
     );
   };
    
+  //Save changes to the DB
+  async function handleClickSaveChanges(mode: string, nonOpIndex: number) {
+    if(mode === 'Operated') {
+    if(saveOpNameChange) {
+      const saveOpNameChangeResult = await handleClickSaveOpName();
+      handlenotification(saveOpNameChangeResult.ok, mode, opRecordToEdit.active, 'name change');
+    }
+
+    if(saveOpAddressChange) {
+      const saveOpAddressChange = await handleClickSaveOpAddress();
+      handlenotification(saveOpAddressChange.ok, mode, opRecordToEdit.apc_address.address_active, 'address change');
+    }
+    
+    } if(mode === 'Non-Operated') {
+    if(nonOpNameUpdate[nonOpIndex]) {
+    const saveNonOpNameResult = await handleClickSaveNonOpName(relatedNonOpAddress[nonOpIndex],nonOpIndex);
+    handlenotification(saveNonOpNameResult.ok, mode, true, 'name change');
+    }
+
+    if(nonOpAddressUpdate[nonOpIndex]) {
+      const saveNonOpAddressResult = await handleClickSaveNonOpAddress(relatedNonOpAddress[nonOpIndex],nonOpIndex);
+      handlenotification(saveNonOpAddressResult.ok, mode, true, 'address change');
+    }
+
+  } else if(mode === 'New Non-Operated') {
+    handleClickSaveNewNonOp();
+  }
+  };
   async function handleClickSaveOpName() {
     try {
-      const operatorToEdit = await updateOperatorNameAndStatus(operatorRecord.name, operatorRecord.active,operatorRecord.apc_id!);
-      
+      const operatorToEdit = await updateOperatorNameAndStatus(opRecordToEdit.apc_name, opRecordToEdit.active, opRecordToEdit.apc_id!);
+
       if(!operatorToEdit.ok) {
-        throw new Error(operatorToEdit.message as any).message
+        throw new Error(operatorToEdit.message);
       }
-    
+      setSaveOpNameChange(false);
+      return operatorToEdit;
+
     } catch (error) {
-      console.error("Failed to update Operator:", error);
-    }
+      return {ok: false, message: error};
+    } 
   };
   async function handleClickSaveOpAddress() {
     try {
-      const operatorAddress = await updateOperatorAddress(operatorRecord, token);
+      const operatorAddress = await updateOperatorAddress(opRecordToEdit.apc_address);
       
       if(!operatorAddress.ok) {
-        throw new Error(operatorAddress.message as any).message
+        throw new Error(operatorAddress.message)
       } 
-    
+      setSaveOpAddressChange(false);
+      return operatorAddress;
     } catch (error) {
-      console.error("Failed to update Operator Address:", error);
+      return {ok: false, message: error};
     }
   };
   async function handleClickActivateOrDeactivateOperator() {
-    if(!operatorRecord.apc_id || !operatorRecord.apc_address_id) return;
+    if (!opToEdit.apc_id || !opToEdit.apc_address_id) return;
 
     const updatedOperator = {
-            ...operatorRecord,
-        active: !operatorRecord.active,
-        address_active: !operatorRecord.address_active
-        };
+      ...opToEdit,
+      apc_name_active: !opToEdit.apc_name_active,
+      apc_address: {
+        ...opToEdit.apc_address,
+        address_active: !opToEdit.apc_address.address_active
+      }
+    };
 
-    setOperatorRecord({
-        ...operatorRecord,
-        active: !operatorRecord.active,
-        address_active: !operatorRecord.address_active
-    })
+    setOpRecordToEdit(updatedOperator);
 
-   try {
-
-            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.name, updatedOperator.active, updatedOperator.apc_id!);
-            
-            if (!operatorStatusChangeResult.ok) {
-                throw new Error(operatorStatusChangeResult.message);
-            }
-
-            console.log(operatorStatusChangeResult)
-
-        } catch (error) {
-            console.error("Failed to change Operator status:", error);
-        }
-  };
-  async function handleClickSavePartnerName(partnerRecord: OperatorPartnerRecord, partnerIdx: number) {
     try {
-      const partnerToEdit = await updatePartnerNameAndStatus(partnerRecord, token);
+
+      const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id);
+
+      if (!operatorStatusChangeResult.ok) {
+        throw new Error(operatorStatusChangeResult.message);
+      }
+
+      handlenotification(true, 'Operated', updatedOperator.apc_name_active, "active change");
+
+    } catch (error) {
+      handlenotification(false, 'Operated', updatedOperator.apc_name_active, "active change");
+    }
+  };
+
+  async function handleClickSaveNonOpName(nonOpRecord: RoleEntryRead, partnerIdx?: number) {
+    try {
+      const partnerToEdit = await updatePartnerNameAndStatus(nonOpRecord);
       
       if(!partnerToEdit.ok) {
         throw new Error(partnerToEdit.message as any).message
       }
-      setPartnerNameUpdate(prevPartnerNameUpdate =>
-        prevPartnerNameUpdate.map((item, index) =>
+      setNonOpNameUpdate(prevnonOpNameUpdate =>
+        prevnonOpNameUpdate.map((item, index) =>
         index === partnerIdx
             ? false : item
         )
     );
+    return partnerToEdit;
     
     } catch (error) {
-      console.error("Failed to update Partner:", error);
+      return {ok: false, message: error};
     }
   };
-  async function handleClickSavePartnerAddress(partnerRecord: OperatorPartnerRecord, partnerIdx: number) {
+  async function handleClickSaveNonOpAddress(nonOpRecord: RoleEntryRead, partnerIdx?: number) {
     try {
-      const partnerAddress = await updatePartnerAddress(partnerRecord, token);
+      const partnerAddress = await updatePartnerAddress(nonOpRecord.apc_address);
       
       if(!partnerAddress.ok) {
         throw new Error(partnerAddress.message as any).message
       } 
-      setPartnerAddressUpdate(prevPartnerAddressUpdate =>
-        prevPartnerAddressUpdate.map((item, index) =>
+      setNonOpAddressUpdate(prevnonOpAddressUpdate =>
+        prevnonOpAddressUpdate.map((item, index) =>
         index === partnerIdx
             ? false : item
         )
     );
+    return partnerAddress;
     
     } catch (error) {
-      console.error("Failed to update Partner Address:", error);
+      return {ok: false, message: error};
     }
   };
-  async function handleClickActivateOrDeactivatePartner( partnerIdx: number) {
+  async function handleClickSaveNewNonOp() {
+    try {
+          const insertPartnerResult = await addPartnerSupabase(newNonOpAddress.apc_name!, newNonOpAddress.apc_op_id!, newNonOpAddress.apc_address!);
     
-  const partnerToUpdate = partnerList[partnerIdx];
+          if(insertPartnerResult.ok) {
+            setSaveNewNonOpAddress(false);
+              handlenotification(true, "Non-Operated", true, 'name change');
+            
+          }
+    
+          if(!insertPartnerResult.ok) {
+            throw new Error(insertPartnerResult.message);
+          }
+        } catch(error) {
+          console.log(error)
+          handlenotification(false, error as string, true, 'name change');
+        }
+  };
+
+  async function handleClickActivateOrDeactivateNonOpRecord(nonOpIdx: number) {
+    
+  const partnerToUpdate = relatedNonOpAddress[nonOpIdx];
   const updatedPartner = {
     ...partnerToUpdate,
-    active: !partnerToUpdate.address_active,
-    address_active: !partnerToUpdate.address_active
-  }
-  setPartnerList(prevPartnerList => 
+    apc_name_active: !partnerToUpdate.apc_name_active,
+    apc_address: {
+        ...partnerToUpdate.apc_address,
+        address_active: !partnerToUpdate.apc_address.address_active
+    }
+  };
+  
+  setRelatedNonOpAddress(prevPartnerList => 
     prevPartnerList.map((partner, index) =>  
-      index === partnerIdx 
+      index === nonOpIdx 
         ? updatedPartner
         : partner
     )
@@ -197,21 +316,22 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   
   try {
     
-   const [partnerStatusChange, partnerAddressStatusChange] = await Promise.all([
-        updatePartnerNameAndStatus(updatedPartner, token),
-        updatePartnerAddress(updatedPartner, token)
-    ])
+   const partnerStatusChange = await updatePartnerNameAndStatus(updatedPartner);
+
     if(!partnerStatusChange.ok) {
         throw new Error(partnerStatusChange.message as any).message;
     }
-    if(!partnerAddressStatusChange.ok) {
-        throw new Error(partnerAddressStatusChange.message as any).message;
-    }
+    
+    handlenotification(true, 'Non-Operated', updatedPartner.apc_name_active, "active change");
     
   } catch (error) {
-      console.error("Failed to change Operator status:", error);
+    console.log(error)
+      handlenotification(false, 'Non-Operated', updatedPartner.apc_name_active, "active change");
+     
     }
   };
+
+  //Disown Partner
   async function handleDisownPartner(partnerIdx: number, id: string) {
     setPartnerListToDisown(prevPartnerListToDisown => {
             const updatedPartnerListToDisown = [...prevPartnerListToDisown];
@@ -245,17 +365,6 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   
  
   };
-  function handleNewAddressChange(e: { target: { name: any; value: any; }; }) {
-    setNewPartnerAddress({
-      ...newPartnerAddress,
-      active: true,
-      name: newPartnerAddress?.name ?? operatorRecord.name,
-      address_active: true,
-      apc_op_id: operatorRecord.apc_id,
-      [e.target.name]: e.target.value!
-    });
-    setSaveNewPartnerAddress(true);
-  };
   async function updatePartnerWithOpIDChange() {
           updatePartnerWithOpID(partnerListToDisown)
   };
@@ -264,351 +373,76 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
   await updatePartnerWithOpIDChange();
   };
 
-
+  function handlenotification(success: boolean, mode:string, active: boolean, action: 'name change' | 'address change' | 'active change') {
+    if(action === 'active change') {
+    if(!success) {
+      notifyFailure(`${mode} name and billing address have NOT been ${active ? 'activated' : 'deactivated'}. No tie-in.\n\n(TLDR: Operator and billing address are NOT ${active ? 'activated' : 'deactivated'}.)`);
+    }
+    if(success) {
+      notifyStandard(`${mode} name and billing address have been ${active ? 'activated' : 'deactivated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${active ? 'activated' : 'deactivated'}.)`);
+    }
+  }
+  if(action === 'address change' || action === 'name change') {
+    if(!success) {
+      notifyFailure(`${mode} name and billing address have NOT been saved. No tie-in.\n\n(TLDR: Operator and billing address are NOT saved.)`);
+    }
+    if(success) {
+      notifyStandard(`${mode} name and billing address have been saved. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved.)`);
+    }
+  }
+  };
+  console.log(opToEdit, 'optoed');
+  console.log(opRecordToEdit, 'oprec')
+  console.log(newNonOpAddress, 'new add')
   return (
     <>
-    {operatorToEdit === null || !operatorToEdit.apc_id || !operatorToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
+    {opToEdit === null || !opToEdit.apc_id || !opToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">
     <p className="custom-style font-semibold text-[var(--darkest-teal)]">No Operator Selected</p>
     </div>) : (
           <div className="">
-            <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-4">
-              <div className="px-4 py-2">
-                <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-                  <div className="sm:col-span-3 sm:col-start-1">
-                    <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Operator Name
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        placeholder="Nav Oil Inc."
-                        autoComplete="off"
-                        value={operatorRecord.name}
-                        onChange={handleOperatorNameChange}
-                        autoFocus={true}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-4 sm:col-start-1">
-                    <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Street Address
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="street"
-                        name="street"
-                        type="text"
-                        autoComplete="off"
-                        value={operatorRecord.street}
-                        onChange={handleOperatorAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Suite
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="suite"
-                        name="suite"
-                        type="text"
-                        autoComplete="off"
-                        value={operatorRecord.suite}
-                        onChange={handleOperatorAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2 sm:col-start-1">
-                    <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      City
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="city"
-                        name="city"
-                        type="text"
-                        autoComplete="off"
-                        value={operatorRecord.city}
-                        onChange={handleOperatorAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      State / Province
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="state"
-                        name="state"
-                        type="text"
-                        autoComplete="off"
-                        value={operatorRecord.state}
-                        onChange={handleOperatorAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      ZIP / Postal Code
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="zip"
-                        name="zip"
-                        type="text"
-                        autoComplete="off"
-                        value={operatorRecord.zip}
-                        onChange={handleOperatorAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                    <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Country
-                    </label>
-                    <div className="mt-1 grid grid-cols-1">
-                      <select
-                        id="country"
-                        name="country"
-                        autoComplete="off"
-                        value={operatorRecord.country}
-                        onChange={handleOperatorAddressChange}
-                        className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      > <option></option>
-                        <option>United States</option>
-                        <option>Canada</option>
-                        <option>Mexico</option>
-                      </select>
-                      <ChevronDownIcon
-                        aria-hidden="true"
-                        className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-                    <button
-                      disabled={(!operatorRecord.apc_id && !operatorRecord.apc_address_id) ? true : false}
-                      onClick={async (e: any) => {
-                        e.preventDefault();
-                        handleClickActivateOrDeactivateOperator();
-                        notifyStandard(`Operator name and billing address have been ${operatorRecord.active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operatorRecord.active ? 'deactivated' : 'activated'}.)`);
-                      }}
-                      className={
-                        `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
-                        ${!operatorRecord.active
-                          ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                          : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
-                      }>
-                      {operatorRecord.active ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button
-                      name={`save-${operatorRecord.name}`}
-                      disabled={(!operatorRecord.apc_id && !operatorRecord.apc_address_id) || (!saveOpNameChange && !saveOpAddressChange) ? true : false}
-                      onClick={async (e: any) => {
-                        e.preventDefault();
-                        { saveOpNameChange ? handleClickSaveOpName() : null };
-                        { saveOpAddressChange ? handleClickSaveOpAddress() : null };
-                        setSaveOpAddressChange(false);
-                        setSaveOpNameChange(false);
-                        notifyStandard(`Operator name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved)`);
-                      }}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div hidden={partnerList.length < 1 ? true : false}>
-                <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6 mb-4">
-                  <div className="p-4 border-b border-[var(--darkest-teal)]/30">
-                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Edit the Operator Addresses for Non-Op AFEs</h2>
-                  </div>
-                  {partnerList.map((partner, partnerIdx) => (
-                  <div key={partner.apc_id} className="px-4 pt-4">
-                    <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 pb-4 sm:grid-cols-6 border-b border-[var(--darkest-teal)]/40">
-                      <div className="sm:col-span-3">
-                        <label htmlFor={`partner-name-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          Name
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id={`partner-name-${partnerIdx}`}
-                            name="name"
-                            type="text"
-                            placeholder="Nav Oil Inc."
-                            autoComplete="off"
-                            value={partner.name}
-                            onChange={(e) => handlePartnerNameChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-4 sm:col-start-1">
-                        <label htmlFor={`partner-street-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          Street Address
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id={`partner-street-${partnerIdx}`}
-                            name="street"
-                            type="text"
-                            autoComplete="off"
-                            value={partner.street}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          Suite
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id="suite"
-                            name="suite"
-                            type="text"
-                            autoComplete="off"
-                            value={partner.suite}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-2 sm:col-start-1">
-                        <label htmlFor={`partner-city-${partnerIdx}`} className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          City
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id={`partner-city-${partnerIdx}`}
-                            name="city"
-                            type="text"
-                            autoComplete="off"
-                            value={partner.city}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          State / Province
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id="state"
-                            name="state"
-                            type="text"
-                            autoComplete="off"
-                            value={partner.state}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          ZIP / Postal Code
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id="zip"
-                            name="zip"
-                            type="text"
-                            autoComplete="off"
-                            value={partner.zip}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                        <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                          Country
-                        </label>
-                        <div className="mt-1 grid grid-cols-1 ">
-                          <select
-                            id="country"
-                            name="country"
-                            autoComplete="off"
-                            value={partner.country}
-                            onChange={(e) => handlePartnerAddressChange(e, partnerIdx)}
-                            className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                          > <option></option>
-                            <option>United States</option>
-                            <option>Canada</option>
-                            <option>Mexico</option>
-                          </select>
-                          <ChevronDownIcon
-                            aria-hidden="true"
-                            className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                          />
-                        </div>
-                      </div>
-                      <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-                        {/* Button to Deactive the Partner Name and Partner Address*/}
-                        <button
-                          //type="submit"
-                          disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
-                          onClick={async (e: any) => {
-                            e.preventDefault();
-                            handleClickActivateOrDeactivatePartner(partnerIdx);
-                            notifyStandard(`Operator's Partner name and address have been ${partner.address_active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.address_active ? 'deactive' : 'active'})`);
-                          }}
-                          //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
-                          className={
-                            `cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)]
-                        ${!partner.address_active
-                              ? 'bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'
-                              : 'bg-white text-[var(--darkest-teal outline-[var(--darkest-teal)] outline-1'}`
-                          }>
-                          {partner.address_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                        {/* Button to Disown the Partner Name and Partner Address*/}
-                        <button
-                          //type="submit"
-                          disabled={(!partner.apc_id && !partner.apc_address_id) ? true : false}
-                          onClick={async (e: any) => {
-                            e.preventDefault();
-                            handleClickDisownPartner(partnerIdx, partner.apc_id!);
-                            notifyStandard(`Operator's Partner name and address have been ${partner.address_active ? 'deactivated' : 'activated'}.  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE ${partner.address_active ? 'deactive' : 'active'})`);
-                          }}
-                          //className="  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)]">
-                          className='cursor-pointer disabled:cursor-not-allowed rounded-md disabled:bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-semibold custom-style shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] hover:bg-[var(--bright-pink)] hover:text-white hover:outline-[var(--bright-pink)] bg-[var(--darkest-teal)] text-white outline-[var(--darkest-teal)] outline-1'>
-                          {'Disown'}
-                        </button>
-                        <button
-                          //type="submit"
-                          disabled={((!partner.apc_id && !partner.apc_address_id) || (partnerAddressUpdate[partnerIdx] === false && partnerNameUpdate[partnerIdx] === false)) ? true : false}
-                          onClick={async (e: any) => {
-                            e.preventDefault();
-                            { partnerAddressUpdate[partnerIdx] === true ? handleClickSavePartnerAddress(partner, partnerIdx) : null };
-                            { partnerNameUpdate[partnerIdx] === true ? handleClickSavePartnerName(partner, partnerIdx) : null }
-                            notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
-                          }}
-                          className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                </form>
+            <div className='rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 mb-4'>
+            <OperatorNonOperatorAddressCard
+            record={opRecordToEdit}
+            saveButtonDisabledOp={!saveOpNameChange && !saveOpAddressChange}
+            onSave={() => [
+              handleClickSaveChanges('Operated',0),
+            ]}
+            onActivateDeactivate={() => [
+              handleClickActivateOrDeactivateOperator()
+            ]}
+            onNameChange={(e) => handleOperatorNameChange(e)}
+            onAddressChange={(e) => handleOperatorAddressChange(e)}
+            mode='Operated'
+            ></OperatorNonOperatorAddressCard>
             </div>
-            <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-              <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:col-span-6 mb-4">
+            <div className='rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 mb-4'>
+              <div className="p-4 border-b border-[var(--darkest-teal)]/30">
+                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Edit the Operator Addresses for Non-Op AFEs</h2>
+              </div>
+              <div hidden={ relatedNonOpAddress.length > 0 } className='w-3/4 mx-auto px-2 py-4'>
+                <NoSelectionOrEmptyArrayMessage
+                message="There are no Non-Op Addresses that you have permissions to edit."
+                ></NoSelectionOrEmptyArrayMessage>
+              </div>
+              {relatedNonOpAddress.map((partner, partnerIdx) => (
+                <div key={partner.apc_id}>
+                  <OperatorNonOperatorAddressCard
+            record={partner}
+            saveButtonDisabledOp={!nonOpNameUpdate[partnerIdx] && !nonOpAddressUpdate[partnerIdx]}
+            onSave={() => [
+              handleClickSaveChanges('Non-Operated',partnerIdx),
+            ]}
+            onActivateDeactivate={() => [
+              handleClickActivateOrDeactivateNonOpRecord(partnerIdx)
+            ]}
+            onNameChange={(e) => handleNonOpNameChange(e, partnerIdx)}
+            onAddressChange={(e) => handleNonOpAddressChange(e, partnerIdx)}
+            mode='Non-Operated'
+            ></OperatorNonOperatorAddressCard>
+                </div>
+              ))}
+            </div>
+              <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 mb-4">
               <div className="p-4 border-b border-[var(--darkest-teal)]/30">
                 <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Claim Partner Addresses for Operator</h2>
                 <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">
@@ -617,158 +451,33 @@ export default function EditOperator({operatorToEdit, token} : EditOperatorProps
               </div>
                 <div >
                   <PartnerToOperatorGrid
-                    currentOpID={ operatorToEdit.apc_id ? operatorToEdit.apc_id : null }
+                    currentOpID={ opToEdit.apc_id }
                     token={token}>
                   </PartnerToOperatorGrid>
                 </div>
-              </form>
-            </div>
-            <form className="bg-white rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:grid-cols-6">
-              <div className="px-4 py-2">
-                <div className="mb-4 border-b border-[var(--darkest-teal)]/30">
-                    <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Add New Addresses for Non-Op AFEs</h2>
-                  </div>
-                <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
-                    <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Name
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        placeholder="Nav Oil Inc."
-                        autoComplete="off"
-                        value={newPartnerAddress?.name || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-4 sm:col-start-1">
-                    <label htmlFor="street" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Street Address
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="street"
-                        name="street"
-                        type="text"
-                        autoComplete="off"
-                        value={newPartnerAddress?.street || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="suite" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Suite
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="suite"
-                        name="suite"
-                        type="text"
-                        autoComplete="off"
-                        value={newPartnerAddress?.suite || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2 sm:col-start-1">
-                    <label htmlFor="city" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      City
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="city"
-                        name="city"
-                        type="text"
-                        autoComplete="off"
-                        value={newPartnerAddress?.city || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="state" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      State / Province
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="state"
-                        name="state"
-                        type="text"
-                        autoComplete="off"
-                        value={newPartnerAddress?.state || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label htmlFor="zip" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      ZIP / Postal Code
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        id="zip"
-                        name="zip"
-                        type="text"
-                        autoComplete="off"
-                        value={newPartnerAddress?.zip || ''}
-                        onChange={handleNewAddressChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-4 pb-2 sm:col-start-1">
-                    <label htmlFor="country" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Country
-                    </label>
-                    <div className="mt-1 grid grid-cols-1 ">
-                      <select
-                        id="country"
-                        name="country"
-                        autoComplete="off"
-                        value={newPartnerAddress?.country || ''}
-                        onChange={handleNewAddressChange}
-                        className="col-start-1 row-start-1 w-full appearance-none w-full rounded-md bg-white px-3 py-1.5 text-base text-[var(--darkest-teal)] outline-1 -outline-offset-1 outline-[var(--darkest-teal)]/40 placeholder:text-[var(--darkest-teal)]/50 focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6 custom-style-long-text"
-                      > <option></option>
-                        <option>United States</option>
-                        <option>Canada</option>
-                        <option>Mexico</option>
-                      </select>
-                      <ChevronDownIcon
-                        aria-hidden="true"
-                        className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
-                      />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2 flex items-end justify-end gap-x-6 pb-2">
-                    <button
-                      disabled={!saveNewPartnerAddress}
-                      onClick={async (e: any) => {
-                        e.preventDefault();
-                        if (!newPartnerAddress) return;
-                        insertPartnerRecord(newPartnerAddress, token);
-                        setSaveNewPartnerAddress(false);
-                        notifyStandard(`Operator's Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Operator's Partner name and address ARE saved)`);
-                      }}
-                      className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
-                      Save
-                    </button>
-                  </div>
-                </div>
               </div>
-            </form>
+            <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 mb-4">
+            <div className="p-4 border-b border-[var(--darkest-teal)]/30">
+                <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Add New Addresses for Non-Op AFEs</h2>
+              </div>
+              <OperatorNonOperatorAddressCard
+            record={newNonOpAddress as RoleEntryRead}
+            saveButtonDisabledOp={!saveNewNonOpAddress}
+            onSave={() => [
+              handleClickSaveChanges('New Non-Operated',0),
+            ]}
+            onActivateDeactivate={() => [
+              handleClickActivateOrDeactivateOperator()
+            ]}
+            onNameChange={(e) => handleNewNonOpName(e)}
+            onAddressChange={(e) => handleNewNonOpAddressChange(e)}
+            mode='New Non-Operated'
+            ></OperatorNonOperatorAddressCard>
+              
+            </div>
           </div>
     )}
-    <ToastContainer />
+    <ToastContainer icon={false}/>
     </>
   )
 }

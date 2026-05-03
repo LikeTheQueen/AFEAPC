@@ -169,28 +169,12 @@ export default function CreateOperator() {
     }
     
     try {
-      const insertPartnerResult = await addPartnerSupabase(operator.name, operator.id);
+      const insertPartnerResult = await addPartnerSupabase(operator.name, operator.id, singleNonOpAddress);
 
       if(insertPartnerResult.ok) {
 
         const transformedPartnerResult = transformPartnerSingle(insertPartnerResult.data);
-
-        if(transformedPartnerResult.id === undefined || !isAddressValid(singleNonOpAddress)) {
-          setPartnerWriteErrorMessage('The Partner ID or the Address is not valid and the record cannot be written');
-          return;
-        
-        }
-        try {
-
-          const operatorNonOpAddressRecord = await addOperatorPartnerAddressSupabase(transformedPartnerResult.id, singleNonOpAddress);
-
-          if (!operatorNonOpAddressRecord.ok) {
-
-            throw new Error(operatorNonOpAddressRecord.message as string);
-
-          }
-
-        const trasnformedAddress = transformAddressSupabase(operatorNonOpAddressRecord.data);
+        const trasnformedAddress = transformAddressSupabase(insertPartnerResult.data);
         
         setSingleNonOpAddress(trasnformedAddress);
 
@@ -200,11 +184,6 @@ export default function CreateOperator() {
         ]);
 
         setSingleNonOpAddress(nonOpAddressBlank);
-
-        } catch(error) {
-          setPartnerWriteErrorMessage("Failed to add Operator Non Op Address: "+error);
-        }
-
       }
 
       if(!insertPartnerResult.ok) {

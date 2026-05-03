@@ -1861,7 +1861,7 @@ const src_Harmon  = '8c7a4be7-e577-499d-8c7b-266a1549a020'; // Harmon #1
 const src_Tillman = 'c3e12abc-9911-4f01-b123-7d89ef012345'; // Tillman #2
 const src_Garrett = 'f9b34c12-1234-4abc-8def-0987654321ab'; // Garrett #3
 
-const todayDate = '2026-04-25';
+const todayDate = '2026-05-01';
  
 // ── AFE Fixtures ───────────────────────────────────────────────────────────────
 //
