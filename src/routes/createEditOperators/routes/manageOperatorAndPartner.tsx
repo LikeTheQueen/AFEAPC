@@ -89,7 +89,7 @@ export default function OperatorViewAndEdit() {
         setOpToEdit(operator);
         setRelatedNonOpAddresses(nonOperatedAddresses);
         setOpen(true);
-    }
+    };
 
     return (
         <>

@@ -276,7 +276,7 @@ export const loggedInUserRachelGreenNoAddress: UserProfileRecordSupabaseType = {
             apc_name: 'Corr and Whit Oils Company',
             apc_op_id: apc_op_id_CW,
             apc_name_active: true,
-            apc_address: null,
+            apc_address: {},
             user_id: userID1,
             user_firstname: 'Rachel',
             user_lastName: 'Green',

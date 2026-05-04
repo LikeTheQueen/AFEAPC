@@ -248,13 +248,17 @@ console.log(data);
   };
 
   export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {
+    console.log(partnerRecords);
     const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
     if (error) {
         console.error(`Error adding the Operator's Partners`, error, data);
-        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners')
-        return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
+        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
+        return {ok: false
+        };
+        //return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
       }
-      return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
+      return {ok: true};
+      //return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
   };
 
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {

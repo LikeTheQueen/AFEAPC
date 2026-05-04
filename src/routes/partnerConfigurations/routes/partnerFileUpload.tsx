@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { PartnerRowData } from 'src/types/interfaces';
 import { writePartnerlistFromSourceToDB } from 'provider/write';
-import { notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
+import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { useSupabaseData } from 'src/types/SupabaseContext';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
+import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 
 const expectedHeaders = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country"];
 interface PartnerOpList {
@@ -17,66 +18,19 @@ interface PartnerOpList {
 export default function PartnerFileUpload() {
     const [data, setData] = useState<PartnerRowData[]>([]);
     const [fileName, setFileName] = useState('');
-    const [opAPCID, setOpAPCID] = useState('');
-    const [rowsLimit] = useState(10);
     const [rowsToShow, setRowsToShow] = useState<PartnerRowData[]>([]);
-    const [customPagination, setCustomPagination] = useState<number[] | []>([]);
-    const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    const { loggedInUser } = useSupabaseData();
+    const maxRowsToShow = 20;
     const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
     const [distinctAccountArray, setDistinctAccountArray] = useState<PartnerRowData[]>([]);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-    function filterOpsList() {
-        if (!loggedInUser) return [];
-        return (loggedInUser.operatorRoles ?? [])
-            .filter(operator => operator.role === 7)
-            .map(({ apc_id, apc_name }) => ({ apc_id, apc_name }));
-    };
+    const handlePageChange = (paginatedData: PartnerRowData[], page: number) => {
+              setRowsToShow(paginatedData);
+              setCurrentPage(page);
+      };
     
-    const filteredOperators: PartnerOpList[] = filterOpsList();
-    
-    const nextPage = () => {
-    const startIndex = rowsLimit * (currentPage + 1);
-    const endIndex = startIndex + rowsLimit;
-    const newArray = distinctAccountArray.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(currentPage + 1);
-    };
-    const changePage = (value: number) => {
-    const startIndex = value * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = distinctAccountArray.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    setCurrentPage(value);
-    };
-    const previousPage = () => {
-    const startIndex = (currentPage - 1) * rowsLimit;
-    const endIndex = startIndex + rowsLimit;
-    const newArray = distinctAccountArray.slice(startIndex, endIndex);
-    setRowsToShow(newArray);
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    } else {
-      setCurrentPage(0);
-    }
-    };
-    useMemo(() => {
-    setCustomPagination(
-      Array(Math.ceil(distinctAccountArray.length / rowsLimit)).fill(null)
-    );
-    setTotalPage(
-        Math.ceil(distinctAccountArray.length / rowsLimit)
-    )
-    }, [distinctAccountArray]);
-    
-    useEffect(() => {
-      if (!loggedInUser) return;
-      if (filteredOperators.length === 1) {
-        setOpAPCID(filteredOperators[0].apc_id)
-            }
-        }, [loggedInUser])
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const file = e.target.files?.[0];
@@ -91,18 +45,13 @@ export default function PartnerFileUpload() {
       const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
-      const fullJson = XLSX.utils.sheet_to_json<PartnerRowData>(worksheet, {
-        defval: '',
-        raw: false,
-      });
-
       const firstRow = XLSX.utils.sheet_to_json(worksheet, {header: 1})[0] as string[];
       const headersMatch = expectedHeaders.every((expected, i) =>
         String(firstRow?.[i] ?? '').trim().toLowerCase() === expected.toLowerCase()
       );
 
       if (!headersMatch) {
-        alert(
+        notifyFailure(
           `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
         );
         return;
@@ -132,20 +81,22 @@ export default function PartnerFileUpload() {
         const looped = opAPCIDArray.map<PartnerRowData>((operator) => ({
           ...basic,
           apc_op_id: operator
-        }))
+        }));
+        
         return looped;
       });
 
-      const distinctItems = getDistinctItemsByProperties(multiplePartnerMap, ["source_id","name", "street", "suite", "city", "state", "zip", "country"]);
-      setDistinctAccountArray(distinctItems);
+      const distinctItemsDisplay = getDistinctItemsByProperties(multiplePartnerMap, ["source_id","name", "street", "suite", "city", "state", "zip", "country"]);
+      const distinctItemsWrite = getDistinctItemsByProperties(multiplePartnerMap, ["source_id","name", "street", "suite", "city", "state", "zip", "country", "apc_op_id"]);
+      setDistinctAccountArray(distinctItemsDisplay.sort((a, b) => a.name.localeCompare(b.name)));
       setData(prevData => {
         const updatedData = [...prevData];
-        const merged = [...updatedData, ...multiplePartnerMap]
+        const merged = [...updatedData, ...distinctItemsWrite.sort((a, b) => a.name.localeCompare(b.name))]
         return merged;
       });
       setFileName(e.target.value);
       setIsDisabled(true);
-      setRowsToShow(distinctItems.slice(0,rowsLimit));
+      //setRowsToShow(distinctItemsDisplay.slice(0,rowsLimit));
       e.target.value='';
     };
     reader.readAsArrayBuffer(file);
@@ -166,7 +117,7 @@ export default function PartnerFileUpload() {
       }
     }
     return distinctItems;
-  }
+  };
 
   return (
     <>
@@ -220,7 +171,7 @@ export default function PartnerFileUpload() {
                     </thead>
                     <tbody className="border-b border-b-[var(--darkest-teal)]/30">
                        {rowsToShow.map(partnerRow =>(
-                        <tr key={partnerRow.source_id} className="text-end sm:text-start custom-style-long-text border-l border-l-[var(--darkest-teal)]/30 even:bg-[var(--darkest-teal)]/20">
+                        <tr key={partnerRow.source_id.concat(partnerRow.apc_op_id)} className="text-end sm:text-start custom-style-long-text border-l border-l-[var(--darkest-teal)]/30 even:bg-[var(--darkest-teal)]/20">
                         <td scope="col" className="text-start pl-2 border-r border-r-[var(--darkest-teal)]/30">{partnerRow.source_id}</td>
                         <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{partnerRow.name}
                         <dl className="font-normal sm:hidden">
@@ -241,53 +192,13 @@ export default function PartnerFileUpload() {
                     </tbody>
                 </table>
             </div>
-             <div className="w-full flex justify-center sm:justify-between flex-col sm:flex-row gap-5 mt-2 px-1 items-center">
-          <div className="text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
-            Showing {currentPage == 0 ? 1 : currentPage * rowsLimit + 1} to{" "}
-            {currentPage == totalPage - 1
-              ? distinctAccountArray?.length
-              : (currentPage + 1) * rowsLimit}{" "}
-            of {distinctAccountArray?.length} Partners
-          </div>
-          <div className="flex">
-            <ul
-              className="flex justify-center items-center align-center gap-x-2 z-30"
-              role="navigation"
-              aria-label="Pagination">
-              <li
-                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
-                  currentPage == 0
-                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                }`}
-                onClick={previousPage}>
-                <ChevronLeftIcon></ChevronLeftIcon>
-              </li>
-              {customPagination?.map((data, index) => (
-                <li
-                  className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid bg-white cursor-pointer ${
-                    currentPage == index
-                      ? "bg-white border-[var(--bright-pink)] pointer-events-none"
-                      : "bg-white border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                  }`}
-                  onClick={() => changePage(index)}
-                  key={index}
-                >
-                  {index + 1}
-                </li>
-              ))}
-              <li
-                className={`flex items-center justify-center w-8 rounded-md h-8 border-2 border-solid disabled] ${
-                  currentPage == totalPage - 1
-                    ? "bg-white border-[var(--darkest-teal)]/10 text-[var(--darkest-teal)]/20 pointer-events-none"
-                    : "bg-white cursor-pointer border-[var(--darkest-teal)]/40 hover:border-[var(--bright-pink)] hover:border-2"
-                }`}
-                onClick={nextPage}>
-                <ChevronRightIcon></ChevronRightIcon>
-              </li>
-            </ul>
-          </div>
-        </div>   
+            <UniversalPagination
+            data={distinctAccountArray}
+            rowsPerPage={maxRowsToShow}
+            listOfType='Partners'
+            onPageChange={handlePageChange}
+            ></UniversalPagination>
+               
         <div className="w-full flex justify-end sm:justify-end flex-col sm:flex-row gap-5 mt-5 pt-5 items-center border-t">
             <button
                     disabled={data.length>0 ? false : true}
@@ -302,7 +213,7 @@ export default function PartnerFileUpload() {
                         Save Partner List
                     </button>
             </div>     
-           <ToastContainer />
+           <ToastContainer icon={false} />
           {useWarnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library")}
     </>
   )
