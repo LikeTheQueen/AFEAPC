@@ -3,25 +3,25 @@ import { useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { GLCodeRowData } from 'src/types/interfaces';
 import { writeGLAccountlistFromSourceToDB } from 'provider/write';
-import { notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
+import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
+import { getDistinctAccountsByProperties, parseRowsToAccountData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
 
 const expectedHeaders = ["account_number", "account_group", "account_description"];
-const NULL_UUID = '00000000-0000-0000-0000-000000000000';
 
 export default function GLFileUpload() {
   const [data, setData] = useState<GLCodeRowData[]>([]);
   const [fileName, setFileName] = useState('');
-  const [rowsLimit] = useState(50);
   const [rowsToShow, setRowsToShow] = useState<GLCodeRowData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const maxRowsToShow = 20;
   const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
   const [partnerAPCIDArray, setPartnerAPCIDArray] = useState<string[]>([]);
   const [distinctAccountArray, setDistinctAccountArray] = useState<GLCodeRowData[]>([]);
-  const [selectListDisabled, setSelectListDisabled] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   const handlePageChange = (paginatedData: GLCodeRowData[], page: number) => {
           setRowsToShow(paginatedData);
@@ -38,103 +38,71 @@ export default function GLFileUpload() {
       const arrayBuffer = event.target?.result;
       if (!arrayBuffer) return;
 
-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      try {
+        const { worksheet } = readWorkbook(arrayBuffer as ArrayBuffer);
 
-      const fullJson = XLSX.utils.sheet_to_json<GLCodeRowData>(worksheet, {
-        defval: '',
-        raw: false,
-      });
+        const { valid, firstRow } = validateHeaders(worksheet, expectedHeaders)
 
-      const firstRow = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0] as string[];
-      const headersMatch = expectedHeaders.every((expected, i) =>
-        String(firstRow?.[i] ?? '').trim().toLowerCase() === expected.toLowerCase()
-      );
+        if (!valid) {
+          notifyFailure(
+            `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
+          )
+          return;
+        }
 
-      if (!headersMatch) {
-        alert(
-          `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
-        );
-        return;
-      }
+        const accountMap = parseRowsToAccountData(worksheet, opAPCIDArray, partnerAPCIDArray);
 
-      const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
-        header: 1,
-        defval: '',
-      });
+        if(accountMap.length < 1) {
+          setFileName(e.target.value);
+          e.target.value = '';
+          notifyFailure('Dry Well.  No rows found in the uploaded file. There’s nothing to run.')
+          return;
+        }
 
-      const dataRows = rows.slice(1);
-      const accountsToOperators: GLCodeRowData[] = dataRows.flatMap<GLCodeRowData>((row) => {
-        const basic = {
-          account_number: String(row[0] ?? ''),
-          account_group: String(row[1] ?? ''),
-          account_description: String(row[2] ?? ''),
-          apc_op_id: '',
-          apc_part_id: ''
-        };
-
-        const looped = opAPCIDArray.map<GLCodeRowData>((operator) => ({
-          ...basic,
-          apc_op_id: operator,
-          apc_part_id: NULL_UUID
-        }))
-
-        return looped;
-      });
-
-      const accountsToPartners: GLCodeRowData[] = dataRows.flatMap<GLCodeRowData>((row) => {
-        const basic = {
-          account_number: String(row[0] ?? ''),
-          account_group: String(row[1] ?? ''),
-          account_description: String(row[2] ?? ''),
-          apc_op_id: '',
-          apc_part_id: ''
-        };
-
-        const looped = partnerAPCIDArray.map<GLCodeRowData>((partner) => ({
-          ...basic,
-          apc_op_id: NULL_UUID,
-          apc_part_id: partner
-        }))
-
-        return looped;
-      });
-
-      const mergedArrays = [...accountsToOperators, ...accountsToPartners];
-      const distinctItems = getDistinctItemsByProperties(mergedArrays, ["account_number", "account_group", "account_description"]);
-      setDistinctAccountArray(distinctItems);
+      const distinctItemsDisplay = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description"]);
+      const distinctItemsWrite = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description","apc_op_id", "apc_part_id"]);
+      setDistinctAccountArray(distinctItemsDisplay);
       setData(prevData => {
         const updatedData = [...prevData];
-        const merged = [...updatedData, ...accountsToOperators, ...accountsToPartners]
+        const merged = [...updatedData, ...distinctItemsWrite]
         return merged;
       });
 
       setFileName(e.target.value);
-      setSelectListDisabled(true);
-      setRowsToShow(distinctItems.slice(0, rowsLimit))
+      setIsDisabled(true);
       e.target.value = '';
+      } catch (err) {
+        notifyFailure('Off-Spec Input.  The uploaded file isn’t Excel. Provide a real spreadsheet to proceed.');
+      } 
     };
     reader.readAsArrayBuffer(file);
   };
 
-  function getDistinctItemsByProperties(
-    arr: GLCodeRowData[],
-    props: Array<keyof GLCodeRowData>
-  ): GLCodeRowData[] {
-    const seen = new Set<string>();
-    const distinctItems: GLCodeRowData[] = [];
-
-    for (const item of arr) {
-      const identifier = props.map((p) => item[p]).join("|"); 
-      if (!seen.has(identifier)) {
-        seen.add(identifier);
-        distinctItems.push(item);
-      }
-    }
-    return distinctItems;
+  const handleClickCancel = () => {
+    setData([]); 
+    setDistinctAccountArray([]); 
+    setIsDisabled(false); 
+    setFileName(''); 
+    notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`); 
   };
-  
+
+  const handleClickSave = async () => {
+    const writeAccountsToDBResults = await writeGLAccountlistFromSourceToDB(data);
+
+    if(!writeAccountsToDBResults.ok) {
+      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${writeAccountsToDBResults.message})`);
+    }
+
+    if(writeAccountsToDBResults.ok) {
+      notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
+    }
+    
+    setIsDisabled(false); 
+    setFileName(''); 
+    setData([]); 
+    setDistinctAccountArray([]); 
+  }
+console.log(data, ' the data wto be written')
   return (
     <>
       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
@@ -154,21 +122,21 @@ export default function GLFileUpload() {
                 <OperatorDropdownMultiSelect
                   onChange={(ids) => { setOpAPCIDArray(ids) }}
                   initialSelectedIds={[]}
-                  isDisabled={selectListDisabled}
+                  isDisabled={isDisabled}
                 />
               </div>
               <div className='grow m-2'>
                 <PartnerDropdownMultiSelect
                   onChange={(ids) => { setPartnerAPCIDArray(ids) }}
                   initialSelectedIds={[]}
-                  isDisabled={selectListDisabled}
+                  isDisabled={isDisabled}
                 />
               </div>
             </div>
               <div className="mt-4">
                 <label
                   htmlFor="file-upload">
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || selectListDisabled} />
+                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || isDisabled} />
                   <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
                        peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
                 </label>
@@ -202,7 +170,7 @@ export default function GLFileUpload() {
         hidden={distinctAccountArray.length===0 ? true : false}>
         <UniversalPagination
           data={distinctAccountArray}
-          rowsPerPage={50}
+          rowsPerPage={maxRowsToShow}
           listOfType="GL Account Codes"
           onPageChange={handlePageChange}
         />
@@ -212,18 +180,18 @@ export default function GLFileUpload() {
         <button
           disabled={data.length > 0 ? false : true}
           className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-          onClick={(e) => { setData([]), setDistinctAccountArray([]), setSelectListDisabled(false), setFileName(''), notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`) }}>
+          onClick={handleClickCancel}>
           Cancel
         </button>
         <button
           disabled={data.length > 0 ? false : true}
           className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-          onClick={(e) => { writeGLAccountlistFromSourceToDB(data), setSelectListDisabled(false), setFileName(''), setData([]), setDistinctAccountArray([]) }}>
+          onClick={handleClickSave}>
           Save GL Account Code List
         </button>
       </div>
       <ToastContainer />
-      {useWarnUnsavedChanges(data.length > 0, "You have NOT saved your GL Account Codes to AFE Partner Connections")}
+     
     </>
   )
 }

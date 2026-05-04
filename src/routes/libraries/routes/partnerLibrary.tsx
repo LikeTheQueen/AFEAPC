@@ -7,6 +7,7 @@ import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 
 const headers = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country",""];
 
@@ -41,8 +42,17 @@ export default function PartnerLibrary() {
   };
 
   async function handleDeletePartner(partnerIdx: number, status: boolean) {
-    await updatePartnerProcessedStatus(partnerIdx, status);
-    getPartners();
+    const updatePartnerResult = await updatePartnerProcessedStatus(partnerIdx, status);
+    if(updatePartnerResult.ok) {
+      getPartners();
+      notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+      return;
+    }
+
+    if(!updatePartnerResult.ok) {
+      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${updatePartnerResult.message})`);
+    return;
+    }
   }
 
   useEffect(() => {

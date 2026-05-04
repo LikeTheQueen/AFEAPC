@@ -182,7 +182,7 @@ describe('View and edit the partner mappings',() => {
     
       });
 
-    test('Fetches account codes and allows users to bring one back from the dead', async () => {
+    test('Fetches partners and allows users to bring one back from the dead', async () => {
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
 

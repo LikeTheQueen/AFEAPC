@@ -14,7 +14,6 @@ import type { UUID } from 'crypto';
       triggered_from: triggered_from
     });
     if (error) {
-        console.error(`Error adding Operator`, error);
         return null;
       }
     return;
@@ -28,6 +27,7 @@ import type { UUID } from 'crypto';
     .eq('id',apc_id)
     .select();
     if (error) {
+      writeToFunctionLogs('updateOperatorNameAndStatus', error.message, null, 'ERROR', 'Update Operator UI');
         return {ok: false, data: [], message: error.message};
       }
       
@@ -41,6 +41,7 @@ import type { UUID } from 'crypto';
       .eq('id',operatorAddress.id)
       .select();
       if (error) {
+        writeToFunctionLogs('updateOperatorAddress', error.message, null, 'ERROR', 'Update Operator Address UI');
           return {ok: false, message: error.message};
         }
         
@@ -54,9 +55,9 @@ import type { UUID } from 'crypto';
     .eq('id',partnerRecord.apc_id)
     .select();
     if (error) {
+        writeToFunctionLogs('updatePartnerNameAndStatus', error.message, null, 'ERROR', 'Update Non Op Name UI');
          return {ok: false, data: [], message: error.message};
       }
-console.log(data);
   return {ok:true, data: data, message: undefined};
   };
 
@@ -67,6 +68,7 @@ console.log(data);
       .eq('id',partnerAddress.id)
       .select();
       if (error) {
+          writeToFunctionLogs('updatePartnerAddress', error.message, null, 'ERROR', 'Update Non Op Address');
           return {ok: false, data: [], message: error.message};
         }
         
@@ -251,14 +253,10 @@ console.log(data);
     console.log(partnerRecords);
     const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
     if (error) {
-        console.error(`Error adding the Operator's Partners`, error, data);
         writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
-        return {ok: false
-        };
-        //return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
+        return {ok: false, message: error.message};
       }
-      return {ok: true};
-      //return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
+      return {ok: true, message: undefined};
   };
 
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
@@ -289,13 +287,15 @@ console.log(data);
   };
 
   export const updatePartnerProcessedStatus = async(id: number, status: boolean) => {
-   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'active': status}).eq('id',id);
+   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'active': status}).eq('id',id).select();
     
     if (error) {
         console.error(`Error updating the Partners Processed Table`, error, data);
-        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
+        return {ok: false, message: error.message};
+        //return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
       }
-      return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+      return {ok: true, message: undefined};
+      //return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
   };
 
   export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
@@ -312,10 +312,10 @@ console.log(data);
     const { data, error } = await supabase.from('GL_CODES').upsert(accountRecords, { onConflict: 'account_number, apc_op_id, apc_part_id' })
     .select();
     if (error) {
-        console.error(`Error adding the Operator's GL Codes`, error);
-        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${error.message})`);
+        writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes');
+        return {ok: false, message: error.message};
       }
-      return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
+      return {ok: true, message: undefined};
   };
 
   export const updateGLAccountCodeStatus = async(id: number, status: boolean ) => {

@@ -30,7 +30,7 @@ export default function PartnerMappingView() {
                     try {
                         const apcPartList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
                         if (isMounted) {
-                            setPartnerMapRecord(apcPartList ?? [])
+                            setPartnerMapRecord(apcPartList.data ?? [])
                             
                         }
                     } finally {

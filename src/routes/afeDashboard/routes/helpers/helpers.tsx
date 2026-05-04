@@ -1,7 +1,8 @@
 import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
 import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
 import { insertAFEHistory } from '../../../../../provider/write'
-import { notifyStandard, superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/helpers/helpers";
+import { notifyStandard } from "src/helpers/helpers";
+import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/helpers/helpers";
 import { handleSendEmail } from "email/emailBasic";
 import { useSupabaseData } from "src/types/SupabaseContext";
 

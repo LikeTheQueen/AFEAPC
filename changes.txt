@@ -1,0 +1,1490 @@
+diff --git a/__tests__/helpers.spec.tsx b/__tests__/helpers.spec.tsx
+index 68ed38b..facd08c 100644
+--- a/__tests__/helpers.spec.tsx
++++ b/__tests__/helpers.spec.tsx
+@@ -1,6 +1,7 @@
+ import { vi } from 'vitest';
+ import * as fetchProvider from '../provider/fetch';
+-import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole, operatorEditUsers } from '../src/helpers/helpers'
++import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole } from '../src/helpers/helpers'
++import { operatorEditUsers } from "src/constants/variables";
+ import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from 'src/types/interfaces';
+ import { singleAFE, twoAFErecords, singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
+ import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2, loggedInUserNoAFEViewRights } from './test-utils/rachelGreenuser';
+diff --git a/__tests__/routeCreateNewUser.spec.tsx b/__tests__/routeCreateNewUser.spec.tsx
+index 0a7e6eb..65e6b24 100644
+--- a/__tests__/routeCreateNewUser.spec.tsx
++++ b/__tests__/routeCreateNewUser.spec.tsx
+@@ -2,7 +2,8 @@ import CreateNewUser from 'src/routes/createEditUsers/routes/createNewUser';
+ import * as fetchProvider from 'provider/fetch';
+ import * as writeProvider from "provider/write";
+ import * as emailProvider from '../email/emailBasic';
+-import { notifyStandard, notifyFailure, doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers } from 'src/helpers/helpers';
++import { notifyStandard, notifyFailure, doesUserHaveRole } from 'src/helpers/helpers';
++import { operatorEditUsers, nonOperatorEditUsers } from "src/constants/variables";
+ import { vi, type Mock } from 'vitest';
+ import { getByRole, screen, waitFor, within } from '@testing-library/react';
+ import userEvent from '@testing-library/user-event';
+diff --git a/__tests__/routePartnerFileUpload.spec.tsx b/__tests__/routePartnerFileUpload.spec.tsx
+index 40ec1de..4eb7989 100644
+--- a/__tests__/routePartnerFileUpload.spec.tsx
++++ b/__tests__/routePartnerFileUpload.spec.tsx
+@@ -1,6 +1,6 @@
+ import * as XLSX from 'xlsx';
+ import * as writeProvider from "provider/write";
+-import { notifyStandard, notifyFailure, useWarnUnsavedChanges, superUserPermission } from 'src/helpers/helpers';
++import { notifyStandard, notifyFailure, useWarnUnsavedChanges } from 'src/helpers/helpers';
+ import { vi, type Mock } from 'vitest';
+ import { screen, waitFor, within, fireEvent, act } from '@testing-library/react';
+ import userEvent from '@testing-library/user-event';
+@@ -40,8 +40,6 @@ vi.mock('src/routes/sharedComponents/operatorDropdownMultiSelect', () => ({
+     }
+ }));
+ 
+-
+-
+ describe('Partner File Upload', () => {
+     let user: ReturnType<typeof userEvent.setup>;
+ 
+@@ -59,9 +57,9 @@ describe('Partner File Upload', () => {
+ 
+         vi.mocked(XLSX.utils.sheet_to_json)
+             
+-            // Second call: Worksheet columns
++            // First Call: Worksheet columns
+             .mockReturnValueOnce([['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
+-            // Third call: raw rows for mapping
++            // Second Call: raw rows for mapping
+             .mockReturnValueOnce([
+                 ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country'],
+                 ['S1', 'Acme Co', '123 Main', '', 'Denver', 'CO', '80201', 'US'],
+@@ -70,6 +68,8 @@ describe('Partner File Upload', () => {
+     });
+ 
+     afterEach(() => {
++        vi.unstubAllGlobals(); 
++        vi.restoreAllMocks();
+         vi.resetAllMocks();
+         vi.clearAllMocks();
+     });
+@@ -119,7 +119,7 @@ describe('Partner File Upload', () => {
+             onload: null as any,
+             result: new ArrayBuffer(8)
+         }
+-        vi.spyOn(globalThis, 'FileReader').mockImplementation(() => mockFileReaderInstance as any)
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
+ 
+         const mockFile = new File(['dummy'], 'partners.xlsx', {
+             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+@@ -138,7 +138,6 @@ describe('Partner File Upload', () => {
+ 
+             expect(rows).toHaveLength(2)
+ 
+-            // Assert specific cells within the first data row
+             const cells = within(rows[1]).getAllByRole('cell')
+             expect(cells[0]).toHaveTextContent('S1')
+             expect(cells[1]).toHaveTextContent('Acme Co')
+@@ -163,14 +162,12 @@ describe('Partner File Upload', () => {
+         });
+ 
+         expect(savePartnerList).toBeDisabled();
+-
+-
+     });
+ 
+     test('Allows user to upload the Partner List and saves the list', async () => {
+ 
+         vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
+-            .mockResolvedValue({ ok: true });
++            .mockResolvedValue({ ok: true, message: undefined });
+ 
+         renderWithProviders(<PartnerFileUpload />, {
+             supabaseOverrides: {
+@@ -214,7 +211,7 @@ describe('Partner File Upload', () => {
+             onload: null as any,
+             result: new ArrayBuffer(8)
+         };
+-        vi.spyOn(globalThis, 'FileReader').mockImplementation(() => mockFileReaderInstance as any)
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
+ 
+         const mockFile = new File(['dummy'], 'partners.xlsx', {
+             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+@@ -227,7 +224,6 @@ describe('Partner File Upload', () => {
+         await waitFor(() => {
+             expect(screen.getByText('Acme Co')).toBeInTheDocument()
+         });
+-
+         await waitFor(() => {
+             const rows = screen.getAllByRole('row')
+ 
+@@ -279,29 +275,161 @@ describe('Partner File Upload', () => {
+                 }],
+             )
+             const rows = screen.getAllByRole('row')
++            expect(rows).toHaveLength(1)
++        });
++
++        expect(savePartnerList).toBeDisabled();
++        expect(notifyStandard).toHaveBeenCalled();
++    });
++
++    test('Allows user to upload the Partner List and saves the list but returns an error on SAVE', async () => {
++
++        vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
++            .mockResolvedValue({ ok: false, message: 'Error' });
++
++        renderWithProviders(<PartnerFileUpload />, {
++            supabaseOverrides: {
++                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
++                loading: false,
++                isSuperUser: false,
++                session: {
++                    access_token: 'test-token',
++                    refresh_token: 'test-refresh-token',
++                    expires_in: 3600,
++                    token_type: 'bearer',
++                    user: {
++                        id: 'test-user-id',
++                        email: 'test@example.com',
++                        aud: 'authenticated',
++                        role: 'authenticated',
++                        created_at: '2024-01-01T00:00:00Z',
++                        app_metadata: [],
++                        user_metadata: {}
++                    }
++                }
++            }
++        });
++        await waitFor(() => {
++            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
++            const tableData = screen.getByRole('table');
++            expect(tableData).toBeInTheDocument();
++            const rowsOG = screen.getAllByRole('row');
++            expect(rowsOG).toHaveLength(1)
++        });
++
++        const chooseFileButton = screen.getByLabelText('Choose File', { selector: 'input' });
++        expect(chooseFileButton).toBeDisabled();
++
++        await userEvent.click(screen.getByText('Mock Operator Select'));
++
++        expect(chooseFileButton).toBeEnabled();
++
++        const mockFileReaderInstance = {
++            readAsArrayBuffer: vi.fn(),
++            onload: null as any,
++            result: new ArrayBuffer(8)
++        };
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
++
++        const mockFile = new File(['dummy'], 'partners.xlsx', {
++            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
++        });
++
++        await act(async () => {
++            fireEvent.change(chooseFileButton, { target: { files: [mockFile] } })
++            mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
++        });
++        await waitFor(() => {
++            expect(screen.getByText('Acme Co')).toBeInTheDocument()
++        });
++        await waitFor(() => {
++            const rows = screen.getAllByRole('row')
+ 
+             expect(rows).toHaveLength(2)
++
++            // Assert specific cells within the first data row
++            const cells = within(rows[1]).getAllByRole('cell')
++            expect(cells[0]).toHaveTextContent('S1')
++            expect(cells[1]).toHaveTextContent('Acme Co')
++            expect(cells[2]).toHaveTextContent('123 Main')
++            expect(cells[4]).toHaveTextContent('Denver')
++            expect(cells[5]).toHaveTextContent('CO')
++            expect(cells[6]).toHaveTextContent('80201')
++            expect(cells[7]).toHaveTextContent('US')
++        });
++
++        const cancelButton = screen.getByRole('button', { name: 'Cancel' });
++        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
++        expect(savePartnerList).toBeEnabled();
++        expect(cancelButton).toBeEnabled();
++
++        await user.click(savePartnerList);
++
++        await waitFor(() => {
++            expect(writeProvider.writePartnerlistFromSourceToDB).toHaveBeenCalledWith(
++                [{
++                    source_id: 'S1',
++                    apc_op_id: 'operator-123',
++                    name: 'Acme Co',
++                    street: '123 Main',
++                    suite: '',
++                    city: 'Denver',
++                    state: 'CO',
++                    zip: '80201',
++                    country: 'US',
++                    active: true
++                },
++                {
++                    source_id: 'S1',
++                    apc_op_id: 'operator-124',
++                    name: 'Acme Co',
++                    street: '123 Main',
++                    suite: '',
++                    city: 'Denver',
++                    state: 'CO',
++                    zip: '80201',
++                    country: 'US',
++                    active: true
++                }],
++            )
++            const rows = screen.getAllByRole('row')
++            expect(rows).toHaveLength(1)
+         });
+ 
+         expect(savePartnerList).toBeDisabled();
++        expect(notifyFailure).toHaveBeenCalled();
++    });
++
++});
++
++describe('Partner File Upload - incorrect headers', () => {
++    let user: ReturnType<typeof userEvent.setup>;
+ 
++    beforeEach(() => {
++        user = userEvent.setup();
++    });
+ 
++    afterEach(() => {
++        vi.unstubAllGlobals(); 
++        vi.restoreAllMocks();
++        vi.resetAllMocks();
++        vi.clearAllMocks();
+     });
+ 
+     test('Incorrect Headers in file', async () => {
+-        vi.clearAllMocks()
++        // Make XLSX return whatever you want
++        const mockWorksheet = {}
++        const mockWorkbook = {
++            Sheets: { Sheet1: mockWorksheet },
++            SheetNames: ['Sheet1']
++        };
+ 
+-    const mockWorksheet = {}
+-    const mockWorkbook = {
+-        Sheets: { Sheet1: mockWorksheet },
+-        SheetNames: ['Sheet1']
+-    }
+-    vi.mocked(XLSX.read).mockReturnValue(mockWorkbook as any)
++        vi.mocked(XLSX.read).mockReturnValue(mockWorkbook as any)
+ 
+-    vi.mocked(XLSX.utils.sheet_to_json)
+-        .mockReturnValueOnce([
+-            ['doc_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']
+-        ])
++        vi.mocked(XLSX.utils.sheet_to_json)
++            
++            // Second call: Worksheet columns
++            .mockReturnValueOnce([['doc_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
+ 
+         renderWithProviders(<PartnerFileUpload />, {
+             supabaseOverrides: {
+@@ -346,7 +474,7 @@ describe('Partner File Upload', () => {
+             onload: null as any,
+             result: new ArrayBuffer(8)
+         }
+-        vi.spyOn(globalThis, 'FileReader').mockImplementation(() => mockFileReaderInstance as any)
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
+ 
+         const mockFile = new File(['dummy'], 'partners.xlsx', {
+             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+@@ -356,14 +484,198 @@ describe('Partner File Upload', () => {
+             fireEvent.change(chooseFileButton, { target: { files: [mockFile] } })
+             mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
+         });
+-
+-        console.log('notifyFailure calls:', vi.mocked(notifyFailure).mock.calls)
+-console.log('sheet_to_json calls:', vi.mocked(XLSX.utils.sheet_to_json).mock.calls)
+-console.log('XLSX.read calls:', vi.mocked(XLSX.read).mock.calls)
++        
+         await waitFor(() => {
+             expect(notifyFailure).toHaveBeenCalled();
+-        })
++        });
++
++    });
++
++    test('No rows in file', async () => {
++        // Make XLSX return whatever you want
++        const mockWorksheet = {}
++        const mockWorkbook = {
++            Sheets: { Sheet1: mockWorksheet },
++            SheetNames: ['Sheet1']
++        };
++
++        vi.mocked(XLSX.read).mockReturnValue(mockWorkbook as any)
++
++        vi.mocked(XLSX.utils.sheet_to_json)
++            .mockReturnValueOnce([
++        ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']
++    ])
++    .mockReturnValueOnce([
++        ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']
++        // no data rows - headers only
++    ])
++
++        renderWithProviders(<PartnerFileUpload />, {
++            supabaseOverrides: {
++                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
++                loading: false,
++                isSuperUser: false,
++                session: {
++                    access_token: 'test-token',
++                    refresh_token: 'test-refresh-token',
++                    expires_in: 3600,
++                    token_type: 'bearer',
++                    user: {
++                        id: 'test-user-id',
++                        email: 'test@example.com',
++                        aud: 'authenticated',
++                        role: 'authenticated',
++                        created_at: '2024-01-01T00:00:00Z',
++                        app_metadata: [],
++                        user_metadata: {}
++                    }
++                },
++            }
++        });
++
++        await waitFor(() => {
++            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
++            const tableData = screen.getByRole('table');
++            expect(tableData).toBeInTheDocument();
++            const rowsOG = screen.getAllByRole('row');
++            expect(rowsOG).toHaveLength(1)
++        });
++
++        const chooseFileButton = screen.getByLabelText('Choose File', { selector: 'input' });
++        expect(chooseFileButton).toBeDisabled();
++
++        await userEvent.click(screen.getByText('Mock Operator Select'));
++
++        expect(chooseFileButton).toBeEnabled();
++
++        const mockFileReaderInstance = {
++            readAsArrayBuffer: vi.fn(),
++            onload: null as any,
++            result: new ArrayBuffer(8)
++        }
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
++
++        const mockFile = new File(['dummy'], 'partners.xlsx', {
++            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
++        });
++
++        await act(async () => {
++            fireEvent.change(chooseFileButton, { target: { files: [mockFile] } })
++            mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
++        });
+         
++        await waitFor(() => {
++            expect(notifyFailure).toHaveBeenCalled();
++        });
++
++    });
++
++    test('Handles null values in file gracefully', async () => {
++        // Make XLSX return whatever you want
++        const mockWorksheet = {}
++        const mockWorkbook = {
++            Sheets: { Sheet1: mockWorksheet },
++            SheetNames: ['Sheet1']
++        };
++
++        vi.mocked(XLSX.read).mockReturnValue(mockWorkbook as any)
++
++        vi.mocked(XLSX.utils.sheet_to_json)
++            
++            // Second call: Worksheet columns
++            .mockReturnValueOnce([['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
++            // Third call: raw rows for mapping
++            .mockReturnValueOnce([
++                ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country'],
++                ['S1', 'Acme Co', null, null, null, 'CO', '80201', 'US']
++            ]);
+ 
++        renderWithProviders(<PartnerFileUpload />, {
++            supabaseOverrides: {
++                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
++                loading: false,
++                isSuperUser: false,
++                session: {
++                    access_token: 'test-token',
++                    refresh_token: 'test-refresh-token',
++                    expires_in: 3600,
++                    token_type: 'bearer',
++                    user: {
++                        id: 'test-user-id',
++                        email: 'test@example.com',
++                        aud: 'authenticated',
++                        role: 'authenticated',
++                        created_at: '2024-01-01T00:00:00Z',
++                        app_metadata: [],
++                        user_metadata: {}
++                    }
++                },
++            }
++        });
++
++        await waitFor(() => {
++            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
++            const tableData = screen.getByRole('table');
++            expect(tableData).toBeInTheDocument();
++            const rowsOG = screen.getAllByRole('row');
++            expect(rowsOG).toHaveLength(1)
++        });
++
++        const chooseFileButton = screen.getByLabelText('Choose File', { selector: 'input' });
++        expect(chooseFileButton).toBeDisabled();
++
++        await userEvent.click(screen.getByText('Mock Operator Select'));
++
++        expect(chooseFileButton).toBeEnabled();
++
++        const mockFileReaderInstance = {
++            readAsArrayBuffer: vi.fn(),
++            onload: null as any,
++            result: new ArrayBuffer(8)
++        }
++        vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
++
++        const mockFile = new File(['dummy'], 'partners.xlsx', {
++            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
++        });
++
++        await act(async () => {
++            fireEvent.change(chooseFileButton, { target: { files: [mockFile] } })
++            mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
++        });
++        await waitFor(() => {
++            expect(screen.getByText('Acme Co')).toBeInTheDocument()
++        });
++
++        await waitFor(() => {
++            const rows = screen.getAllByRole('row')
++
++            expect(rows).toHaveLength(2)
++
++            // Assert specific cells within the first data row
++            const cells = within(rows[1]).getAllByRole('cell')
++            expect(cells[0]).toHaveTextContent('S1')
++            expect(cells[1]).toHaveTextContent('Acme Co')
++            expect(cells[2]).toHaveTextContent('')
++            expect(cells[4]).toHaveTextContent('')
++            expect(cells[5]).toHaveTextContent('CO')
++            expect(cells[6]).toHaveTextContent('80201')
++            expect(cells[7]).toHaveTextContent('US')
++        });
++
++        const cancelButton = screen.getByRole('button', { name: 'Cancel' });
++        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
++        expect(savePartnerList).toBeEnabled();
++        expect(cancelButton).toBeEnabled();
++
++        await user.click(cancelButton);
++
++        await waitFor(() => {
++            const rows = screen.getAllByRole('row')
++
++            expect(rows).toHaveLength(1)
++        });
++
++        expect(savePartnerList).toBeDisabled();
+     });
+ });
+\ No newline at end of file
+diff --git a/__tests__/routePartnerLibrary.spec.tsx b/__tests__/routePartnerLibrary.spec.tsx
+index a674797..d84e2b3 100644
+--- a/__tests__/routePartnerLibrary.spec.tsx
++++ b/__tests__/routePartnerLibrary.spec.tsx
+@@ -182,7 +182,7 @@ describe('View and edit the partner mappings',() => {
+     
+       });
+ 
+-    test('Fetches account codes and allows users to bring one back from the dead', async () => {
++    test('Fetches partners and allows users to bring one back from the dead', async () => {
+         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
+ 
+diff --git a/provider/fetch.ts b/provider/fetch.ts
+index a38abb7..71f7ea4 100644
+--- a/provider/fetch.ts
++++ b/provider/fetch.ts
+@@ -12,6 +12,7 @@ import {
+ import  supabase  from './supabase';
+ import type { OperatorOrPartnerList } from 'src/types/interfaces';
+ import { callEdge } from 'src/edge';
++import { writeToFunctionLogs } from './write';
+ 
+ 
+ export const fetchSourceSystems = async() => {
+@@ -244,6 +245,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
+   .eq('active', true);
+   
+   if (error) {
++    writeToFunctionLogs('fetchPartnersFromPartnersCrosswalk', error.message, null, 'ERROR', 'Mapping views');
+       return {ok: false, data:[]};
+     }
+   if(!data) {
+diff --git a/provider/write.ts b/provider/write.ts
+index fad5c02..ef395c5 100644
+--- a/provider/write.ts
++++ b/provider/write.ts
+@@ -14,7 +14,6 @@ import type { UUID } from 'crypto';
+       triggered_from: triggered_from
+     });
+     if (error) {
+-        console.error(`Error adding Operator`, error);
+         return null;
+       }
+     return;
+@@ -28,6 +27,7 @@ import type { UUID } from 'crypto';
+     .eq('id',apc_id)
+     .select();
+     if (error) {
++      writeToFunctionLogs('updateOperatorNameAndStatus', error.message, null, 'ERROR', 'Update Operator UI');
+         return {ok: false, data: [], message: error.message};
+       }
+       
+@@ -41,6 +41,7 @@ import type { UUID } from 'crypto';
+       .eq('id',operatorAddress.id)
+       .select();
+       if (error) {
++        writeToFunctionLogs('updateOperatorAddress', error.message, null, 'ERROR', 'Update Operator Address UI');
+           return {ok: false, message: error.message};
+         }
+         
+@@ -54,9 +55,9 @@ import type { UUID } from 'crypto';
+     .eq('id',partnerRecord.apc_id)
+     .select();
+     if (error) {
++        writeToFunctionLogs('updatePartnerNameAndStatus', error.message, null, 'ERROR', 'Update Non Op Name UI');
+          return {ok: false, data: [], message: error.message};
+       }
+-console.log(data);
+   return {ok:true, data: data, message: undefined};
+   };
+ 
+@@ -67,6 +68,7 @@ console.log(data);
+       .eq('id',partnerAddress.id)
+       .select();
+       if (error) {
++          writeToFunctionLogs('updatePartnerAddress', error.message, null, 'ERROR', 'Update Non Op Address');
+           return {ok: false, data: [], message: error.message};
+         }
+         
+@@ -251,14 +253,10 @@ console.log(data);
+     console.log(partnerRecords);
+     const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
+     if (error) {
+-        console.error(`Error adding the Operator's Partners`, error, data);
+         writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
+-        return {ok: false
+-        };
+-        //return notifyStandard(`There was an error adding your partner list.\n\n(TLDR: ${error.message})`);
++        return {ok: false, message: error.message};
+       }
+-      return {ok: true};
+-      //return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
++      return {ok: true, message: undefined};
+   };
+ 
+   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
+@@ -293,9 +291,11 @@ console.log(data);
+     
+     if (error) {
+         console.error(`Error updating the Partners Processed Table`, error, data);
+-        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
++        return {ok: false, message: error.message};
++        //return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
+       }
+-      return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
++      return {ok: true, message: undefined};
++      //return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+   };
+ 
+   export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
+@@ -312,10 +312,10 @@ console.log(data);
+     const { data, error } = await supabase.from('GL_CODES').upsert(accountRecords, { onConflict: 'account_number, apc_op_id, apc_part_id' })
+     .select();
+     if (error) {
+-        console.error(`Error adding the Operator's GL Codes`, error);
+-        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${error.message})`);
++        writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes');
++        return {ok: false, message: error.message};
+       }
+-      return notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
++      return {ok: true, message: undefined};
+   };
+ 
+   export const updateGLAccountCodeStatus = async(id: number, status: boolean ) => {
+diff --git a/src/constants/variables.tsx b/src/constants/variables.tsx
+index c836bf1..8ba7121 100644
+--- a/src/constants/variables.tsx
++++ b/src/constants/variables.tsx
+@@ -1,4 +1,14 @@
+ export const supportEmail = 'elizabeth.shaw@afepartner.com';
+ export const resendOTPCoolDown = 30;
+ export const otpLength = 6;
+-export const countries = ['United States', 'Canada', 'Mexico'];
+\ No newline at end of file
++export const countries = ['United States', 'Canada', 'Mexico'];
++export const superUserPermission = 1;
++export const viewOperatedAFEPermission = 2;
++export const viewNonOpAFEPermission = 3;
++export const operatorEditUsers = 4;
++export const nonOperatorEditUsers = 5;
++export const approveRejectNonOpAFEs = 6;
++export const viewOperatorBilling = 7;
++export const editOperatorLibrary = 8;
++export const editNonOpLibrary = 9;
++
+diff --git a/src/helpers/helpers.tsx b/src/helpers/helpers.tsx
+index b44d7ff..4453286 100644
+--- a/src/helpers/helpers.tsx
++++ b/src/helpers/helpers.tsx
+@@ -5,16 +5,6 @@ import { toast, type ToastContentProps } from "react-toastify";
+ import { Slide, Zoom, Flip, Bounce } from 'react-toastify';
+ import type { AddressType, AFEHistorySupabaseType, AFEType, EstimatesSupabaseType, OperatorType, UserProfileRecordSupabaseType } from "src/types/interfaces";
+ 
+-export const superUserPermission = 1;
+-export const viewOperatedAFEPermission = 2;
+-export const viewNonOpAFEPermission = 3;
+-export const operatorEditUsers = 4;
+-export const nonOperatorEditUsers = 5;
+-export const approveRejectNonOpAFEs = 6;
+-export const viewOperatorBilling = 7;
+-export const editOperatorLibrary = 8;
+-export const editNonOpLibrary = 9;
+-
+ export function setAFEHistoryMaxID(afeHistories: AFEHistorySupabaseType[] | []) {
+   return afeHistories.length;
+ };
+diff --git a/src/routes/afeDashboard/routes/helpers/helpers.tsx b/src/routes/afeDashboard/routes/helpers/helpers.tsx
+index f6b5e7a..b97c54c 100644
+--- a/src/routes/afeDashboard/routes/helpers/helpers.tsx
++++ b/src/routes/afeDashboard/routes/helpers/helpers.tsx
+@@ -1,7 +1,8 @@
+ import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
+ import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
+ import { insertAFEHistory } from '../../../../../provider/write'
+-import { notifyStandard, superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/helpers/helpers";
++import { notifyStandard } from "src/helpers/helpers";
++import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+ import { handleSendEmail } from "email/emailBasic";
+ import { useSupabaseData } from "src/types/SupabaseContext";
+ 
+diff --git a/src/routes/createEditOperators/routes/manageOperatorAndPartner.tsx b/src/routes/createEditOperators/routes/manageOperatorAndPartner.tsx
+index f1683b6..7cb7b20 100644
+--- a/src/routes/createEditOperators/routes/manageOperatorAndPartner.tsx
++++ b/src/routes/createEditOperators/routes/manageOperatorAndPartner.tsx
+@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
+ import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+ import UniversalPagination from "../../sharedComponents/pagnation";
+ import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+-import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
++import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/constants/variables";
+ 
+ function addressDisplay(addressRecord: RoleEntryRead) {
+     const addressRecordDisplay = addressRecord.apc_address?.street.concat(' ',
+diff --git a/src/routes/createEditUsers/routes/createNewUser.tsx b/src/routes/createEditUsers/routes/createNewUser.tsx
+index 22d19d0..592f084 100644
+--- a/src/routes/createEditUsers/routes/createNewUser.tsx
++++ b/src/routes/createEditUsers/routes/createNewUser.tsx
+@@ -5,7 +5,8 @@ import { type UserProfileRecordSupabaseType, type RoleEntryWrite, type RoleTypes
+ import { transformOperatorPartnerAddress } from '../../../types/transform';
+ import { Field, Label, Switch } from '@headlessui/react';
+ import { handleNewUser } from './helpers/helpers';
+-import { doesUserHaveRole, operatorEditUsers, nonOperatorEditUsers, notifyFailure } from 'src/helpers/helpers';
++import { doesUserHaveRole, notifyFailure } from 'src/helpers/helpers';
++import { operatorEditUsers, nonOperatorEditUsers } from "src/constants/variables";
+ import LoadingPage from 'src/routes/sharedComponents/loadingPage';
+ import { handleSendEmail } from 'email/emailBasic';
+ import { ToastContainer } from 'react-toastify';
+diff --git a/src/routes/createEditUsers/routes/helpers/helpers.tsx b/src/routes/createEditUsers/routes/helpers/helpers.tsx
+index a73c87f..e755979 100644
+--- a/src/routes/createEditUsers/routes/helpers/helpers.tsx
++++ b/src/routes/createEditUsers/routes/helpers/helpers.tsx
+@@ -1,7 +1,7 @@
+ import type { RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from "src/types/interfaces";
+ import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
+ import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+-import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers,nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/helpers/helpers";
++import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers, nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/constants/variables";
+ 
+ export function filterOperatorRolePermissions (roles: RoleEntryWrite[], user_id:string): RoleEntryWrite[] {
+         return roles.filter(item => item.role === viewOperatedAFEPermission || item.role === operatorEditUsers || item.role === viewOperatorBilling || item.role === editOperatorLibrary ).map(item => ({
+diff --git a/src/routes/glConfigurations/routes/glFileUpload.tsx b/src/routes/glConfigurations/routes/glFileUpload.tsx
+index 785ba95..acf8260 100644
+--- a/src/routes/glConfigurations/routes/glFileUpload.tsx
++++ b/src/routes/glConfigurations/routes/glFileUpload.tsx
+@@ -3,25 +3,25 @@ import { useMemo, useState } from "react";
+ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+ import type { GLCodeRowData } from 'src/types/interfaces';
+ import { writeGLAccountlistFromSourceToDB } from 'provider/write';
+-import { notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
++import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
+ import { ToastContainer } from 'react-toastify';
+ import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
+ import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
+ import UniversalPagination from 'src/routes/sharedComponents/pagnation';
++import { getDistinctAccountsByProperties, parseRowsToAccountData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
+ 
+ const expectedHeaders = ["account_number", "account_group", "account_description"];
+-const NULL_UUID = '00000000-0000-0000-0000-000000000000';
+ 
+ export default function GLFileUpload() {
+   const [data, setData] = useState<GLCodeRowData[]>([]);
+   const [fileName, setFileName] = useState('');
+-  const [rowsLimit] = useState(50);
+   const [rowsToShow, setRowsToShow] = useState<GLCodeRowData[]>([]);
+   const [currentPage, setCurrentPage] = useState(0);
++  const maxRowsToShow = 20;
+   const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
+   const [partnerAPCIDArray, setPartnerAPCIDArray] = useState<string[]>([]);
+   const [distinctAccountArray, setDistinctAccountArray] = useState<GLCodeRowData[]>([]);
+-  const [selectListDisabled, setSelectListDisabled] = useState<boolean>(false);
++  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+ 
+   const handlePageChange = (paginatedData: GLCodeRowData[], page: number) => {
+           setRowsToShow(paginatedData);
+@@ -38,103 +38,71 @@ export default function GLFileUpload() {
+       const arrayBuffer = event.target?.result;
+       if (!arrayBuffer) return;
+ 
+-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+-      const workbook = XLSX.read(data, { type: 'array' });
+-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
++      try {
++        const { worksheet } = readWorkbook(arrayBuffer as ArrayBuffer);
+ 
+-      const fullJson = XLSX.utils.sheet_to_json<GLCodeRowData>(worksheet, {
+-        defval: '',
+-        raw: false,
+-      });
++        const { valid, firstRow } = validateHeaders(worksheet, expectedHeaders)
+ 
+-      const firstRow = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0] as string[];
+-      const headersMatch = expectedHeaders.every((expected, i) =>
+-        String(firstRow?.[i] ?? '').trim().toLowerCase() === expected.toLowerCase()
+-      );
+-
+-      if (!headersMatch) {
+-        alert(
+-          `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
+-        );
+-        return;
+-      }
+-
+-      const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
+-        header: 1,
+-        defval: '',
+-      });
++        if (!valid) {
++          notifyFailure(
++            `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
++          )
++          return;
++        }
+ 
+-      const dataRows = rows.slice(1);
+-      const accountsToOperators: GLCodeRowData[] = dataRows.flatMap<GLCodeRowData>((row) => {
+-        const basic = {
+-          account_number: String(row[0] ?? ''),
+-          account_group: String(row[1] ?? ''),
+-          account_description: String(row[2] ?? ''),
+-          apc_op_id: '',
+-          apc_part_id: ''
+-        };
+-
+-        const looped = opAPCIDArray.map<GLCodeRowData>((operator) => ({
+-          ...basic,
+-          apc_op_id: operator,
+-          apc_part_id: NULL_UUID
+-        }))
+-
+-        return looped;
+-      });
++        const accountMap = parseRowsToAccountData(worksheet, opAPCIDArray, partnerAPCIDArray);
+ 
+-      const accountsToPartners: GLCodeRowData[] = dataRows.flatMap<GLCodeRowData>((row) => {
+-        const basic = {
+-          account_number: String(row[0] ?? ''),
+-          account_group: String(row[1] ?? ''),
+-          account_description: String(row[2] ?? ''),
+-          apc_op_id: '',
+-          apc_part_id: ''
+-        };
+-
+-        const looped = partnerAPCIDArray.map<GLCodeRowData>((partner) => ({
+-          ...basic,
+-          apc_op_id: NULL_UUID,
+-          apc_part_id: partner
+-        }))
+-
+-        return looped;
+-      });
++        if(accountMap.length < 1) {
++          setFileName(e.target.value);
++          e.target.value = '';
++          notifyFailure('Dry Well.  No rows found in the uploaded file. There’s nothing to run.')
++          return;
++        }
+ 
+-      const mergedArrays = [...accountsToOperators, ...accountsToPartners];
+-      const distinctItems = getDistinctItemsByProperties(mergedArrays, ["account_number", "account_group", "account_description"]);
+-      setDistinctAccountArray(distinctItems);
++      const distinctItemsDisplay = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description"]);
++      const distinctItemsWrite = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description","apc_op_id", "apc_part_id"]);
++      setDistinctAccountArray(distinctItemsDisplay);
+       setData(prevData => {
+         const updatedData = [...prevData];
+-        const merged = [...updatedData, ...accountsToOperators, ...accountsToPartners]
++        const merged = [...updatedData, ...distinctItemsWrite]
+         return merged;
+       });
+ 
+       setFileName(e.target.value);
+-      setSelectListDisabled(true);
+-      setRowsToShow(distinctItems.slice(0, rowsLimit))
++      setIsDisabled(true);
+       e.target.value = '';
++      } catch (err) {
++        notifyFailure('Off-Spec Input.  The uploaded file isn’t Excel. Provide a real spreadsheet to proceed.');
++      } 
+     };
+     reader.readAsArrayBuffer(file);
+   };
+ 
+-  function getDistinctItemsByProperties(
+-    arr: GLCodeRowData[],
+-    props: Array<keyof GLCodeRowData>
+-  ): GLCodeRowData[] {
+-    const seen = new Set<string>();
+-    const distinctItems: GLCodeRowData[] = [];
+-
+-    for (const item of arr) {
+-      const identifier = props.map((p) => item[p]).join("|"); 
+-      if (!seen.has(identifier)) {
+-        seen.add(identifier);
+-        distinctItems.push(item);
+-      }
+-    }
+-    return distinctItems;
++  const handleClickCancel = () => {
++    setData([]); 
++    setDistinctAccountArray([]); 
++    setIsDisabled(false); 
++    setFileName(''); 
++    notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`); 
+   };
+-  
++
++  const handleClickSave = async () => {
++    const writeAccountsToDBResults = await writeGLAccountlistFromSourceToDB(data);
++
++    if(!writeAccountsToDBResults.ok) {
++      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${writeAccountsToDBResults.message})`);
++    }
++
++    if(writeAccountsToDBResults.ok) {
++      notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
++    }
++    
++    setIsDisabled(false); 
++    setFileName(''); 
++    setData([]); 
++    setDistinctAccountArray([]); 
++  }
++console.log(data, ' the data wto be written')
+   return (
+     <>
+       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+@@ -154,21 +122,21 @@ export default function GLFileUpload() {
+                 <OperatorDropdownMultiSelect
+                   onChange={(ids) => { setOpAPCIDArray(ids) }}
+                   initialSelectedIds={[]}
+-                  isDisabled={selectListDisabled}
++                  isDisabled={isDisabled}
+                 />
+               </div>
+               <div className='grow m-2'>
+                 <PartnerDropdownMultiSelect
+                   onChange={(ids) => { setPartnerAPCIDArray(ids) }}
+                   initialSelectedIds={[]}
+-                  isDisabled={selectListDisabled}
++                  isDisabled={isDisabled}
+                 />
+               </div>
+             </div>
+               <div className="mt-4">
+                 <label
+                   htmlFor="file-upload">
+-                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || selectListDisabled} />
++                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || isDisabled} />
+                   <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
+                        peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
+                 </label>
+@@ -202,7 +170,7 @@ export default function GLFileUpload() {
+         hidden={distinctAccountArray.length===0 ? true : false}>
+         <UniversalPagination
+           data={distinctAccountArray}
+-          rowsPerPage={50}
++          rowsPerPage={maxRowsToShow}
+           listOfType="GL Account Codes"
+           onPageChange={handlePageChange}
+         />
+@@ -212,13 +180,13 @@ export default function GLFileUpload() {
+         <button
+           disabled={data.length > 0 ? false : true}
+           className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+-          onClick={(e) => { setData([]), setDistinctAccountArray([]), setSelectListDisabled(false), setFileName(''), notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: GL Account Codes were NOT saved)`) }}>
++          onClick={handleClickCancel}>
+           Cancel
+         </button>
+         <button
+           disabled={data.length > 0 ? false : true}
+           className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+-          onClick={(e) => { writeGLAccountlistFromSourceToDB(data), setSelectListDisabled(false), setFileName(''), setData([]), setDistinctAccountArray([]) }}>
++          onClick={handleClickSave}>
+           Save GL Account Code List
+         </button>
+       </div>
+diff --git a/src/routes/libraries/routes/partnerLibrary.tsx b/src/routes/libraries/routes/partnerLibrary.tsx
+index adc032e..2869986 100644
+--- a/src/routes/libraries/routes/partnerLibrary.tsx
++++ b/src/routes/libraries/routes/partnerLibrary.tsx
+@@ -7,6 +7,7 @@ import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
+ import { fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
+ import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+ import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
++import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+ 
+ const headers = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country",""];
+ 
+@@ -17,7 +18,6 @@ export default function PartnerLibrary() {
+ 
+   const [opAPCID, setOpAPCID] = useState<string>('');
+   const [partnerList, setPartnerList] = useState<PartnerRowData[] | []>([]);
+-  const [partnerAPCID, setPartnerAPCID] = useState<string>('');
+   const [hideDeletedPartners, setHideDeletedPartners] = useState<boolean>(true);
+   const [loading, setLoading] = useState(false);
+ 
+@@ -41,8 +41,15 @@ export default function PartnerLibrary() {
+   };
+ 
+   async function handleDeletePartner(partnerIdx: number, status: boolean) {
+-    await updatePartnerProcessedStatus(partnerIdx, status);
+-    getPartners();
++    const updatePartnerStatus = await updatePartnerProcessedStatus(partnerIdx, status);
++    if(updatePartnerStatus.ok) {
++      getPartners();
++      notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
++    }
++    if(!updatePartnerStatus.ok) {
++      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${updatePartnerStatus.message})`);
++    }
++    
+   }
+ 
+   useEffect(() => {
+diff --git a/src/routes/mainScreen.tsx b/src/routes/mainScreen.tsx
+index 368ef1d..bc7ec16 100644
+--- a/src/routes/mainScreen.tsx
++++ b/src/routes/mainScreen.tsx
+@@ -17,14 +17,13 @@ import {
+ import {
+   Bars3Icon,
+   BellIcon,
+-  ClockIcon,
+-  FolderIcon,
+   XMarkIcon
+ } from '@heroicons/react/24/outline';
+ 
+ import { ChevronDownIcon } from '@heroicons/react/20/solid';
+ import { useSupabaseData } from "../types/SupabaseContext";
+ import { doesUserHaveRole } from "src/helpers/helpers";
++import { editNonOpLibrary, editOperatorLibrary, nonOperatorEditUsers, operatorEditUsers, superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+ 
+ //Users that have permission 2 or 3 or a Super User can see these.
+ const afeNavigation = [
+@@ -122,17 +121,15 @@ export default function MainScreen() {
+                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                     {/* AFE MENU OPTIONS*/}
+                     <li>
+-                      {doesUserHaveRole(loggedInUser, 2, 3) && (
++                      {doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewNonOpAFEPermission) && (
+                       <ul role="list" className="-mx-2 space-y-1">
+                         {afeNavigation.map((item) => (
+                           <li key={item.name}>
+                             <NavLink
+-                              className={({ isActive, isPending }) =>
++                              className={( isActive ) =>
+                                 isActive
+                                   ? 'bg-[var(--dark-teal)] text-white custom-style text-sm/6 group flex gap-x-3 rounded-md p-2 hover:bg-[var(--bright-pink)]'
+-                                  : isPending
+-                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+-                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 '
++                                  : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 '
+                               }
+                               to={item.href}
+                               onClick={handleClick}
+@@ -148,7 +145,7 @@ export default function MainScreen() {
+                       )}
+                     </li>
+                     {/* USER MENU OPTIONS*/}
+-                    {doesUserHaveRole(loggedInUser, 4, 5) && (
++                    {doesUserHaveRole(loggedInUser, operatorEditUsers, nonOperatorEditUsers) && (
+                     <li>
+                       <div className="relative">
+                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
+@@ -162,12 +159,10 @@ export default function MainScreen() {
+                         {userSettingsNavigation.map((setting) => (
+                           <li key={setting.name}>
+                             <NavLink
+-                              className={({ isActive, isPending }) =>
++                              className={( isActive ) =>
+                                 isActive
+                                   ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+-                                  : isPending
+-                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+-                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                                  : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                               }
+                               to={setting.href}
+                               onClick={handleClick}
+@@ -183,7 +178,7 @@ export default function MainScreen() {
+                     </li>
+                     )}
+                     {/* LIBRARY CONFIGURATION MENU OPTIONS*/}
+-                    {doesUserHaveRole(loggedInUser, 8, 9) && (
++                    {doesUserHaveRole(loggedInUser, editOperatorLibrary, editNonOpLibrary) && (
+                     <li>
+                       <div className="relative">
+                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
+@@ -198,12 +193,10 @@ export default function MainScreen() {
+                         {libraryNavigation.map((help) => (
+                           <li key={help.id}>
+                             <NavLink
+-                              className={({ isActive, isPending }) =>
++                              className={( isActive ) =>
+                                 isActive
+                                   ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+-                                  : isPending
+-                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+-                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                                  : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                               }
+                               to={help.href}
+                               onClick={handleClick}
+@@ -233,12 +226,10 @@ export default function MainScreen() {
+                         {help.map((help) => (
+                           <li key={help.name}>
+                             <NavLink
+-                              className={({ isActive, isPending }) =>
++                              className={( isActive ) =>
+                                 isActive
+                                   ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+-                                  : isPending
+-                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+-                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                                  : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                               }
+                               to={help.href}
+                               onClick={handleClick}
+@@ -253,7 +244,7 @@ export default function MainScreen() {
+                       </ul>
+                     </li>
+                     {/* ONBOARDING MENU OPTIONS*/}
+-                    {doesUserHaveRole(loggedInUser, 1, 1) && (
++                    {doesUserHaveRole(loggedInUser, superUserPermission, superUserPermission) && (
+                     <li>
+                       <div className="relative">
+                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
+@@ -268,12 +259,10 @@ export default function MainScreen() {
+                         {onboarding.map((onboarding) => (
+                           <li key={onboarding.name}>
+                             <NavLink
+-                              className={({ isActive, isPending }) =>
++                              className={( isActive ) =>
+                                 isActive
+                                   ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+-                                  : isPending
+-                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+-                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                                  : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                               }
+                               to={onboarding.href}
+                               onClick={handleClick}
+@@ -309,17 +298,15 @@ export default function MainScreen() {
+               <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                 {/* AFE MENU OPTIONS*/}
+                 <li>
+-                  {doesUserHaveRole(loggedInUser, 2, 3) && (
++                  {doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewNonOpAFEPermission) && (
+                   <ul role="list" className="-mx-2 space-y-1">
+                     {afeNavigation.map((item) => (
+                       <li key={item.id}>
+                         <NavLink
+-                          className={({ isActive, isPending }) =>
++                          className={({ isActive }) =>
+                             isActive
+                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+-                              : isPending
+-                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+-                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                              : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                           }
+                           to={item.href}
+                         >
+@@ -335,7 +322,7 @@ export default function MainScreen() {
+                   )}
+                 </li>
+                 {/* USER MENU OPTIONS*/}
+-                {doesUserHaveRole(loggedInUser, 4, 5) && (
++                {doesUserHaveRole(loggedInUser, operatorEditUsers, nonOperatorEditUsers) && (
+                 <li>
+                   <div className="relative">
+                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
+@@ -350,12 +337,10 @@ export default function MainScreen() {
+                     {userSettingsNavigation.map((setting) => (
+                       <li key={setting.name}>
+                         <NavLink
+-                          className={({ isActive, isPending }) =>
++                          className={({ isActive }) =>
+                             isActive
+                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+-                              : isPending
+-                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+-                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                              : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                           }
+                           to={setting.href}>
+                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+@@ -369,7 +354,7 @@ export default function MainScreen() {
+                 </li>
+                 )}
+                 {/* LIBRARY CONFIGURATION MENU OPTIONS*/}
+-                {doesUserHaveRole(loggedInUser, 8, 9) && (
++                {doesUserHaveRole(loggedInUser, editOperatorLibrary, editNonOpLibrary) && (
+                 <li>
+                   <div className="relative">
+                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
+@@ -384,12 +369,10 @@ export default function MainScreen() {
+                     {libraryNavigation.map((help) => (
+                       <li key={help.name}>
+                         <NavLink
+-                          className={({ isActive, isPending }) =>
++                          className={({ isActive }) =>
+                             isActive
+                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+-                              : isPending
+-                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+-                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                              : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                           }
+                           to={help.href}>
+                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+@@ -417,12 +400,10 @@ export default function MainScreen() {
+                     {help.map((help) => (
+                       <li key={help.name}>
+                         <NavLink
+-                          className={({ isActive, isPending }) =>
++                          className={({ isActive }) =>
+                             isActive
+                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+-                              : isPending
+-                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+-                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                              : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                           }
+                           to={help.href}>
+                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+@@ -450,12 +431,10 @@ export default function MainScreen() {
+                     {onboarding.map((onboarding) => (
+                       <li key={onboarding.name}>
+                         <NavLink
+-                          className={({ isActive, isPending }) =>
++                          className={({ isActive }) =>
+                             isActive
+                               ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+-                              : isPending
+-                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+-                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
++                              : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                           }
+                           to={onboarding.href}>
+                           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+diff --git a/src/routes/partnerConfigurations/routes/partnerFileUpload.tsx b/src/routes/partnerConfigurations/routes/partnerFileUpload.tsx
+index baec2b2..60741f7 100644
+--- a/src/routes/partnerConfigurations/routes/partnerFileUpload.tsx
++++ b/src/routes/partnerConfigurations/routes/partnerFileUpload.tsx
+@@ -1,19 +1,13 @@
+-import * as XLSX from 'xlsx';
+-import { useEffect, useMemo, useState } from "react";
+-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
++import { useState } from "react";
+ import type { PartnerRowData } from 'src/types/interfaces';
+ import { writePartnerlistFromSourceToDB } from 'provider/write';
+ import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
+ import { ToastContainer } from 'react-toastify';
+-import { useSupabaseData } from 'src/types/SupabaseContext';
+ import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
+ import UniversalPagination from 'src/routes/sharedComponents/pagnation';
++import { getDistinctItemsByProperties, parseRowsToPartnerData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
+ 
+ const expectedHeaders = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country"];
+-interface PartnerOpList {
+-    apc_id: string;
+-    apc_name: string;
+-};
+ 
+ export default function PartnerFileUpload() {
+     const [data, setData] = useState<PartnerRowData[]>([]);
+@@ -22,16 +16,15 @@ export default function PartnerFileUpload() {
+     const [currentPage, setCurrentPage] = useState(0);
+     const maxRowsToShow = 20;
+     const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
+-    const [distinctAccountArray, setDistinctAccountArray] = useState<PartnerRowData[]>([]);
++    const [distinctPartnerArray, setDistinctPartnerArray] = useState<PartnerRowData[]>([]);
+     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+ 
+-    const handlePageChange = (paginatedData: PartnerRowData[], page: number) => {
+-              setRowsToShow(paginatedData);
+-              setCurrentPage(page);
+-      };
+-    
++  const handlePageChange = (paginatedData: PartnerRowData[], page: number) => {
++    setRowsToShow(paginatedData);
++    setCurrentPage(page);
++  };
+ 
+-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
++  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+ 
+     const file = e.target.files?.[0];
+     if (!file) return;
+@@ -41,84 +34,71 @@ export default function PartnerFileUpload() {
+       const arrayBuffer = event.target?.result;
+       if (!arrayBuffer) return;
+ 
+-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+-      const workbook = XLSX.read(data, { type: 'array' });
+-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+-
+-      const firstRow = XLSX.utils.sheet_to_json(worksheet, {header: 1})[0] as string[];
+-      const headersMatch = expectedHeaders.every((expected, i) =>
+-        String(firstRow?.[i] ?? '').trim().toLowerCase() === expected.toLowerCase()
+-      );
+-
+-      if (!headersMatch) {
+-        notifyFailure(
+-          `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
+-        );
+-        return;
+-      }
++      try {
++        const { worksheet } = readWorkbook(arrayBuffer as ArrayBuffer);
+ 
+-      const rows: unknown[][] = XLSX.utils.sheet_to_json(worksheet, {
+-        header: 1,
+-        defval: '', 
+-      });
++        const { valid, firstRow } = validateHeaders(worksheet, expectedHeaders)
+ 
+-      const dataRows = rows.slice(1);
+-      
+-      const multiplePartnerMap: PartnerRowData[] = dataRows.flatMap<PartnerRowData>((row) => {
+-        const basic = {
+-        source_id: String(row[0] ?? ''),
+-        apc_op_id: '',
+-        name: String(row[1] ?? ''),
+-        street: String(row[2] ?? ''),
+-        suite: String(row[3] ?? ''),
+-        city: String(row[4] ?? ''),
+-        state: String(row[5] ?? ''),
+-        zip: String(row[6] ?? ''),
+-        country: String(row[7] ?? ''),
+-        active: true,
+-        };
++        if (!valid) {
++          notifyFailure(
++            `Invalid headers. Expected: ${expectedHeaders.join(", ")}\nFound: ${firstRow?.join(", ")}`
++          )
++          return;
++        }
+ 
+-        const looped = opAPCIDArray.map<PartnerRowData>((operator) => ({
+-          ...basic,
+-          apc_op_id: operator
+-        }));
++        const partnerMap = parseRowsToPartnerData(worksheet, opAPCIDArray);
+         
+-        return looped;
+-      });
++        if(partnerMap.length < 1) {
++          setFileName(e.target.value);
++          e.target.value = '';
++          notifyFailure('Dry Well.  No rows found in the uploaded file. There’s nothing to run.')
++          return;
++        }
+ 
+-      const distinctItemsDisplay = getDistinctItemsByProperties(multiplePartnerMap, ["source_id","name", "street", "suite", "city", "state", "zip", "country"]);
+-      const distinctItemsWrite = getDistinctItemsByProperties(multiplePartnerMap, ["source_id","name", "street", "suite", "city", "state", "zip", "country", "apc_op_id"]);
+-      setDistinctAccountArray(distinctItemsDisplay.sort((a, b) => a.name.localeCompare(b.name)));
+-      setData(prevData => {
+-        const updatedData = [...prevData];
+-        const merged = [...updatedData, ...distinctItemsWrite.sort((a, b) => a.name.localeCompare(b.name))]
+-        return merged;
+-      });
+-      setFileName(e.target.value);
+-      setIsDisabled(true);
+-      //setRowsToShow(distinctItemsDisplay.slice(0,rowsLimit));
+-      e.target.value='';
++        const distinctItemsDisplay = getDistinctItemsByProperties(partnerMap, ["source_id", "name", "street", "suite", "city", "state", "zip", "country"]);
++        const distinctItemsWrite = getDistinctItemsByProperties(partnerMap, ["source_id", "name", "street", "suite", "city", "state", "zip", "country", "apc_op_id"]);
++        setDistinctPartnerArray(distinctItemsDisplay.sort((a, b) => a.name.localeCompare(b.name)));
++        setData(prevData => {
++          const updatedData = [...prevData];
++          const merged = [...updatedData, ...distinctItemsWrite.sort((a, b) => a.name.localeCompare(b.name))]
++          return merged;
++        });
++        setFileName(e.target.value);
++        setIsDisabled(true);
++        e.target.value = '';
++
++      } catch (err) {
++        notifyFailure('Off-Spec Input.  The uploaded file isn’t Excel. Provide a real spreadsheet to proceed.');
++      }
++      
+     };
+     reader.readAsArrayBuffer(file);
+-    };
++  };
+ 
+-  function getDistinctItemsByProperties(
+-    arr: PartnerRowData[],
+-    props: Array<keyof PartnerRowData>
+-  ): PartnerRowData[] {
+-    const seen = new Set<string>();
+-    const distinctItems: PartnerRowData[] = [];
+-  
+-    for (const item of arr) {
+-      const identifier = props.map((p) => item[p]).join("|"); // Create unique identifier
+-      if (!seen.has(identifier)) {
+-        seen.add(identifier);
+-        distinctItems.push(item);
+-      }
++  const handleClickCancel = () => {
++    setData([]);
++    setDistinctPartnerArray([]);
++    setIsDisabled(false);
++    setFileName('');
++    notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: Partners were NOT saved)`);
++  };
++
++  const handleClickSave = async () => {
++    const writePartnerListResult = await writePartnerlistFromSourceToDB(data);
++    if(writePartnerListResult.ok) {
++      notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
+     }
+-    return distinctItems;
++    if(!writePartnerListResult.ok) {
++      notifyFailure(`There was an error adding your partner list.\n\n(TLDR: ${writePartnerListResult.message})`);
++    }
++    setData([]);
++    setDistinctPartnerArray([]);
++    setIsDisabled(false);
++    setFileName('');
+   };
+ 
++  const unsavedWarning = useWarnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library");
++console.log(distinctPartnerArray.length)
+   return (
+     <>
+     <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
+@@ -192,29 +172,31 @@ export default function PartnerFileUpload() {
+                     </tbody>
+                 </table>
+             </div>
++            <div hidden={distinctPartnerArray.length < 1}>
+             <UniversalPagination
+-            data={distinctAccountArray}
++            data={distinctPartnerArray}
+             rowsPerPage={maxRowsToShow}
+             listOfType='Partners'
+             onPageChange={handlePageChange}
+             ></UniversalPagination>
++            </div>
+                
+         <div className="w-full flex justify-end sm:justify-end flex-col sm:flex-row gap-5 mt-5 pt-5 items-center border-t">
+             <button
+                     disabled={data.length>0 ? false : true}
+                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+-                    onClick={(e) => {setData([]),setRowsToShow([]),setIsDisabled(false),setFileName(''),notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: Partners were NOT saved)`)}}>
++                    onClick={handleClickCancel}>
+                         Cancel
+                     </button>
+                     <button
+                     disabled={data.length>0 ? false : true}
+                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
+-                    onClick={(e) => {writePartnerlistFromSourceToDB(data),setIsDisabled(false),setFileName(''), setData([])}}>
++                    onClick={handleClickSave}>
+                         Save Partner List
+                     </button>
+             </div>     
+            <ToastContainer icon={false} />
+-          {useWarnUnsavedChanges(data.length>0,"You have NOT saved your Partners to the AFE Partner Connections Library")}
++          {unsavedWarning}
+     </>
+   )
+ }
+\ No newline at end of file
+diff --git a/src/routes/partnerConfigurations/routes/partnerMappingView.tsx b/src/routes/partnerConfigurations/routes/partnerMappingView.tsx
+index f857504..1287126 100644
+--- a/src/routes/partnerConfigurations/routes/partnerMappingView.tsx
++++ b/src/routes/partnerConfigurations/routes/partnerMappingView.tsx
+@@ -30,7 +30,7 @@ export default function PartnerMappingView() {
+                     try {
+                         const apcPartList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
+                         if (isMounted) {
+-                            setPartnerMapRecord(apcPartList ?? [])
++                            setPartnerMapRecord(apcPartList.data ?? [])
+                             
+                         }
+                     } finally {
+diff --git a/src/routes/sharedComponents/operatorDropdownMultiSelect.tsx b/src/routes/sharedComponents/operatorDropdownMultiSelect.tsx
+index 16de552..5500173 100644
+--- a/src/routes/sharedComponents/operatorDropdownMultiSelect.tsx
++++ b/src/routes/sharedComponents/operatorDropdownMultiSelect.tsx
+@@ -1,5 +1,5 @@
+ import { useEffect, useState } from "react";
+-import { editOperatorLibrary, superUserPermission } from "src/helpers/helpers";
++import { editOperatorLibrary, superUserPermission } from "src/constants/variables";
+ import { useSupabaseData } from "src/types/SupabaseContext";
+ import type { RoleEntryRead } from "src/types/interfaces";
+ 
+diff --git a/src/routes/sharedComponents/partnerDropdownMultiSelect.tsx b/src/routes/sharedComponents/partnerDropdownMultiSelect.tsx
+index 9e1bdaa..758cae9 100644
+--- a/src/routes/sharedComponents/partnerDropdownMultiSelect.tsx
++++ b/src/routes/sharedComponents/partnerDropdownMultiSelect.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useState } from "react";
+ import { useSupabaseData } from "src/types/SupabaseContext";
+ import type { RoleEntryRead } from "src/types/interfaces";
+-import { editNonOpLibrary, superUserPermission } from "src/helpers/helpers";
++import { editNonOpLibrary, superUserPermission } from "src/constants/variables";
+ 
+ type Props = {
+   onChange?: (id: string[]) => void;

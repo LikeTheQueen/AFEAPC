@@ -1,12 +1,13 @@
 import * as XLSX from 'xlsx';
 import * as writeProvider from "provider/write";
-import { notifyStandard, notifyFailure, useWarnUnsavedChanges } from 'src/helpers/helpers';
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import PartnerFileUpload from 'src/routes/partnerConfigurations/routes/partnerFileUpload';
+import GLFileUpload from 'src/routes/glConfigurations/routes/glFileUpload';
+
 import {
     RachelGreen_AllPermissions_CW_NonOpCW,
 } from './test-utils/afeRecords';
@@ -16,7 +17,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    writePartnerlistFromSourceToDB: vi.fn(),
+    writeGLAccountlistFromSourceToDB: vi.fn(),
 }));
 
 vi.mock('src/helpers/helpers', () => ({
@@ -40,7 +41,15 @@ vi.mock('src/routes/sharedComponents/operatorDropdownMultiSelect', () => ({
     }
 }));
 
-describe('Partner File Upload', () => {
+vi.mock('src/routes/sharedComponents/partnerDropdownMultiSelect', () => ({
+    PartnerDropdownMultiSelect: ({ onChange }: { onChange: (ids: string[]) => void }) => {
+        return <button onClick={() => onChange(['partner-123', 'partner-124'])}>Mock Partner Select</button>
+    }
+}));
+
+
+
+describe('Account File Upload', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -58,12 +67,12 @@ describe('Partner File Upload', () => {
         vi.mocked(XLSX.utils.sheet_to_json)
             
             // First Call: Worksheet columns
-            .mockReturnValueOnce([['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
+            .mockReturnValueOnce([['Account_number', 'Account_Group', 'Account_Description']])
             // Second Call: raw rows for mapping
             .mockReturnValueOnce([
-                ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country'],
-                ['S1', 'Acme Co', '123 Main', '', 'Denver', 'CO', '80201', 'US'],
-                ['S1', 'Acme Co', '123 Main', '', 'Denver', 'CO', '80201', 'US']
+                ['Account_number', 'Account_Group', 'Account_Description'],
+                ['acct-1', 'Drill', 'Rig'],
+                ['acct-1', 'Drill', 'Rig']
             ]);
     });
 
@@ -74,9 +83,9 @@ describe('Partner File Upload', () => {
         vi.clearAllMocks();
     });
 
-    test('Allows user to upload the Partner List and cancel, clearing the list', async () => {
+    test('Allows user to upload the Account List and cancel, clearing the list', async () => {
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -100,7 +109,7 @@ describe('Partner File Upload', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -110,6 +119,7 @@ describe('Partner File Upload', () => {
         const chooseFileButton = screen.getByLabelText('Choose File', { selector: 'input' });
         expect(chooseFileButton).toBeDisabled();
 
+        await userEvent.click(screen.getByText('Mock Partner Select'));
         await userEvent.click(screen.getByText('Mock Operator Select'));
 
         expect(chooseFileButton).toBeEnabled();
@@ -121,7 +131,7 @@ describe('Partner File Upload', () => {
         }
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -130,7 +140,7 @@ describe('Partner File Upload', () => {
             mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
         });
         await waitFor(() => {
-            expect(screen.getByText('Acme Co')).toBeInTheDocument()
+            expect(screen.getByText('acct-1')).toBeInTheDocument()
         });
 
         await waitFor(() => {
@@ -139,18 +149,14 @@ describe('Partner File Upload', () => {
             expect(rows).toHaveLength(2)
 
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('S1')
-            expect(cells[1]).toHaveTextContent('Acme Co')
-            expect(cells[2]).toHaveTextContent('123 Main')
-            expect(cells[4]).toHaveTextContent('Denver')
-            expect(cells[5]).toHaveTextContent('CO')
-            expect(cells[6]).toHaveTextContent('80201')
-            expect(cells[7]).toHaveTextContent('US')
+            expect(cells[0]).toHaveTextContent('Drill')
+            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[2]).toHaveTextContent('Rig')
         });
 
         const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
-        expect(savePartnerList).toBeEnabled();
+        const saveAccountList = screen.getByRole('button', { name: /save gl account code list/i });
+        expect(saveAccountList).toBeEnabled();
         expect(cancelButton).toBeEnabled();
 
         await user.click(cancelButton);
@@ -161,15 +167,15 @@ describe('Partner File Upload', () => {
             expect(rows).toHaveLength(1)
         });
 
-        expect(savePartnerList).toBeDisabled();
+        expect(saveAccountList).toBeDisabled();
     });
 
-    test('Allows user to upload the Partner List and saves the list', async () => {
+    test('Allows user to upload the Account List and saves the list', async () => {
 
-        vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
+        vi.mocked(writeProvider.writeGLAccountlistFromSourceToDB)
             .mockResolvedValue({ ok: true, message: undefined });
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -192,7 +198,7 @@ describe('Partner File Upload', () => {
             }
         });
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -203,6 +209,7 @@ describe('Partner File Upload', () => {
         expect(chooseFileButton).toBeDisabled();
 
         await userEvent.click(screen.getByText('Mock Operator Select'));
+        await userEvent.click(screen.getByText('Mock Partner Select'));
 
         expect(chooseFileButton).toBeEnabled();
 
@@ -213,7 +220,7 @@ describe('Partner File Upload', () => {
         };
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -222,7 +229,7 @@ describe('Partner File Upload', () => {
             mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
         });
         await waitFor(() => {
-            expect(screen.getByText('Acme Co')).toBeInTheDocument()
+            expect(screen.getByText('acct-1')).toBeInTheDocument()
         });
         await waitFor(() => {
             const rows = screen.getAllByRole('row')
@@ -231,63 +238,64 @@ describe('Partner File Upload', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('S1')
-            expect(cells[1]).toHaveTextContent('Acme Co')
-            expect(cells[2]).toHaveTextContent('123 Main')
-            expect(cells[4]).toHaveTextContent('Denver')
-            expect(cells[5]).toHaveTextContent('CO')
-            expect(cells[6]).toHaveTextContent('80201')
-            expect(cells[7]).toHaveTextContent('US')
+            expect(cells[0]).toHaveTextContent('Drill')
+            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[2]).toHaveTextContent('Rig')
         });
 
         const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
-        expect(savePartnerList).toBeEnabled();
+        const saveAccountList = screen.getByRole('button', { name: /save gl account code list/i });
+        expect(saveAccountList).toBeEnabled();
         expect(cancelButton).toBeEnabled();
 
-        await user.click(savePartnerList);
+        await user.click(saveAccountList);
 
         await waitFor(() => {
-            expect(writeProvider.writePartnerlistFromSourceToDB).toHaveBeenCalledWith(
+            expect(writeProvider.writeGLAccountlistFromSourceToDB).toHaveBeenCalledWith(
                 [{
-                    source_id: 'S1',
+                    account_number: 'acct-1',
                     apc_op_id: 'operator-123',
-                    name: 'Acme Co',
-                    street: '123 Main',
-                    suite: '',
-                    city: 'Denver',
-                    state: 'CO',
-                    zip: '80201',
-                    country: 'US',
-                    active: true
+                    apc_part_id: null,
+                    account_group: 'Drill',
+                    account_description: 'Rig'
                 },
                 {
-                    source_id: 'S1',
+                    account_number: 'acct-1',
                     apc_op_id: 'operator-124',
-                    name: 'Acme Co',
-                    street: '123 Main',
-                    suite: '',
-                    city: 'Denver',
-                    state: 'CO',
-                    zip: '80201',
-                    country: 'US',
-                    active: true
-                }],
+                    apc_part_id: null,
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                },
+                {
+                    account_number: 'acct-1',
+                    apc_op_id: null,
+                    apc_part_id: 'partner-123',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                },
+                {
+                    account_number: 'acct-1',
+                    apc_op_id: null,
+                    apc_part_id: 'partner-124',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                }
+            ],
             )
             const rows = screen.getAllByRole('row')
             expect(rows).toHaveLength(1)
         });
 
-        expect(savePartnerList).toBeDisabled();
+        expect(saveAccountList).toBeDisabled();
         expect(notifyStandard).toHaveBeenCalled();
     });
 
-    test('Allows user to upload the Partner List and saves the list but returns an error on SAVE', async () => {
+    test('Allows user to upload the Account List and saves the list but returns an error on SAVE', async () => {
 
-        vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
+        vi.mocked(writeProvider.writeGLAccountlistFromSourceToDB)
             .mockResolvedValue({ ok: false, message: 'Error' });
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -310,7 +318,7 @@ describe('Partner File Upload', () => {
             }
         });
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -321,6 +329,7 @@ describe('Partner File Upload', () => {
         expect(chooseFileButton).toBeDisabled();
 
         await userEvent.click(screen.getByText('Mock Operator Select'));
+        await userEvent.click(screen.getByText('Mock Partner Select'));
 
         expect(chooseFileButton).toBeEnabled();
 
@@ -331,7 +340,7 @@ describe('Partner File Upload', () => {
         };
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -340,7 +349,7 @@ describe('Partner File Upload', () => {
             mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
         });
         await waitFor(() => {
-            expect(screen.getByText('Acme Co')).toBeInTheDocument()
+            expect(screen.getByText('acct-1')).toBeInTheDocument()
         });
         await waitFor(() => {
             const rows = screen.getAllByRole('row')
@@ -349,60 +358,61 @@ describe('Partner File Upload', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('S1')
-            expect(cells[1]).toHaveTextContent('Acme Co')
-            expect(cells[2]).toHaveTextContent('123 Main')
-            expect(cells[4]).toHaveTextContent('Denver')
-            expect(cells[5]).toHaveTextContent('CO')
-            expect(cells[6]).toHaveTextContent('80201')
-            expect(cells[7]).toHaveTextContent('US')
+            expect(cells[0]).toHaveTextContent('Drill')
+            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[2]).toHaveTextContent('Rig')
         });
 
         const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
-        expect(savePartnerList).toBeEnabled();
+        const saveAccountList = screen.getByRole('button', { name: /save gl account code list/i });
+        expect(saveAccountList).toBeEnabled();
         expect(cancelButton).toBeEnabled();
 
-        await user.click(savePartnerList);
+        await user.click(saveAccountList);
 
         await waitFor(() => {
-            expect(writeProvider.writePartnerlistFromSourceToDB).toHaveBeenCalledWith(
+            expect(writeProvider.writeGLAccountlistFromSourceToDB).toHaveBeenCalledWith(
                 [{
-                    source_id: 'S1',
+                    account_number: 'acct-1',
+                    account_group: 'Drill',
+                    account_description: 'Rig',
                     apc_op_id: 'operator-123',
-                    name: 'Acme Co',
-                    street: '123 Main',
-                    suite: '',
-                    city: 'Denver',
-                    state: 'CO',
-                    zip: '80201',
-                    country: 'US',
-                    active: true
+                    apc_part_id: null
                 },
                 {
-                    source_id: 'S1',
+                    account_number: 'acct-1',
                     apc_op_id: 'operator-124',
-                    name: 'Acme Co',
-                    street: '123 Main',
-                    suite: '',
-                    city: 'Denver',
-                    state: 'CO',
-                    zip: '80201',
-                    country: 'US',
-                    active: true
-                }],
+                    apc_part_id: null,
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                },
+                {
+                    account_number: 'acct-1',
+                    apc_op_id: null,
+                    apc_part_id: 'partner-123',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                },
+                {
+                    account_number: 'acct-1',
+                    apc_op_id: null,
+                    apc_part_id: 'partner-124',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                }
+            ],
             )
             const rows = screen.getAllByRole('row')
             expect(rows).toHaveLength(1)
         });
 
-        expect(savePartnerList).toBeDisabled();
+        expect(saveAccountList).toBeDisabled();
         expect(notifyFailure).toHaveBeenCalled();
     });
 
 });
 
-describe('Partner File Upload - incorrect headers', () => {
+describe('Account File Upload - incorrect headers', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -416,7 +426,7 @@ describe('Partner File Upload - incorrect headers', () => {
         vi.clearAllMocks();
     });
 
-    test('Incorrect Headers in file', async () => {
+    test('Incorrect Headers in Account file', async () => {
         // Make XLSX return whatever you want
         const mockWorksheet = {}
         const mockWorkbook = {
@@ -429,9 +439,9 @@ describe('Partner File Upload - incorrect headers', () => {
         vi.mocked(XLSX.utils.sheet_to_json)
             
             // Second call: Worksheet columns
-            .mockReturnValueOnce([['doc_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
+            .mockReturnValueOnce([['Account_num', 'Account_Group', 'Account_Description']])
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -455,7 +465,7 @@ describe('Partner File Upload - incorrect headers', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -466,6 +476,7 @@ describe('Partner File Upload - incorrect headers', () => {
         expect(chooseFileButton).toBeDisabled();
 
         await userEvent.click(screen.getByText('Mock Operator Select'));
+        await userEvent.click(screen.getByText('Mock Partner Select'));
 
         expect(chooseFileButton).toBeEnabled();
 
@@ -476,7 +487,7 @@ describe('Partner File Upload - incorrect headers', () => {
         }
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -491,7 +502,7 @@ describe('Partner File Upload - incorrect headers', () => {
 
     });
 
-    test('No rows in file', async () => {
+    test('No rows in Account file', async () => {
         // Make XLSX return whatever you want
         const mockWorksheet = {}
         const mockWorkbook = {
@@ -503,14 +514,14 @@ describe('Partner File Upload - incorrect headers', () => {
 
         vi.mocked(XLSX.utils.sheet_to_json)
             .mockReturnValueOnce([
-        ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']
+        ['Account_number', 'Account_Group', 'Account_Description']
     ])
     .mockReturnValueOnce([
-        ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']
+        ['Account_number', 'Account_Group', 'Account_Description']
         // no data rows - headers only
     ])
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -534,7 +545,7 @@ describe('Partner File Upload - incorrect headers', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -545,6 +556,7 @@ describe('Partner File Upload - incorrect headers', () => {
         expect(chooseFileButton).toBeDisabled();
 
         await userEvent.click(screen.getByText('Mock Operator Select'));
+        await userEvent.click(screen.getByText('Mock Partner Select'));
 
         expect(chooseFileButton).toBeEnabled();
 
@@ -555,7 +567,7 @@ describe('Partner File Upload - incorrect headers', () => {
         }
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -570,7 +582,7 @@ describe('Partner File Upload - incorrect headers', () => {
 
     });
 
-    test('Handles null values in file gracefully', async () => {
+    test('Handles null values in Account file gracefully', async () => {
         // Make XLSX return whatever you want
         const mockWorksheet = {}
         const mockWorkbook = {
@@ -583,14 +595,14 @@ describe('Partner File Upload - incorrect headers', () => {
         vi.mocked(XLSX.utils.sheet_to_json)
             
             // Second call: Worksheet columns
-            .mockReturnValueOnce([['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country']])
+            .mockReturnValueOnce([['Account_number', 'Account_Group', 'Account_Description']])
             // Third call: raw rows for mapping
             .mockReturnValueOnce([
-                ['Source_id', 'Name', 'Street', 'Suite', 'City', 'State', 'Zip', 'Country'],
-                ['S1', 'Acme Co', null, null, null, 'CO', '80201', 'US']
+                ['Account_number', 'Account_Group', 'Account_Description'],
+                ['acct-1', null, null]
             ]);
 
-        renderWithProviders(<PartnerFileUpload />, {
+        renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
@@ -614,7 +626,7 @@ describe('Partner File Upload - incorrect headers', () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText('Upload Partner Library from Your AFE System')).toBeInTheDocument();
+            expect(screen.getByText('Upload GL Account Codes from the AFE System')).toBeInTheDocument();
             const tableData = screen.getByRole('table');
             expect(tableData).toBeInTheDocument();
             const rowsOG = screen.getAllByRole('row');
@@ -625,6 +637,7 @@ describe('Partner File Upload - incorrect headers', () => {
         expect(chooseFileButton).toBeDisabled();
 
         await userEvent.click(screen.getByText('Mock Operator Select'));
+        await userEvent.click(screen.getByText('Mock Partner Select'));
 
         expect(chooseFileButton).toBeEnabled();
 
@@ -635,7 +648,7 @@ describe('Partner File Upload - incorrect headers', () => {
         }
         vi.stubGlobal('FileReader', vi.fn(() => mockFileReaderInstance));
 
-        const mockFile = new File(['dummy'], 'partners.xlsx', {
+        const mockFile = new File(['dummy'], 'accounts.xlsx', {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
 
@@ -644,7 +657,7 @@ describe('Partner File Upload - incorrect headers', () => {
             mockFileReaderInstance.onload({ target: { result: new ArrayBuffer(8) } })
         });
         await waitFor(() => {
-            expect(screen.getByText('Acme Co')).toBeInTheDocument()
+            expect(screen.getByText('acct-1')).toBeInTheDocument()
         });
 
         await waitFor(() => {
@@ -654,18 +667,14 @@ describe('Partner File Upload - incorrect headers', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('S1')
-            expect(cells[1]).toHaveTextContent('Acme Co')
+            expect(cells[0]).toHaveTextContent('')
+            expect(cells[1]).toHaveTextContent('acct-1')
             expect(cells[2]).toHaveTextContent('')
-            expect(cells[4]).toHaveTextContent('')
-            expect(cells[5]).toHaveTextContent('CO')
-            expect(cells[6]).toHaveTextContent('80201')
-            expect(cells[7]).toHaveTextContent('US')
         });
 
         const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-        const savePartnerList = screen.getByRole('button', { name: /save partner list/i });
-        expect(savePartnerList).toBeEnabled();
+        const saveAccountList = screen.getByRole('button', { name: /save gl account code list/i });
+        expect(saveAccountList).toBeEnabled();
         expect(cancelButton).toBeEnabled();
 
         await user.click(cancelButton);
@@ -676,6 +685,6 @@ describe('Partner File Upload - incorrect headers', () => {
             expect(rows).toHaveLength(1)
         });
 
-        expect(savePartnerList).toBeDisabled();
+        expect(saveAccountList).toBeDisabled();
     });
 });
