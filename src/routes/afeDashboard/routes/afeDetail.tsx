@@ -1,6 +1,6 @@
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory, fetchAFEWells, fetchAFESignedNonOp } from "provider/fetch";
-import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable } from "src/helpers/helpers";
+import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, notifyStandard } from "src/helpers/helpers";
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
-import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, usePartnerStatusChange } from "./helpers/helpers";
+import { handleOperatorArchiveStatusChange, handlePartnerArchiveStatusChange, handleThePartnerStatusChange } from "./helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon} from '@heroicons/react/24/outline';
@@ -34,7 +34,6 @@ export default function AFEDetailURL() {
   const [tabList, setTabList] = useState(tabs);
   const [currentTab, setCurrentTab] = useState(1);
   const [open, setOpen] = useState(false);
-  const { handlePartnerStatusChange } = usePartnerStatusChange();
 
   const [afeHistoryloading, setAFEHistoryLoading] = useState(false);
   const [afeLoading, setAFELoading] = useState(false);
@@ -290,6 +289,32 @@ export default function AFEDetailURL() {
 
   },[afeHistories]);
 
+  async function handleStatusChanges(status: string) {
+    const partnerStatusChangeResult = await handleThePartnerStatusChange(
+      afeRecord!,
+      status,
+      `The ${afeRecord?.partner_name!} status on the AFE changed from ${afeRecord?.partner_status} to ${status}`,
+      'action',
+      loggedInUser?.firstName!, 
+      loggedInUser?.lastName!,
+      loggedInUser?.email!,
+      token
+    );
+    if(!partnerStatusChangeResult?.ok) {
+      return {ok: false};
+    }
+    if (partnerStatusChangeResult.ok) {
+      setButtonDisabled(true);
+      handleStatusComment(status);
+      setAFEPartnerStatus(status);
+      setStatusColor(setStatusTextColor(status));
+      setStatusBgColor(setStatusBackgroundColor(status));
+      setStatusRgColor(setStatusRingColor(status));
+
+      return {ok: false};
+    }
+  }
+
   
   return (
     <>
@@ -352,16 +377,7 @@ export default function AFEDetailURL() {
                       name="partnerApprove"
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
-                      onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord!, 'Approved', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as approved`, 'action'),
-                        setButtonDisabled(true),
-                        handleStatusComment('Approved'),
-                        setAFEPartnerStatus('Approved'),
-                        setStatusColor(setStatusTextColor('Approved')),
-                        setStatusBgColor(setStatusBackgroundColor('Approved')),
-                        setStatusRgColor(setStatusRingColor('Approved')),
-                        refreshData();
-                      }}
+                      onClick={() => { handleStatusChanges('Approved') }}
                       disabled={statusButtonDisabled}>
                       Approve
                     </button>
@@ -369,16 +385,7 @@ export default function AFEDetailURL() {
                     name="partnerReject"
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
-                      onClick={(e: any) => {
-                        handlePartnerStatusChange(afeRecord!, 'Rejected', `${loggedInUser?.firstName} ${loggedInUser?.lastName} at ${afeRecord?.partner_name} marked the AFE as rejected`, 'action'),
-                        setButtonDisabled(true),
-                        handleStatusComment('Rejected'),
-                        setAFEPartnerStatus('Rejected'),
-                        setStatusColor(setStatusTextColor('Rejected')),
-                        setStatusBgColor(setStatusBackgroundColor('Rejected')),
-                        setStatusRgColor(setStatusRingColor('Rejected')),
-                        refreshData();
-                      }}
+                      onClick={() => { handleStatusChanges('Rejected') }}
                       disabled={statusButtonDisabled}>
                       Reject
                     </button>
@@ -671,7 +678,6 @@ export default function AFEDetailURL() {
                   afe_number={afeRecord?.afe_number!}
                   afe_version={afeRecord?.version_string!}
                   ></FileUpload>
-                  <ToastContainer/>
                 </div>
               </div>
               <div hidden={currentTab !== 2}>

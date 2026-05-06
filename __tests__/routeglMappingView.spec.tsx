@@ -135,6 +135,8 @@ describe('View and Edit Operators',() => {
     test('Fetches the mapped account codes when a user selects the dropdowns and let user delete one', async () => {
         (fetchProvider.fetchMappedGLAccountCode as Mock)
             .mockResolvedValue({ ok: true, data: mappedGLCodes });
+        (writeProvider.updateGLCodeMapping as Mock)
+        .mockResolvedValue({ ok: true, data: { id: 36, active: false } })
         await setupWithSelections(user);
         expect(fetchProvider.fetchMappedGLAccountCode).toHaveBeenCalledTimes(1);
 

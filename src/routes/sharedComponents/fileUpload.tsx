@@ -59,6 +59,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
         .upload('afe/'+filePath, fileToUpload);
 
       if (error) {
+        console.log(error, 'error upload');
         throw new Error(error.message);
       }
       if (data) {
@@ -75,11 +76,12 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
           `https://www.afepartner.com/mainscreen/afeDetail/${apc_afe_id}`,
           'View AFE'
         );
-        notifyStandard('Upload complete. The operation ran without incident.');
+        notifyStandard('Upload complete. The operation ran without incident.up');
 
       }
       
     } catch (error) {
+      console.log(error)
       notifyStandard('There seems to be an issue: '+error);
     } finally {
       setUploading(false);

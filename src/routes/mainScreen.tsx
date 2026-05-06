@@ -1,9 +1,11 @@
 
 import supabase from "provider/supabase";
 import { useState } from 'react';
-import { Outlet } from "react-router";
+import { Link, Outlet } from "react-router";
 import { NavLink } from "react-router";
 import "../style.css";
+import logoWhiteBackground from 'public/AFEAPCLogoSmall.png'
+import logo from '../assets/AFEAPCLogoSimpleNoBackground.png'
 import {
   Dialog,
   DialogBackdrop,
@@ -25,6 +27,7 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useSupabaseData } from "../types/SupabaseContext";
 import { doesUserHaveRole } from "src/helpers/helpers";
+import { APP_LOGO } from "src/constants/variables";
 
 //Users that have permission 2 or 3 or a Super User can see these.
 const afeNavigation = [
@@ -298,12 +301,14 @@ export default function MainScreen() {
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-[var(--darkest-teal)] px-6 pb-4">
-            <div className="flex h-16 shrink-0 items-center">
+            <div className="flex h-24 shrink-0 items-center justify-center  -mb-8 bg-[var(--darkest-teal)]">
+              <Link to="/mainscreen/afe">
               <img
                 alt="AFE Partner Connections"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
+                src={APP_LOGO}
+                className="h-22 w-auto bg-transparent"
               />
+              </Link>
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">

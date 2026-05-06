@@ -7,8 +7,14 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-    route("/", "./routes/landing.tsx"),
+    layout("./routes/webpage/publicLayout.tsx", [
+    index("./routes/webpage/homepage.tsx"),          // renders at "/"
+    route("/howitworks", "./routes/webpage/howItWorks.tsx"),
     route("/login", "./routes/userLogin/routes/login.tsx"),
+]),
+    //route("/", "./routes/landing.tsx"),
+    //route("/howitworks", "./routes/webpage/howItWorks.tsx"),
+    //route("/login", "./routes/userLogin/routes/login.tsx"),
     layout("./routes/loggedInUserSupabase.tsx", [
         route("/mainscreen", "./routes/mainScreen.tsx", [
             route("afe", "./routes/afeDashboard/routes/afe.tsx"),

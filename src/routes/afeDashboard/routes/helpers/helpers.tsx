@@ -1,10 +1,74 @@
-import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus } from "provider/write";
+import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus, writeToFunctionLogs } from "provider/write";
 import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
-import { insertAFEHistory } from '../../../../../provider/write'
-import { notifyStandard } from "src/helpers/helpers";
-import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/helpers/helpers";
-import { handleSendEmail } from "email/emailBasic";
+import { insertAFEHistory } from 'provider/write'
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+import { superUserPermission, supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+import { handleSendEmail, sendAFEStatusChangeEmailToOperator, sendAFEStatusChangeEmailToPartner } from "email/emailBasic";
 import { useSupabaseData } from "src/types/SupabaseContext";
+
+export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
+  updateAFEPartnerArchiveStatus(id, archivedStatus, token);
+  insertAFEHistory(id, description, type, token);
+};
+
+export function handleOperatorArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
+  updateAFEOperatorArchiveStatus(id, archivedStatus, token);
+  insertAFEHistory(id, description, type, token);
+};
+
+export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
+    if (!user) return;
+    return user?.operatorRoles
+      .filter(role => role.role === viewOperatedAFEPermission || role.role === superUserPermission)
+      .map(role => role.apc_id);
+};
+
+export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | null) {
+    if (!user) return;
+    return user?.partnerRoles
+      .filter(role => role.role === viewNonOpAFEPermission || role.role === superUserPermission)
+      .map(role => role.apc_id);
+};
+
+export async function handleThePartnerStatusChange(
+  afeRecord: AFEType,
+  newPartnerStatus: string,
+  description: string,
+  type: string,
+  loggedInUserFirstName: string,
+  loggedInUserLastName: string,
+  loggedinUserEmail: string,
+  token: string) {
+
+  if (afeRecord.partner_status === newPartnerStatus) {
+    return { ok: true };
+  }
+  const partnerStatusChange = await updateAFEPartnerStatus(afeRecord.id, newPartnerStatus, token);
+  if (!partnerStatusChange.ok) {
+    writeToFunctionLogs('UpdateAFEPartnerStatus', partnerStatusChange.message, null, 'ERROR', `AFE or AFE Details to change Partner status to ${newPartnerStatus} by ${loggedInUserFirstName} ${loggedInUserLastName}`);
+    notifyFailure(`Unable to update the AFE status.  Contact ${supportEmail} if the problem persists`);
+    return { ok: false };
+  }
+  if (partnerStatusChange.ok) {
+    const insertAFEHistoryResult = await insertAFEHistory(afeRecord.id, description, type, token);
+    if (!insertAFEHistoryResult.ok) {
+      writeToFunctionLogs('insertAFEHistory', insertAFEHistoryResult.message, null, 'ERROR', `AFE or AFE Details to change Partner status to ${newPartnerStatus} and cannot update AFE History`);
+    }
+    //Send to Operator
+    sendAFEStatusChangeEmailToOperator(afeRecord, newPartnerStatus, loggedInUserFirstName, loggedInUserLastName, loggedinUserEmail);
+    sendAFEStatusChangeEmailToPartner(afeRecord, newPartnerStatus, loggedInUserFirstName, loggedInUserLastName, loggedinUserEmail);
+    if (newPartnerStatus === 'Approved') {
+      console.log('handleStatusChanges called', newPartnerStatus);
+      notifyStandard('AFE Approved.  Spud ahead.');
+    } else if (newPartnerStatus === 'Rejected') {
+      notifyStandard('AFE rejected.  This well is a no-go.');
+    }
+    return { ok: true };
+  }
+
+};
+
+
 
 export async function handlePartnerStatuChangeLogic(
   afeRecord: AFEType,
@@ -47,7 +111,7 @@ export async function handlePartnerStatuChangeLogic(
     return { success: true };
   }
   return { success: false, reason: 'Failed to update Partner Status' };
-}
+};
 
 export function usePartnerStatusChange() {
   const { loggedInUser, session } = useSupabaseData();
@@ -82,29 +146,9 @@ export function usePartnerStatusChange() {
 
   return { handlePartnerStatusChange };
 };
-export function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
-  updateAFEPartnerArchiveStatus(id, archivedStatus, token);
-  insertAFEHistory(id, description, type, token);
-};
 
-export function handleOperatorArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
-  updateAFEOperatorArchiveStatus(id, archivedStatus, token);
-  insertAFEHistory(id, description, type, token);
-};
 
-export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
-    if (!user) return;
-    return user?.operatorRoles
-      .filter(role => role.role === viewOperatedAFEPermission || role.role === superUserPermission)
-      .map(role => role.apc_id);
-};
 
-export function getViewRoleNonOperatorIds(user: UserProfileRecordSupabaseType | null) {
-    if (!user) return;
-    return user?.partnerRoles
-      .filter(role => role.role === viewNonOpAFEPermission || role.role === superUserPermission)
-      .map(role => role.apc_id);
-};
 
 const handleEmailPartnerStatusChangeNotification = async ( 
   afeRecord: AFEType,

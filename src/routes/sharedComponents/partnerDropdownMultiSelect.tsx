@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
-import { editNonOpLibrary, superUserPermission } from "src/helpers/helpers";
+import { editNonOpLibrary, superUserPermission } from "src/constants/variables";
 
 type Props = {
   onChange?: (id: string[]) => void;

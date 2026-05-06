@@ -4,7 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { useNavigate, useLocation } from 'react-router';
 import OTPInput from './otpInput';
 import "../../../style.css";
-import { resendOTPCoolDown } from 'src/constants/variables';
+import { APP_LOGO, resendOTPCoolDown } from 'src/constants/variables';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 import { ToastContainer } from 'react-toastify';
 import { useSearchParams } from 'react-router';
@@ -122,7 +122,7 @@ useEffect(() => {
     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
       <img
         alt="AFE Partner Connections"
-        src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+        src={APP_LOGO}
         className="mx-auto h-10 w-auto"
       />
 

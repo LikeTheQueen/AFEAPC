@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
-import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/helpers/helpers";
+import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/constants/variables";
 
 function addressDisplay(addressRecord: RoleEntryRead) {
     const addressRecordDisplay = addressRecord.apc_address?.street.concat(' ',

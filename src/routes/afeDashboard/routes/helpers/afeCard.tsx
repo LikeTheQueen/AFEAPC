@@ -26,7 +26,7 @@ export function AFECard({ operatedAFE, afe }: Props) {
               : window.innerWidth >= 1440 ? 
               formatDate(afe.iapp_date) : formatDateShort(afe.iapp_date)}
               </p>
-              <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.well_name}</p>
+              <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">Well Name: </span>{afe.sortID}</p>
               <div className="flex flex-row items-center justify-between">
               <p className="truncate text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]/80"><span className="font-semibold">AFE Type: </span>{afe.afe_type}</p>
               <p className="truncate text-xs/6 2xl:text-sm/6 font-semibold text-[var(--darkest-teal)]/80">AFE Number: {afe.afe_number} {afe.version_string}</p>

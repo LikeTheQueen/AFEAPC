@@ -391,7 +391,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
     }
   }
   };
-  
+  console.log(relatedNonOpAddress, ' the related addresses')
   return (
     <>
     {opToEdit === null || !opToEdit.apc_id || !opToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">

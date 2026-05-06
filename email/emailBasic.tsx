@@ -1,3 +1,4 @@
+import type { AFEType, UserProfileRecordSupabaseType } from 'src/types/interfaces';
 import supabase from '../provider/supabase'
 
 interface EmailResponse {
@@ -160,4 +161,49 @@ export const handleSendEmail = async (
     subject,
     html
   )
-}
+};
+
+export async function sendAFEStatusChangeEmailToOperator(
+  afeRecord: AFEType,
+  newStatus: string,
+  loggedInUserFirstName: string,
+  loggedInUserLastName: string,
+  loggedinUserEmail: string,
+) {
+  const subject = `Your AFE has been ${newStatus} by ${loggedInUserFirstName} ${loggedInUserLastName} at ${afeRecord.partner_name}`;
+  const body = `This message is to let you know that your AFE has been ${newStatus}. The AFE Number is ${afeRecord.afe_number} (${afeRecord.version_string})`;
+
+  await handleSendEmail(
+    subject,
+    body,
+    afeRecord.operator,
+    afeRecord.partner_name,        
+    "AFE Partner Connections",        
+    loggedinUserEmail,  //CHANGE THIS     
+    `https://www.afepartner.com/mainscreen/afeDetail/${afeRecord.id}`,
+    'View AFE'
+  );
+};
+
+export async function sendAFEStatusChangeEmailToPartner(
+  afeRecord: AFEType,
+  newStatus: string,
+  loggedInUserFirstName: string,
+  loggedInUserLastName: string,
+  loggedinUserEmail: string,
+) {
+  const subject = `The AFE ${afeRecord.afe_number} (${afeRecord.version_string}) has been ${newStatus}`;
+  const body = `This message is to let you know that AFE ${afeRecord.afe_number} (${afeRecord.version_string}) has been marked ${newStatus} by ${loggedInUserFirstName} ${loggedInUserLastName}.
+  The AFE Number is ${afeRecord.afe_number} (${afeRecord.version_string}) and the Operator is ${afeRecord.operator}`;
+
+  await handleSendEmail(
+    subject,
+    body,
+    afeRecord.partner_name,
+    loggedInUserFirstName+' '+loggedInUserLastName,        
+    loggedInUserFirstName+' '+loggedInUserLastName,    
+    loggedinUserEmail,  //CHANGE THIS  TO PARTNER   
+    `https://www.afepartner.com/mainscreen/afeDetail/${afeRecord.id}`,
+    'View AFE'
+  );
+};

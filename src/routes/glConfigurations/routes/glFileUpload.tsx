@@ -102,7 +102,7 @@ export default function GLFileUpload() {
     setData([]); 
     setDistinctAccountArray([]); 
   }
-console.log(data, ' the data wto be written')
+
   return (
     <>
       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">

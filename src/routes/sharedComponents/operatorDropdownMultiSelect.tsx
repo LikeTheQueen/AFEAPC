@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { editOperatorLibrary, superUserPermission } from "src/helpers/helpers";
+import { editOperatorLibrary, superUserPermission } from "src/constants/variables";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { RoleEntryRead } from "src/types/interfaces";
 

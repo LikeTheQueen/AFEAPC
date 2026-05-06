@@ -1,5 +1,6 @@
 import {  NavLink } from "react-router";
 import { HeartIcon } from "@heroicons/react/24/outline";
+import { APP_LOGO } from "src/constants/variables";
 const navigation = {
     solutions: [
       { name: 'AFE Systems', href: '#' },
@@ -85,16 +86,16 @@ const navigation = {
   
   export default function Footer() {
     return (
-      <footer className="bg-black">
-        <div className="relative bg-[var(--dark-teal)]/30">
+      <footer className="bg-black/20">
+        <div className="relative">
         <div className="absolute inset-0 overflow-hidden bg-black/20">
         </div>
         <div className="mx-auto max-w-7xl px-0 pt-16 pb-8 z-6">
         <div className="xl:grid xl:grid-cols-5 xl:gap-8 border-t border-white/60 pt-8 pl-4 sm:pl-0">
           <div className="space-y-8 col-span-2">
             <img
-              alt="Company name"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+              alt="AFE Partner Connections"
+              src={APP_LOGO}
               className="h-9"
             />
             <p className="text-sm/6 text-balance text-gray-300 custom-style-long-text">

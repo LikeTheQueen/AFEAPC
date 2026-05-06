@@ -127,7 +127,7 @@ describe('View and edit the partner mappings',() => {
 
     test('Shows a list of mapped Partners to the user', async () => {
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue(operatorMappedLibrary);
+        .mockResolvedValue({ok: true, data: operatorMappedLibrary});
         
         await setupWithSelections(user);
 
@@ -147,7 +147,7 @@ describe('View and edit the partner mappings',() => {
 
     test('Shows a message if there are no mapped partners', async () => {
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue([]);
+                    .mockResolvedValue({ok:true, data:[]});
         
         await setupWithSelections(user);
 
@@ -163,7 +163,7 @@ describe('View and edit the partner mappings',() => {
 
     test('Shows a message if response is undefined', async () => {
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue(undefined);
+                    .mockResolvedValue({ok:false, data:[]});
         
         await setupWithSelections(user);
 
@@ -179,7 +179,7 @@ describe('View and edit the partner mappings',() => {
 
     test('User deletes a partner mapping', async () => {
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue(operatorMappedLibrary);
+        .mockResolvedValue({ok: true, data: operatorMappedLibrary});
         
         await setupWithSelections(user);
 
@@ -213,7 +213,7 @@ describe('View and edit the partner mappings',() => {
 
     test('User deletes a partner mapping', async () => {
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue(operatorMappedLibrary);
+         .mockResolvedValue({ok: true, data: operatorMappedLibrary});
         
         await setupWithSelections(user);
 

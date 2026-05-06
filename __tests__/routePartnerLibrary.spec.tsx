@@ -139,6 +139,8 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the partners and allows users to delete a partner', async () => {
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
+        (writeProvider.updatePartnerProcessedStatus as Mock)
+          .mockResolvedValue({ok: true, message: undefined});
 
         await setupWithSelections(user);
         expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);
@@ -154,37 +156,12 @@ describe('View and edit the partner mappings',() => {
       await user.click(within(partnerRow).getByRole('button'));
       });
 
-    test.skip('Select Op Account Codes after Non Op Call', async () => {
-        (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
-          .mockResolvedValueOnce(WhitAndCorrOilAccountCodes)
-          .mockResolvedValueOnce(WhitAndCorrOilAccountCodesNonOP);
-
-        await setupWithSelections(user);
-       expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);
-        await waitFor(() => {
-          expect(screen.getByText('A partner')).toBeInTheDocument();
-          expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
-          expect(screen.getByText('Arctic Canada Ltd.')).not.toBeVisible();
-          expect(screen.getByText('Athena Minerals Inc.')).not.toBeVisible();
-        });
-        
-        await user.selectOptions(
-            screen.getByRole('combobox', { name: /select a partner/i }),
-            'op-2'
-        );
-        
-        await waitFor(() => {
-          expect(screen.getAllByText('5310.201')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('5310.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('5310.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('5310.202')[1]).not.toBeVisible();
-        });
-    
-      });
 
     test('Fetches partners and allows users to bring one back from the dead', async () => {
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
+          (writeProvider.updatePartnerProcessedStatus as Mock)
+          .mockResolvedValue({ok: true, message: undefined});
 
         await setupWithSelections(user);
        expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);

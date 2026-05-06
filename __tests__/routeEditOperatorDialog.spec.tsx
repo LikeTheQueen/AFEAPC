@@ -74,7 +74,7 @@ describe('Edit Operators',() => {
       renderWithProviders(<EditOperator 
         token='test-token' 
         opToEdit={loggedInUserRachelGreen.operatorRoles[0]}
-        NonOpAddress={loggedInUserRachelGreen.partnerRoles} />, {
+        NonOpAddress={loggedInUserRachelGreen.partnerRoles.filter(nonOp => nonOp.apc_op_id === loggedInUserRachelGreen.operatorRoles[0].apc_id && (nonOp.role === 1 || nonOp.role === 9)) ?? []} />, {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
@@ -140,7 +140,7 @@ describe('Edit Operators',() => {
       renderWithProviders(<EditOperator 
         token='test-token' 
         opToEdit={loggedInUserRachelGreen.operatorRoles[0]}
-        NonOpAddress={loggedInUserRachelGreen.partnerRoles} />, {
+        NonOpAddress={loggedInUserRachelGreen.partnerRoles.filter(nonOp => nonOp.apc_op_id === loggedInUserRachelGreen.operatorRoles[0].apc_id && (nonOp.role === 1 || nonOp.role === 9)) ?? []} />, {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
@@ -165,7 +165,7 @@ describe('Edit Operators',() => {
 
         const operatorNameInput = screen.getAllByRole('textbox', { name: /Non-Op Name/i });
         const operatorCityInput = screen.getAllByRole('textbox', { name: /city/i });
-       
+        
         expect(operatorNameInput[0]).toHaveValue(loggedInUserRachelGreen.partnerRoles[0].apc_name);
         expect(operatorCityInput[1]).toHaveValue(loggedInUserRachelGreen.partnerRoles[0].apc_address.city);
         await user.clear(operatorNameInput[0]);

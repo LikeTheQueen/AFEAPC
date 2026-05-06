@@ -3,7 +3,7 @@ import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
 import * as emailProvider from '../email/emailBasic';
 import { notifyStandard, notifyFailure, doesUserHaveRole } from 'src/helpers/helpers';
-import { operatorEditUsers, nonOperatorEditUsers } from "src/helpers/helpers";
+import { operatorEditUsers, nonOperatorEditUsers } from "src/constants/variables";
 import { vi, type Mock } from 'vitest';
 import { getByRole, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

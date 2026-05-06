@@ -20,7 +20,8 @@ import {
   MonicaGeller_NoOpRoles_CW_NonOpCW,
   OperatorDropDown,
   PartnerDropdown,
-  loggedInUserIsSuperUser
+  loggedInUserIsSuperUser,
+  theAFERecordBeingClicked
 } from './test-utils/afeRecords';
 
 
@@ -41,6 +42,8 @@ vi.mock('provider/write', () => ({
 vi.mock('../email/emailBasic', () => ({
   handleSendEmail: vi.fn().mockResolvedValue(undefined),
   sendEmail: vi.fn().mockResolvedValue({ id: 'mock-email-id' }),
+  sendAFEStatusChangeEmailToOperator: vi.fn().mockResolvedValue(undefined),
+  sendAFEStatusChangeEmailToPartner: vi.fn().mockResolvedValue(undefined),
 }));
 
 
@@ -570,15 +573,24 @@ describe('displaying AFEs', () => {
 
   test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search', async () => {
     const user = userEvent.setup();
-
+ 
     (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
       ok: true,
       data: { id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb', status: 'Viewed'}
     });
+    
+    (writeProvider.insertAFEHistory as Mock).mockReturnValue({
+      ok: true,
+      data: { id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb', description: 'The Partner Status on the AFE changed from New to Viewed', type:'Action'}
+    });
 
-    (emailProvider.handleSendEmail as Mock).mockImplementation(() => 
-  Promise.resolve({ ok: true })
-);
+    (emailProvider.sendAFEStatusChangeEmailToOperator as Mock).mockImplementation(() =>
+      Promise.resolve({ ok: true })
+    );
+
+    (emailProvider.sendAFEStatusChangeEmailToPartner as Mock).mockImplementation(() =>
+      Promise.resolve({ ok: true })
+    );
     renderWithProviders(<AFE />, {
       routes: [
       { path: '/', element: <AFE /> },
@@ -649,15 +661,12 @@ describe('displaying AFEs', () => {
 
     await waitFor(() => {
       expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
-      expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
-        'Your AFE has been viewed by Rachel at Corr and Whit Oils',
-        'This message is to let you know that your AFE has been viewed!',
-        'John Ross Exploration Inc',
-        'Corr and Whit Oils',
-        "AFE Partner Connections",
+      expect(emailProvider.sendAFEStatusChangeEmailToOperator).toHaveBeenCalledWith(
+        theAFERecordBeingClicked,
+        'Viewed',
+        RachelGreen_AllPermissions_CW_NonOpCW.firstName,
+        RachelGreen_AllPermissions_CW_NonOpCW.lastName,
         RachelGreen_AllPermissions_CW_NonOpCW.email,
-        `https://www.afepartner.com/mainscreen/afeDetail/2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb`,
-        'View AFE'
       )
     });
 
@@ -734,11 +743,11 @@ await new Promise(resolve => setTimeout(resolve, 150));
     await waitFor(() => {
       expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
       expect(writeProvider.writeToFunctionLogs).toHaveBeenCalledWith(
-        'Update Partner Status',
+        'UpdateAFEPartnerStatus',
         'Unable to update Partner Status',
         null,
         'ERROR',
-        `AFE Homepage by ${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName}`
+        `AFE or AFE Details to change Partner status to Viewed by ${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName}`
       );
     });
 

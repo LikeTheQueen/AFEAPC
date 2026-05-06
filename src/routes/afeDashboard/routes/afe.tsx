@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
+import { getViewRoleNonOperatorIds, getViewRoleOperatorIds, handleThePartnerStatusChange } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
@@ -9,8 +9,6 @@ import { fetchAFEs } from "provider/fetch";
 import { transformAFEs } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
-import { handleSendEmail } from "email/emailBasic";
-import { insertAFEHistory, updateAFEPartnerStatus, writeToFunctionLogs } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import { ToastContainer } from "react-toastify";
 import { AFECard } from "./helpers/afeCard";
@@ -65,6 +63,7 @@ export default function AFE() {
     
     try{
           const afes = await fetchAFEs(token, signal);
+          
 
           if(!afes.ok) {
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
@@ -174,40 +173,18 @@ export default function AFE() {
           setCurrentPageNonOperated(page);
   };
 
-  const handleEmailNotifcation = async ( partner: string, operator: string, url: string, urlText: string ) => {
-      await handleSendEmail(
-        `Your AFE has been viewed by ${loggedInUser?.firstName} at ${partner}`,
-        'This message is to let you know that your AFE has been viewed!',
-        operator,
-        partner,
-        "AFE Partner Connections",
-        loggedInUser?.email!,
-        url,
-        urlText
-      );
-  };
-
   async function handlePartnerStatusChanged(afe: AFEType) {
     if(loggedInUser?.is_super_user) return;
     if(afe.partner_status !== 'New') return;
-
-    const partnerStatusChange = await updateAFEPartnerStatus(afe.id, 'Viewed', token);
-
-    if(partnerStatusChange.ok) {
-          await handleEmailNotifcation(afe.partner_name, afe.operator,`https://www.afepartner.com/mainscreen/afeDetail/${afe.id}`,'View AFE');
-          await insertAFEHistory(afe.id, 'The Partner Status on the AFE changed from New to Viewed','action', token);
-        }
-         
-    if(!partnerStatusChange.ok) {
-          writeToFunctionLogs(
-            'Update Partner Status',
-            partnerStatusChange.message,
-            null,
-            'ERROR',
-            `AFE Homepage by ${loggedInUser?.firstName} ${loggedInUser?.lastName}`
-          );
-
-        }
+    handleThePartnerStatusChange(
+      afe,
+      'Viewed',
+      'The Partner Status on the AFE changed from New to Viewed',
+      'action',
+      loggedInUser?.firstName!, 
+      loggedInUser?.lastName!,
+      loggedInUser?.email!,
+      token);
   };
 
   return (
@@ -385,7 +362,6 @@ export default function AFE() {
       </div>
     </>
     )}
-    <ToastContainer/>
     </>
     
   )

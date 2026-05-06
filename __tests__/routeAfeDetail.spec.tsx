@@ -1,10 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import AFEDetailURL from '../src/routes/afeDashboard/routes/afeDetail';
 import userEvent from '@testing-library/user-event';
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import * as XLSX from 'xlsx';
+import * as fetchProvider from '../provider/fetch';
+import * as writeProvider from "provider/write";
+import * as emailProvider from '../email/emailBasic';
+import * as afeHelpers from '../src/routes/afeDashboard/routes/helpers/helpers';
 import { 
   singleAFEResultSupabase, 
   singleAFEEstimatesResponse, 
@@ -52,6 +56,7 @@ vi.mock('../provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
+  updateAFEPartnerStatus: vi.fn().mockResolvedValue({ ok: true, data: null }),
   insertAFEHistory: vi.fn().mockResolvedValue({ ok: true, data:{ afe_id:1,  description:'Did',type: 'Viewed' } }),
 }))
  
@@ -59,14 +64,13 @@ vi.mock('src/routes/afeDashboard/routes/helpers/styleHelpers', () => ({
   setStatusTextColor: vi.fn((status) => status),
   setStatusBackgroundColor: vi.fn((status) => status),
   setStatusRingColor: vi.fn((status) => status),
+  handleThePartnerStatusChange: vi.fn(),
 }));
  
 vi.mock('src/routes/afeDashboard/routes/helpers/helpers', () => ({
   handleOperatorArchiveStatusChange: vi.fn(),
   handlePartnerArchiveStatusChange: vi.fn(),
-  usePartnerStatusChange: vi.fn(() => ({
-    handlePartnerStatusChange: vi.fn(),
-  })),
+  handleThePartnerStatusChange: vi.fn()
 }));
 
 vi.mock('xlsx', () => ({
@@ -81,6 +85,7 @@ vi.mock('xlsx', () => ({
 // ─── Render helper ────────────────────────────────────────────────────────────
  
 import { fetchAFEDetails, fetchAFEHistory, fetchAFEEstimates, fetchAFEDocs, fetchAFEAttachments, fetchAFESignedNonOp, fetchAFEWells, fetchRelatedDocuments } from '../provider/fetch';
+import { transformSingleAFE } from 'src/types/transform';
  
 const setupFetchMocks = () => {
   vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: true, data: singleAFEResultSupabase });
@@ -249,8 +254,16 @@ describe('AFEDetailURL', () => {
   });
 
   it('shows the Approve button and calls status functions when clicked', async () => {
+    (afeHelpers.handleThePartnerStatusChange as Mock).mockReturnValue({
+      ok: true
+    });
+    (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
+      ok: true,
+      data: { id: afeID, status: 'New'}
+    });
   renderAFEDetailPartner();
   const user = userEvent.setup();
+  const afeTransformed = transformSingleAFE(singleAFEResultSupabase);
 
   await waitFor(() => {
     const approveButton = document.querySelector('button[name="partnerApprove"]');
@@ -260,14 +273,37 @@ describe('AFEDetailURL', () => {
   const approveButton = document.querySelector('button[name="partnerApprove"]')!;
   await user.click(approveButton as HTMLElement);
 
+    await waitFor(() => {
+      expect(afeHelpers.handleThePartnerStatusChange).toHaveBeenCalledWith(
+        afeTransformed,
+        'Approved',
+        `The ${afeTransformed.partner_name} status on the AFE changed from ${afeTransformed.partner_status} to Approved`,
+        'action',
+        loggedInUserRossGeller.firstName,
+        loggedInUserRossGeller.lastName,
+        loggedInUserRossGeller.email,
+        'fake-token'
+      );
+    });
+
   expect(setStatusTextColor).toHaveBeenCalledWith('Approved');
   expect(setStatusBackgroundColor).toHaveBeenCalledWith('Approved');
   expect(setStatusRingColor).toHaveBeenCalledWith('Approved');
+
+  expect(screen.getByRole('button', { name: 'Approve'})).toBeDisabled();
 });
 
 it('shows the Reject button and calls status functions when clicked', async () => {
+  (afeHelpers.handleThePartnerStatusChange as Mock).mockReturnValue({
+      ok: true
+    });
+    (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
+      ok: true,
+      data: { id: afeID, status: 'New'}
+    });
   renderAFEDetailPartner();
   const user = userEvent.setup();
+  const afeTransformed = transformSingleAFE(singleAFEResultSupabase);
 
   await waitFor(() => {
     const rejectButton = document.querySelector('button[name="partnerReject"]');
@@ -276,6 +312,18 @@ it('shows the Reject button and calls status functions when clicked', async () =
 
   const rejectButton = document.querySelector('button[name="partnerReject"]')!;
   await user.click(rejectButton as HTMLElement);
+  await waitFor(() => {
+      expect(afeHelpers.handleThePartnerStatusChange).toHaveBeenCalledWith(
+        afeTransformed,
+        'Rejected',
+        `The ${afeTransformed.partner_name} status on the AFE changed from ${afeTransformed.partner_status} to Rejected`,
+        'action',
+        loggedInUserRossGeller.firstName,
+        loggedInUserRossGeller.lastName,
+        loggedInUserRossGeller.email,
+        'fake-token'
+      );
+    });
 
   expect(setStatusTextColor).toHaveBeenCalledWith('Rejected');
   expect(setStatusBackgroundColor).toHaveBeenCalledWith('Rejected');

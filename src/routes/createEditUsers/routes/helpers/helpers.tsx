@@ -1,7 +1,7 @@
 import type { RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from "src/types/interfaces";
 import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
-import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers, nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/helpers/helpers";
+import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers, nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/constants/variables";
 
 export function filterOperatorRolePermissions (roles: RoleEntryWrite[], user_id:string): RoleEntryWrite[] {
         return roles.filter(item => item.role === viewOperatedAFEPermission || item.role === operatorEditUsers || item.role === viewOperatorBilling || item.role === editOperatorLibrary ).map(item => ({

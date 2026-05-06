@@ -2781,6 +2781,37 @@ export const afesReturnedFromSupabaseDynamicDate = [
  
 ];
 
+export const theAFERecordBeingClicked = {
+        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb',
+        created_at: new Date("2025-10-01T12:00:00.000Z"),
+        afe_type: 'drilling',
+        afe_number: '06D111JC',
+        description: 'Drill TILLMAN #2',
+        total_gross_estimate: 420000,
+        version_string: null,
+        supp_gross_estimate: 0,
+        operator_wi: 60,
+        partner_wi: 40,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        operator: "John Ross Exploration Inc",
+        iapp_date: '9/29/2025',
+        last_mod_date: '9/29/2025',
+        legacy_chainID: 300,
+        legacy_afeid: 300,
+        chain_version: 1,
+        source_system_id: src_Tillman,
+        partnerID: apc_partner_id_CW,
+        partner_status_date: null,
+        sortID: 180,
+        archived: false,
+        partner_archived: false,
+        partner_name: "Corr and Whit Oils",
+        apc_op_id : "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        apc_partner_id: "712abc45-def0-4321-9876-abcdef012345",
+        well_name: 'TILLMAN #2',
+    };
+
 
 // ── User IDs ───────────────────────────────────────────────────────────────────
 export const user_id_RachelGreen    = '13e69340-d14c-45a9-96a8-142795925487';
