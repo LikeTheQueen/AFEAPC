@@ -20,3 +20,9 @@
   font-style: italic;
 }
 
+.custom-style-subheader {
+  font-family: 'Montserrat';
+  text-transform: lowercase;
+  font-style: italic;
+}
+

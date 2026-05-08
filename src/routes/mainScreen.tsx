@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Link, Outlet } from "react-router";
 import { NavLink } from "react-router";
 import "../style.css";
-import logoWhiteBackground from 'public/AFEAPCLogoSmall.png'
-import logo from '../assets/AFEAPCLogoSimpleNoBackground.png'
 import {
   Dialog,
   DialogBackdrop,

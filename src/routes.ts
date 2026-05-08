@@ -10,6 +10,8 @@ export default [
     layout("./routes/webpage/publicLayout.tsx", [
     index("./routes/webpage/homepage.tsx"),          // renders at "/"
     route("/howitworks", "./routes/webpage/howItWorks.tsx"),
+    route("/aboutus", "./routes/webpage/aboutUs.tsx"),
+    route("/contactus", "./routes/webpage/contactUs.tsx"),
     route("/login", "./routes/userLogin/routes/login.tsx"),
 ]),
     //route("/", "./routes/landing.tsx"),

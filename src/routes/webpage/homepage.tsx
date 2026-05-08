@@ -3,7 +3,7 @@ import LiquidEther from "src/blocks/LiquidEther";
 export default function Homepage() {
     return (
         <div className='bg-black'>
-        <section className="relative w-full h-full bg-black/60">
+        <section className="relative w-full h-full bg-black/10">
         {/* Background layer */}
         <div className="absolute inset-0 z-5">
           <LiquidEther

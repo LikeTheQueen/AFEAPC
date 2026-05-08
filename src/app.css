@@ -9,7 +9,7 @@
   --dark-teal: #0E4749;
   --bright-pink: #F61067;
   --light-grey: #9AA0A8;
-  --gright-green: #95C623;
+  --bright-green: #95C623;
   --toastify-color-light: #002626;
   --toastify-toast-padding: 0px;
   --toastify-toast-width: 500px;
@@ -85,6 +85,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --animate-divider-reveal: dividerReveal 1s ease-out forwards;
+  @keyframes dividerReveal {
+    0% { width: 0% }
+    100% { width: 100% }
+  }
 }
 
 .dark {
