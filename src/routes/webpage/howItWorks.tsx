@@ -67,7 +67,7 @@ export default function HowItWorks() {
                     Four precise steps that transform a cumbersome approval process into an orchestrated, transparent workflow.
                 </h2>
         
-        <div className="max-w-5/6 mx-auto grid grid-cols-1 sm:grid-cols-4 gap-2 sm:mt-6 p-2 pb-4 sm:p-6 sm:pb-6">
+        <div className="max-w-5/6 mx-auto grid grid-cols-1 sm:grid-cols-4 gap-4 sm:mt-6 p-2 pb-4 sm:p-6 sm:pb-6">
             {cardVerbiage.map((item) => (
         <HowItWorksCard key={item.number}
         number={item.number}
