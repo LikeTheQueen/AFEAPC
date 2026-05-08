@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LandingPage from 'src/routes/landing';
+import LandingPage from 'src/routes/unusedRoutes/landing';
 import LoginForm from 'src/routes/userLogin/routes/login';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 

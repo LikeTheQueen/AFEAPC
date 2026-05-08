@@ -3,7 +3,7 @@ vi.mock('src/blocks/LiquidEther', () => ({
 }));
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import LandingPage from 'src/routes/landing';
+import LandingPage from 'src/routes/unusedRoutes/landing';
 import LoginForm from 'src/routes/userLogin/routes/login';
 import { MemoryRouter, useNavigate } from 'react-router';
 

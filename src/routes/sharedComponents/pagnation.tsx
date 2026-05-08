@@ -11,7 +11,7 @@ type PaginationProps<T> = {
 
 export default function UniversalPagination<T>({
     data,
-    rowsPerPage = 5,
+    rowsPerPage = 0,
     listOfType,
     onPageChange,
     totalUnfilteredRows = 0,
@@ -24,6 +24,7 @@ export default function UniversalPagination<T>({
 
     // Calculate total pages and pagnation array when data changes
     useMemo(() => {
+        if(data.length < 1) return;
         const pages = Math.ceil(data.length / rowsPerPage);
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));

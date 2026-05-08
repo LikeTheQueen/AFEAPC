@@ -240,7 +240,7 @@ export default function HowItWorks() {
                 <div className="relative flex items-center bg-black rounded-full pl-6 pr-1 py-1.5">
                   <p className="custom-style font-light text-sm sm:text-base/7 text-white/80 flex-1 py-2">Want to know more?</p>
                   <NavLink
-                    to="/contactus"
+                    to="/requestdemo"
                     className="custom-style font-semibold text-xs tracking-widest text-black bg-white rounded-full px-6 py-3 transition-all duration-200 hover:bg-[var(--bright-pink)] hover:text-white whitespace-nowrap"
                     role="button">
                     Let's Talk
@@ -276,7 +276,7 @@ export default function HowItWorks() {
           <div className="relative inline-flex items-center justify-center w-56 group">
             <div className="absolute -inset-px rounded-lg bg-gradient-to-r from-white via-[var(--dark-teal)] to-[var(--bright-pink)] transition-all duration-200 group-hover:shadow-lg group-hover:shadow-[var(--bright-pink)]/30" />
             <NavLink
-              to="/contactus"
+              to="/requestdemo"
               className="relative inline-flex items-center justify-center w-full py-3 px-6 custom-style font-semibold text-sm text-white bg-black rounded-lg"
               role="button">
               Request A Demo

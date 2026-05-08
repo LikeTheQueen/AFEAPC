@@ -10,10 +10,10 @@ import { transformAFEs } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
-import { ToastContainer } from "react-toastify";
 import { AFECard } from "./helpers/afeCard";
 import { AFEHeader, NoFilteredAFEsToView } from "./helpers/afeHeader";
 import { AFEFilters } from "./helpers/afeFilters";
+import * as XLSX from 'xlsx';
 
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
@@ -187,6 +187,47 @@ export default function AFE() {
       token);
   };
 
+  const afeMapping = (afes: AFEType[]) => {
+              return afes.map(item => ({
+                Operator: item.operator,
+                Operator_Status: item.op_status,
+                Operator_Approved_Date: item.iapp_date,
+                Created: item.created_at,
+                AFE_type: item.afe_type,
+                AFE_number: item.afe_number,
+                Version: item.version_string,
+                Description: item.description,
+                Total_gross_estimate: item.total_gross_estimate,
+                Supp_gross_estimate: item.supp_gross_estimate,
+                Operator_Wi: item.operator_wi,
+                Partner_wi: item.partner_wi,
+                Partner_status: item.partner_status,
+                Partner_status_date: item.partner_status,
+                Well: item.well_name
+                
+              }))
+            };
+  
+    const handleExport = async () => {
+          
+          const afeExport = () => {
+            if(currentTab === 1 && filteredNonOperatedAFEs.length < 1) return [];
+            if(currentTab === 2 && filteredOperatedAFEs.length < 1) return [];
+            if(currentTab === 1 && filteredNonOperatedAFEs.length > 0) {
+              return afeMapping(filteredNonOperatedAFEs);
+            }
+            if(currentTab === 2 && filteredOperatedAFEs.length > 0 ) {
+              return afeMapping(filteredOperatedAFEs);
+            }
+            return [];
+          };
+            const ws = XLSX.utils.json_to_sheet(afeExport());
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Export");
+            XLSX.writeFile(wb, "export.xlsx");
+          
+      };
+
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-4">
@@ -274,6 +315,7 @@ export default function AFE() {
       daysAgo={currentTab === 2 ? partnerStatusDaysAgo : operatorApprovedDaysAgo}
       onDaysAgoChange={currentTab === 2 ? setPartnerStatusDaysAgo : setOperatorApprovedDaysAgo}
       mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
+      handleExport={handleExport}
       ></AFEFilters> 
       </div>
       {/*No AFE Message when filtered or [] On all Tabs, for Tab 2 it's operated*/}
@@ -315,14 +357,7 @@ export default function AFE() {
           <div className="h-4"></div>
           
     </div>
-    {/*Operated AFEs Header.  Hidden on tab 1 and 2 or if there are no AFEs*/}
-    <div hidden ={afeFetchError || currentTab !== 3 || (currentTab === 3 && filteredOperatedAFEs.length > 0 ) || (currentTab === 3 && operatedAFEs.length > 0) ? true : false}>
-      <NoFilteredAFEsToView
-      mode={'Operated'}
-      >        
-      </NoFilteredAFEsToView>
-      
-      </div>
+    
     {/*No AFE Message when filtered or [] On all Tabs, hidden on all tabs except 3 and only for Operated AFEs*/}
     <div hidden={currentTab !==3}>
       <AFEHeader
@@ -358,7 +393,15 @@ export default function AFE() {
           
           <div className="h-4"></div>
           
-          </div>
+      </div>
+      {/*Operated AFEs Header.  Hidden on tab 1 and 2 or if there are no AFEs*/}
+    <div hidden ={afeFetchError || currentTab !== 3 || (currentTab === 3 && filteredOperatedAFEs.length > 0 ) || (currentTab === 3 && operatedAFEs.length > 0) ? true : false}>
+      <NoFilteredAFEsToView
+      mode={'Operated'}
+      >        
+      </NoFilteredAFEsToView>
+      
+      </div>
       </div>
     </>
     )}

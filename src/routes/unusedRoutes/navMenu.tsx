@@ -98,7 +98,7 @@ export default function NavMenu() {
             </div>
 
             {/* Menu items - Center */}
-            <div className='hidden sm:justify-center sm:col-span-4 sm:grid grid-cols-4 gap-x-0'>
+            <div className='hidden sm:justify-center sm:col-span-4 sm:grid grid-cols-5 gap-x-0'>
               {mainNavigation.map((item) => (
                   <div key={item.id} className="w-9/10 mx-auto relative inline-flex items-center justify-center group">
                 <NavLink

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink, useNavigate } from "react-router";
-import  Footer  from "./webpage/footer"
-import LiquidEther from '../blocks/LiquidEther';
+import  Footer  from "../webpage/footer"
+import LiquidEther from '../../blocks/LiquidEther';
 import logo from '../assets/AFEAPCLogoSimpleNoBackground.png'
 import FloatingLines from 'src/blocks/FloatingLines';
 import { ChevronDownIcon } from '@heroicons/react/16/solid'

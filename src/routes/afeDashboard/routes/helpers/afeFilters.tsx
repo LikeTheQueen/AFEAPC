@@ -16,6 +16,7 @@ type AFEFiltersProps = {
     daysAgo: number;
     onDaysAgoChange: (days: number) => void;
     mode: 'Operated' | 'Non-Operated';
+    handleExport?: () => void;
 }
 
 export function AFEFilters({ 
@@ -31,13 +32,14 @@ export function AFEFilters({
   daysAgo,
   onDaysAgoChange,
   mode,
+  handleExport
  }: AFEFiltersProps) {
     return (
         <>
         <div className="mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70" data-testid={`${mode}AFElistFilter`}
             hidden={(afeLength > 0 ) ? false : true} >
             <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFEs</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_auto] gap-x-6">
                 <div>
                     <label htmlFor="afeNumberNonOp" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Search on AFE Number</label>
                     <input
@@ -82,6 +84,13 @@ export function AFEFilters({
                         onChange={onDaysAgoChange}>
                     </DaysAgoDropdown>
                 </div>
+            <div className="self-end">
+                <button
+                  onClick={handleExport}
+                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-xs/6 2xl:text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                  Export AFEs to Excel
+                </button>
+              </div>
             </div>
         </div>
         </>

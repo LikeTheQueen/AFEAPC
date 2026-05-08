@@ -19,16 +19,19 @@ export const editNonOpLibrary = 9;
 //Webpage Navigation
 export const mainNavigation = [
   {
-    id: 1, name: 'How it Works', href: "howitworks"
+    id: 1, name: 'Home', href: ""
   },
   {
-    id: 2, name: 'About', href: "aboutus"
+    id: 2, name: 'How it Works', href: "howitworks"
   },
   {
-    id: 3, name: 'Contact Us', href: "contactus"
+    id: 3, name: 'Questions', href: "faq"
   },
   {
-    id: 4, name: 'Request a Demo', href: "contactus"
+    id: 4, name: 'About Us', href: "aboutus"
+  },
+  {
+    id: 5, name: 'Request a Demo', href: "requestdemo"
   },
 ];
 export const WEBSITE_NAVIGATION = [
@@ -36,16 +39,15 @@ export const WEBSITE_NAVIGATION = [
     id:1,
     title: 'Solutions',
     subItems: [
-      { id: 1, name: 'AFE Systems', href: 'aboutus' },
-      { id: 2, name: 'How It Works', href: 'howitworks' },
+      { id: 1, name: 'How It Works', href: 'howitworks' },
+      //{ id: 2, name: 'AFE Systems', href: 'aboutus' },
     ]},
     {
     id:2,
     title: 'Support',
     subItems: [
-      { id: 1, name: 'Contact Support', href: 'contactus' },
-      { id: 2, name: 'Documentation', href: '#' },
-      { id: 3, name: 'FAQ', href: '#' },
+      { id: 1, name: 'Contact Support', href: 'contactsupport' },
+      { id: 2, name: 'FAQ', href: 'faq' },
     ]},
     {
     id:3,

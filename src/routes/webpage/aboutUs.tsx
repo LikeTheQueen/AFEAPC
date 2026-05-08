@@ -339,11 +339,11 @@ export default function AboutPage() {
             AFE Partner Connections is the platform the energy industry has needed for years. See what a purpose-built solution — designed by someone who's been in the room — can do for your Non-Op workflow.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <NavLink to="/demo"
+            <NavLink to="/requestdemo"
               className="custom-style font-semibold text-sm tracking-[0.15em] text-[var(--darkest-teal)] bg-[var(--bright-pink)] px-10 py-4 rounded-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_36px_rgba(246,16,103,0.4)]">
               Request a Demo
             </NavLink>
-            <NavLink to="/how-it-works"
+            <NavLink to="/howitworks"
               className="custom-style font-semibold text-sm tracking-[0.15em] text-white border border-white/20 px-10 py-4 rounded-sm transition-all duration-200 hover:border-white/50 hover:bg-white/[0.04]">
               See How It Works
             </NavLink>

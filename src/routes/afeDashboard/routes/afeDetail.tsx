@@ -57,6 +57,7 @@ export default function AFEDetailURL() {
   const [doesUserHavePartnerViewAFERole, setUserPartnerViewAFERole] = useState(false);
   const [doesUserHaveOperatorViewAFERole, setUserOperatorViewAFERole] = useState(false);
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
+  const [signedNonOpAgreement, setSignedNonOpAgreement] = useState(false);
   const { refreshData } = useSupabaseData();
 
   
@@ -137,6 +138,7 @@ export default function AFEDetailURL() {
           const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(attachmentResponse.data);
           const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(signedAFENonOpResponse.data);
           setDocs(documentTransformed.concat(attachmentTransformed, signedAFENonOpTransformed));
+          if(signedAFENonOpTransformed.length > 0 ) setSignedNonOpAgreement(true);
         }
       }
       finally {
@@ -378,7 +380,7 @@ export default function AFEDetailURL() {
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
                       onClick={() => { handleStatusChanges('Approved') }}
-                      disabled={statusButtonDisabled}>
+                      disabled={statusButtonDisabled || !signedNonOpAgreement}>
                       Approve
                     </button>
                     <button
@@ -386,7 +388,7 @@ export default function AFEDetailURL() {
                       hidden={doesUserHaveAcceptRejectRole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-white disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-[var(--dark-teal)] transition-colors ease-in-out duration-300 hover:bg-red-800 hover:outline-red-800 hover:text-white outline-2 -outline-offset-1 outline-[var(--dark-teal)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-800"
                       onClick={() => { handleStatusChanges('Rejected') }}
-                      disabled={statusButtonDisabled}>
+                      disabled={statusButtonDisabled || !signedNonOpAgreement}>
                       Reject
                     </button>
                   </div>

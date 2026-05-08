@@ -4,7 +4,7 @@ vi.mock('src/blocks/LiquidEther', () => ({
 
 import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LandingPage from 'src/routes/landing';
+import LandingPage from 'src/routes/unusedRoutes/landing';
 import LoginForm from 'src/routes/userLogin/routes/login';
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router';
 import supabase from 'provider/supabase';

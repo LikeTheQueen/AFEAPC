@@ -1,16 +1,17 @@
 import "../../style.css";
 import { Outlet } from "react-router";
-import NavMenu from "./navMenu";
 import Footer from "./footer";
+import NavHeader from "./navHeader";
+import { useLocation } from "react-router";
 
 export default function PublicLayout() {
+  const { pathname } = useLocation();
+
   return (
-    <>
     <div className="min-h-full bg-[var(--darkest-teal)] border-[var(--darkest-teal)]">
-      <NavMenu></NavMenu>
+      <NavHeader />
       <Outlet />
-      <Footer></Footer>
-      </div>
-    </>
-  )
+      {pathname !== '/login' && <Footer />}
+    </div>
+  );
 }

@@ -12,6 +12,7 @@ import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformGLCodeCrosswalk } from "src/types/transform";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 export default function GLMapping() {
     const { session } = useSupabaseData();
@@ -104,7 +105,8 @@ export default function GLMapping() {
 
         }
     };
-
+console.log(cumaltiveGLMap.length, 'CU')
+console.log(rowsToShow.length)
     return (
         <>
             <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
@@ -161,6 +163,11 @@ export default function GLMapping() {
                                 (opAPCID !== '' && partnerAPCID === '') ||
                                 (opAPCID === '' && partnerAPCID !== '') ? true : false}
                         className="divide-y divide-[var(--darkest-teal)]/90">
+                            <div hidden={cumaltiveGLMap.length > 0}>
+                                <NoSelectionOrEmptyArrayMessage
+                                message={'There are no mapped GL Codes between these companies.'}
+                                ></NoSelectionOrEmptyArrayMessage>
+                            </div>
 
                         <div hidden={cumaltiveGLMap.length > 0 ? false : true} className="">
                             <h1 className="mt-4 custom-style text-[var(--darkest-teal)] font-semibold">GL Account Code Mappings</h1>
