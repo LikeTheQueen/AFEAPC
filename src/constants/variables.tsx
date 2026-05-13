@@ -16,6 +16,22 @@ export const viewOperatorBilling = 7;
 export const editOperatorLibrary = 8;
 export const editNonOpLibrary = 9;
 
+export const operatedPermissionHeaders = [
+  "View Operated AFEs", "Edit Operator User Permissions", "Manage Libraries", "View Billing Details"
+];
+
+export const operatedPermissionRoles = [
+  viewOperatedAFEPermission, operatorEditUsers, editOperatorLibrary, viewOperatorBilling
+];
+
+export const nonOperatedPermissionHeaders = [
+  "View Non-Op AFEs", "Edit Non-Op User Permissions", "Manage Libraries", "Accept/Reject Non-Op AFEs"
+];
+
+export const nonOperatedPermissionRoles = [
+  viewNonOpAFEPermission, nonOperatorEditUsers, editNonOpLibrary, approveRejectNonOpAFEs
+];
+
 //Webpage Navigation
 export const mainNavigation = [
   {

@@ -33,9 +33,11 @@ export const fetchUserProfileRecordFromSupabase = async(session: string) => {
       console.error(`Error fetching user profile:`, error);
       return null;
     }
-    console.log(data);
+    
     return transformUserProfileRecordSupabase(data);
 };
+
+
 
 export const fetchRolesGeneric = async() => {
     const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
@@ -477,6 +479,7 @@ export const fetchOperatorExecuteFilters = async(apc_op_id: string) => {
       console.error(`Error fetching Operator Filters`, error);
       return {ok: false, message: error.message, data: []};
     }
+    console.log(data)
     return {ok: true, data: data};
 
 }
@@ -609,10 +612,10 @@ export async function verifyClaimProof(afe_doc_id: string, partner_doc_id: strin
     return callEdge<TogglePayload, ToggleResult>("verify_secret", { afe_doc_id, partner_doc_id, id }, token);
   };
 
-export async function testExecuteConnection(apc_op_id: string) {
+export async function testExecuteConnection(apc_op_id: string, triggered_by: string) {
     
   const { data, error } = await supabase.functions.invoke('execute_test_connection', {
-    body: { apc_op_id: apc_op_id},
+    body: { apc_op_id: apc_op_id, triggered_by: triggered_by},
   })
   
   if(!data || error) {

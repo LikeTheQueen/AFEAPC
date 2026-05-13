@@ -61,7 +61,6 @@ export default function UserStatusDashboard() {
     }
 
   }, [token, loggedInUser])
-
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-16"> 

@@ -16,6 +16,7 @@ export default [
     route("/contactsupport", "./routes/webpage/contactUs.tsx", { id: "contactsupport" }),
     route("/faq", "./routes/webpage/faq.tsx"),
     route("/login", "./routes/userLogin/routes/login.tsx"),
+    route("/corrandwhit", "./routes/userLogin/routes/userChallenge.tsx"),
 ]),
     //route("/", "./routes/landing.tsx"),
     //route("/howitworks", "./routes/webpage/howItWorks.tsx"),

@@ -135,6 +135,48 @@ export interface AFEType {
     apc_op_id: string | null;
   }
 
+  export interface UserPermissionFlatRow {
+  role_id: number | null;
+  role: number | null;
+  role_active: boolean | null;
+  apc_id: string | null;
+  apc_name: string | null;
+  apc_address_id: number | null;
+  street: string | null;
+  suite: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  country: string | null;
+  user_id: string | null;
+  first_name: string;
+  last_name: string;
+  email: string;
+  user_active: boolean;
+  is_op_permission: boolean;
+  is_partner_permission: boolean;
+}
+  export interface ApcRoleGroup {
+  apc_id: string;
+  apc_address_id: number;
+  apc_name: string;
+  apc_street: string;
+  apc_suite: string;
+  apc_city: string;
+  apc_state: string;
+  apc_zip: string;
+  roles: RoleEntryWrite[];  
+}
+
+export interface GroupedUser {
+  user_id: string;  
+  user_firstname: string;
+  user_lastName: string;
+  user_email: string;
+  user_active: boolean;
+  apcrole: ApcRoleGroup[];
+}
+
   export interface PartnerRoleEntryWrite{
     user_id: string;
     role: number;
@@ -160,6 +202,8 @@ export interface AFEType {
     partnerRoles: RoleEntryRead[];
     user_id?: UUID | null;
     is_super_user: boolean;
+    apc_op_id_umbrella: string | null;
+    is_org_super_user: boolean;
   }
 
 //Interface for User Roles pulled from Supabase

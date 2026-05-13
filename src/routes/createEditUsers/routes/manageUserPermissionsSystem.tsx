@@ -1,76 +1,99 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import type { RoleEntryRead } from "src/types/interfaces";
-import PermissionDashboard from "src/routes/sharedComponents/userPermissionsSystem";
-import { transformRoleEntrySupabase } from "src/types/transform";
+import type { GroupedUser, RoleEntryRead, UserPermissionFlatRow } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
+import { buildGroupedUsers } from "./helpers/helpers";
+import  PermissionDashboards  from "src/routes/sharedComponents/permissionGrid";
 
 export default function UserPermissionDashboard() {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
-  const [opUserRoleList, setOpUserRoleList] = useState<RoleEntryRead[] | []>([]);
-  const [partnerUserRoleList, setPartnerUserRoleList] = useState<RoleEntryRead[] | []>([]);
+  const [permissionData, setPermissionData] = useState<UserPermissionFlatRow[] | []>([]);
+  const [nonOpUserRoleList, setNonOpUserRoleList] = useState<GroupedUser[] | []>([]);
+  const [operatorUserRoleList, setOperatorUserRoleList] = useState<GroupedUser[] | []>([]);
   const [userPermissionListLoading, setUserPermissionListLoading] = useState(true);
 
-  useEffect(() => {
-    if(!token || !loggedInUser) {
-      setUserPermissionListLoading(false);
-      return;
-    }
-
-    let isMounted = true;
-
-    async function getUserPermissions() {
-      if(!loggedInUser) return;
-      setUserPermissionListLoading(true);
-      
-      try{
-        const userPermissionsRaw = await fetchUserPermissions(true, token);
-
-        if(!userPermissionsRaw.ok) {
-          throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
-        }
-        
-        const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
-        const opPermissions = userPermissionsTransformed.filter(permission => permission.is_op_permission);
-        const partnerPermissions = userPermissionsTransformed.filter(permission => permission.is_partner_permission);
-
-        if(isMounted) {
-          setOpUserRoleList(opPermissions);
-          setPartnerUserRoleList(partnerPermissions);
-          setUserPermissionListLoading(false);
-        }
-      }
-      catch(e) {
-        console.error('Not able to get user permissions ',e);
-      }
-      finally{
+   useEffect(() => {
+      if(!token || !loggedInUser) {
+        setUserPermissionListLoading(false);
         return;
       }
-    }
-    getUserPermissions();
-    return () => {
-      isMounted = false;
-    }
-  }, [token, loggedInUser])
+  
+      let isMounted = true;
+  
+      async function getUserPermissions() {
+        if(!loggedInUser) return;
+        setUserPermissionListLoading(true);
+        
+        try{
+          const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
+          
+  
+          if(!userPermissionsRaw.ok) {
+            throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
+          }
+          if(isMounted) {
+            
+            setPermissionData(userPermissionsRaw.data);
+            setUserPermissionListLoading(false);
+          }
+        }
+        catch(e) {
+          console.error('Not able to get user permissions ',e);
+        }
+        finally{
+          return;
+        }
+      }
+      getUserPermissions();
+      return () => {
+        isMounted = false;
+      }
+    }, [token, loggedInUser]);
+  
+    const { grouped: opRoles, editableApcAddressIds: opEditableIds } = useMemo(() => {
+    if (!permissionData.length || !loggedInUser) return { grouped: [], editableApcAddressIds: new Set<number>() };
+    return buildGroupedUsers(permissionData, loggedInUser, 'operator');
+  }, [permissionData, loggedInUser]);
+  
+  const { grouped: nonOpRoles, editableApcAddressIds: nonOpEditableIds } = useMemo(() => {
+    if (!permissionData.length || !loggedInUser) return { grouped: [], editableApcAddressIds: new Set<number>() };
+    return buildGroupedUsers(permissionData, loggedInUser, 'partner');
+  }, [permissionData, loggedInUser]);
+  
+  useEffect(() => {
+    setNonOpUserRoleList(nonOpRoles);
+  },[nonOpRoles]);
+  
+  useEffect(() => {
+    setOperatorUserRoleList(opRoles);
+  },[opRoles]);
 
   
   return (
-    <>
-    
+
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
     {userPermissionListLoading ? (
       <LoadingPage></LoadingPage>
     ) : (
-    <PermissionDashboard 
-    readOnly={!loggedInUser?.is_super_user}
-    operatorRoles={opUserRoleList}
-    partnerRoles={partnerUserRoleList}>
-    </PermissionDashboard>
+      <>
+    <div className="divide-y divide-[var(--darkest-teal)]/40">
+    <PermissionDashboards 
+    profileView={false}
+    allUserRoles={operatorUserRoleList}
+    apcIDEditPriv={opEditableIds}
+    mode="Operated">
+    </PermissionDashboards>
+    <PermissionDashboards
+      profileView={false}
+      allUserRoles={nonOpUserRoleList}
+      apcIDEditPriv={nonOpEditableIds}
+      mode="Non-Operated">
+    </PermissionDashboards>
+    </div>
+    </>
     )}
     </div>
-      
-    </>
   )
 }

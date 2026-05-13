@@ -12,6 +12,7 @@ import { handleSendEmail } from 'email/emailBasic';
 import { ToastContainer } from 'react-toastify';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { supportEmail } from 'src/constants/variables';
+import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 
  
 export default function CreateNewUser() {
@@ -25,6 +26,8 @@ export default function CreateNewUser() {
     operatorRoles: [],
     partnerRoles: [],
     user_id: "00000000-0000-0000-0000-000000000000",
+    apc_op_id_umbrella: "00000000-0000-0000-0000-000000000000",
+    is_org_super_user: false,
   };
 
   const { loggedInUser, session } = useSupabaseData();
@@ -38,6 +41,7 @@ export default function CreateNewUser() {
   const [loadingPermissions, setLoadingPermissions] = useState(true);
   const [userHavePermissions, setUserHavePermissions] = useState(false);
   const [fetchError, setFetchError] = useState(false);
+  const [opAPCID, setOpAPCID] = useState('');
 
   useEffect(() => {
     setLoadingPermissions(true);
@@ -47,6 +51,7 @@ export default function CreateNewUser() {
     }
 
     if (loggedInUser && token !== '') {
+      if(!loggedInUser.is_super_user) setOpAPCID(loggedInUser.apc_op_id_umbrella!);
       const userPermissionCheck = doesUserHaveRole(loggedInUser,operatorEditUsers,nonOperatorEditUsers);
       if(!userPermissionCheck) return;
       setUserHavePermissions(userPermissionCheck);
@@ -115,6 +120,12 @@ export default function CreateNewUser() {
       active: isChecked
     })
   };
+  const handleOrgSuperUserToggle = (isChecked: boolean) => {
+    setNewUser({
+      ...newUser,
+      is_org_super_user: isChecked
+    })
+  };
   const handleSuperToggle = (makeSuper: boolean) => {
     setNewUser({
       ...newUser,
@@ -180,13 +191,13 @@ export default function CreateNewUser() {
       loggedInUser?.firstName!,
       "AFE Partner Connections",
       loggedInUser?.firstName!,
-      loggedInUser?.email!,
+      [loggedInUser?.email!, 'elizabeth.rider.shaw@gmail.com']
     );
   };
   const handleSaveNewUser = async () => {
-    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token);
+    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token, opAPCID);
   };
-
+console.log(opAPCID)
   return (
     <>
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
@@ -220,8 +231,8 @@ export default function CreateNewUser() {
             {userHavePermissions ? (
             <form className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 md:col-span-3">
               <div className="px-4 py-6 sm:p-8">
-                <div className="grid max-w-7xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-11">
-                  <div className="sm:col-span-4">
+                <div className="grid max-w-7xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-10">
+                  <div className="sm:col-span-3">
                     <label htmlFor="firstName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                       First name
                     </label>
@@ -237,7 +248,7 @@ export default function CreateNewUser() {
                         />
                     </div>
                   </div>
-                  <div className="sm:col-span-4">
+                  <div className="sm:col-span-3">
                     <label htmlFor="lastName" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                       Last name
                     </label>
@@ -254,8 +265,7 @@ export default function CreateNewUser() {
                       
                     </div>
                   </div>
-                  <div className="sm:col-span-4">
-
+                  <div className="sm:col-span-3">
                     <label htmlFor="email" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                       Email address
                     </label>
@@ -272,8 +282,55 @@ export default function CreateNewUser() {
                         />
                     </div>
                   </div>
-                  <div className="sm:col-span-4">
-                    <Field className={`flex items-end justify-start sm:col-span-4 mt-2 ${!loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
+                  <div className="sm:col-span-3">
+                    <Field className="flex items-end justify-start sm:col-span-4 mt-2">
+                      <Switch
+                        checked={newUser.active}
+                        onChange={handleActiveToggle}
+                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                        />
+                      </Switch>
+                      <Label as="span" className="ml-3 text-sm">
+                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Active</span>{' '}
+                        <span className="text-gray-500 custom-style-long-text">(User will be able to sign-on)</span>
+                      </Label>
+                    </Field>                    
+                  </div>
+                  <div className="sm:col-span-6 flex justify-start">
+                    <Field className={`flex items-end justify-start  ${!loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
+                      }`}>
+                      <Switch
+                        checked={newUser.is_org_super_user}
+                        onChange={handleOrgSuperUserToggle}
+                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                        />
+                      </Switch>
+                      <Label as="span" className="ml-3 text-sm">
+                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Org Super User</span>{' '}
+                        <span className="text-gray-500 custom-style-long-text">(User can create, active or deactivate other users)</span>
+                      </Label>
+                    </Field>
+                  </div>
+                  <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-3">
+                    <label htmlFor="selectedOperator" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                      Operator
+                    </label>
+                    <div className="mt-2 ">
+                        <OperatorDropdown
+                          value={opAPCID}
+                          onChange={(id) => { setOpAPCID(id) }}
+                          limitedList={true}
+                      />
+                    </div>
+                  </div>
+                  <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-4 flex justify-start">
+                    <Field className={`flex items-end justify-start  ${!loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
                       }`}>
                       <Switch
                         disabled={!loggedInUser?.is_super_user}
@@ -290,22 +347,6 @@ export default function CreateNewUser() {
                         <span className="text-gray-500 custom-style-long-text">(User has full application access)</span>
                       </Label>
                     </Field>
-                    <Field className="flex items-end justify-start sm:col-span-4 mt-2">
-                      <Switch
-                        checked={newUser.active}
-                        onChange={handleActiveToggle}
-                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
-                        <span
-                          aria-hidden="true"
-                          className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
-                        />
-                      </Switch>
-                      <Label as="span" className="ml-3 text-sm">
-                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Active</span>{' '}
-                        <span className="text-gray-500 custom-style-long-text">(User will be able to sign-on)</span>
-                      </Label>
-                    </Field>
-
                   </div>
                 </div>
                 {loadingPermissions ? (

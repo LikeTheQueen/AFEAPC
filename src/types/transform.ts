@@ -230,6 +230,8 @@ export const transformUserProfileRecordSupabase = (item: any): UserProfileRecord
     //partners: crosswalkPartner.map((c: any) => c.apc_id),
     user_id:item.id,
     is_super_user: item.is_super_user,
+    apc_op_id_umbrella: item.apc_op_id_umbrella,
+    is_org_super_user: item.is_org_super_user,
     };
 };
 
@@ -457,6 +459,40 @@ export const transformRoleEntrySupabase = (data: any[]): RoleEntryRead[] => {
     is_op_permission: item.is_op_permission,
     is_partner_permission: item.is_partner_permission,
     apc_op_id: item.apc_id.apc_op_id ?? null,
+    }));
+};
+
+export const transformRoleEntryForPermissionsView = (data: any[]): RoleEntryRead[] => {
+    return data 
+    .map(item => ({
+    id: item.role_id, 
+    role: item.role, 
+    active: item.role_active,
+
+    apc_id: item.apc_id, 
+    apc_name: item.apc_name, 
+    apc_address_id: item.apc_address_id, 
+    
+    apc_address:  {
+            street: item.street,
+            suite: item.suite,
+            city: item.city,
+            state: item.state,
+            zip: item.zip,
+            country: item.country,
+            id: item.apc_address_id,
+            address_active: item.active
+        }, 
+
+    user_id: item.user_id, 
+    user_firstname: item.first_name, 
+    user_lastName: item.last_name, 
+    user_email: item.email,
+    user_active: item.user_active,
+
+    is_op_permission: item.is_op_permission,
+    is_partner_permission: item.is_partner_permission,
+    apc_op_id: null,
     }));
 };
 

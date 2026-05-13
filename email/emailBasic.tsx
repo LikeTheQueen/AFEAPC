@@ -12,7 +12,7 @@ export interface AppEmailParams {
   salutationTo: string;
   supportContactName: string;
   sentFromSignature: string;
-  sendToEmailAddress?: string;      
+  sendToEmailAddress?: string | string[];      
   ctaUrl?: string;
   ctaUrlText?: string;         
 }
@@ -94,7 +94,7 @@ export function buildAppEmailHTML(params: AppEmailParams): string {
                 <a href="${ctaUrl}" style="color:#F61067; text-decoration:none;">${ctaUrlText}</a>
               </p>
               ${
-                sendToEmailAddress
+                !Array.isArray(sendToEmailAddress) && sendToEmailAddress
                   ? `<p style="margin:0; font-size:12px;">This message was sent to ${sendToEmailAddress}.</p>`
                   : ""
               }
@@ -113,7 +113,7 @@ export function buildAppEmailHTML(params: AppEmailParams): string {
 }
 
 export const sendEmail = async (
-  to: string,
+  to: string | string[],
   subject: string,
   html: string
 ): Promise<EmailResponse> => {
@@ -140,7 +140,7 @@ export const handleSendEmail = async (
   salutationTo: string,
   supportContact: string,
   sentFromSignature: string,
-  sendToEmailAddress: string, 
+  sendToEmailAddress: string | string[], 
   ctaUrl?: string, 
   ctaUrlText?: string
 ) => {

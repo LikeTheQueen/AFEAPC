@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import type { RoleEntryRead } from "src/types/interfaces";
-import PermissionDashboard from "../../sharedComponents/permissionGrid";
-import { transformRoleEntrySupabase } from "src/types/transform";
+import type { GroupedUser, UserPermissionFlatRow } from "src/types/interfaces";
+import  PermissionDashboards  from "../../sharedComponents/permissionGrid";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
+import { buildGroupedUsers } from "./helpers/helpers";
 
 export default function UserPermissionDashboard() {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
-  const [opUserRoleList, setOpUserRoleList] = useState<RoleEntryRead[] | []>([]);
-  const [partnerUserRoleList, setPartnerUserRoleList] = useState<RoleEntryRead[] | []>([]);
+  const [permissionData, setPermissionData] = useState<UserPermissionFlatRow[] | []>([]);
+  const [nonOpUserRoleList, setNonOpUserRoleList] = useState<GroupedUser[] | []>([]);
+  const [operatorUserRoleList, setOperatorUserRoleList] = useState<GroupedUser[] | []>([]);
   const [userPermissionListLoading, setUserPermissionListLoading] = useState(true);
 
   useEffect(() => {
@@ -31,21 +32,16 @@ export default function UserPermissionDashboard() {
         if(!userPermissionsRaw.ok) {
           throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
         }
-        
-        const userPermissionsTransformed = transformRoleEntrySupabase(userPermissionsRaw.data); 
-        const opPermissions = userPermissionsTransformed.filter(permission => permission.is_op_permission);
-        const partnerPermissions = userPermissionsTransformed.filter(permission => permission.is_partner_permission);
-
         if(isMounted) {
-          setOpUserRoleList(opPermissions);
-          setPartnerUserRoleList(partnerPermissions);
-          setUserPermissionListLoading(false);
+          setPermissionData(userPermissionsRaw.data);
+          
         }
       }
       catch(e) {
         console.error('Not able to get user permissions ',e);
       }
       finally{
+        setUserPermissionListLoading(false);
         return;
       }
     }
@@ -53,9 +49,27 @@ export default function UserPermissionDashboard() {
     return () => {
       isMounted = false;
     }
-  }, [token, loggedInUser])
+  }, [token, loggedInUser]);
 
-  
+  const { grouped: opRoles, editableApcAddressIds: opEditableIds } = useMemo(() => {
+  if (!permissionData.length || !loggedInUser) return { grouped: [], editableApcAddressIds: new Set<number>() };
+  return buildGroupedUsers(permissionData, loggedInUser, 'operator');
+}, [permissionData, loggedInUser]);
+
+const { grouped: nonOpRoles, editableApcAddressIds: nonOpEditableIds } = useMemo(() => {
+  if (!permissionData.length || !loggedInUser) return { grouped: [], editableApcAddressIds: new Set<number>() };
+  return buildGroupedUsers(permissionData, loggedInUser, 'partner');
+}, [permissionData, loggedInUser]);
+
+useEffect(() => {
+  setNonOpUserRoleList(nonOpRoles);
+},[nonOpRoles]);
+
+useEffect(() => {
+  setOperatorUserRoleList(opRoles);
+},[opRoles]);
+
+
   return (
     <>
     
@@ -63,11 +77,22 @@ export default function UserPermissionDashboard() {
     {userPermissionListLoading ? (
       <LoadingPage></LoadingPage>
     ) : (
-    <PermissionDashboard 
-    readOnly={false}
-    operatorRoles={opUserRoleList}
-    partnerRoles={partnerUserRoleList}>
-    </PermissionDashboard>
+      <>
+          <div className="divide-y divide-[var(--darkest-teal)]/40">
+          <PermissionDashboards 
+          profileView={false}
+          allUserRoles={operatorUserRoleList}
+          apcIDEditPriv={opEditableIds}
+          mode="Operated">
+          </PermissionDashboards>
+          <PermissionDashboards 
+          profileView={false}
+          allUserRoles={nonOpUserRoleList}
+          apcIDEditPriv={nonOpEditableIds}
+          mode="Non-Operated">
+          </PermissionDashboards>
+    </div>
+    </>
     )}
     </div>
       

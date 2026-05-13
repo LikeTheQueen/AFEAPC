@@ -9,13 +9,13 @@ const Key = '9Sr9xstNsdU5L2PUWG236JGR2YZ7l6FiqCxTA41p71gRsIkHl4xo9Au12YIXfO6X';
 const urlPathLogout = "api/Authentication/Logout";
 
 export default function TestExecuteConnections() {
- 
+  
   return (
 
     <div className="bg-white">
       <TestExecuteEstablishedConnection></TestExecuteEstablishedConnection>
       <TestExecuteManual></TestExecuteManual>
-      <ToastContainer></ToastContainer>
+      <ToastContainer icon={false}></ToastContainer>
     </div>
 
   );

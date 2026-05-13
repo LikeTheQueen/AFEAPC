@@ -3,8 +3,10 @@ import { XMarkIcon} from '@heroicons/react/20/solid';
 import { OperatorDropdown } from './operatorDropdown';
 import { testExecuteConnection } from 'provider/fetch';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
 export default function TestExecuteEstablishedConnection() {
+  const { loggedInUser } = useSupabaseData();
   const [opAPCID, setOpAPCID] = useState('');
   const [hideWarning, setHideWarning] = useState(true);
   const [hideSuccess, setHideSuccess] = useState(true);
@@ -13,7 +15,7 @@ export default function TestExecuteEstablishedConnection() {
     if(opAPCID ==='') return;
      
     try {
-      const textConnectionResult = await testExecuteConnection(opAPCID);
+      const textConnectionResult = await testExecuteConnection(opAPCID, loggedInUser?.user_id!);
       
       
       if(!textConnectionResult.ok) {
