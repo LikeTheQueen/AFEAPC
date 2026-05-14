@@ -624,7 +624,8 @@ export const transformUserNameAndEmail = (data: any[]) : UserFullNameAndEmail[] 
         firstname: item.first_name,
         lastName: item.last_name,
         email: item.email,
-        active: item.active
+        active: item.active,
+        is_org_super_user: item.is_org_super_user,
     }))
 };
 

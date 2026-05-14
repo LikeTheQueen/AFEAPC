@@ -14,6 +14,10 @@ import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 
 
+export const fetchCompanyProfile = async() => {
+  const { data, error } = await supabase.from('PARENT_COMPANY').select('name, OPERATINGCOMPANIES:OPERATORS!parent_company(name)')
+console.log(data, error)
+};
 export const fetchSourceSystems = async() => {
   const { data, error } = await supabase.from('SOURCE_SYSTEM').select('id, system');
   if (error) {
@@ -260,6 +264,29 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`*,apc_id(id,name)`)
       if (error || !data) {
       console.error(`Error fetching Operators and Partners:`, error);
+      return emptyArray;
+      }
+    const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
+    const operatorListSorted = dataFormatted.sort((a,b) => {
+      if (a.apc_name === undefined && b.apc_name === undefined) {
+        return 0;
+      }
+      if (a.apc_name === undefined) {
+        return 1;
+      }
+      if (b.apc_name === undefined) {
+        return -1;
+      }
+      return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+    });
+    return operatorListSorted; 
+};
+
+export const fetchAllParentCompanies = async() => {
+  const emptyArray: OperatorOrPartnerList[] = []
+  const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS').select(`*,apc_id(id,name)`)
+      if (error || !data) {
+      console.error(`Error fetching Parent Companies:`, error);
       return emptyArray;
       }
     const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);

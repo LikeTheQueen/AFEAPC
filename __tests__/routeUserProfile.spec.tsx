@@ -23,32 +23,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
      updateGLCodeMapping: vi.fn(),
  }));
  
- const setupWithSelections = async (
-   user: ReturnType<typeof userEvent.setup>
- ) => {
-   renderWithProviders(<Profile />, {
-     supabaseOverrides: {
-       loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
-       loading: false,
-       isSuperUser: false,
-       session: {
-         access_token: 'test-token',
-         refresh_token: 'test-refresh-token',
-         expires_in: 3600,
-         token_type: 'bearer',
-         user: {
-           id: 'test-user-id',
-           email: 'test@example.com',
-           aud: 'authenticated',
-           role: 'authenticated',
-           created_at: '2024-01-01T00:00:00Z',
-           app_metadata: [],
-           user_metadata: {}
-         }
-       },
-     }
-   });
- };
+ 
 
  describe('User Profile',() => {
      let user: ReturnType<typeof userEvent.setup>;

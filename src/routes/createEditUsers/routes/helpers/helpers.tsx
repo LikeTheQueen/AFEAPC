@@ -1,5 +1,5 @@
 import type { ApcRoleGroup, GroupedUser, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator, UserPermissionFlatRow, UserProfileRecordSupabaseType } from "src/types/interfaces";
-import { createNewUser, createUserRolesOperator, createUserProfile, deactivateUser, writeorUpadateUserRoles, writeSuperUserProfile, writeUserRolesforOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
+import { createNewUser, createUserRolesOperator, updateUserActiveStatusToInactive, createNewUserProfile, createUserRolesPartner } from "provider/write";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { superUserPermission, viewNonOpAFEPermission, viewOperatedAFEPermission, operatorEditUsers, nonOperatorEditUsers, approveRejectNonOpAFEs, viewOperatorBilling, editNonOpLibrary, editOperatorLibrary } from "src/constants/variables";
 import { transformRoleEntryForPermissionsView, transformRoleEntrySupabase } from "src/types/transform";
@@ -65,40 +65,7 @@ export const handleNewUser = async(
             notifyStandard(`New user saved to the system.  They got saved faster than a last minute AFE approval.\n\n(TLDR: New user successfully saved.)`)
             return;
         }
-    /*
     
-    if(!active && newUser !== null) {
-        deactivateUser(newUser?.user?.id!)
-    };
-    if(newUser?.user?.id !== null) {
-        await createUserProfile(firstName,lastName,email,newUser?.user?.id!,active);
-        const updateRoleEntry = (roles: RoleEntryWrite[]): RoleEntryWrite[] => {
-        return roles.filter(item => item.role === 2 || item.role === 4 || item.role === 7).map(item => ({
-        user_id: newUser?.user?.id!,
-        role: item.role,
-        apc_id: item.apc_id,
-        apc_address_id: item.apc_address_id,
-        active: true
-    })) 
-    };
-    const updateRoleEntryPartners = (roles: RoleEntryWrite[]): RoleEntryWrite[] => {
-        return roles.filter(item => item.role === 3 || item.role === 5 || item.role === 6).map(item => ({
-        user_id: newUser?.user?.id!,
-        role: item.role,
-        apc_id: item.apc_id,
-        apc_address_id: item.apc_address_id,
-        active: true
-    })) 
-    };
-        const processedRolesOp = updateRoleEntry(roles);
-        const processedRolesPartner = updateRoleEntryPartners(partnerRoles);
-        writeorUpadateUserRoles(processedRolesOp, 'OPERATOR_USER_PERMISSIONS');
-        writeorUpadateUserRoles(processedRolesPartner, 'PARTNER_USER_PERMISSIONS');
-    };
-    if(newUser?.user?.id !== null && superUser === true) {
-        writeSuperUserProfile(newUser?.user.id!)
-    };
-    */
 };
 
 export function mergeRoles(existing: RoleEntryRead[], incoming: RoleEntryRead[]): RoleEntryRead[] {
@@ -152,7 +119,7 @@ export function buildGroupedUsers(
 
   const transformed = transformRoleEntryForPermissionsView(rows);
   const filteredRoles = transformed.filter(r => 
-    r.role !== null && 
+    r.apc_id !== null && 
     r.role !== 1 && 
     (permissionType === 'operator' ? r.is_op_permission : r.is_partner_permission)
   );
@@ -168,7 +135,10 @@ export function buildGroupedUsers(
     ? loggedInUser.operatorRoles
     : loggedInUser.partnerRoles;
 
-  const editableApcAddressIds = new Set(
+  const editableApcAddressIds = loggedInUser.is_org_super_user ? new Set(
+    allApcs
+      .map(r => r.apc_address_id)
+  ) :  new Set(
     loggedInRoles
       .filter(r => editRoles.includes(r.role ?? 0))
       .map(r => r.apc_address_id)
@@ -224,7 +194,7 @@ export function buildGroupedUsers(
       user_active: row.user_active,
       apcrole,
     };
-  });
+  }).filter(roles => roles.user_id !== null);
 
   return { grouped, editableApcAddressIds };
 };
@@ -253,7 +223,10 @@ export function buildGroupedUsersOG(
     ? loggedInUser.operatorRoles
     : loggedInUser.partnerRoles;
 
-  const editableApcAddressIds = new Set(
+  const editableApcAddressIds = loggedInUser.is_org_super_user ? new Set(
+    loggedInRoles
+      .map(r => r.apc_address_id)
+  ) :  new Set(
     loggedInRoles
       .filter(r => editRoles.includes(r.role ?? 0))
       .map(r => r.apc_address_id)

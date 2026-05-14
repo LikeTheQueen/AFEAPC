@@ -1,3 +1,4 @@
+import { superUserPermission } from "src/constants/variables";
 import type { RoleEntryRead } from "src/types/interfaces";
 
 export function isLoggedInUserOperator(apc_op_id:string | undefined, logged_in_user_op_id: string | undefined) {
@@ -75,7 +76,7 @@ export function formatDateShort(date: Date | null | string) {
 
 export function doesLoggedInUserHaveCorrectRole(roles: RoleEntryRead[], roleVal: number, apc_id: string) {
     
-    const rolemapfilter = roles.filter(role => ((role.role === roleVal || role.role === 1) && role.active === true && role.apc_id === apc_id));
+    const rolemapfilter = roles.filter(role => ((role.role === roleVal || role.role === superUserPermission) && role.active === true && role.apc_id === apc_id));
     const isChecked = rolemapfilter.length===1 ? true : false;
 
     return isChecked;

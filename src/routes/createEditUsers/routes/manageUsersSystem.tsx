@@ -5,6 +5,7 @@ import type { UserFullNameAndEmail } from "src/types/interfaces";
 import UserDashboard from "src/routes/sharedComponents/userDashboardSystem";
 import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
+import { ToastContainer } from "react-toastify";
 
 
 export default function UserStatusDashboard() {
@@ -29,7 +30,7 @@ export default function UserStatusDashboard() {
         setIsError(false);
 
        try{
-        const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, true, token);
+        const userListRaw = await fetchUsersForOperator(loggedInUser.is_super_user, false, token);
       
         if(!userListRaw.ok) {
         throw new Error((userListRaw as any).message ?? 'Unable to fetch users');
@@ -72,6 +73,7 @@ export default function UserStatusDashboard() {
     </UserDashboard >
     )}
     </div>
+    <ToastContainer icon={false}></ToastContainer>
     </>
   )
 }

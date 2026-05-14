@@ -4,6 +4,7 @@ import { checkedByRole, getRoleIndex } from "../../routes/createEditUsers/routes
 import { writeorUpadateUserRoles } from "provider/write";
 import React from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
+import { nonOperatorEditUsers, operatorEditUsers } from "src/constants/variables";
 
 type apcrole = {
     apc_id: string;
@@ -203,14 +204,14 @@ useEffect(() => {
   const isPartnerRowDisabled = (apc_id: string) => {
     if (loggedInUser?.is_super_user) return false;
     
-    const userPartnerRole = loggedInUser?.partnerRoles.find(pr => pr.apc_id === apc_id && pr.role === 5);
-
+    const userPartnerRole = loggedInUser?.partnerRoles.find(pr => pr.apc_id === apc_id && pr.role === nonOperatorEditUsers);
+  
     return !userPartnerRole;
 };
 const isOperatorRowDisabled = (apc_id: string) => {
   if (loggedInUser?.is_super_user) return false;
 
-    const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === 4);
+    const userOperatorRole = loggedInUser?.operatorRoles.find(pr => pr.apc_id === apc_id && pr.role === operatorEditUsers);
 
     return !userOperatorRole;
 };

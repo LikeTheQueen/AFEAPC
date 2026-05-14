@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { GroupedUser, UserPermissionFlatRow } from "src/types/interfaces";
@@ -34,7 +34,7 @@ export default function UserPermissionDashboard() {
         }
         if(isMounted) {
           setPermissionData(userPermissionsRaw.data);
-          
+          setUserPermissionListLoading(false);
         }
       }
       catch(e) {
@@ -72,7 +72,6 @@ useEffect(() => {
 
   return (
     <>
-    
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
     {userPermissionListLoading ? (
       <LoadingPage></LoadingPage>
@@ -94,8 +93,7 @@ useEffect(() => {
     </div>
     </>
     )}
-    </div>
-      
+    </div> 
     </>
   )
 }

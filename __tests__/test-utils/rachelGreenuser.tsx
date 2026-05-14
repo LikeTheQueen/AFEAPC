@@ -1678,56 +1678,64 @@ export const userListActiveOrInactive = [
         "first_name": "Easy",
         "last_name": "Test",
         "email": "easy_rider21@hotmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "77ef7dd6-bd03-4500-b599-ad1447e8c489",
         "first_name": "Mike",
         "last_name": "Rider",
         "email": "mike.rider@earthlink.net",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "36eeb21d-9605-45e4-bcc0-ae4bda595ea9",
         "first_name": "Liam",
         "last_name": "Neilson",
         "email": "eand.v3851@gmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "6b02d1dc-7f5b-4482-ab68-4b3177074856",
         "first_name": "Brandon Champ",
         "last_name": "Bailey",
         "email": "brandonbailey25@gmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "2bdd72e2-7064-46aa-91e5-6f8ed1dc8191",
         "first_name": "Von",
         "last_name": "Miller",
         "email": "e.andv3851@gmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
         "first_name": "Queen",
         "last_name": "Elizabeth",
         "email": "eandv3851@gmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": false
     },
     {
         "user_id": "13e69340-d14c-45a9-96a8-142795925487",
         "first_name": "Rachel",
         "last_name": "Green",
         "email": "elizabeth.rider.shaw@gmail.com",
-        "active": true
+        "active": true,
+        "is_org_super_user": true
     },
     {
         "user_id": "11b3c839-8be8-4de2-b61b-8a0f9f56448b",
         "first_name": "Sara",
         "last_name": "Bear",
         "email": "sara.m.bibb@gmail.com",
-        "active": false
+        "active": false,
+        "is_org_super_user": false
     }
 ];
 

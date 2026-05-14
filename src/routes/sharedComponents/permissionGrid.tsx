@@ -26,9 +26,13 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
   const [rolesWrite, setRolesWrite] = useState<RoleEntryWrite[] | []>([]);
   const [hideRowsUserCannotEdit, setHideRowsUserCannotEdit] = useState(!profileView);
 
-  console.log(session?.access_token)
+  
   useEffect(() => {
   setAllUsersPermissions([...allUserRoles].sort((a, b) => a.user_firstname.localeCompare(b.user_firstname)));
+  //setAllUsersPermissions(allUserRoles)
+  console.log(allUserRoles, 'the roles in the gird', mode)
+  console.log(loggedInUser, 'the logged in user', mode)
+  console.log(apcIDEditPriv, mode)
   if(mode === 'Operated') {
     setPermissionHeaders(operatedPermissionHeaders);
     setRoleValueArray(operatedPermissionRoles);
@@ -126,7 +130,7 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
     return;
   }
 
-console.log(opRolesWrite, partnerRolesWrite, rolesWrite, mode)
+
   return (
     <>
     <div className="divide-y divide-[var(--darkest-teal)]/40">
@@ -142,20 +146,20 @@ console.log(opRolesWrite, partnerRolesWrite, rolesWrite, mode)
      
         <div className="">
           <div hidden={profileView} className="flex justify-start p-4">
-            <Field className="flex items-end ">
-                                  <Switch
-                                    checked={hideRowsUserCannotEdit}
-                                    onChange={(e) => setHideRowsUserCannotEdit(!hideRowsUserCannotEdit)}
-                                    className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
-                                    <span
-                                      aria-hidden="true"
-                                      className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
-                                    />
-                                  </Switch>
-                                  <Label as="span" className="ml-3 text-sm">
-                                    <span className="font-medium text-[var(--darkest-teal)] custom-style">Hide permissions you cannot edit</span>{' '}
-                                  </Label>
-                                </Field>
+            <Field hidden={loggedInUser?.is_org_super_user || loggedInUser?.is_super_user} className="flex items-end ">
+              <Switch
+                checked={hideRowsUserCannotEdit}
+                onChange={(e) => setHideRowsUserCannotEdit(!hideRowsUserCannotEdit)}
+                className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                />
+              </Switch>
+              <Label as="span" className="ml-3 text-sm">
+                <span className="font-medium text-[var(--darkest-teal)] custom-style">Hide permissions you cannot edit</span>{' '}
+              </Label>
+            </Field>
           </div>
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-1 md:grid-cols-1 ">
             <ul role="list" className="">

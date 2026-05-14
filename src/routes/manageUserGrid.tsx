@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive } from 'provider/write';
+import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive, updateUserProfile } from 'provider/write';
 import { type UserFullNameAndEmail } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
+import { Field, Label, Switch } from "@headlessui/react";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 
 
 export default function UserDashboard({ userList =[], isError=false } : {  userList: UserFullNameAndEmail[]; isError:boolean;}) {
@@ -58,6 +60,38 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
             console.error('Failed to deactivate user:', error);
         }
     };
+    
+    async function handleSuperUserToggle(userID: string, is_super_org_user: boolean) {
+        if (!token) return;
+
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === userID ? { ...user, is_org_super_user: is_super_org_user } : user
+            )
+        );
+
+        try {
+            const updateUserOrgStatus = await updateUserProfile(userID, is_super_org_user)
+            console.log(updateUserOrgStatus)
+
+            if (!updateUserOrgStatus.ok) {
+
+                setUsers(prevUsers =>
+                    prevUsers.map(user =>
+                        user.id === userID ? { ...user, is_org_super_user: !is_super_org_user } : user
+                    )
+                );
+
+                notifyFailure(`Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still ${!is_super_org_user ? 'ON' : 'OFF'})`)
+
+            } else {
+                notifyStandard(`Shut-In Complete.  Super User access has been sealed off.\n\n(TLDR: Super User Access is now ${is_super_org_user ? 'ON' : 'OFF'})`)
+            }
+
+        } finally {
+            return;
+        }
+    };
    
     return (
         <>
@@ -81,6 +115,10 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                             scope="col"
                             className="hidden w-2/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
                             Email
+                        </th>
+                        <th scope="col" 
+                            className="hidden w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
+                            Super User
                         </th>
                         <th scope="col" 
                             className="hidden w-1/5 px-2 py-3.5 text-center text-pretty text-base/7 font-semibold custom-style sm:table-cell bg-[var(--darkest-teal)]">
@@ -112,6 +150,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                     className="inline-flex items-center rounded-md bg-[var(--darkest-teal)]/20 px-3 py-2 text-sm/6 font-medium text-[var(--darkest-teal)]/40 custom-style ring-1 ring-gray-900/20 ring-inset ml-1">
                                     Inactive
                                 </span>
+                                
                                 <button
                                     type="button"
                                     hidden={user.active}
@@ -128,6 +167,22 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] mr-1">
                                     Deactivate User
                                 </button>
+                                    <Field hidden={!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user} className={`flex flex-col sm:flex-row items-start sm:items-end justify-start  ${!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
+                                        }`}>
+                                        <Switch
+                                            checked={user.is_org_super_user}
+                                            disabled={user.id === loggedInUser?.user_id}
+                                            onChange={(e) => handleSuperUserToggle(user.id, !user.is_org_super_user)}
+                                            className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent disabled:bg-gray-200 bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                                            <span
+                                                aria-hidden="true"
+                                                className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                                            />
+                                        </Switch>
+                                        <Label as="span" className="sm:ml-3 text-sm">
+                                            <span className="font-medium text-[var(--darkest-teal)] custom-style">Super User</span>
+                                        </Label>
+                                    </Field>
                                 </dd>
                             </dl>
                             </td>
@@ -135,6 +190,24 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 {user.email}
                             </td>
 
+                            <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
+                                <Field className={`flex items-end justify-start  ${!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
+                                    }`}>
+                                    <Switch
+                                        checked={user.is_org_super_user}
+                                        disabled={user.id === loggedInUser?.user_id}
+                                        onChange={(e) => handleSuperUserToggle(user.id, !user.is_org_super_user)}
+                                        className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent disabled:bg-gray-200 bg-gray-200 transition-colors duration-200 ease-in-out focus:ring-0 focus:ring-[var(--bright-pink)] focus:ring-offset-2 focus:outline-hidden data-checked:bg-[var(--bright-pink)]">
+                                        <span
+                                            aria-hidden="true"
+                                            className="pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5"
+                                        />
+                                    </Switch>
+                                    <Label as="span" className="ml-3 text-sm">
+                                        <span className="font-medium text-[var(--darkest-teal)] custom-style">Super User</span>
+                                    </Label>
+                                </Field>
+                            </td>
                             <td className="hidden align-middle px-3 py-4 text-sm/6 lg:whitespace-nowrap text-center sm:table-cell">
                                 <span
                                     hidden={!user.active}

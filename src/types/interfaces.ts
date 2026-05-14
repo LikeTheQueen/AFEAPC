@@ -387,6 +387,7 @@ export interface UserFullNameAndEmail {
   lastName: string;
   email: string;
   active: boolean;
+  is_org_super_user: boolean;
 }
 
 export interface OperaatorOrPartnerListAndUsers extends OperatorOrPartnerList {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchUserPermissions } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import type { GroupedUser, RoleEntryRead, UserPermissionFlatRow } from "src/types/interfaces";
+import type { GroupedUser, UserPermissionFlatRow } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { buildGroupedUsers } from "./helpers/helpers";
 import  PermissionDashboards  from "src/routes/sharedComponents/permissionGrid";
@@ -28,13 +28,11 @@ export default function UserPermissionDashboard() {
         
         try{
           const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
-          
   
           if(!userPermissionsRaw.ok) {
             throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
           }
           if(isMounted) {
-            
             setPermissionData(userPermissionsRaw.data);
             setUserPermissionListLoading(false);
           }
@@ -43,6 +41,7 @@ export default function UserPermissionDashboard() {
           console.error('Not able to get user permissions ',e);
         }
         finally{
+          setUserPermissionListLoading(false);
           return;
         }
       }
@@ -72,7 +71,7 @@ export default function UserPermissionDashboard() {
 
   
   return (
-
+    <>
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">
     {userPermissionListLoading ? (
       <LoadingPage></LoadingPage>
@@ -95,5 +94,6 @@ export default function UserPermissionDashboard() {
     </>
     )}
     </div>
+    </>
   )
 }

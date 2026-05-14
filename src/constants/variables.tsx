@@ -15,7 +15,8 @@ export const approveRejectNonOpAFEs = 6;
 export const viewOperatorBilling = 7;
 export const editOperatorLibrary = 8;
 export const editNonOpLibrary = 9;
-
+export const orgSuperUser = 11;
+ 
 export const operatedPermissionHeaders = [
   "View Operated AFEs", "Edit Operator User Permissions", "Manage Libraries", "View Billing Details"
 ];

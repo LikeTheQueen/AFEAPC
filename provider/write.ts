@@ -75,9 +75,21 @@ import type { UUID } from 'crypto';
     return {ok:true, data: data, message: undefined};
   };
 
-  export const addOperatorSupabase = async (name: string, source_system:number) => {
+  export const addOParentCompanySupabase = async (name: string) => {
+    const { data, error } = await supabase.from('PARENT_COMPANY')
+    .insert({name: name, active:true})
+    .select()
+    .single();
+    if (error) {
+        return {ok: false, data: null, message: error.message};
+      }
+
+      return {ok: true, data: data, message: undefined};
+  };
+
+  export const addOperatorSupabase = async (name: string, source_system:number, parent_company:string) => {
     const { data, error } = await supabase.from('OPERATORS')
-    .insert({name: name, source_system: source_system, active:true})
+    .insert({name: name, source_system: source_system, active:true, parent_company: parent_company})
     .select()
     .single();
     if (error) {
@@ -115,6 +127,23 @@ import type { UUID } from 'crypto';
 
   export const addOperatorAdressSupabase = async (apc_id: string, address: AddressType) => {
     const { data, error } = await supabase.from('OPERATOR_ADDRESS')
+    .insert({apc_id: apc_id, 
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country })
+      .select()
+      .single();
+    if (error) {
+        return { ok: false, data: null, message: error.message};
+      }
+      return {ok: true, data:data, message: undefined};
+  };
+
+  export const addParentCompanyAdressSupabase = async (apc_id: string, address: AddressType) => {
+    const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS')
     .insert({apc_id: apc_id, 
       street: address.street, 
       suite: address.suite, 
@@ -171,13 +200,14 @@ import type { UUID } from 'crypto';
       return (user);
   };
 
-  export const createUserProfile = async(firstName: string, lastName: string, email: string, id:string, active: boolean) => {
-    const { data, error } = await supabase.from('USER_PROFILE').insert({id: id, first_name: firstName, last_name:lastName, email: email, active:active});
+  export const updateUserProfile = async(id:string, is_org_super_user: boolean) => {
+    const { data, error } = await supabase.from('USER_PROFILE')
+    .update({is_org_super_user: is_org_super_user})
+    .eq('id', id);
     if (error) {
-        console.error(`Error adding User Profile`, error);
-        return null;
+        return {ok: false, message: error.message};
       }
-      return;
+      return {ok:true, message: undefined};
   };
 
   export const writeUserRolesforOperator = async(roles:RoleTypeSupabaseOperator[]) => {

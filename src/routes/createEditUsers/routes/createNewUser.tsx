@@ -12,7 +12,7 @@ import { handleSendEmail } from 'email/emailBasic';
 import { ToastContainer } from 'react-toastify';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { supportEmail } from 'src/constants/variables';
-import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
+import { ParentCompanyDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 
  
 export default function CreateNewUser() {
@@ -199,7 +199,10 @@ export default function CreateNewUser() {
   };
 console.log(opAPCID)
   return (
-    <>
+    <> {!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
+     ( <NoSelectionOrEmptyArrayMessage
+                message={'You do not have permission to create users'}
+        /> ) :(
       <div className="px-4 sm:px-10 sm:py-4 divide-y divide-[var(--darkest-teal)]/40 ">
         <div className="divide-y divide-[var(--darkest-teal)]/40">
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 py-10 md:grid-cols-4 ">
@@ -300,7 +303,7 @@ console.log(opAPCID)
                     </Field>                    
                   </div>
                   <div className="sm:col-span-6 flex justify-start">
-                    <Field className={`flex items-end justify-start  ${!loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
+                    <Field className={`flex items-end justify-start  ${!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
                       }`}>
                       <Switch
                         checked={newUser.is_org_super_user}
@@ -319,10 +322,10 @@ console.log(opAPCID)
                   </div>
                   <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-3">
                     <label htmlFor="selectedOperator" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
-                      Operator
+                      Parent Company
                     </label>
                     <div className="mt-2 ">
-                        <OperatorDropdown
+                        <ParentCompanyDropdown
                           value={opAPCID}
                           onChange={(id) => { setOpAPCID(id) }}
                           limitedList={true}
@@ -563,6 +566,7 @@ console.log(opAPCID)
           </div>
         </div>
       </div>
+      )}
       <ToastContainer />
     </>
   )

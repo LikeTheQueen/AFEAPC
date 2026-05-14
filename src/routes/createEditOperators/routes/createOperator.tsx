@@ -2,7 +2,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addPartnerSupabase } from 'provider/write';
+import { addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { ToastContainer } from 'react-toastify';
@@ -11,6 +11,7 @@ import { fetchSourceSystems } from 'provider/fetch';
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle, transformSourceSystemSupabase } from 'src/types/transform';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { useSupabaseData } from 'src/types/SupabaseContext';
+import { ParentCompanyDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 
 export default function CreateOperator() {
     let operatorBlank : OperatorType = {
@@ -38,7 +39,7 @@ export default function CreateOperator() {
         address_active: true
     };  
 
-    const { session } = useSupabaseData();
+    const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [sourceSystems, setSourceSystems] = useState<AFESourceSystemType[] | []>([]);
     const [operator, setOperator] = useState<OperatorType>(operatorBlank);
@@ -49,6 +50,7 @@ export default function CreateOperator() {
     const [fetchErrorMessage, setFetchErrorMessage] = useState<string | null>(null);
     const [operatorWriteErrorMessage, setOperatorWriteErrorMessage] = useState<string | null>(null);
     const [partnerWriteErrorMessage, setPartnerWriteErrorMessage] = useState<string | null>(null);
+    const [parentCompanyAPCID, setParentCompanyID] = useState('');
 
     useEffect(() => {
         let isMounted = true;
@@ -118,48 +120,52 @@ export default function CreateOperator() {
     })
   };
   async function handleClickSaveOpName() {
-     
-    if (!operator.name || !operator.source_system || operator.source_system === 0) {
-      setOperatorWriteErrorMessage('The Operator name or Source System is not valid and the record cannot be written');  
-      return;
-    }
+  // Validate everything upfront before any writes
+  if (!operator.name || !operator.source_system || operator.source_system === 0) {
+    setOperatorWriteErrorMessage('The Operator name or Source System is not valid');
+    return;
+  }
 
-    try {
-      const insertOperatorResult = await addOperatorSupabase(operator.name, operator.source_system);
-      
-      if (!insertOperatorResult.ok) {
-        throw new Error(insertOperatorResult.message);
-      }
-        const transformedOperatorResult = transformOperatorSingle(insertOperatorResult.data);
-        setOperator(transformedOperatorResult); 
-        setShowSaved(true);
-        
-       if (  
-          transformedOperatorResult.id === undefined || !isAddressValid(operatorBillingAddress)
-        ) {
-          setOperatorWriteErrorMessage("The Operator ID or Billing Address is not valid and the Billing Address cannot be written");
-          return;
-        }
+  if (!isAddressValid(operatorBillingAddress)) {
+    setOperatorWriteErrorMessage('The Billing Address is not valid');
+    return;
+  }
+let parentCompanyID =''
+  try {
+    if(parentCompanyAPCID === '') {
+    const createParentCompany = await addOParentCompanySupabase(operator.name);
+    if (!createParentCompany.ok) throw new Error(createParentCompany.message);
 
-        try {
-              const operatorAddressRecord = await addOperatorAdressSupabase(transformedOperatorResult.id, operatorBillingAddress);
-            
-              if(!operatorAddressRecord.ok) {
+    const parentCompanyAddressRecord = await addParentCompanyAdressSupabase(
+      createParentCompany.data.id, operatorBillingAddress
+    );
+    if (!parentCompanyAddressRecord.ok) throw new Error(parentCompanyAddressRecord.message);
 
-                throw new Error(operatorAddressRecord.message);
+    parentCompanyID = createParentCompany.data.id;
+  }
+    const insertOperatorResult = await addOperatorSupabase(
+      operator.name, operator.source_system, parentCompanyID !== '' ? parentCompanyID : parentCompanyAPCID
+    );
+    if (!insertOperatorResult.ok) throw new Error(insertOperatorResult.message);
 
-              }
+    const transformedOperatorResult = transformOperatorSingle(insertOperatorResult.data);
+    if (transformedOperatorResult.id === undefined) throw new Error('Operator ID missing after insert');
 
-              const trasnformedAddress = transformAddressSupabase(operatorAddressRecord.data);
-              setOpBillAddress(trasnformedAddress);
-            
-              } catch (error) {
-                  setOperatorWriteErrorMessage('Could not write the Operator Billing Address: '+error)
-                } 
-        
-    } catch (error) {
-      setOperatorWriteErrorMessage("Failed to add operator: "+error);
-    }
+    const operatorAddressRecord = await addOperatorAdressSupabase(
+      transformedOperatorResult.id, operatorBillingAddress
+    );
+    if (!operatorAddressRecord.ok) throw new Error(operatorAddressRecord.message);
+
+    const transformedAddress = transformAddressSupabase(operatorAddressRecord.data);
+
+    // Only mark saved once everything has succeeded
+    setOperator(transformedOperatorResult);
+    setOpBillAddress(transformedAddress);
+    setShowSaved(true);
+
+  } catch (error) {
+    setOperatorWriteErrorMessage('Failed to save operator: ' + error);
+  }
   };
   async function handleClickSaveAnother() {
     if(operator.name === '' || operator.name === null || operator.name === undefined || operator.id === undefined) 
@@ -328,7 +334,7 @@ export default function CreateOperator() {
                   />
                 </div>
               </div>
-                <div className="sm:col-span-2 sm:col-start-4">
+                <div className="sm:col-span-2 sm:col-start-3">
                 <label htmlFor="sourceSystem" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Source System for AFEs
                 </label>
@@ -351,6 +357,18 @@ export default function CreateOperator() {
                     className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-[var(--darkest-teal)] sm:size-4"
                   />
                 </div>
+              </div>
+              <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-2">
+                                  <label htmlFor="selectedOperator" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                                    Parent Company
+                                  </label>
+                                  <div className="mt-1">
+                                      <ParentCompanyDropdown
+                                        value={parentCompanyAPCID}
+                                        onChange={(id) => { setParentCompanyID(id) }}
+                                        limitedList={true}
+                                    />
+                                  </div>
               </div>
             </div>
           </div>

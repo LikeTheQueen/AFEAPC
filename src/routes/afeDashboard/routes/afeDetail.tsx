@@ -20,6 +20,7 @@ import { insertAFEHistory } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import FileUpload from "src/routes/sharedComponents/fileUpload";
+import { approveRejectNonOpAFEs, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
 
 const tabs = [
   {id:1, name:"AFE Documents", current: true},
@@ -199,12 +200,12 @@ export default function AFEDetailURL() {
             isMounted = false; 
         };
   }, [afeRecord]);
-
+ 
   useEffect(() => {
     if(!loggedInUser || !afeRecord) return;
-    const userAcceptRejectRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.partnerRoles!, 6, afeRecord.apc_partner_id)
-    const userPartnerViewRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.partnerRoles!, 3, afeRecord.apc_partner_id)
-    const userOperatorViewRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.operatorRoles!, 2, afeRecord.apc_op_id)
+    const userAcceptRejectRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.partnerRoles!, approveRejectNonOpAFEs, afeRecord.apc_partner_id)
+    const userPartnerViewRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.partnerRoles!, viewNonOpAFEPermission, afeRecord.apc_partner_id)
+    const userOperatorViewRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.operatorRoles!, viewOperatedAFEPermission, afeRecord.apc_op_id)
     
     setUserAcceptRejectRole(userAcceptRejectRole);
     setUserPartnerViewAFERole(userPartnerViewRole);

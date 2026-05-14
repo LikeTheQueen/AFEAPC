@@ -302,7 +302,7 @@ export default function AFE() {
       onDaysAgoChange={currentTab === 2 ? setPartnerStatusDaysAgo : setOperatorApprovedDaysAgo}
       mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
       handleExport={handleExport}
-      ></AFEFilters> this
+      ></AFEFilters> 
       </div>
       {/*No AFE Message when filtered or [] On all Tabs, for Tab 2 it's operated*/}
       <div hidden ={ afeFetchError ? true : (

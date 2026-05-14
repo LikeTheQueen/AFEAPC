@@ -9,7 +9,8 @@ import { ToastContainer } from "react-toastify";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
-import { superUserPermission, editOperatorLibrary, editNonOpLibrary } from "src/constants/variables";
+import { superUserPermission, editOperatorLibrary, editNonOpLibrary, orgSuperUser } from "src/constants/variables";
+import { fetchCompanyProfile } from "provider/fetch";
 
 function addressDisplay(addressRecord: RoleEntryRead) {
     const addressRecordDisplay = addressRecord.apc_address?.street.concat(' ',
@@ -36,9 +37,9 @@ export default function OperatorViewAndEdit() {
 
     useEffect(() => {
         if(!loggedInUser) return;
-    
+    fetchCompanyProfile();
         const operatorList = (loggedInUser.operatorRoles ?? [])
-        .filter(operator => operator.role === superUserPermission || operator.role === editOperatorLibrary);
+        .filter(operator => operator.role === superUserPermission || operator.role === orgSuperUser);
         setFilteredOperators(operatorList.sort((a, b) => a.apc_name.localeCompare(b.apc_name)));
     
       },[loggedInUser]);

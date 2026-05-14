@@ -5,6 +5,8 @@ import type { UserFullNameAndEmail } from "src/types/interfaces";
 import UserDashboard from "../../../routes/manageUserGrid";
 import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { ToastContainer } from "react-toastify";
 
 
 export default function UserStatusDashboard() {
@@ -67,13 +69,17 @@ export default function UserStatusDashboard() {
     <div className="px-4 sm:px-10 sm:py-16"> 
     {userListLoading ? (
       <LoadingPage></LoadingPage>
-    ) : ( 
+    ) : ( !loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
+      (<NoSelectionOrEmptyArrayMessage
+        message={'You do not have permission to edit user active or deactive status'}
+      /> ) : (
     <UserDashboard 
     userList={userList}
     isError={isError}>
     </UserDashboard >
-    )}
+    ))}
     </div>
+    <ToastContainer icon={false}></ToastContainer>
     </>
   )
 }
