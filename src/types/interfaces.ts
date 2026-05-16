@@ -33,6 +33,7 @@ export interface AFEType {
     partner_archived: boolean;
     apc_partner_id: string;
     well_name: string;
+    currency_code: string;
   }
 
 //Interface for AFE IDs pulled from Execute
@@ -340,6 +341,18 @@ export interface GroupedUser {
   id?: number;
   source_id: string;
   apc_op_id: string;
+  name: string;
+  street: string;
+  suite: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  active: boolean;
+  };
+
+  export interface UnrelatedPartnerRowData {
+  id?: number;
   name: string;
   street: string;
   suite: string;

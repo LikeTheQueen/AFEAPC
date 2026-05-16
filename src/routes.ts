@@ -8,7 +8,7 @@ import {
 
 export default [
     layout("./routes/webpage/publicLayout.tsx", [
-    index("./routes/webpage/homepage.tsx"),          // renders at "/"
+    index("./routes/webpage/homepage.tsx"),          
     route("/howitworks", "./routes/webpage/howItWorks.tsx"),
     route("/aboutus", "./routes/webpage/aboutUs.tsx"),
     route("/contactus", "./routes/webpage/contactUs.tsx"),
@@ -49,12 +49,12 @@ export default [
             route("managePermissions", "./routes/createEditUsers/routes/manageUserPermissions.tsx"),
             route("editOperator", "./routes/createEditOperators/routes/manageOperatorAndPartner.tsx"),
             route("createOperator", "./routes/createEditOperators/routes/createOperator.tsx"),
+            route("createPartner", "./routes/afeapcSuperUser/routes/createNewPartner.tsx"),
             route("createUser", "./routes/createEditUsers/routes/createNewUser.tsx"),
             route("manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),
             route("manageUserPermissionsSystem", "./routes/createEditUsers/routes/manageUserPermissionsSystem.tsx"),
             
             route("notifications", "./routes/afeDashboard/routes/notifications.tsx"),
-            
             
         ]),
     ])

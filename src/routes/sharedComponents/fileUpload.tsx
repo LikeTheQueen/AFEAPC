@@ -1,28 +1,28 @@
 import { useRef, useState } from 'react';
-import supabase from "../../../provider/supabase"
-import { insertAFEHistory, insertIntoAFEDocTableNonOpAgreement } from 'provider/write';
-import { ToastContainer } from 'react-toastify';
-import { notifyStandard } from 'src/helpers/helpers';
+import { insertAFEHistoryRecord, insertDocument, insertIntoAFEDocTable } from 'provider/write';
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { handleSendEmail } from 'email/emailBasic';
-
+import { fetchEmailsForNonOperatorUsers, fetchEmailsForOperatorUsers } from 'provider/fetch';
+import { supportEmail } from 'src/constants/variables';
 
 type FileUploadProps = {
   apc_afe_id: string;
   apc_op_id: string;
   apc_part_id: string;
-  token: string;
   userName: string;
   apc_partner_name: string;
-  loggedInUserEmail: string;
+  apc_operator_name: string;
   afe_number: string;
   afe_version: string;
+  mode: 'Operator' | 'Partner';
 }
 
-export default function FileUpload({apc_afe_id, apc_op_id, apc_part_id, token, userName, apc_partner_name, loggedInUserEmail, afe_number, afe_version}: FileUploadProps) {
+export default function FileUpload({apc_afe_id, apc_op_id, apc_part_id, userName, apc_partner_name, apc_operator_name, afe_number, afe_version, mode}: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [isNonOpAFEAgreement, setIsNonOpAFEAgreement] = useState<boolean | undefined>(undefined);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const companyName = mode === 'Operator' ? apc_operator_name : apc_partner_name
   
   const isSignedNonOpAgreement = [
   { id: 'Yes', title: 'Yes', value: true},
@@ -38,7 +38,11 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
     if (!e.target.files || e.target.files.length === 0) {
         return;
       }
-      setIsNonOpAFEAgreement(undefined);
+      if(mode === 'Operator') {
+        setIsNonOpAFEAgreement(false);
+      } else {
+        setIsNonOpAFEAgreement(undefined);
+      }  
       setFileToUpload(e.target.files[0]);
   }
   async function submitFile() {
@@ -46,43 +50,61 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
 
     const fileExt = fileToUpload.name.split('.').pop();
     const fileNameEncrypt = `${Math.random()}.${fileExt}`; 
-    const filePath = `${fileNameEncrypt}`;
+    const filePath = `afe/${apc_afe_id}/attachments/${fileNameEncrypt}`;
     const fileName = fileToUpload.name.split('.').slice(0, -1).join('.');
     const fileBytes = (await fileToUpload.arrayBuffer()).byteLength;
     const checksum = await sha256((await fileToUpload.arrayBuffer()));
 
-  
     try{
       setUploading(true);
-      const { data, error } = await supabase.storage
-        .from('AFE_Docs')
-        .upload('afe/'+filePath, fileToUpload);
+      const [uploadFileResults, docTableResults] = await Promise.all([
+        insertDocument(filePath, fileToUpload),
+        insertIntoAFEDocTable(apc_afe_id, apc_op_id, apc_part_id, filePath, fileToUpload.name, fileName, fileExt!, fileBytes, checksum, isNonOpAFEAgreement)
+      ]);
 
-      if (error) {
-        console.log(error, 'error upload');
-        throw new Error(error.message);
+      if (!uploadFileResults.ok || !docTableResults.ok) {
+        throw new Error();
       }
-      if (data) {
-        await insertIntoAFEDocTableNonOpAgreement(apc_afe_id, apc_op_id, apc_part_id, 'afe/' + filePath, fileToUpload.name, fileName, fileExt!, fileBytes, checksum, isNonOpAFEAgreement);
-        await insertAFEHistory(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action', token);
+      if (uploadFileResults.ok && docTableResults.ok) {
+        let emails = [supportEmail];
+        const emailAddresses = mode === 'Partner' ? await fetchEmailsForOperatorUsers(apc_op_id) : await fetchEmailsForNonOperatorUsers(apc_part_id);
+        
+        if(emailAddresses.ok && emailAddresses.data.length > 0) {
+          emails = emailAddresses.data;
+        }
 
+        if(isNonOpAFEAgreement) {
+        
+        await insertAFEHistoryRecord(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action');
         await handleSendEmail(
           `A signed AFE has been uploaded by ${userName} at ${apc_partner_name}`,
           `This message is to let you know that ${apc_partner_name} has uploaded a signed copy of the AFE.  The AFE Number is ${afe_number} (${afe_version})`,
           'there',
           `${apc_partner_name}`,
           'AFE Partner Connections',
-          loggedInUserEmail,
+          emails,
           `https://www.afepartner.com/mainscreen/afeDetail/${apc_afe_id}`,
           'View AFE'
         );
-        notifyStandard('Upload complete. The operation ran without incident.up');
-
+      } else {
+          await insertAFEHistoryRecord(apc_afe_id, 'An attachment has been uploaded by ' + userName + ' for ' + companyName, 'action');
+          await handleSendEmail(
+          `An attachment has been uploaded by ${userName} at ${companyName}`,
+          `This message is to let you know that ${companyName} has uploaded an attachment for the AFE.  The AFE Number is ${afe_number} (${afe_version})`,
+          'there',
+          `${companyName}`,
+          'AFE Partner Connections',
+          emails,
+          `https://www.afepartner.com/mainscreen/afeDetail/${apc_afe_id}`,
+          'View AFE'
+        );
+        }
+        
+        notifyStandard('Upload complete. The operation ran without incident.');
       }
       
     } catch (error) {
-      console.log(error)
-      notifyStandard('There seems to be an issue: '+error);
+      notifyFailure(`Pressure Loss Detected.  The file couldn’t be uploaded.`)
     } finally {
       setUploading(false);
       setIsNonOpAFEAgreement(undefined)
@@ -91,7 +113,6 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-
       
     }
   };
@@ -116,10 +137,10 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
                   </label>
               </div>
               
-              <div className='items-center'>
+              <div  className='items-center'>
   
-    <fieldset className='mt-4 text-left'>
-      <legend className="text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]">Is this a signed Non-Op AFE?</legend>
+    <fieldset hidden={mode === 'Operator' ? true : false} className='text-left mt-4'>
+      <legend className="text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]">Is this a signed Non-Op AFE?*</legend>
       <div className="text-xs/6 2xl:text-sm/6 flex flex-row items-center justify-start space-x-6">
         {isSignedNonOpAgreement.map((nonOpAgreement) => (
           <div key={nonOpAgreement.id} className="flex flex-row items-center">
@@ -142,7 +163,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
       </div>
     </fieldset>
               </div>
-              <div className="col-span-2 text-[var(--darkest-teal)]/50">{fileToUpload === null ? 'No File Chosen' : fileToUpload.name}</div>
+              <div className="mt-2 col-span-2 text-[var(--darkest-teal)]/50">{fileToUpload === null ? 'No File Chosen' : fileToUpload.name}</div>
               <div className='col-span-2 items-end text-end'>
                 <div 
               className="mt-1 -mb-6 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">

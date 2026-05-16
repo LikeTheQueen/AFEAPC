@@ -1,10 +1,10 @@
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { fetchAFEDetails, fetchAFEDocs, fetchRelatedDocuments,fetchAFEAttachments, fetchAFEEstimates, fetchAFEHistory, fetchAFEWells, fetchAFESignedNonOp } from "provider/fetch";
-import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, notifyStandard } from "src/helpers/helpers";
+import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, notifyStandard, notifyFailure } from "src/helpers/helpers";
 import { doesLoggedInUserHaveCorrectRole } from "src/helpers/styleHelpers";
 import { setStatusTextColor, setStatusBackgroundColor, setStatusRingColor } from "./helpers/styleHelpers";
 import { useParams } from 'react-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type AFEDocuments, type AFEHistorySupabaseType, type AFEType, type AFEWells, type EstimatesSupabaseType } from "../../../types/interfaces";
 import { transformAFEHistorySupabase, transformSingleAFE, transformEstimatesSupabase, transformAFEDocumentList, transformAFEWells } from "src/types/transform";
 import AFEHistory from "./afeHistory";
@@ -16,11 +16,17 @@ import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { ToastContainer } from "react-toastify";
-import { insertAFEHistory } from "provider/write";
+import { insertAFEHistoryRecord } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import FileUpload from "src/routes/sharedComponents/fileUpload";
 import { approveRejectNonOpAFEs, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+
+type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+
+function getErrorMessage(results: ToggleResult[]): string | undefined {
+  return results.find((r): r is { ok: false; message: string } => !r.ok)?.message;
+}
 
 const tabs = [
   {id:1, name:"AFE Documents", current: true},
@@ -36,18 +42,13 @@ export default function AFEDetailURL() {
   const [currentTab, setCurrentTab] = useState(1);
   const [open, setOpen] = useState(false);
 
-  const [afeHistoryloading, setAFEHistoryLoading] = useState(false);
   const [afeLoading, setAFELoading] = useState(false);
-  const [afeEstimatesLoading, setAFEEstimatesLoading] = useState(false);
-  const [afeDocumentLoading, setAFEDocumentLoading] = useState(false);
 
   const [afeRecord, setAFERecord] = useState<AFEType | null>(null);
-  const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[] | []>([]);
-  const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] | []>([]);
-  const [afeHistoriesComments, setAFEHistoryComments] = useState<AFEHistorySupabaseType[] | []>([]);
-  const [afeHistoriesActions, setAFEHistoryActions] = useState<AFEHistorySupabaseType[] | []>([]);
-  const [afeDocs, setDocs] = useState<AFEDocuments[] | []>([]);
-  const [afeWells, setWells] = useState<AFEWells[] | []>([]);
+  const [afeEstimates, setEstimates] = useState<EstimatesSupabaseType[]>([]);
+  const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[] >([]);
+  const [afeDocs, setDocs] = useState<AFEDocuments[] >([]);
+  const [afeWells, setWells] = useState<AFEWells[] >([]);
   const [docToView, setDocToView] = useState<string>('');
   const [afePartnerStatus, setAFEPartnerStatus] = useState('');
   const [statusButtonDisabled, setButtonDisabled] = useState(true);
@@ -59,148 +60,82 @@ export default function AFEDetailURL() {
   const [doesUserHaveOperatorViewAFERole, setUserOperatorViewAFERole] = useState(false);
   const afeHistoryMaxId: number = setAFEHistoryMaxID(afeHistories);
   const [signedNonOpAgreement, setSignedNonOpAgreement] = useState(false);
-  const { refreshData } = useSupabaseData();
+  const [afeFetchError, setAFEFetchError] = useState(false);
 
   
   const [rowsToShow, setRowsToShow] = useState<EstimatesSupabaseType[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  
-  useEffect(() => {
-    let isMounted = true;
-    async function getAFERecord() {
-      if (!afeID || token ==='') return;
+
+  const getAFEDetails = useCallback(async (signal: AbortSignal) => {
+    if (!afeID || token ==='') return;
       setAFELoading(true);
-      try{
-        const afeDetails = await fetchAFEDetails(afeID, token);
+    try {
+      const afeDetailsResults = await Promise.all([
+        fetchAFEDetails(afeID, token, signal),
+        fetchAFEHistory(afeID, token, signal)
+      ]);
 
-        if(!afeDetails.ok) {
-          if (isMounted) setAFELoading(false)
-            return;
+      if (afeDetailsResults.some(r => !r.ok)) {
+        throw new Error(getErrorMessage(afeDetailsResults) ?? 'Cannot get AFE Details');
+      }
 
-        }
-
-        if (isMounted) {
-          const afeDetailsFormatted = transformSingleAFE(afeDetails.data);
+        if(!signal.aborted) {
           
-          setAFERecord(afeDetailsFormatted)
-        }
-      } finally {
-                if (isMounted) {
-                    setAFELoading(false);
-                }
-    } 
-    }; 
-  getAFERecord();
-  return () => {
-            isMounted = false;
-        };
-  }, [afeID, token])
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchAllRelatedData() {
-      if(!afeID || token==='' ) return;
-      // Fetch history
-      setAFEHistoryLoading(true);
-      try{
-        const historyResponse = await fetchAFEHistory(afeID, token);
-
-        if(!historyResponse.ok) {
-          throw new Error((historyResponse as any).message ?? "Cannot find AFE Details");
-        }
-
-        if(isMounted) {
-          const historyTransformed = transformAFEHistorySupabase(historyResponse.data);
+          const afeDetailsResultsSuccesses = afeDetailsResults as { ok: true; data: any[] }[];
+          const afeDetailsFormatted = transformSingleAFE(afeDetailsResultsSuccesses[0].data);
+          setAFERecord(afeDetailsFormatted);
+          const historyTransformed = transformAFEHistorySupabase(afeDetailsResultsSuccesses[1].data);
           setHistory(historyTransformed.sort((a: AFEHistorySupabaseType, b: AFEHistorySupabaseType) => a.id - b.id));
-        }
+          
+          const relatedAFEDetailsResults = await Promise.all([
+            fetchAFEDocs(afeID, afeDetailsFormatted.apc_op_id, afeDetailsFormatted.apc_partner_id, token),
+            fetchAFEAttachments(afeID, afeDetailsFormatted.apc_op_id, token),
+            fetchAFESignedNonOp(afeID, afeDetailsFormatted.apc_op_id, afeDetailsFormatted.apc_partner_id, token),
+            fetchAFEEstimates(afeDetailsFormatted.source_system_id, afeDetailsFormatted.apc_partner_id, afeDetailsFormatted.apc_op_id, token),
+            fetchAFEWells(afeDetailsFormatted.source_system_id, afeDetailsFormatted.apc_op_id, token)
+          ]);
 
-      } 
-      finally {
-                if (isMounted) {
-                    setAFEHistoryLoading(false);
-                   
-                }
-      };
-
-      if(!afeID || token==='' || !afeRecord || !afeRecord.apc_op_id || !afeRecord.apc_partner_id) return;
-      //fetch document list
-      setAFEDocumentLoading(true);
-      try{
-        const documentResponse = await fetchAFEDocs(afeID, afeRecord.apc_op_id, afeRecord.apc_partner_id, token);
-        const attachmentResponse = await fetchAFEAttachments(afeID, afeRecord.apc_op_id, token);
-        const signedAFENonOpResponse = await fetchAFESignedNonOp(afeID, afeRecord.apc_op_id, afeRecord.apc_partner_id, token);
-        
-        if(!documentResponse.ok || !attachmentResponse.ok || !signedAFENonOpResponse.ok) {
-          return;
-        }
-        if(isMounted) {
-          const documentTransformed: AFEDocuments[] = transformAFEDocumentList(documentResponse.data);
-          const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(attachmentResponse.data);
-          const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(signedAFENonOpResponse.data);
+          if (relatedAFEDetailsResults.some(r => !r.ok)) {
+            throw new Error(getErrorMessage(relatedAFEDetailsResults) ?? 'Cannot get AFE Details');
+          }
+          if(!signal.aborted) {
+          const relatedAFEDetailsResultsSuccesses = relatedAFEDetailsResults as { ok: true; data: any[] }[];
+          const documentTransformed: AFEDocuments[] = transformAFEDocumentList(relatedAFEDetailsResultsSuccesses[0].data);
+          const attachmentTransformed: AFEDocuments[] = transformAFEDocumentList(relatedAFEDetailsResultsSuccesses[1].data);
+          const signedAFENonOpTransformed: AFEDocuments[] = transformAFEDocumentList(relatedAFEDetailsResultsSuccesses[2].data);
           setDocs(documentTransformed.concat(attachmentTransformed, signedAFENonOpTransformed));
           if(signedAFENonOpTransformed.length > 0 ) setSignedNonOpAgreement(true);
-        }
-      }
-      finally {
-                if (isMounted) {
-                    setAFEDocumentLoading(false);
-                }
-      };
-      
-      if(!afeRecord || !afeRecord.source_system_id || !afeRecord.apc_partner_id) return;
-       // Fetch estimates
-       setAFEEstimatesLoading(true);
-       try {
-        const estimatesResponse = await fetchAFEEstimates(afeRecord.source_system_id, afeRecord.apc_partner_id, afeRecord.apc_op_id, token);
-
-        if(!estimatesResponse.ok) {
-          throw new Error((estimatesResponse as any).message ?? "Cannot find AFE Estimates");
-        }
-        if(isMounted) {
-          const estimatesTransformed = transformEstimatesSupabase(estimatesResponse.data);
+          const estimatesTransformed = transformEstimatesSupabase(relatedAFEDetailsResultsSuccesses[3].data);
           setEstimates(estimatesTransformed.sort((a, b) => a.operator_account_group.localeCompare(b.operator_account_group)));
-        }
-       }
-       finally {
-                if (isMounted) {
-                    setAFEEstimatesLoading(false);
-                }
-      };
-
-      if(!afeRecord || !afeRecord.apc_op_id || !afeRecord.source_system_id) return;
-      //Fetch Wells
-      try {
-        const wellResponse = await fetchAFEWells(afeRecord.source_system_id, afeRecord.apc_op_id, token);
-
-        if(!wellResponse.ok) {
-          throw new Error((wellResponse as any).message ?? "Cannot find Wells");
-        }
-
-        if(isMounted) {
-          const wellTransformed = transformAFEWells(wellResponse.data);
+          const wellTransformed = transformAFEWells(relatedAFEDetailsResultsSuccesses[4].data);
           setWells(wellTransformed);
+          const newStatus = afeDetailsFormatted.partner_status;
+          setAFEPartnerStatus(newStatus);
+          setStatusColor(setStatusTextColor(newStatus));
+          setStatusBgColor(setStatusBackgroundColor(newStatus));
+          setStatusRgColor(setStatusRingColor(newStatus));
+          setButtonDisabled(toggleStatusButtonDisable(afeDetailsFormatted)); 
         }
-
       }
-      finally {};
+    } catch(err) {
+      if(!signal.aborted) {
+        setAFEFetchError(true)
+      }
+    } finally {
+      if(!signal.aborted) {
+        setAFELoading(false);
       
-      // Set status and UI-related states
-      if(!afeRecord || !afeRecord.partner_status) return;
-      const newStatus = afeRecord.partner_status;
-      setAFEPartnerStatus(newStatus);
-      setStatusColor(setStatusTextColor(newStatus));
-      setStatusBgColor(setStatusBackgroundColor(newStatus));
-      setStatusRgColor(setStatusRingColor(newStatus));
-      setButtonDisabled(toggleStatusButtonDisable(afeRecord)); 
+      }
     }
+  }, [token, afeID]);
 
-    fetchAllRelatedData();
-    return () => {
-            isMounted = false; 
-        };
-  }, [afeRecord]);
- 
+  useEffect(() => {
+  const controller = new AbortController();
+  void getAFEDetails(controller.signal);
+  return () => controller.abort();
+}, [getAFEDetails]);
+
+  
   useEffect(() => {
     if(!loggedInUser || !afeRecord) return;
     const userAcceptRejectRole = doesLoggedInUserHaveCorrectRole(loggedInUser?.partnerRoles!, approveRejectNonOpAFEs, afeRecord.apc_partner_id)
@@ -211,6 +146,9 @@ export default function AFEDetailURL() {
     setUserPartnerViewAFERole(userPartnerViewRole);
     setUserOperatorViewAFERole(userOperatorViewRole);
   },[loggedInUser, afeRecord]);
+
+  const afeHistoriesComments = useMemo(() => afeHistories.filter(h => h.type === 'comment'), [afeHistories]);
+  const afeHistoriesActions = useMemo(() => afeHistories.filter(h => h.type !== 'comment'), [afeHistories]);
 
   const handlePageChange = (paginatedData: EstimatesSupabaseType[], page: number) => {
     setRowsToShow(paginatedData);
@@ -225,18 +163,20 @@ export default function AFEDetailURL() {
     setHistory([...afeHistories, newComment]);
   };
 
-  async function handleViewDocument(url:string) {
-    try{
-    const file = await fetchRelatedDocuments(url,token);
+  async function handleViewDocument(url: string, docName: string) {
+    try {
+      const file = await fetchRelatedDocuments(url, token);
 
-    if(file.ok) {
-      setDocToView(file.data[0].uri)
-    }
-
-    } finally {
-      if(docToView !=='') {
-        setOpen(true);
+      if (!file.ok) {
+        throw new Error();
       }
+      const uri = file.data[0].uri;
+        setDocToView(uri);
+        if (uri !== '') setOpen(true);
+        insertAFEHistoryRecord(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed')
+
+    } catch {
+      notifyFailure(`Blind Well.  The file couldn’t be opened for viewing`);
     }
 
   };
@@ -246,20 +186,19 @@ export default function AFEDetailURL() {
     try{
     const file = await fetchRelatedDocuments(url,token);
     const filename = fileName+'.'+mimetype;
-    if(file.ok) {
+    if(!file.ok) {
+      throw new Error();
+    }
       const downloadURL = file.data[0].uri;
       const a = document.createElement("a");
       a.href = filename ? `${downloadURL}&download=${encodeURIComponent(filename)}` : downloadURL;
       a.setAttribute("download", filename ?? "");
       document.body.appendChild(a);
       a.click();
-      a.remove();
-    } else {
-  console.error("No signed URL returned from Supabase.");
-}
-     
-    } finally {
-    return;
+      a.remove(); 
+      insertAFEHistoryRecord(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', fileName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download')
+    } catch {
+      notifyFailure(`Pressure Loss Detected.  The file couldn’t be delivered`);
     }
 
   };
@@ -285,13 +224,7 @@ export default function AFEDetailURL() {
         XLSX.writeFile(wb, "export.xlsx");
       
   };
-
-  useMemo(() => {
-     setAFEHistoryComments(afeHistories.filter(history => history.type === 'comment'));
-     setAFEHistoryActions(afeHistories.filter(history => history.type !== 'comment'));
-
-  },[afeHistories]);
-
+  
   async function handleStatusChanges(status: string) {
     const partnerStatusChangeResult = await handleThePartnerStatusChange(
       afeRecord!,
@@ -314,9 +247,19 @@ export default function AFEDetailURL() {
       setStatusBgColor(setStatusBackgroundColor(status));
       setStatusRgColor(setStatusRingColor(status));
 
-      return {ok: false};
+      return {ok: true};
     }
+  };
+
+  async function handleArchiveChanges(actionBy: 'Operator' | 'Partner') {
+    if(actionBy === 'Operator') {
+    handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
+    setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));           
+    } else {
+    handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action', token),
+    setAFERecord(prev => (prev ? { ...prev, partner_archived: !prev.partner_archived } : null));
   }
+  } ;
 
   
   return (
@@ -327,6 +270,7 @@ export default function AFEDetailURL() {
           message={'You do not have permission to view this AFE'}
           />
         </div>
+        {afeLoading ? (<div className="h-full text-center mx-20 mt-20" ><LoadingPage></LoadingPage></div>) : (
         <div hidden={(afeRecord === null && afeLoading == false) ? true : false}>
       <div className="relative h-full">
       <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -398,35 +342,22 @@ export default function AFEDetailURL() {
                     name="partnerArchive"
                       hidden={doesUserHavePartnerViewAFERole ? false : true}
                       className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
-                      onClick={(e: any) => {
-                        
-                        handlePartnerArchiveStatusChange(afeRecord?.id!, !afeRecord?.partner_archived, `${!afeRecord?.partner_archived === false ? 'The Partner Un-Archived the AFE' : 'The Partner Archived the AFE'}`, 'action', token),
-                        setAFERecord(prev => (prev ? { ...prev, partner_archived: !prev.partner_archived } : null));
-                      }}
-                      >
+                      onClick={(e: any) => {handleArchiveChanges('Partner')}}>
                       {afeRecord?.partner_archived === true ? 'Un-Archive' : 'Archive'}
                     </button>
                       <button
                         name="operatorArchive"
                         hidden={doesUserHaveOperatorViewAFERole ? false : true}
                         className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 text-xs/6 2xl:text-sm/7 font-semibold custom-style text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]"
-                        onClick={(e: any) => {
-                          handleOperatorArchiveStatusChange(afeRecord?.id!, !afeRecord?.archived, `${!afeRecord?.archived === false ? 'The Operator Un-Archived the AFE' : 'The Operator Archived the AFE'}`, 'action', token),
-                            setAFERecord(prev => (prev ? { ...prev, archived: !prev.archived } : null));
-                          refreshData();
-                        }}
-                      >
+                        onClick={(e: any) => {handleArchiveChanges('Operator')}}>
                         {afeRecord?.archived === true ? 'Un-Archive' : 'Archive'}
                       </button>
-                    
-
                   </div>
                 </div>
               </div>
             </div>
            {/* AFE Details */}
             <div className="px-2 py-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
-               {afeLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                {/* AFE Header 1 */}
               <div className="m-0 max-w-2xl sm:w-full sm:flex justify-between text-xs/6 2xl:text-sm/6 ">
@@ -472,8 +403,8 @@ export default function AFEDetailURL() {
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       ${ afeRecord?.supp_gross_estimate! > 0 ?
                       afeRecord?.supp_gross_estimate!.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) :
-                      afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                      }
+                      afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
+                      } {afeRecord?.currency_code}
                     </dd>
                   </div>
                   <div className="2xl:pr-4 text-left col-span-7">
@@ -482,7 +413,7 @@ export default function AFEDetailURL() {
                       { afeRecord?.supp_gross_estimate! > 0 ?
                       calcPartnerNet(afeRecord?.supp_gross_estimate!, afeRecord?.partner_wi) :
                       calcPartnerNet(afeRecord?.total_gross_estimate, afeRecord?.partner_wi)
-                      }
+                      } {afeRecord?.currency_code}
                     </dd>
                   </div>
                   <div className="sm:pr-4 col-span-15 sm:row-start-3 sm:text-right">
@@ -495,7 +426,6 @@ export default function AFEDetailURL() {
                 </div>
               </div>
               </>
-               )}
                {/* AFE Wells - Hidden if there is only one */}
                <div 
                hidden={afeWells.length === 0 ? true : false}
@@ -521,7 +451,6 @@ export default function AFEDetailURL() {
                 ))}
               </div>
               </div>
-               {afeEstimatesLoading ? (<div><LoadingPage></LoadingPage></div>) : (
                 <>
                {/* AFE Estimates */}
               <div className="2xl:h-100">  
@@ -571,7 +500,6 @@ export default function AFEDetailURL() {
               </div>
             </div>    
           </>
-               )}
               <div hidden={afeEstimates.length > 0 ? false : true} 
               className="mt-4 -mb-8 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
                 <button
@@ -648,16 +576,14 @@ export default function AFEDetailURL() {
                               aria-label="View Document">
                               <li className="cursor-pointer"
                                 onClick={(e) => {
-                                  handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimetype),
-                                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', token)
-                                }}>
+                                  handleDownloadDocument(afeDoc.storage_path, afeDoc.filename_display, afeDoc.mimetype)
+                                  }}>
                                 Download
                               </li>
                               <li className="cursor-pointer"
                                 hidden={afeDoc.mimetype === 'pdf' ? false : true}
                                 onClick={(e) => {
-                                  setOpen(true), handleViewDocument(afeDoc.storage_path),
-                                  insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', afeDoc.filename_display, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', token)
+                                  handleViewDocument(afeDoc.storage_path, afeDoc.filename_display)
                                 }}>
                                 View
                               </li>
@@ -675,11 +601,11 @@ export default function AFEDetailURL() {
                   apc_op_id={afeRecord?.apc_op_id!}
                   apc_part_id={afeRecord?.apc_partner_id!}
                   apc_partner_name={afeRecord?.partner_name!}
+                  apc_operator_name={afeRecord?.operator!}
                   userName={loggedInUser?.firstName+' '+loggedInUser?.lastName}
-                  loggedInUserEmail={loggedInUser?.email!}
-                  token={token}
                   afe_number={afeRecord?.afe_number!}
                   afe_version={afeRecord?.version_string!}
+                  mode={loggedInUser?.is_super_user ? 'Partner' : doesUserHaveOperatorViewAFERole ? 'Operator' : 'Partner'}
                   ></FileUpload>
                 </div>
               </div>
@@ -690,6 +616,7 @@ export default function AFEDetailURL() {
                 maxRowsToShow={5}
                 onlyShowRecentFileHistory={false}
                 hideCommentBox={false}
+                onCommentAdded={(comment) => setHistory(prev => [...prev, comment])}
                 />
               </div>
               
@@ -707,8 +634,9 @@ export default function AFEDetailURL() {
           </div>
         </div>
         </div>
+        )}
       </main>
-      <ToastContainer/>
+      <ToastContainer icon={false}/>
     </>
   )
 }

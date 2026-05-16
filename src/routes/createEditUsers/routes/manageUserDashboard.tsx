@@ -23,6 +23,11 @@ export default function UserStatusDashboard() {
         return;
       }
 
+    if(!loggedInUser.is_org_super_user && !loggedInUser.is_super_user) {
+      setUserListLoading(false);
+        return;
+    }
+
     let isMounted = true;
     
     async function getUsersToEdit() {
@@ -71,8 +76,12 @@ export default function UserStatusDashboard() {
       <LoadingPage></LoadingPage>
     ) : ( !loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
       (<NoSelectionOrEmptyArrayMessage
-        message={'You do not have permission to edit user active or deactive status'}
-      /> ) : (
+                message={
+              <>
+                  Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to manage user statuses.  For that you will need to reach out to your admin.
+              </>
+          }>
+                </NoSelectionOrEmptyArrayMessage> ) : (
     <UserDashboard 
     userList={userList}
     isError={isError}>

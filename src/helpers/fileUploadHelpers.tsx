@@ -1,4 +1,4 @@
-import type { GLCodeRowData, PartnerRowData } from 'src/types/interfaces';
+import type { AddressType, GLCodeRowData, OperatorType, PartnerRowData, UnrelatedPartnerRowData } from 'src/types/interfaces';
 import * as XLSX from 'xlsx';
 
 export function validateHeaders(worksheet: XLSX.WorkSheet, expectedHeaders: string[]): { valid: boolean, firstRow: string[] } {
@@ -38,6 +38,55 @@ export function parseRowsToPartnerData(
             apc_op_id: operator
         }))
     })
+};
+
+type ParsedPartnerData = {
+    partnerRows: UnrelatedPartnerRowData[];
+    operatorRows: { operator: OperatorType; address: AddressType }[];
+};
+
+export function parseRowsToUnrelatedPartnerData(
+    worksheet: XLSX.WorkSheet
+): ParsedPartnerData {
+    const rows = XLSX.utils.sheet_to_json(worksheet, {
+        header: 1,
+        defval: '',
+    }) as unknown[][]
+
+    const dataRows = rows.slice(1).filter(row => String(row[0] ?? '').trim() !== '');
+
+    const partnerRowsExtract = dataRows.flatMap<UnrelatedPartnerRowData>((row) => {
+        const basic = {
+            name: String(row[0] ?? ''),
+            street: String(row[1] ?? ''),
+            suite: String(row[2] ?? ''),
+            city: String(row[3] ?? ''),
+            state: String(row[4] ?? ''),
+            zip: String(row[5] ?? ''),
+            country: String(row[6] ?? ''),
+            active: true,
+        }
+        return basic;
+    });
+
+    const partnerRows = getDistinctUnrelatedpartnersItemsByProperties(partnerRowsExtract, ["name", "street", "suite", "city", "state", "zip", "country"]);
+
+    const operatorRows = partnerRows.map((row) => ({
+        operator: {
+            name: row.name,
+        } as OperatorType,
+        address: {
+            street: row.street,
+            suite: row.suite,
+            city: row.city,            
+            state: row.state,
+            zip: row.zip,
+            country: row.country,
+            address_active: true,
+        } as AddressType,
+    }));
+
+    return { partnerRows, operatorRows };
 };
 
 export function parseRowsToAccountData(
@@ -98,6 +147,23 @@ export function getDistinctItemsByProperties(
   ): PartnerRowData[] {
     const seen = new Set<string>();
     const distinctItems: PartnerRowData[] = [];
+
+    for (const item of arr) {
+      const identifier = props.map((p) => item[p]).join("|"); 
+      if (!seen.has(identifier)) {
+        seen.add(identifier);
+        distinctItems.push(item);
+      }
+    }
+    return distinctItems;
+};
+
+export function getDistinctUnrelatedpartnersItemsByProperties(
+    arr: UnrelatedPartnerRowData[],
+    props: Array<keyof UnrelatedPartnerRowData>
+  ): UnrelatedPartnerRowData[] {
+    const seen = new Set<string>();
+    const distinctItems: UnrelatedPartnerRowData[] = [];
 
     for (const item of arr) {
       const identifier = props.map((p) => item[p]).join("|"); 

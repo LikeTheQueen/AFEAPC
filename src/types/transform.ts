@@ -63,6 +63,7 @@ export const transformAFEs = (data: any[]): AFEType[] => {
         partner_archived: item.partner_archived,
         apc_partner_id: item.apc_partner_id,
         well_name: item.well_name,
+        currency_code: item.currency_code,
     }));
 };
 
@@ -95,7 +96,8 @@ export const transformSingleAFE = (item: any): AFEType => {
         archived: item.archived,
         partner_archived: item.partner_archived,
         apc_partner_id:item.apc_partner_id,
-        well_name: item.well_name
+        well_name: item.well_name,
+        currency_code: item.currency_code,
     };
 };
 

@@ -4,35 +4,55 @@ import { formatDateShort } from "src/helpers/styleHelpers";
 import { type Notifications } from "src/types/interfaces";
 import { transformNotifications } from "src/types/transform";
 import UniversalPagination from "../../sharedComponents/pagnation";
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import { ChevronDownIcon } from '@heroicons/react/16/solid';
+import { viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+import { doesUserHaveRole } from "src/helpers/helpers";
+import { useSupabaseData } from "src/types/SupabaseContext";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 type FilterNotificationProp = {
   apc_afe_id: string;
 }
 
 export default function NotificationsGrid() {
-  
-const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
+  const { loggedInUser } = useSupabaseData();
+  const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
 // State for paginated data
-    const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const maxRowsToShow = (6);
+  const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const maxRowsToShow = (6);
 //Paging for the call to Supabase    
-    const minRange = (0);
-    const [maxRange, setMaxRange] = useState(3);
-    const [totalNotificationHistoryRowCount, setTotalNotificationHistoryRowCount] = useState(0);
+  const minRange = (0);
+  const [maxRange, setMaxRange] = useState(3);
+  const [totalNotificationHistoryRowCount, setTotalNotificationHistoryRowCount] = useState(0);
 //Filtering variables
-    const [actionList, setActionList] = useState<string [] | []>([]);
-    const [userList, setUserList] = useState<string [] | []>([]);
-    const [selectedAction, setSelectedAction] = useState('');
-    const [selectedUser, setSelectedUser] = useState('');
-    const [afeSearch, setAFESearch] = useState('');
-    const [verSearch, setVerSearch] = useState('');
-    const [descriptionSearch, setDescriptionSearch] = useState('');
+  const [actionList, setActionList] = useState<string [] | []>([]);
+  const [userList, setUserList] = useState<string [] | []>([]);
+  const [selectedAction, setSelectedAction] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
+  const [afeSearch, setAFESearch] = useState('');
+  const [verSearch, setVerSearch] = useState('');
+  const [descriptionSearch, setDescriptionSearch] = useState('');
+  const [doesUserHaveViewOpAFERole, setDoesUserHaveOpAFERole] = useState(false);
+  const [doesUserHaveViewNonOpAFERole, setDoesUserHaveNonOpAFERole] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
     let isMounted = true;
     async function getNotifications() {
+      if(!loggedInUser) {
+            setLoading(false);
+            return;
+          }
+          const viewOpAFERole = doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewOperatedAFEPermission);
+          const viewNonOpAFERole = doesUserHaveRole(loggedInUser, viewNonOpAFEPermission, viewNonOpAFEPermission);
+          setDoesUserHaveOpAFERole(viewOpAFERole);
+          setDoesUserHaveNonOpAFERole(viewNonOpAFERole);
+          if(!viewNonOpAFERole && !viewOpAFERole) {
+            setLoading(false);
+            return;
+          }
         try {
             const result = await fetchNotifications(minRange, maxRange, false);
         
@@ -50,7 +70,7 @@ const [notifications, setNotifications] = useState<Notifications[] | []>([]);
             isMounted = false;
         };
     
-},[maxRange])
+},[maxRange, loggedInUser])
 
 useMemo(() => {
   async function getNotificationHistoryRowCount() {
@@ -124,7 +144,16 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
 
   return (
     <>
-    <div className="px-4 py-4 sm:px-6 sm:py-6">
+    <div hidden={doesUserHaveViewOpAFERole && doesUserHaveViewNonOpAFERole} className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
+              <NoSelectionOrEmptyArrayMessage
+              message={
+            <>
+               Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to view AFEs and that means you are not able to see the history either.  For that you will need to reach out to your admin.
+            </>
+              }>
+              </NoSelectionOrEmptyArrayMessage>
+          </div>
+    <div hidden={!doesUserHaveViewOpAFERole || !doesUserHaveViewNonOpAFERole} className="px-4 py-4 sm:px-6 sm:py-6">
       <h2 className="text-lg sm:text-xl font-semibold custom-style">AFE Histories</h2>
        <p className="text-xs/6 2xl:text-sm/6 custom-style-long-text px-3">
                 Cumlative history of actions taken on all AFEs.
@@ -482,14 +511,14 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
           </div>
             </div>
       </div>
-      <div className="sm:h-93">
+      <div className="sm:min-h-93">
       <table className="mt-6 w-full text-left whitespace-normal">
         <colgroup>
-          <col className="w-4/5 lg:w-3/12" />
-          <col className="w-2/5 lg:w-5/12" />
-          <col className="lg:w-2/12" />
-          <col className="lg:w-2/12" />
-          <col className="lg:w-1/12" />
+          <col className="w-full sm:w-3/12" />
+          <col className="hidden sm:table-column sm:w-5/12" />
+          <col className="w-auto sm:w-2/12" />
+          <col className="hidden md:table-column md:w-2/12" />
+          <col className="hidden sm:table-column sm:w-1/12" />
         </colgroup>
         <thead className="border-b border-[var(--darkest-teal)]/30 text-sm/6 sm:text-base/6 text-[var(--darkest-teal)] custom-style">
           <tr className="">
@@ -512,7 +541,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         </thead>
         <tbody className="divide-y divide-[var(--darkest-teal)]/20 ">
           {rowsToShow.sort((a,b) => b.id - a.id).map((item) => (
-            <tr key={item.id} className="h-15" >
+            <tr key={item.id} className="align-top" >
               <td className="py-2 px-4 sm:pr-10 pl-4 sm:pl-6 text-left">
                 <div className="flex items-center ">
                   <img

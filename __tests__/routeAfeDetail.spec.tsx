@@ -19,6 +19,8 @@ import {
   singleAFEAttachmentResponse,
   singleAFEDocResponse,
   singleAFESignedResponse } from './test-utils/rachelGreenuser';
+
+  import { MonicaGeller_NoOpRoles_CW_NonOpCW, afesReturnedFromSupabase } from './test-utils/afeRecords';
 // ─── Route config ─────────────────────────────────────────────────────────────
 const afeID = '4b6cebbf-ca88-4e9e-8479-dd50cc13e03W';
 const afeDetailRoute = `/mainscreen/afeDetail/${afeID}`;
@@ -129,7 +131,7 @@ const renderAFEDetailNull = () => {
     routePath: afeDetailRoute,
     routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
     supabaseOverrides: {
-      loggedInUser: loggedInUserRachelGreen,
+      loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
       loading: false,
       isSuperUser: false,
       session: mockSession as any,
@@ -143,7 +145,7 @@ const renderAFEDetailPartner = () => {
     routePath: afeDetailRoute,
     routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
     supabaseOverrides: {
-      loggedInUser: loggedInUserRossGeller,
+      loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
       loading: false,
       isSuperUser: false,
       session: mockSession as any,
@@ -291,7 +293,7 @@ describe('AFEDetailURL', () => {
   expect(setStatusRingColor).toHaveBeenCalledWith('Approved');
 
   expect(screen.getByRole('button', { name: 'Approve'})).toBeDisabled();
-});
+  });
 
 it('shows the Reject button and calls status functions when clicked', async () => {
   (afeHelpers.handleThePartnerStatusChange as Mock).mockReturnValue({
@@ -328,7 +330,7 @@ it('shows the Reject button and calls status functions when clicked', async () =
   expect(setStatusTextColor).toHaveBeenCalledWith('Rejected');
   expect(setStatusBackgroundColor).toHaveBeenCalledWith('Rejected');
   expect(setStatusRingColor).toHaveBeenCalledWith('Rejected');
-});
+  });
 
   });
 describe('AFEDetailURL documents', () => {

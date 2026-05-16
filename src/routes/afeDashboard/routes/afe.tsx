@@ -14,6 +14,9 @@ import { AFECard } from "./helpers/afeCard";
 import { AFEHeader, NoFilteredAFEsToView } from "./helpers/afeHeader";
 import { AFEFilters } from "./helpers/afeFilters";
 import * as XLSX from 'xlsx';
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+import { doesUserHaveRole } from "src/helpers/helpers";
 
 const tabs = [
   {id:1, name:"Non-Operated AFEs", current: true},
@@ -36,6 +39,8 @@ export default function AFE() {
   const [partnerStatusDaysAgo, setPartnerStatusDaysAgo] = useState(100);
   const [afeNumberSearch, setAFENumberSearch] = useState('');
   const [afeFetchError, setAFEFetchError] = useState(false);
+  const [doesUserHaveViewOpAFERole, setDoesUserHaveOpAFERole] = useState(true);
+  const [doesUserHaveViewNonOpAFERole, setDoesUserHaveNonOpAFERole] = useState(true);
 
   // State for paginated data
   const [rowsToShowOperated, setRowsToShowOperated] = useState<AFEType[]>([]);
@@ -60,12 +65,18 @@ export default function AFE() {
   
   const getAFEs = useCallback(async (signal: AbortSignal) => {
     if(!loggedInUser?.user_id || token === '') return;
+    const viewOpAFERole = doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewOperatedAFEPermission);
+    const viewNonOpAFERole = doesUserHaveRole(loggedInUser, viewNonOpAFEPermission, viewNonOpAFEPermission);
+    setDoesUserHaveOpAFERole(viewOpAFERole);
+    setDoesUserHaveNonOpAFERole(viewNonOpAFERole);
     setAFELoading(true);
-    
+    if(!viewNonOpAFERole && !viewOpAFERole) {
+      setAFELoading(false);
+      return;
+    }
     try{
           const afes = await fetchAFEs(token, signal);
           
-
           if(!afes.ok) {
             throw new Error((afes as any).message ?? "Cannot find AFE Details");
           }
@@ -91,7 +102,7 @@ export default function AFE() {
   void getAFEs(controller.signal);
   return () => controller.abort();
 }, [getAFEs]);
-
+  
   useEffect(() => {
     if (!loggedInUser || !allAFEs) return;
 
@@ -209,7 +220,7 @@ export default function AFE() {
               }))
             };
   
-    const handleExport = async () => {
+  const handleExport = async () => {
           
           const afeExport = () => {
             if(currentTab === 1 && filteredNonOperatedAFEs.length < 1) return [];
@@ -358,7 +369,15 @@ export default function AFE() {
           <div className="h-4"></div>
           
     </div>
-    
+    <div hidden={currentTab === 2 || (currentTab === 1 && (doesUserHaveViewNonOpAFERole)) || (currentTab === 3 && (doesUserHaveViewNonOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
+          <NoSelectionOrEmptyArrayMessage
+          message={
+        <>
+            Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to view Non-Op AFEs.  For that you will need to reach out to your admin.
+        </>
+    }>
+          </NoSelectionOrEmptyArrayMessage>
+      </div>
     {/*No AFE Message when filtered or [] On all Tabs, hidden on all tabs except 3 and only for Operated AFEs*/}
     <div hidden={currentTab !==3}>
       <AFEHeader
@@ -402,6 +421,15 @@ export default function AFE() {
       >        
       </NoFilteredAFEsToView>
       
+      </div>
+      <div hidden={currentTab === 1 || (currentTab === 2 && (doesUserHaveViewOpAFERole)) || (currentTab === 3 && (doesUserHaveViewOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
+          <NoSelectionOrEmptyArrayMessage
+          message={
+        <>
+            Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to view Operated AFEs.  For that you will need to reach out to your admin.
+        </>
+    }>
+          </NoSelectionOrEmptyArrayMessage>
       </div>
       </div>
     </>

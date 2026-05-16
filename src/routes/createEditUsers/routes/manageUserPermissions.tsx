@@ -5,6 +5,9 @@ import type { GroupedUser, UserPermissionFlatRow } from "src/types/interfaces";
 import  PermissionDashboards  from "../../sharedComponents/permissionGrid";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { buildGroupedUsers } from "./helpers/helpers";
+import { doesUserHaveRole } from "src/helpers/helpers";
+import { operatorEditUsers, nonOperatorEditUsers } from "src/constants/variables";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 export default function UserPermissionDashboard() {
   const { loggedInUser, session } = useSupabaseData();
@@ -13,9 +16,20 @@ export default function UserPermissionDashboard() {
   const [nonOpUserRoleList, setNonOpUserRoleList] = useState<GroupedUser[] | []>([]);
   const [operatorUserRoleList, setOperatorUserRoleList] = useState<GroupedUser[] | []>([]);
   const [userPermissionListLoading, setUserPermissionListLoading] = useState(true);
+  const [doesUserHaveEditOpUserRole, setDoesUserHaveOpEditUserRole] = useState(false);
+  const [doesUserHaveEditNonOpUserRole, setDoesUserHaveNonOpEditUserRole] = useState(false);
 
   useEffect(() => {
     if(!token || !loggedInUser) {
+      setUserPermissionListLoading(true);
+      return;
+    }
+    const editOpUserRole = doesUserHaveRole(loggedInUser, operatorEditUsers, operatorEditUsers);
+    const editNonOpUserRole = doesUserHaveRole(loggedInUser, nonOperatorEditUsers, nonOperatorEditUsers);
+    setDoesUserHaveOpEditUserRole(editOpUserRole);
+    setDoesUserHaveNonOpEditUserRole(editNonOpUserRole);
+    setUserPermissionListLoading(true);
+    if(!editOpUserRole && !editNonOpUserRole && !loggedInUser.is_org_super_user) {
       setUserPermissionListLoading(false);
       return;
     }
@@ -77,7 +91,16 @@ useEffect(() => {
       <LoadingPage></LoadingPage>
     ) : (
       <>
-          <div className="divide-y divide-[var(--darkest-teal)]/40">
+      <div hidden={doesUserHaveEditOpUserRole || doesUserHaveEditNonOpUserRole || loggedInUser?.is_org_super_user } className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
+                    <NoSelectionOrEmptyArrayMessage
+                    message={
+                  <>
+                     Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to view AFEs and that means you are not able to see the history either.  For that you will need to reach out to your admin.
+                  </>
+                    }>
+                    </NoSelectionOrEmptyArrayMessage>
+                </div>
+      <div hidden={!doesUserHaveEditOpUserRole && !doesUserHaveEditNonOpUserRole && !loggedInUser?.is_org_super_user} className="divide-y divide-[var(--darkest-teal)]/40">
           <PermissionDashboards 
           profileView={false}
           allUserRoles={operatorUserRoleList}
@@ -90,7 +113,7 @@ useEffect(() => {
           apcIDEditPriv={nonOpEditableIds}
           mode="Non-Operated">
           </PermissionDashboards>
-    </div>
+      </div>
     </>
     )}
     </div> 

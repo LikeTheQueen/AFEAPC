@@ -12,6 +12,7 @@ import {
 import  supabase  from './supabase';
 import type { OperatorOrPartnerList } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
+import { supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from 'src/constants/variables';
 
 
 export const fetchCompanyProfile = async() => {
@@ -40,6 +41,34 @@ export const fetchUserProfileRecordFromSupabase = async(session: string) => {
     
     return transformUserProfileRecordSupabase(data);
 };
+
+export const fetchEmailsForOperatorUsers = async(apc_op_id: string) => {
+  const { data, error } = await supabase
+      .from('OPERATOR_USER_PERMISSIONS')
+      .select('user_id(email)')
+      .eq('role', viewOperatedAFEPermission)
+      .eq('active', true)
+      .eq('apc_id', apc_op_id);
+
+    if (error) {
+      return { ok: false, message: error.message, data: [supportEmail] };
+    }
+    return {ok: true, data: data.map((row: any) => row.user_id.email) as string[]}
+};
+
+export const fetchEmailsForNonOperatorUsers = async(apc_partner_id: string) => {
+  const { data, error } = await supabase
+      .from('PARTNER_USER_PERMISSIONS')
+      .select('user_id(email)')
+      .eq('role', viewNonOpAFEPermission)
+      .eq('active', true)
+      .eq('apc_id', apc_partner_id);
+
+    if (error) {
+      return { ok: false, message: error.message, data: [supportEmail] };
+    }
+    return {ok: true, data: data.map((row: any) => row.user_id.email) as string[]}
+}
 
 
 
@@ -520,21 +549,21 @@ export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:st
     
   };
 
-export async function fetchAFEDetails(afeID: string, token: string) {
+export async function fetchAFEDetails(afeID: string, token: string, signal?: AbortSignal) {
     
     type TogglePayload = { afeID: string; };
     type ToggleResult  = { ok: true; data: any } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_base_details", { afeID }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_base_details", { afeID }, token, signal);
     
   };
 
-export async function fetchAFEHistory(afeID: string, token: string) {
+export async function fetchAFEHistory(afeID: string, token: string, signal?: AbortSignal) {
     
     type TogglePayload = { afeID: string; };
     type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_history", { afeID }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_AFE_history", { afeID }, token, signal);
     
   };
 
@@ -561,7 +590,7 @@ export async function fetchRelatedDocuments(url: string, token: string) {
     type TogglePayload = { url: string; };
     type ToggleResult  = { ok: true; data: RelatedDoc[] } | { ok: false; message: string };
    
-    return callEdge<TogglePayload, ToggleResult>("fetch_related_documents", {url }, token);
+    return callEdge<TogglePayload, ToggleResult>("fetch_related_documents", {url}, token);
     
   };
 

@@ -949,8 +949,6 @@ await new Promise(resolve => setTimeout(resolve, 150));
   test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)', async () => {
     const user = userEvent.setup();
 
-     
-    
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,

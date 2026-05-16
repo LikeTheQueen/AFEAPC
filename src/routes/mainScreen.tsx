@@ -50,17 +50,13 @@ const help = [
   { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
   { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
 ]
-const settings = [
-  { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'U' },
-  { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
-  { id: 3, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
-  { id: 4, name: 'Configurations', href: "configurations", initial: 'C' }
-]
+
 const onboarding = [
   { id: 1, name: 'Create Operator', href: "createOperator", initial: 'O' },
-  { id: 2, name: 'Create Users', href: "createUser", initial: 'U' },
-  { id: 3, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
-  { id: 4, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+  { id: 2, name: 'Create Partners', href: "createPartner", initial: 'P' },
+  { id: 3, name: 'Create Users', href: "createUser", initial: 'U' },
+  { id: 4, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
+  { id: 5, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
 ]
 const userNavigation = [
   { name: 'Your profile', href: 'profile' },
@@ -299,12 +295,12 @@ export default function MainScreen() {
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-[var(--darkest-teal)] px-6 pb-4">
-            <div className="flex h-24 shrink-0 items-center justify-center  -mb-8 bg-[var(--darkest-teal)]">
+            <div className="flex h-24 shrink-0 items-center justify-start  -mb-2 bg-[var(--darkest-teal)]">
               <Link to="/mainscreen/afe">
               <img
                 alt="AFE Partner Connections"
                 src={APP_LOGO}
-                className="h-22 w-auto bg-transparent"
+                className="h-16 w-auto bg-transparent"
               />
               </Link>
             </div>

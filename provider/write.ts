@@ -4,6 +4,18 @@ import { callEdge } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
 
+  //INSERT FUNCTIONS API CALLS
+  export const insertAFEHistoryRecord = async (afe_id:string, description:string, type: string) => {
+    const { data, error } = await supabase
+    .from('AFE_HISTORY')
+    .insert({afe_id: afe_id, description: description, type:type})
+    .select();
+    if (error) {
+        writeToFunctionLogs('insertAFEHistoryRecord', 'Cannot add history to AFE '+afe_id, { message: error.message } as unknown as JSON , 'ERROR', 'AFE Detail screen')
+        return {ok: false}
+      }
+      return {ok: true}
+  };
   export const writeToFunctionLogs = async (function_name: string, message: string, details: JSON | null, level: string, triggered_from: string) => {
     
     const { data, error } = await supabase.from('FUNCTION_LOGS').insert({
@@ -18,6 +30,18 @@ import type { UUID } from 'crypto';
       }
     return;
   };
+  export const insertDocument = async(filepath: string, fileToUpload: File) => {
+    const { data, error } = await supabase.storage
+          .from('AFE_Docs')
+          .upload(filepath, fileToUpload);
+  
+        if (error) {
+          writeToFunctionLogs('insertDocument', error.message, null, 'ERROR', 'Attach Doc to AFE in AFE Detail');
+          return {ok: false};
+        }
+    return {ok: true};
+  };
+  
 
   export const updateOperatorNameAndStatus = async (operatorName: string, activeStatus: boolean, apc_id:string) => {
     console.log(activeStatus,apc_id,operatorName)
@@ -111,6 +135,31 @@ import type { UUID } from 'crypto';
       const { data: dataAddress, error: errorAdress } = await supabase.from('PARTNER_ADDRESS')
     .insert({apc_id: apc_id, 
       apc_op_id: apc_op_id,
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country })
+    .select()
+    .single();
+    if (errorAdress) {
+         return { ok: false, data:null, message: errorAdress.message};
+      }
+      return {ok: true, data:dataAddress, message: undefined};
+  };
+
+  export const addUnrelatedPartnerSupabase = async (name: string, address: AddressType) => {
+    const { data, error } = await supabase.from('PARTNERS')
+    .insert({name: name, active:true})
+    .select()
+    .single();
+    if (error) {
+        return {ok: false, data: null, message: error.message};
+      }
+      const apc_id = data.id;
+      const { data: dataAddress, error: errorAdress } = await supabase.from('PARTNER_ADDRESS')
+    .insert({apc_id: apc_id, 
       street: address.street, 
       suite: address.suite, 
       city: address.city, 
@@ -289,6 +338,15 @@ import type { UUID } from 'crypto';
       return {ok: true, message: undefined};
   };
 
+   export const writePartnerlistForAFEPartnerConnections = async(partnerRecords: OperatorType, partnerAddress: AddressType) => {
+    const { data, error } = await supabase.from('PARTNERS').insert(partnerRecords).select();
+    if (error) {
+        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
+        return {ok: false, message: error.message};
+      }
+      return {ok: true, message: undefined};
+  };
+
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
     const { error } = await supabase.from('PARTNERS_CROSSWALK').insert(partnerRecords);
     if (error) {
@@ -396,7 +454,7 @@ import type { UUID } from 'crypto';
    return {ok:true, data: data as any, message: null};
   };
 
-  export const insertIntoAFEDocTableNonOpAgreement = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {
+  export const insertIntoAFEDocTable = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {
     const { data, error } = await supabase.from('AFE_PROCESSED_FILE').insert({
       apc_afe_id: apc_afe_id, 
       apc_op_id: apc_op_id, 
@@ -406,16 +464,17 @@ import type { UUID } from 'crypto';
       filename_display: filename_display, 
       mimetype: mimetype, 
       byte_size: byte_size, 
-      isAttachment: false, 
-      isForm: !isNonOpSignedAFE, 
+      isAttachment: !isNonOpSignedAFE, 
+      isForm: false, 
       isNonOpSignedAFE: isNonOpSignedAFE, 
       documentDate: new Date(),
       checksum: checksum
     }).select()
-    if(error) {
-      return notifyStandard('There was an issue');
-    }
-    return data;
+    if (error) {
+          writeToFunctionLogs('insertIntoAFEDocTable', error.message, null, 'ERROR', 'Attach Doc to AFE in AFE Detail could not create reference records');
+          return {ok: false};
+        }
+    return {ok: true};
   };
 
   interface AFEFilterCondition {
@@ -449,7 +508,7 @@ import type { UUID } from 'crypto';
     
     return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type }, token);
   };
-
+  
   export async function createNewUser(email: string, password: string, token: string) {
     
     type TogglePayload = { email:string; password: string; };

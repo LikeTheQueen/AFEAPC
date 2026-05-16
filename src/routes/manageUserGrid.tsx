@@ -17,7 +17,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
     }, [userList]);
 
     function handleReactivate(userID: string) {
-        if(!token) return;
+        if(!token || !loggedInUser?.is_org_super_user) return;
 
         setUsers(prevUsers => 
             prevUsers.map(user => 
@@ -40,7 +40,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
     };
     
     function handleDeactivate(userID: string) {
-        if(!token) return;
+        if(!token|| !loggedInUser?.is_org_super_user) return;
         setUsers(prevUsers => 
             prevUsers.map(user => 
                 user.id === userID ? { ...user, active: false } : user
@@ -62,7 +62,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
     };
     
     async function handleSuperUserToggle(userID: string, is_super_org_user: boolean) {
-        if (!token) return;
+        if (!token || !loggedInUser?.is_org_super_user) return;
 
         setUsers(prevUsers =>
             prevUsers.map(user =>
@@ -99,8 +99,8 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
             <div className="grid max-w-full grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-7 ">
                 <div className="md:col-span-2">
                     <h2 className="text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">User Profiles</h2>
-                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">You can Activate or Deactivate users associated to the addresses you have the Edit User Permissions for and are a Super User of your organization.</p>
-                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt.</p>
+                    <p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">You can set the Super User status, Activate or Deactivate users if you are a Super User of your organization.</p>
+                    <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">But Self-deactivation? Nice try, 007. You'll need outside authorization for that stunt.</p>
                     <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">Another admin for your organization will need to deactivate your profile or contact AFE Partner Connections directly.</p>
                 </div>
                 <div className="md:col-span-5 ">
@@ -154,7 +154,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={user.active}
-                                    disabled={loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleReactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] mr-1">
                                     Activate User
@@ -162,7 +162,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={!user.active}
-                                    disabled={loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleDeactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] mr-1">
                                     Deactivate User

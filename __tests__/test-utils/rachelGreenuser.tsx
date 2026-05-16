@@ -15,6 +15,8 @@ export const loggedInUserRachelGreen: UserProfileRecordSupabaseType = {
     email: 'elizabeth.rider.shaw@gmail.com',
     active: true,
     is_super_user: false,
+    is_org_super_user: false,
+    apc_op_id_umbrella: apc_part_id_Athena,
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',

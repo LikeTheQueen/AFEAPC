@@ -1,11 +1,8 @@
-import { ChatBubbleBottomCenterTextIcon, CommandLineIcon, ArrowTopRightOnSquareIcon, XMarkIcon, DocumentIcon, UserCircleIcon } from '@heroicons/react/20/solid';
+import { ChatBubbleBottomCenterTextIcon, XMarkIcon, DocumentIcon, UserCircleIcon } from '@heroicons/react/20/solid';
 import { useEffect, useMemo, useState } from 'react';
 import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
-import { insertAFEHistory } from 'provider/write'
-import { useSupabaseData } from 'src/types/SupabaseContext';
-import { SingleCheckbox } from 'src/routes/sharedComponents/singleCheckbox';
-import { fetchAFEHistoryCount } from 'provider/fetch';
+import { insertAFEHistoryRecord } from 'provider/write';
 import { AFEHistoryBlock } from 'src/routes/sharedComponents/shatedUIBlocks';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { NotificationsGridPreFiltered } from 'src/routes/afeDashboard/routes/notifications';
@@ -18,29 +15,21 @@ type AFEHistoryProps = {
     maxRowsToShow: number;
     onlyShowRecentFileHistory: boolean;
     hideCommentBox: boolean;
+    onCommentAdded?: (comment: AFEHistorySupabaseType) => void;
 };
 
-export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsToShow, onlyShowRecentFileHistory, hideCommentBox }: AFEHistoryProps) {
+export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsToShow, onlyShowRecentFileHistory, hideCommentBox, onCommentAdded }: AFEHistoryProps) {
     
-    //User session information for adding a comment
-    const { session } = useSupabaseData();
-    const token = session?.access_token ?? "";
     //Status for dialog box
     const [open, setOpen] = useState(false);
     
     const [afeHistories, setHistory] = useState<AFEHistorySupabaseType[]>([]);
     //Unfiltered AFE History
     const [unfilteredAFEHistory, setUnfilteredAFEHistory] = useState<AFEHistorySupabaseType[]>(historyAFEs);
-    const [onlyRecentAFEDocViewHistory, setOnlyRecentAFEDocViewHistory] = useState(false);
-    const [hideAFEActions, setHideAFEActions] = useState(false);
-    const [hideAFEComments, setHideAFEComments] = useState(false);
-    const [hideAFEFileActions, setHideAFEFileActions] = useState(false);
     const [commentVal, setCommentVal] = useState('');
     const [totalAFEHistoryCount, setTotalAFEHistoryCount] = useState(0);
     const [totalAFEHistoryDocFilteredCount, setTotalAFEHistoryDocFilteredCount] = useState(0);
     const [maxAFEHistoryRange, setMaxAFEHistoryRange] = useState(maxRowsToShow);
-    const [totalAFEActionCount, setTotalAFEActionCount] = useState(0);
-    const [totalAFECommentCount, setTotalAFECommentCount] = useState(0);
     const [totalDocumentActionsCount, setTotalDocumentActionsCount] = useState(0);
     const [totalRecentDocumentActionsCount, setTotalRecentDocumentActionsCount] = useState(0);
 
@@ -65,13 +54,6 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
     const afeHistoryMaxId: number = setAFEHistoryMaxID(unfilteredAFEHistory);
 
     const filterAFEHistory = (afeHistories: AFEHistorySupabaseType[]) => {
-        const applyFilters = afeHistories.filter(afeHistory => {
-            
-            const documentFilter = afeHistory.type.includes('file');
-
-            setTotalDocumentActionsCount(afeHistories.filter(afeHistory => afeHistory.type.includes('file')).length);
-            return documentFilter ;
-        })
 
         const maxIDDocView = afeHistories.reduce<Record<string, AFEHistorySupabaseType>>((acc, curr) => {
         const key = `${curr.user}-${curr.description}-${curr.type}`
@@ -93,63 +75,15 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
     };
 
     function handleComment() {
-        setAFEHistoryMaxID(afeHistories);
         const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: apc_afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
-        setHistory([...afeHistories, newComment]);
-        insertAFEHistory(apc_afe_id, commentVal, 'comment', token);
+        insertAFEHistoryRecord(apc_afe_id, commentVal, 'comment');
         setCommentVal('');
+        onCommentAdded?.(newComment);
     };
 
     return (
         <>
             <div className="h-full flex flex-col">
-                {/* History feed 
-                <div className='mr-1 grid grid-cols-1 2xl:grid-cols-5 gap-x-0 gap-y-2 mb-4 mt-4 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-lg px-2 py-3 text-xs/5 2xl:text-sm/6'>
-                    
-                    <div className="justify-start col-span-2 flex flex-row-reverse gap-2 py-0 px-0">
-                          <SingleCheckbox 
-                            value={!hideAFEActions}
-                            onChange={(hideAFEActions) => setHideAFEActions(!hideAFEActions)}
-                            label={`Show AFE Actions (${totalAFEActionCount})`}
-                            id={'hideAFEActions'}>
-                          </SingleCheckbox>
-                    </div>
-                    
-                    <div className="justify-start col-span-3 flex flex-row-reverse gap-2 py-0 px-0">
-                          <SingleCheckbox 
-                            value={!hideAFEFileActions}
-                            onChange={(hideAFEFileActions) => setHideAFEFileActions(!hideAFEFileActions)}
-                            label={`Include Document Actions (${totalDocumentActionsCount})`}
-                            id={'hideAFEFileActions'}>
-                          </SingleCheckbox>
-                    </div>
-                    <div className="justify-start col-span-2 flex flex-row-reverse gap-2 py-0 px-0">
-                          <SingleCheckbox 
-                            value={!hideAFEComments}
-                            onChange={(hideAFEComments) => setHideAFEComments(!hideAFEComments)}
-                            label={`Show Comments (${totalAFECommentCount})`}
-                            id={'hideAFEComments'}>
-                          </SingleCheckbox>
-                    </div>
-                    <div className="justify-start col-span-3 flex flex-row-reverse gap-2 py-0 px-0">
-                          <SingleCheckbox 
-                            value={onlyRecentAFEDocViewHistory}
-                            onChange={(onlyRecentAFEDocViewHistory) => setOnlyRecentAFEDocViewHistory(onlyRecentAFEDocViewHistory)}
-                            label={`Only Latest Document Action* (${totalRecentDocumentActionsCount})`}
-                            id={'onlyRecentAFEDocViewHistory'}>
-                          </SingleCheckbox>
-                    </div>
-                    <div className='2xl:col-span-5 text-right -mt-2 font-light custom-style-info text-[var(--darkest-teal)] sm:text-right text-xs/5'>
-                        *Defaulted to show each user’s most recent document view/download
-                    </div>
-
-                    <div className='2xl:col-span-5 flex flex-row justify-end items-center text-right -mb-2 font-medium custom-style text-[var(--darkest-teal)] sm:text-right text-xs/5 2xl:text-sm/6'>
-                        <div className='pr-2'>Complete AFE History</div>
-                        <ArrowTopRightOnSquareIcon aria-hidden="true" onClick={(e) => {
-                                  setOpen(true)}} className="relative size-5 flex-none text-[var(--darkest-teal)]" />
-                    </div>
-                    
-                </div>*/}
                 <div className="overflow-y-auto flex-1 sm:max-h-130 sm:min-h-130">
                 <ul role="list" className="mt-2 mr-1 space-y-4 mb-1 ">
                     {
