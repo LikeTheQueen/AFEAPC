@@ -14,10 +14,7 @@ import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelect
 import { supportEmail } from 'src/constants/variables';
 import { ParentCompanyDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 
- 
-export default function CreateNewUser() {
-
-  let userBlank: UserProfileRecordSupabaseType = {
+let userBlank: UserProfileRecordSupabaseType = {
     firstName: '',
     lastName: '',
     email: '',
@@ -29,6 +26,8 @@ export default function CreateNewUser() {
     apc_op_id_umbrella: "00000000-0000-0000-0000-000000000000",
     is_org_super_user: false,
   };
+ 
+export default function CreateNewUser() {
 
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? '';
@@ -44,9 +43,9 @@ export default function CreateNewUser() {
   const [opAPCID, setOpAPCID] = useState('');
 
   useEffect(() => {
-    setLoadingPermissions(true);
+    
     if (!loggedInUser || token === '') {
-      setLoadingPermissions(false);
+      
       return;
     }
 
@@ -85,8 +84,7 @@ export default function CreateNewUser() {
         setFetchError(true);
         notifyFailure('Unable to get permissions for the new user.  Please contact AFE Partner Support')
       } finally {
-        setLoadingPermissions(false);
-        
+        if (isMounted) setLoadingPermissions(false);
         return;
       }
     } 
@@ -94,7 +92,7 @@ export default function CreateNewUser() {
     return () => {
       isMounted = false;
     }
-  }, [loggedInUser, token]);
+  }, [loggedInUser?.user_id]);
 
   useEffect(() => {
     async function getGenericRoles() {
@@ -106,7 +104,7 @@ export default function CreateNewUser() {
   useEffect(() => {
     console.count("CreateNewUser render");
     
-  }, [loggedInUser]);
+  }, [loggedInUser?.user_id]);
 
   function handleUserChange(e: { target: { name: any; value: any; }; }) {
     setNewUser({
@@ -197,7 +195,9 @@ export default function CreateNewUser() {
   const handleSaveNewUser = async () => {
     handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token, opAPCID);
   };
-console.log(opAPCID)
+
+  if (!loggedInUser) return <LoadingPage />;
+
   return (
     <> {!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
      ( <NoSelectionOrEmptyArrayMessage

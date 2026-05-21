@@ -78,6 +78,19 @@ export interface AFEType {
     active?: boolean;
   }
 
+//Interface to create a new Parent Company
+  export interface ParentCompanyWrite {
+    apc_name: string;
+    max_users: number;
+    license_expires: string;
+    is_active: boolean;
+  }
+
+  export interface ParentCompany extends ParentCompanyWrite {
+    apc_id: string;
+    apc_address: AddressType | null;
+  }
+
 //Interface for Partners pulled from the database
   export interface PartnerType {
     id?: UUID;
@@ -371,6 +384,13 @@ export interface GLCodeRowData {
   apc_part_id: string | null;
   id?: number | null;
 };
+export interface GLCodeRowDataWrite {
+  account_number: string | null;
+  account_group: string | null;
+  account_description: string | null;
+  apc_id: string | null;
+};
+
 export interface PartnerMappingRecord {
   operator?: string | UUID;
   op_partner_id?: string;

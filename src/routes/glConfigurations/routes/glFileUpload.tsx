@@ -61,6 +61,7 @@ export default function GLFileUpload() {
 
       const distinctItemsDisplay = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description"]);
       const distinctItemsWrite = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description","apc_op_id", "apc_part_id"]);
+      console.log(distinctItemsWrite);
       setDistinctAccountArray(distinctItemsDisplay);
       setData(prevData => {
         const updatedData = [...prevData];
@@ -136,7 +137,7 @@ export default function GLFileUpload() {
               <div className="mt-4">
                 <label
                   htmlFor="file-upload">
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={opAPCIDArray.length === 0 || isDisabled} />
+                  <input id="file-upload" name="file-upload" type="file" className="sr-only peer" accept=".xlsx, .xls" onChange={handleFileUpload} disabled={(opAPCIDArray.length === 0 && partnerAPCIDArray.length === 0)|| isDisabled} />
                   <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
                        peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
                 </label>
@@ -159,8 +160,8 @@ export default function GLFileUpload() {
           <tbody className="border-b border-b-[var(--darkest-teal)]/30">
             {rowsToShow.map((accountRow, accountIdx) => (
               <tr key={accountIdx} className="text-end sm:text-start custom-style-long-text border-l border-l-[var(--darkest-teal)]/30 even:bg-[var(--darkest-teal)]/20">
-                <td scope="col" className="text-start pl-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_group}</td>
-                <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_number}</td>
+                <td scope="col" className="text-start pl-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_number}</td>
+                <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_group}</td>
                 <td scope="col" className="px-2 border-r border-r-[var(--darkest-teal)]/30">{accountRow.account_description}</td>
               </tr>
             ))}
@@ -190,7 +191,7 @@ export default function GLFileUpload() {
           Save GL Account Code List
         </button>
       </div>
-      <ToastContainer />
+      <ToastContainer icon={false}/>
      
     </>
   )

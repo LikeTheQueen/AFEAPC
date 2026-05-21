@@ -6,6 +6,7 @@ import React from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { nonOperatedPermissionHeaders, nonOperatedPermissionRoles, operatedPermissionHeaders, operatedPermissionRoles } from "src/constants/variables";
 import { Field, Label, Switch } from "@headlessui/react";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 
 type PermissionGridData = {
   profileView: boolean;
@@ -16,7 +17,7 @@ type PermissionGridData = {
 
 
 export default function PermissionDashboards({ profileView, allUserRoles = [], apcIDEditPriv, mode }: PermissionGridData) {
-  const { loggedInUser, session } = useSupabaseData();
+  const { loggedInUser } = useSupabaseData();
   const [allUsersPermissions, setAllUsersPermissions] = useState(allUserRoles);
   const [permissionHeaders, setPermissionHeaders] = useState<String[] | []>([]);
   const [roleValueArray, setRoleValueArray] = useState<number[] | []>([]);
@@ -29,10 +30,7 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
   
   useEffect(() => {
   setAllUsersPermissions([...allUserRoles].sort((a, b) => a.user_firstname.localeCompare(b.user_firstname)));
-  //setAllUsersPermissions(allUserRoles)
-  console.log(allUserRoles, 'the roles in the gird', mode)
-  console.log(loggedInUser, 'the logged in user', mode)
-  console.log(apcIDEditPriv, mode)
+  
   if(mode === 'Operated') {
     setPermissionHeaders(operatedPermissionHeaders);
     setRoleValueArray(operatedPermissionRoles);
@@ -119,13 +117,28 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
 
   async function handleClickSave () {
     if(mode === 'Operated') {
-      writeorUpadateUserRoles(rolesWrite,'OPERATOR_USER_PERMISSIONS');
-      setOpRolesWrite([]);
-      setRolesWrite([]);
+      const permissionResult = await writeorUpadateUserRoles(rolesWrite,'OPERATOR_USER_PERMISSIONS');
+      if(!permissionResult.ok) {
+        notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${permissionResult.message}\n\n(TLDR: Permissions are NOT saved)`);
+        setOpRolesWrite([]);
+        setRolesWrite([]);
+      } else {
+        notifyStandard(`Permissions are saved.  Let's call it a clean tie-in.\n\n(TLDR: Permissions ARE saved)`);
+        setOpRolesWrite([]);
+        setRolesWrite([]);
+      }
+      
     } else {
-      writeorUpadateUserRoles(rolesWrite, 'PARTNER_USER_PERMISSIONS'); 
-      setPartnerRolesWrite([]);
-      setRolesWrite([]);
+      const permissionResult = await writeorUpadateUserRoles(rolesWrite, 'PARTNER_USER_PERMISSIONS'); 
+      if(!permissionResult.ok) {
+        notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${permissionResult.message}\n\n(TLDR: Permissions are NOT saved)`);
+        setPartnerRolesWrite([]);
+        setRolesWrite([]);
+      } else {
+        notifyStandard(`Permissions are saved.  Let's call it a clean tie-in.\n\n(TLDR: Permissions ARE saved)`);
+        setPartnerRolesWrite([]);
+        setRolesWrite([]);
+      }
     }
     return;
   }
@@ -214,7 +227,7 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
         <tr className="border-b border-b-[var(--darkest-teal)]  sm:border-none">
           <td className="hidden sm:table-cell w-full max-w-0 py-2 pr-3 pl-4 text-sm/6 font-semibold text-[var(--darkest-teal)] custom-style sm:w-auto sm:max-w-none sm:pl-2 text-start">
             
-            {operator.apc_name}
+            {operator.apc_name.toLowerCase() as Lowercase<string>}
             <p className="font-normal justify-end text-end mt-1 w-full text-xs">{operator.apc_street} {operator.apc_suite}
             
             <br></br>{operator.apc_city}, {operator.apc_state}

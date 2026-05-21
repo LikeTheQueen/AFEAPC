@@ -50,6 +50,7 @@ export default [
             route("editOperator", "./routes/createEditOperators/routes/manageOperatorAndPartner.tsx"),
             route("createOperator", "./routes/createEditOperators/routes/createOperator.tsx"),
             route("createPartner", "./routes/afeapcSuperUser/routes/createNewPartner.tsx"),
+            route("createparentcompany", "./routes/afeapcSuperUser/routes/createParentCompany.tsx"),
             route("createUser", "./routes/createEditUsers/routes/createNewUser.tsx"),
             route("manageUsersSystem", "./routes/createEditUsers/routes/manageUsersSystem.tsx"),
             route("manageUserPermissionsSystem", "./routes/createEditUsers/routes/manageUserPermissionsSystem.tsx"),

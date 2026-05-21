@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { fetchAllOperators, fetchAllParentCompanies } from "provider/fetch";
-import type { OperatorOrPartnerList } from "src/types/interfaces";
+import type { OperatorOrPartnerList, ParentCompany } from "src/types/interfaces";
 import { editOperatorLibrary, superUserPermission } from "src/constants/variables";
 
 type Props = {
@@ -10,8 +10,15 @@ type Props = {
   onChange?: (id: string) => void;
   limitedList: boolean;
   valueLabel?: (name: string) => void;
-
 };
+
+type ParentCompanyProps = {
+  value: string;
+  onChange?: (id: string) => void;
+  onRecordChange?: (record: ParentCompany) => void; 
+  limitedList?: boolean;
+  valueLabel?: (name: string) => void;
+}
 
 export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: Props) {
   const { loggedInUser } = useSupabaseData();
@@ -68,15 +75,17 @@ export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: P
   );
 };
 
-export function ParentCompanyDropdown({ value, onChange, limitedList, valueLabel }: Props) {
+export function ParentCompanyDropdown({ value, onChange, onRecordChange, limitedList, valueLabel }: ParentCompanyProps) {
   const { loggedInUser } = useSupabaseData();
-  const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
+  const [filteredOperators, setFilteredOperators] = useState<ParentCompany[] | []>([]);
   
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value;
         const name = e.target.options[e.target.selectedIndex].text;
+        const fullRecord = filteredOperators.find(op => op.apc_id === id);
         onChange?.(id);
         valueLabel?.(name);
+        if (fullRecord) onRecordChange?.(fullRecord);
     };
 
     useEffect(() => {
@@ -116,3 +125,5 @@ export function ParentCompanyDropdown({ value, onChange, limitedList, valueLabel
       </>
   );
 };
+
+

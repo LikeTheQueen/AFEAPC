@@ -30,7 +30,8 @@ import type {
     SupportHistory,
     Notifications,
     SystemHistory,
-    OperatorRecordWithNonOpAddresses
+    OperatorRecordWithNonOpAddresses,
+    ParentCompany
 } from "./interfaces";
 
 export const transformAFEs = (data: any[]): AFEType[] => {
@@ -577,6 +578,29 @@ export const transformOperatorForDropDown = (data: any[]) : OperatorOrPartnerLis
             zip: item.zip,
             country: item.country,
             id: item.apc_address_id,
+            address_active: item.active
+        }, 
+
+    }))
+};
+
+export const transformParentCompany = (data: any[]) : ParentCompany[] => {
+    return data.map(item => ({
+        apc_id: item.apc_id.id,
+        apc_name:item.apc_id.name,
+        is_active:item.apc_id.active,
+        max_users:item.apc_id.max_users,
+        license_expires: item.apc_id.license_expires 
+            ? new Date(item.apc_id.license_expires).toISOString().split('T')[0] 
+            : '',
+        apc_address:  {
+            street: item.street,
+            suite: item.suite,
+            city: item.city,
+            state: item.state,
+            zip: item.zip,
+            country: item.country,
+            id: item.id,
             address_active: item.active
         }, 
 

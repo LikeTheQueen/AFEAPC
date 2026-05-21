@@ -24,8 +24,11 @@ export default function UniversalPagination<T>({
 
     // Calculate total pages and pagnation array when data changes
     useMemo(() => {
+        console.log(data.length,'the length of the datarows')
         if(data.length < 1) return;
         const pages = Math.ceil(data.length / rowsPerPage);
+        console.log(pages, 'the math')
+        console.log(rowsPerPage, 'the rows')
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
 

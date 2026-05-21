@@ -1,6 +1,6 @@
 
 import supabase from "provider/supabase";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet } from "react-router";
 import { NavLink } from "react-router";
 import "../style.css";
@@ -17,8 +17,6 @@ import {
 import {
   Bars3Icon,
   BellIcon,
-  ClockIcon,
-  FolderIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 
@@ -52,11 +50,12 @@ const help = [
 ]
 
 const onboarding = [
-  { id: 1, name: 'Create Operator', href: "createOperator", initial: 'O' },
-  { id: 2, name: 'Create Partners', href: "createPartner", initial: 'P' },
-  { id: 3, name: 'Create Users', href: "createUser", initial: 'U' },
-  { id: 4, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
-  { id: 5, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+  { id: 1, name: 'Create & Manage Parent Companies', href: "createparentcompany", initial: 'P' },
+  { id: 2, name: 'Create Operator', href: "createOperator", initial: 'O' },
+  { id: 3, name: 'Create Partners', href: "createPartner", initial: 'P' },
+  { id: 4, name: 'Create Users', href: "createUser", initial: 'U' },
+  { id: 5, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
+  { id: 6, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
 ]
 const userNavigation = [
   { name: 'Your profile', href: 'profile' },
@@ -66,9 +65,9 @@ const userNavigation = [
 
 export default function MainScreen() {
   const { loggedInUser } = useSupabaseData();
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,11 +80,11 @@ export default function MainScreen() {
     } finally {
       setIsLoading(false)
     }
-  }
+  };
 
   const handleClick = () => {
     setSidebarOpen(false);
-  }
+  };
 
   return (
     <>

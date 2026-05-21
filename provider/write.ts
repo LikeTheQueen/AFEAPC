@@ -1,5 +1,5 @@
 import  supabase  from './supabase';
-import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, ParentCompany, ParentCompanyWrite, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
@@ -111,6 +111,39 @@ import type { UUID } from 'crypto';
       return {ok: true, data: data, message: undefined};
   };
 
+  export const addOParentCompanyRecordSupabase = async (parentCompany: ParentCompanyWrite) => {
+    const { data, error } = await supabase.from('PARENT_COMPANY')
+    .insert({
+      name: parentCompany.apc_name, 
+      max_users: parentCompany.max_users ?? 1,
+      license_expires: parentCompany.license_expires ? new Date(parentCompany.license_expires).toISOString() : new Date(),
+      active:true})
+    .select()
+    .single();
+    if (error) {
+        return {ok: false, data: null, message: error.message};
+      }
+
+      return {ok: true, data: data, message: undefined};
+  };
+
+  export const updateOParentCompanyRecordSupabase = async (parentCompany: ParentCompany) => {
+    const { data, error } = await supabase.from('PARENT_COMPANY')
+    .update({
+      name: parentCompany.apc_name, 
+      max_users: parentCompany.max_users,
+      license_expires: parentCompany.license_expires,
+      active:true})
+    .eq('id', parentCompany.apc_id)
+    .select()
+    .single();
+    if (error) {
+        return {ok: false, data: null, message: error.message};
+      }
+
+      return {ok: true, data: data, message: undefined};
+  };
+
   export const addOperatorSupabase = async (name: string, source_system:number, parent_company:string) => {
     const { data, error } = await supabase.from('OPERATORS')
     .insert({name: name, source_system: source_system, active:true, parent_company: parent_company})
@@ -208,6 +241,25 @@ import type { UUID } from 'crypto';
       return {ok: true, data:data, message: undefined};
   };
 
+  export const updateParentCompanyAdressSupabase = async (address: AddressType) => {
+    const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS')
+    .update({
+      street: address.street, 
+      suite: address.suite, 
+      city: address.city, 
+      state: address.state, 
+      zip: address.zip, 
+      country: address.country, 
+      active: address.address_active})
+      .eq('id', address.id)
+      .select()
+      .single();
+    if (error) {
+        return { ok: false, data: null, message: error.message};
+      }
+      return {ok: true, data:data, message: undefined};
+  };
+
   export const addOperatorPartnerAddressSupabase = async (apc_id: UUID, address: AddressType) => {
     const { data, error } = await supabase.from('PARTNER_ADDRESS')
     .insert({apc_id: apc_id, 
@@ -269,15 +321,16 @@ import type { UUID } from 'crypto';
   };
 
   export const writeorUpadateUserRoles = async(roles:RoleEntryWrite[], table: string) => {
-  const withID = roles.filter(role => !(Number.isNaN(role.id))  )
+  const withID = roles.filter(role => !(Number.isNaN(role.id)))
   const withoutID = roles.filter(role => (Number.isNaN(role.id)))
-  
+
   if (withID.length>0) {
     const { data, error } = await supabase.from(table).upsert(withID).select();
     if (error) {
-        console.error(`Error updating roles for user`, error);
-        return null;
+        writeToFunctionLogs('writeorUpadateUserRoles',error.message, null, 'WARN', 'Manage Permissions UI');
+        return {ok:false, message: error.message};
       }
+    return {ok:true, message: ''};
   }
   if (withoutID.length>0) {
     const removeIDColumn: RoleEntryWrite[] = withoutID.map(item => ({
@@ -288,13 +341,13 @@ import type { UUID } from 'crypto';
       role: item.role
     }))
   const { data, error } = await supabase.from(table).insert(removeIDColumn);
-  
+  console.log(data, 'the data', error, 'the error');
   if (error) {
-        console.error(`Error adding roles for user`, error);
-        return null;
+        writeToFunctionLogs('writeorUpadateUserRoles',error.message, null, 'WARN', 'Manage Permissions UI');
+        return {ok:false, message: error.message};
       }
   }
-      return;
+      return {ok:true, message: ''};
   };
 
   export const writeSuperUserProfile = async(user_id: string) => {
@@ -349,6 +402,7 @@ import type { UUID } from 'crypto';
 
   export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
     const { error } = await supabase.from('PARTNERS_CROSSWALK').insert(partnerRecords);
+    
     if (error) {
         return {ok:false, message: error.message};
       }
@@ -366,7 +420,7 @@ import type { UUID } from 'crypto';
   };
 
   export const updatePartnerProcessedMapValue = async(id: number[], mapValue: boolean) => {
-   const {error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('id',id);
+   const {error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).in('id',id);
     
     if (error) {
         return {ok:false, message: error.message};
@@ -396,15 +450,48 @@ import type { UUID } from 'crypto';
       return data;
   };
 
-  export const writeGLAccountlistFromSourceToDB = async(accountRecords: GLCodeRowData[]) => {
-    const { data, error } = await supabase.from('GL_CODES').upsert(accountRecords, { onConflict: 'account_number, apc_op_id, apc_part_id' })
-    .select();
-    if (error) {
-        writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes');
-        return {ok: false, message: error.message};
-      }
-      return {ok: true, message: undefined};
-  };
+  export const writeGLAccountlistFromSourceToDB = async (accountRecords: GLCodeRowData[]) => {
+    const opRecords = accountRecords
+    .filter(r => r.apc_op_id != null)
+    .map(r => ({
+            account_number: r.account_number,
+            account_group: r.account_group,
+            account_description: r.account_description,
+            apc_id: r.apc_op_id
+        }));
+    const partRecords = accountRecords
+    .filter(r => r.apc_part_id != null)
+    .map(r => ({
+            account_number: r.account_number,
+            account_group: r.account_group,
+            account_description: r.account_description,
+            apc_id: r.apc_part_id
+        }));
+
+    if (opRecords.length > 0) {
+        const { error } = await supabase
+            .from('GL_CODES_OP')
+            .upsert(opRecords, { onConflict: 'account_number, apc_id' })
+            .select();
+        if (error) {
+            writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes for Operator');
+            return { ok: false, message: error.message };
+        }
+    }
+
+    if (partRecords.length > 0) {
+        const { error } = await supabase
+            .from('GL_CODES_NONOP')
+            .upsert(partRecords, { onConflict: 'account_number, apc_id' })
+            .select();
+        if (error) {
+            writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes for Non-Operator');
+            return { ok: false, message: error.message };
+        }
+    }
+
+    return { ok: true, message: undefined };
+};
 
   export const updateGLAccountCodeStatus = async(id: number, status: boolean ) => {
     const { error } = await supabase.from('GL_CODES_PROCESSED').update({'active': status}).eq('id',id);

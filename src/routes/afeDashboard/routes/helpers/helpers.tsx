@@ -39,11 +39,13 @@ export async function handleThePartnerStatusChange(
   loggedInUserLastName: string,
   loggedinUserEmail: string,
   token: string) {
-
+console.log(afeRecord.partner_status)
+console.log(newPartnerStatus)
   if (afeRecord.partner_status === newPartnerStatus) {
     return { ok: true };
   }
   const partnerStatusChange = await updateAFEPartnerStatus(afeRecord.id, newPartnerStatus, token);
+  console.log(partnerStatusChange)
   if (!partnerStatusChange.ok) {
     writeToFunctionLogs('UpdateAFEPartnerStatus', partnerStatusChange.message, null, 'ERROR', `AFE or AFE Details to change Partner status to ${newPartnerStatus} by ${loggedInUserFirstName} ${loggedInUserLastName}`);
     notifyFailure(`Unable to update the AFE status.  Contact ${supportEmail} if the problem persists`);

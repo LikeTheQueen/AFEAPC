@@ -341,7 +341,8 @@ export default function AFE() {
       </NoFilteredAFEsToView>
       </div>
       {/*Non Operated AFEs List.  Hidden on tab 2 or if there are no AFEs*/}
-      <div hidden ={ (nonOperatedAFEs.length < 1 || filteredNonOperatedAFEs.length < 1) || currentTab === 2 ? true : false} >
+      {currentTab !== 2 && filteredNonOperatedAFEs.length > 0 && nonOperatedAFEs.length > 0 && (
+        <>
       <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="Non-OperatedAFElist">
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
@@ -367,8 +368,8 @@ export default function AFE() {
           />
           </div>
           <div className="h-4"></div>
-          
-    </div>
+          </>
+      )}
     <div hidden={currentTab === 2 || (currentTab === 1 && (doesUserHaveViewNonOpAFERole)) || (currentTab === 3 && (doesUserHaveViewNonOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
           <NoSelectionOrEmptyArrayMessage
           message={
@@ -388,7 +389,8 @@ export default function AFE() {
       </AFEHeader>
 
     </div>
-    <div  hidden ={ (operatedAFEs.length < 1 && filteredOperatedAFEs.length < 1) || currentTab === 1 ? true : false } >
+    {currentTab !== 1 && filteredOperatedAFEs.length > 0 && operatedAFEs.length > 0 && (
+    <>
     <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="OperatedAFElist">
       {rowsToShowOperated?.map((afe) => (
         <Link key={afe.id} 
@@ -412,8 +414,8 @@ export default function AFE() {
           </div>
           
           <div className="h-4"></div>
-          
-      </div>
+      </>    
+    )}
       {/*Operated AFEs Header.  Hidden on tab 1 and 2 or if there are no AFEs*/}
     <div hidden ={afeFetchError || currentTab !== 3 || (currentTab === 3 && filteredOperatedAFEs.length > 0 ) || (currentTab === 3 && operatedAFEs.length > 0) ? true : false}>
       <NoFilteredAFEsToView

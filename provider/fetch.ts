@@ -8,16 +8,17 @@ import {
   transformOperatorForDropDown,
   transformGLCodes,
   transformGLCodeCrosswalk,
-  transformSupportHistory} from 'src/types/transform';
+  transformSupportHistory,
+  transformParentCompany} from 'src/types/transform';
 import  supabase  from './supabase';
-import type { OperatorOrPartnerList } from 'src/types/interfaces';
+import type { OperatorOrPartnerList, ParentCompany } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from 'src/constants/variables';
 
 
 export const fetchCompanyProfile = async() => {
   const { data, error } = await supabase.from('PARENT_COMPANY').select('name, OPERATINGCOMPANIES:OPERATORS!parent_company(name)')
-console.log(data, error)
+
 };
 export const fetchSourceSystems = async() => {
   const { data, error } = await supabase.from('SOURCE_SYSTEM').select('id, system');
@@ -312,13 +313,14 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 };
 
 export const fetchAllParentCompanies = async() => {
-  const emptyArray: OperatorOrPartnerList[] = []
-  const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS').select(`*,apc_id(id,name)`)
+  const emptyArray: ParentCompany[] = []
+  const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS').select(`*,apc_id(id,name, max_users, license_expires)`)
       if (error || !data) {
       console.error(`Error fetching Parent Companies:`, error);
       return emptyArray;
       }
-    const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
+      
+    const dataFormatted: ParentCompany[] = transformParentCompany(data);
     const operatorListSorted = dataFormatted.sort((a,b) => {
       if (a.apc_name === undefined && b.apc_name === undefined) {
         return 0;
@@ -374,7 +376,7 @@ export const fetchAccountCodesForOperatorOrPartner = async(apc_op_id: string, ap
       console.error(`Error fetching GL Codes:`, error);
       return [];
       } 
-      console.log('the data', data)
+
       return transformGLCodes(data);
 
     }
@@ -464,20 +466,23 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
     console.error('Unable to get AFE History');
      return [];
   }
-  console.log('the data in the call', data);
+
   return data;
 };
+
 export const fetchSystemHistory = async( minRange: number, maxRange: number) => {
   const { data, error } = await supabase
   .from('SYSTEM_HISTORY')
   .select('*, apc_op_id(id,name),apc_partner_id(id,name),created_by(id,first_name, last_name, email)')
+  .eq('visible', true)
+  .not('created_by','is', null)
   .order('id', { ascending: false })
   .range(minRange,maxRange);
   if(error) {
     console.error('Unable to get Support History');
     return [];
   }
-  console.log(data);
+  
   return data
 };
 export const fetchSystemHistoryCount = async () => {
@@ -489,7 +494,7 @@ export const fetchSystemHistoryCount = async () => {
     console.error('Unable to get System History count', error);
     return 0;
   }
-  console.log(count,'THE COUNT FROM THE CALL')
+
   return count ?? 0;
 };
 export const fetchAFEHistoryCount = async (afe_id: string) => {
@@ -535,7 +540,7 @@ export const fetchOperatorExecuteFilters = async(apc_op_id: string) => {
       console.error(`Error fetching Operator Filters`, error);
       return {ok: false, message: error.message, data: []};
     }
-    console.log(data)
+
     return {ok: true, data: data};
 
 }

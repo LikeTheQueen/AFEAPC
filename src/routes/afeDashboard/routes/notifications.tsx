@@ -15,7 +15,7 @@ type FilterNotificationProp = {
 }
 
 export default function NotificationsGrid() {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, loading } = useSupabaseData();
   const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
 // State for paginated data
   const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
@@ -33,29 +33,22 @@ export default function NotificationsGrid() {
   const [afeSearch, setAFESearch] = useState('');
   const [verSearch, setVerSearch] = useState('');
   const [descriptionSearch, setDescriptionSearch] = useState('');
-  const [doesUserHaveViewOpAFERole, setDoesUserHaveOpAFERole] = useState(false);
-  const [doesUserHaveViewNonOpAFERole, setDoesUserHaveNonOpAFERole] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const doesUserHaveViewOpAFERole = loggedInUser ? doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewOperatedAFEPermission) : null;
+  const doesUserHaveViewNonOpAFERole = loggedInUser ? doesUserHaveRole(loggedInUser, viewNonOpAFEPermission, viewNonOpAFEPermission) : null;
 
 
-    useEffect(() => {
+useEffect(() => {
     let isMounted = true;
     async function getNotifications() {
-      if(!loggedInUser) {
-            setLoading(false);
+      if(loading || !loggedInUser) {
             return;
           }
-          const viewOpAFERole = doesUserHaveRole(loggedInUser, viewOperatedAFEPermission, viewOperatedAFEPermission);
-          const viewNonOpAFERole = doesUserHaveRole(loggedInUser, viewNonOpAFEPermission, viewNonOpAFEPermission);
-          setDoesUserHaveOpAFERole(viewOpAFERole);
-          setDoesUserHaveNonOpAFERole(viewNonOpAFERole);
-          if(!viewNonOpAFERole && !viewOpAFERole) {
-            setLoading(false);
+          if(doesUserHaveViewOpAFERole === null || !doesUserHaveViewNonOpAFERole && !doesUserHaveViewOpAFERole) {
             return;
           }
         try {
             const result = await fetchNotifications(minRange, maxRange, false);
-        
+         
             if(result.length > 0 ) {
                 const transformedNotifications = transformNotifications(result);
                 setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
@@ -70,7 +63,7 @@ export default function NotificationsGrid() {
             isMounted = false;
         };
     
-},[maxRange, loggedInUser])
+},[maxRange, loggedInUser, loading])
 
 useMemo(() => {
   async function getNotificationHistoryRowCount() {
@@ -78,7 +71,7 @@ useMemo(() => {
     setTotalNotificationHistoryRowCount(afeHistoryRowCountResult);
   }; getNotificationHistoryRowCount();
   
-},[])
+},[loggedInUser])
 
 useEffect(() => {
   let isMounted = true;
@@ -141,10 +134,10 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-
+console.log(loading, 'the loading')
   return (
     <>
-    <div hidden={doesUserHaveViewOpAFERole && doesUserHaveViewNonOpAFERole} className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
+    <div hidden={loading || doesUserHaveViewOpAFERole === null || doesUserHaveViewNonOpAFERole === null || doesUserHaveViewOpAFERole || doesUserHaveViewNonOpAFERole} className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
               <NoSelectionOrEmptyArrayMessage
               message={
             <>
@@ -153,7 +146,7 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
               }>
               </NoSelectionOrEmptyArrayMessage>
           </div>
-    <div hidden={!doesUserHaveViewOpAFERole || !doesUserHaveViewNonOpAFERole} className="px-4 py-4 sm:px-6 sm:py-6">
+    <div hidden={loading || doesUserHaveViewOpAFERole === null || (!doesUserHaveViewOpAFERole && !doesUserHaveViewNonOpAFERole)} className="px-4 py-4 sm:px-6 sm:py-6">
       <h2 className="text-lg sm:text-xl font-semibold custom-style">AFE Histories</h2>
        <p className="text-xs/6 2xl:text-sm/6 custom-style-long-text px-3">
                 Cumlative history of actions taken on all AFEs.

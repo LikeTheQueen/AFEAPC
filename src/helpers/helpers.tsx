@@ -211,16 +211,16 @@ export function isOperatorValid(operator: OperatorType): boolean {
   );
 };
 
-export const doesUserHaveRole = (user: UserProfileRecordSupabaseType | null, operatorMinLevel: number, partnerMinLevel: number): boolean => {
+export const doesUserHaveRole = (user: UserProfileRecordSupabaseType | null, operatorRole: number, nonOperatorRole: number): boolean => {
 if (!user) return false;
 if (user.is_super_user) return true;
 //Check that there are roles
 if (!user?.operatorRoles.length && !user?.partnerRoles.length) return false;
 // Check operator roles
-const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorMinLevel && r.active) ?? false;  
-  // Check partner roles
-const hasPartnerAccess = user.partnerRoles?.some(r => r.role! === partnerMinLevel && r.active) ?? false;
+const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorRole && r.active) ?? false;  
+// Check non-operator roles
+const hasNonOperatorAccess = user.partnerRoles?.some(r => r.role! === nonOperatorRole && r.active) ?? false;
 
-return hasOperatorAccess || hasPartnerAccess; 
+return hasOperatorAccess || hasNonOperatorAccess; 
 };
 

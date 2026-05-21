@@ -28,7 +28,8 @@ export default function GLMapping() {
     const [currentPage, setCurrentPage] = useState(0);
     const handlePageChange = (paginatedData: GLMappedRecord[], page: number) => {
                   setRowsToShow(paginatedData);
-                  //setCurrentPage(page);
+                  setCurrentPage(page);
+                  setRowsLimit(3);
           };
     
     useEffect(() => {
@@ -42,11 +43,14 @@ export default function GLMapping() {
                     throw new Error((glCodeMapList as any).message ?? "Unable to get the GL Account Code mappings");
                 }
                 if (isMounted) {
-                    
+                    console.log(glCodeMapList.data)
                     const glCodeMapListFormatted = transformGLCodeCrosswalk(glCodeMapList.data);
                     setCumaltiveGLMap(glCodeMapListFormatted ?? []);
                     setRowsToShow(glCodeMapListFormatted ?? []);
                     glCodeMapListFormatted.length < rowsLimit ? setRowsLimit(glCodeMapListFormatted.length) : rowsLimit;
+                    console.log(glCodeMapListFormatted.length < rowsLimit, 'less then limit');
+                    console.log(glCodeMapListFormatted.length, 'the lendth')
+                    console.log(rowsLimit, 'the limit')
 
                 }
             } finally {
