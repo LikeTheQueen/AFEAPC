@@ -61,7 +61,7 @@ export default function GLFileUpload() {
 
       const distinctItemsDisplay = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description"]);
       const distinctItemsWrite = getDistinctAccountsByProperties(accountMap, ["account_number", "account_group", "account_description","apc_op_id", "apc_part_id"]);
-      console.log(distinctItemsWrite);
+
       setDistinctAccountArray(distinctItemsDisplay);
       setData(prevData => {
         const updatedData = [...prevData];

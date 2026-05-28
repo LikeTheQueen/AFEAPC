@@ -334,7 +334,7 @@ let parentCompanyID =''
                   />
                 </div>
               </div>
-                <div className="sm:col-span-2 sm:col-start-3">
+              <div className="sm:col-span-2 sm:col-start-3">
                 <label htmlFor="sourceSystem" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Source System for AFEs
                 </label>
@@ -359,7 +359,7 @@ let parentCompanyID =''
                 </div>
               </div>
               <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-2">
-                                  <label htmlFor="selectedOperator" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                                  <label htmlFor="partnerMapID" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                                     Parent Company
                                   </label>
                                   <div className="mt-1">

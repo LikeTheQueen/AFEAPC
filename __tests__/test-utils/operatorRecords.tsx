@@ -431,7 +431,7 @@ export const operatorDeactivatedFromSupabase = [
     {
         "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
         "created_at": "2025-10-06T20:14:39.997772+00:00",
-        "name": "Corr and Whit Oils Company",
+        "name": "Corr and Whit Oils",
         "base_url": null,
         "key": null,
         "docID": null,
@@ -471,7 +471,7 @@ export const operatorActivatedFromSupabase = [
     {
         "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
         "created_at": "2025-10-06T20:14:39.997772+00:00",
-        "name": "Corr and Whit Oils Company",
+        "name": "Corr and Whit Oils",
         "base_url": null,
         "key": null,
         "docID": null,
@@ -1257,6 +1257,17 @@ export const operatorBillingAddressToCreate: AddressType = {
 
 export const operatorAddressAddedResponse = {
             "id": 67,
+            "zip": "98987",
+            "city": "Austin",
+            "state": "Texas",
+            "suite": "",
+            "active": true,
+            "street": "1234 Main Street",
+            "country": "United States"
+};
+
+export const parentCompanyAddressAddedResponse = {
+            "id": 88,
             "zip": "98987",
             "city": "Austin",
             "state": "Texas",

@@ -314,7 +314,7 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
 
 export const fetchAllParentCompanies = async() => {
   const emptyArray: ParentCompany[] = []
-  const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS').select(`*,apc_id(id,name, max_users, license_expires)`)
+  const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS').select(`*,apc_id(id,name, max_users, license_expires, active)`)
       if (error || !data) {
       console.error(`Error fetching Parent Companies:`, error);
       return emptyArray;
@@ -442,7 +442,7 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
   if(afeSpecificHistory) {
   const { data, error } = await supabase
   .from('AFE_HISTORY')
-  .select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)')
+  .select('*, afe_id(id,afe_number, version_string, apc_op_id(id, name), apc_partner_id(id, name), partner_status),user_id(id,first_name, last_name, email)')
   .eq('afe_id',apc_afe_id)
   .order('id', { ascending: false })
   .range(minRange,maxRange);
@@ -457,7 +457,7 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
   }
   const { data, error } = await supabase
   .from('AFE_HISTORY')
-  .select('*, afe_id(id,afe_number, version_string),user_id(id,first_name, last_name, email)')
+  .select('*, afe_id(id,afe_number, version_string, apc_op_id(id, name), apc_partner_id(id, name), partner_status),user_id(id,first_name, last_name, email)')
   .eq('type','action')
   .order('id', { ascending: false })
   .range(minRange,maxRange);
@@ -466,7 +466,7 @@ export const fetchNotifications = async(minRange: number, maxRange: number, afeS
     console.error('Unable to get AFE History');
      return [];
   }
-
+console.log(data);
   return data;
 };
 

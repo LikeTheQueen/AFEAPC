@@ -47,6 +47,7 @@ export default function UserPermissionDashboard() {
           throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
         }
         if(isMounted) {
+          console.log(userPermissionsRaw.data)
           setPermissionData(userPermissionsRaw.data);
           setUserPermissionListLoading(false);
         }
@@ -83,7 +84,7 @@ useEffect(() => {
   setOperatorUserRoleList(opRoles);
 },[opRoles]);
 
-
+console.log(doesUserHaveEditOpUserRole, 'does user have op edit role')
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-16 divide-y divide-gray-900/20 ">

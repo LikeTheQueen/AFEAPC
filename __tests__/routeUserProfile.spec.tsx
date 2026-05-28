@@ -8,9 +8,6 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 import Profile from 'src/routes/userProfile/routes/profile';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
-    OperatorDropDown,
-    PartnerDropdown,
-    partnerAccountCodes,
     MonicaGeller_NoOpRoles_CW_NonOpCW,
     RossGeller_Op_CW_No_NonOp
  } from './test-utils/afeRecords';
@@ -44,7 +41,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
              supabaseOverrides: {
                  loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',
@@ -88,7 +84,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
              supabaseOverrides: {
                  loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',
@@ -128,7 +123,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
              supabaseOverrides: {
                  loggedInUser: RossGeller_Op_CW_No_NonOp,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',
@@ -168,7 +162,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
              supabaseOverrides: {
                  loggedInUser: null,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',

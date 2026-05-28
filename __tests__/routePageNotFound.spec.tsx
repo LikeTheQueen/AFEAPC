@@ -47,6 +47,7 @@ describe('Page not Found', () => {
     expect(screen.getByText(/Error: Not Found/i)).toBeVisible();
   });
 
+  
   test('Displays message via FuzzyText when stack is undefined', () => {
     renderWithProviders(
       <PageNotFound message={mockProps.message} details={mockProps.details} stack={undefined} />,

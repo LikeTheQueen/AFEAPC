@@ -72,7 +72,6 @@ export default function UserDashboard({ userList =[] }: {  userList: UserFullNam
     
             try {
                 const updateUserOrgStatus = await updateUserProfile(userID, is_super_org_user)
-    console.log(updateUserOrgStatus)
                 if (!updateUserOrgStatus.ok) {
     
                     setUsers(prevUsers =>

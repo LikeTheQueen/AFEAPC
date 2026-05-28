@@ -4,20 +4,17 @@ import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from './test-utils/renderWithOptions';
+import { renderWithProviders } from '../test-utils/renderWithOptions';
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import { transformSingleAFE } from 'src/types/transform';
 
 
-import AFEDetailURL from '../src/routes/afeDashboard/routes/afeDetail';
+import AFEDetailURL from '../../src/routes/afeDashboard/routes/afeDetail';
 
-import { MonicaGeller_NoOpRoles_CW_NonOpCW, afesReturnedFromSupabase } from './test-utils/afeRecords';
+import { MonicaGeller_NoOpRoles_CW_NonOpCW, afesReturnedFromSupabase } from '../test-utils/afeRecords';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
-    OperatorDropDown,
-    PartnerDropdown,
-    partnerAccountCodes
- } from './test-utils/afeRecords';
+ } from '../test-utils/afeRecords';
 
  vi.mock('provider/fetch', () => ({
    fetchAFEDetails: vi.fn(),
@@ -75,7 +72,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
      supabaseOverrides: {
        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
        loading: false,
-       isSuperUser: false,
        session: {
          access_token: 'test-token',
          refresh_token: 'test-refresh-token',

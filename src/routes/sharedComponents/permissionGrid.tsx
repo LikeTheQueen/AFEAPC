@@ -241,6 +241,7 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
               
   <input
     type="checkbox"
+    id={roleVal.toString()}
     defaultChecked={checkedByRoleEntryWrite(operator.roles, roleVal)}
     disabled={isRowDisabled(operator.apc_address_id) || user.user_id === loggedInUser?.user_id!}
     value={getRoleIndexRoleEntryWrite(operator.roles,roleVal,operator.apc_id,operator.apc_address_id,user.user_id)}

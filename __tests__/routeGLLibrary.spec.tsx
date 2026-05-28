@@ -66,7 +66,6 @@ const setupWithSelections = async (
     supabaseOverrides: {
       loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -100,7 +99,6 @@ const setupWithSelectionsNonOpAccount = async (
     supabaseOverrides: {
       loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -126,7 +124,7 @@ const setupWithSelectionsNonOpAccount = async (
   
 };
 
-describe('View and edit the partner mappings',() => {
+describe('View and edit the GL Code Library',() => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -145,7 +143,6 @@ describe('View and edit the partner mappings',() => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',

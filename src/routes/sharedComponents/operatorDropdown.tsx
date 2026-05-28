@@ -100,12 +100,13 @@ export function ParentCompanyDropdown({ value, onChange, onRecordChange, limited
       load();
     }, [loggedInUser, limitedList]);
     
+    
   return (
     <>
           <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
           <select
-              id="operatorMapID"
-              name="operatorMapID"
+              id="partnerMapID"
+              name="partnerMapID"
               autoComplete="off"
               value={value}
               onChange={handleChange}

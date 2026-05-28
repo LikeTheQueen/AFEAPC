@@ -72,7 +72,6 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
 
         try {
             const updateUserOrgStatus = await updateUserProfile(userID, is_super_org_user)
-            console.log(updateUserOrgStatus)
 
             if (!updateUserOrgStatus.ok) {
 

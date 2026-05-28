@@ -9,13 +9,15 @@ import { getByRole, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
+import { apc_parent_company_CWFriends, loggedInUserIsSuperUser, ParentCompanyDropdown } from './test-utils/afeRecords';
+import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from '__tests__/test-utils/afeRecords';
 
-import { loggedInUserRachelGreenWithUserId, permissionResponseRachel, permissionResponseRachelNonOp, genericRoleList, loggedInUserRachelGreenCannotEditUsersNoRole4or5 } from './test-utils/rachelGreenuser';
+import { permissionResponseRachel, permissionResponseRachelNonOp, genericRoleList, loggedInUserRachelGreenCannotEditUsersNoRole4or5 } from './test-utils/rachelGreenuser';
 
 vi.mock('provider/fetch', () => ({
   fetchRolesGeneric: vi.fn(),
-  fetchListOfOperatorsOrPartnersForUser: vi.fn()
+  fetchListOfOperatorsOrPartnersForUser: vi.fn(),
+  fetchAllParentCompanies: vi.fn()
 }));
 
 vi.mock('provider/write', () => ({
@@ -74,12 +76,14 @@ describe('Create New User',() => {
         vi.mocked(fetchProvider.fetchRolesGeneric).mockResolvedValue(
             genericRoleList
         );
+        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+            []
+        );
 
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -105,12 +109,21 @@ describe('Create New User',() => {
 
             const userFirstName = screen.getByLabelText(/First name/i );
             expect(userFirstName).toHaveDisplayValue('');
-            const toggle = screen.getByRole('switch', { name: /Super User/i });
-            expect(toggle).toBeInTheDocument();
-            expect(toggle).toBeDisabled();
+            
+            const toggle = screen.queryByRole('switch', { name: /^Super User/i });
+            expect(toggle).not.toBeInTheDocument();
+
+            const parentCompaniesDropdown = screen.queryByRole('combobox', { name: /Parent Company/i});
+            expect(parentCompaniesDropdown).not.toBeInTheDocument();
+            
+            const orgtoggle = screen.getByRole('switch', { name: /^Org Super User/i });
+            expect(orgtoggle).toBeInTheDocument();
+            expect(orgtoggle).toBeVisible();
+            
             const activetoggle = screen.getByRole('switch', { name: /Active/i });
             expect(activetoggle).toBeInTheDocument();
             expect(activetoggle).toBeEnabled();
+            
             expect(screen.getByRole('button', { name: /add new user/i })).toBeDisabled();
 
             const nonOpPermissionTable = screen.getAllByRole("listitem");
@@ -140,13 +153,14 @@ describe('Create New User',() => {
             genericRoleList
         );
 
-        
-        
+        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+            []
+        );
+
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -164,6 +178,11 @@ describe('Create New User',() => {
                           },
                         }
             });
+        
+        await waitFor(() => {
+          const userFirstName = screen.getByLabelText(/First name/i );
+            expect(userFirstName).toHaveDisplayValue('');
+        })
 
             await waitFor(() => {
                   expect(mockPartnersFetch).toHaveBeenCalled();
@@ -175,12 +194,21 @@ describe('Create New User',() => {
             const userEmail = screen.getByLabelText(/Email address/i );
             const saveUserButton = screen.getByRole('button', { name: /add new user/i });
             expect(userFirstName).toHaveDisplayValue('');
-            const toggle = screen.getByRole('switch', { name: /Super User/i });
-            expect(toggle).toBeInTheDocument();
-            expect(toggle).toBeDisabled();
+            
+            const toggle = screen.queryByRole('switch', { name: /^Super User/i });
+            expect(toggle).not.toBeInTheDocument();
+
+            const parentCompaniesDropdown = screen.queryByRole('combobox', { name: /Parent Company/i});
+            expect(parentCompaniesDropdown).not.toBeInTheDocument();
+            
             const activetoggle = screen.getByRole('switch', { name: /Active/i });
             expect(activetoggle).toBeInTheDocument();
+
+            const orgtoggle = screen.getByRole('switch', { name: /^Org Super User/i });
+            expect(orgtoggle).toBeInTheDocument();
+
             expect(activetoggle).toBeEnabled();
+            
             expect(saveUserButton).toBeDisabled();
 
             const nonOpPermissionTable = screen.getAllByRole("listitem");
@@ -211,7 +239,9 @@ describe('Create New User',() => {
                 [],
                 [],
                 false,
-                'test-token'
+                'test-token',
+                apc_parent_company_CWFriends,
+                false
             );
 
 
@@ -240,9 +270,8 @@ describe('Create New User',() => {
         
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -274,9 +303,8 @@ describe('Create New User',() => {
 
             expect(checkboxes).toHaveLength(8);
             expect(userFirstName).toHaveDisplayValue('');
-            const toggle = screen.getByRole('switch', { name: /Super User/i });
-            expect(toggle).toBeInTheDocument();
-            expect(toggle).toBeDisabled();
+            const toggle = screen.queryByRole('switch', { name: /^Super User$/i });
+            expect(toggle).not.toBeInTheDocument();
             const activetoggle = screen.getByRole('switch', { name: /Active/i });
             expect(activetoggle).toBeInTheDocument();
             expect(activetoggle).toBeEnabled();
@@ -315,7 +343,9 @@ describe('Create New User',() => {
                 [{role:4, apc_id:'3b34a78a-13ad-40b5-aecd-268d56dd5e0d', apc_address_id:66,active:true}],
                 [{role:5, apc_id:'8ed0a285-0011-4f56-962f-c46bc0889d1b', apc_address_id:10,active:true}],
                 false,
-                'test-token'
+                'test-token',
+                apc_parent_company_CWFriends,
+                false
             );
 
 
@@ -344,9 +374,8 @@ describe('Create New User',() => {
         
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -378,9 +407,10 @@ describe('Create New User',() => {
 
             expect(checkboxes).toHaveLength(8);
             expect(userFirstName).toHaveDisplayValue('');
-            const toggle = screen.getByRole('switch', { name: /Super User/i });
-            expect(toggle).toBeInTheDocument();
-            expect(toggle).toBeDisabled();
+            const toggle = screen.queryByRole('switch', { name: /^Super User/i });
+            expect(toggle).not.toBeInTheDocument();
+            const orgtoggle = screen.getByRole('switch', { name: /^Org Super User/i });
+            expect(orgtoggle).toBeInTheDocument();
             const activetoggle = screen.getByRole('switch', { name: /Active/i });
             expect(activetoggle).toBeInTheDocument();
             expect(activetoggle).toBeEnabled();
@@ -413,7 +443,7 @@ describe('Create New User',() => {
             await user.click(checkboxes[2]);
             await user.click(checkboxes[6]);
 
-            await user.click(toggle);
+            await user.click(orgtoggle);
             await user.click(saveUserButton);
 
             expect(handleNewUser).toHaveBeenCalledWith(
@@ -424,7 +454,9 @@ describe('Create New User',() => {
                 [{role:8, apc_id:'3b34a78a-13ad-40b5-aecd-268d56dd5e0d', apc_address_id:66,active:true}],
                 [{role:9, apc_id:'8ed0a285-0011-4f56-962f-c46bc0889d1b', apc_address_id:10,active:true}],
                 false,
-                'test-token'
+                'test-token',
+                apc_parent_company_CWFriends,
+                true
             );
 
 
@@ -449,11 +481,14 @@ describe('Create New User',() => {
             genericRoleList
         );
 
+        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+            ParentCompanyDropdown
+        );
+
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
                             loggedInUser: loggedInUserIsSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -485,19 +520,25 @@ describe('Create New User',() => {
 
             expect(checkboxes).toHaveLength(8);
             expect(userFirstName).toHaveDisplayValue('');
-            const toggle = screen.getByRole('switch', { name: /Super User/i });
+            const toggle = screen.getByRole('switch', { name: /^Super User/i });
             expect(toggle).toBeInTheDocument();
             expect(toggle).toBeEnabled();
+            const orgtoggle = screen.getByRole('switch', { name: /^Org Super User/i });
+            expect(orgtoggle).toBeInTheDocument();
+            expect(orgtoggle).toBeEnabled();
             const activetoggle = screen.getByRole('switch', { name: /Active/i });
             expect(activetoggle).toBeInTheDocument();
             expect(activetoggle).toBeEnabled();
             expect(saveUserButton).toBeDisabled();
 
+            const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+            expect(parentCompaniesDropdown).toBeInTheDocument();
+
             const nonOpPermissionTable = screen.getAllByRole("listitem");
             expect(nonOpPermissionTable).toHaveLength(9);
             const tables = screen.getAllByRole('table');
             expect(tables).toHaveLength(2);
-            expect(screen.getByText(/Corr and Whit Oils Company/i)).toBeInTheDocument();
+            expect(screen.getByText(/Corr and Whit Oils Company$/i)).toBeInTheDocument();
             expect(screen.getByText(/John Ross Exploration Inc/i)).toBeInTheDocument();
 
             await user.type(userFirstName, 'Janice');
@@ -509,7 +550,7 @@ describe('Create New User',() => {
             await user.type(userEmail, 'jgrill@email.com');
             expect(userEmail).toHaveValue('jgrill@email.com');
 
-            expect(saveUserButton).toBeEnabled();
+            expect(saveUserButton).not.toBeEnabled();
 
             await user.click(activetoggle);
             await user.click(checkboxes[1]);
@@ -519,7 +560,27 @@ describe('Create New User',() => {
             await user.click(checkboxes[2]);
             await user.click(checkboxes[6]);
 
+            await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
+
             await user.click(toggle);
+            expect(screen.getByRole('button', { name: /add new user/i })).not.toBeEnabled();
+            await user.click(saveUserButton);
+
+            expect(handleNewUser).not.toHaveBeenCalledWith(
+                'Janice',
+                'Grill',
+                'jgrill@email.com',
+                true,
+                [],
+                [],
+                true,
+                'test-token',
+                apc_parent_company_CWFriends,
+                false
+            );
+
+            await user.selectOptions(parentCompaniesDropdown, '');
+            expect(screen.getByRole('button', { name: /add new user/i })).toBeEnabled();
             await user.click(saveUserButton);
 
             expect(handleNewUser).toHaveBeenCalledWith(
@@ -530,7 +591,9 @@ describe('Create New User',() => {
                 [],
                 [],
                 true,
-                'test-token'
+                'test-token',
+                '',
+                false
             );
 
 
@@ -558,7 +621,6 @@ describe('Create New User',() => {
                           supabaseOverrides: {
                             loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',
@@ -582,8 +644,8 @@ describe('Create New User',() => {
                   expect(mockPartnersFetchSecond).not.toHaveBeenCalled();
                 });
 
-            expect(screen.getByText(/You do not have permissions to create new users/i)).toBeInTheDocument();
-            expect(screen.getByText(/You do not have permissions to create new users/i)).toBeVisible();
+            expect(screen.getByText(/You do not have permission to create users/i)).toBeInTheDocument();
+            expect(screen.getByText(/You do not have permission to create users/i)).toBeVisible();
 
             const fetchErrorMessage = screen.queryByText(`Unable to get available permission grid.  Try again or contact AFE Partner Support: ${supportEmail}`);
             expect(fetchErrorMessage).not.toBeInTheDocument();
@@ -610,9 +672,8 @@ describe('Create New User',() => {
 
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenWithUserId,
+                            loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                             loading: false,
-                            isSuperUser: false,
                             session: {
                             access_token: 'test-token',
                             refresh_token: 'test-refresh-token',

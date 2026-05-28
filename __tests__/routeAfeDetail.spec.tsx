@@ -15,12 +15,11 @@ import {
   singleAFEWellResponse, 
   loggedInUserRachelGreen, 
   singleAFEHistoryResponse,
-  loggedInUserRossGeller,
   singleAFEAttachmentResponse,
   singleAFEDocResponse,
   singleAFESignedResponse } from './test-utils/rachelGreenuser';
 
-  import { MonicaGeller_NoOpRoles_CW_NonOpCW, afesReturnedFromSupabase } from './test-utils/afeRecords';
+  import { MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_ViewAFECW_NonOPAFECW_APC, JoeyTribiani_view_McKen_AFE } from './test-utils/afeRecords';
 // ─── Route config ─────────────────────────────────────────────────────────────
 const afeID = '4b6cebbf-ca88-4e9e-8479-dd50cc13e03W';
 const afeDetailRoute = `/mainscreen/afeDetail/${afeID}`;
@@ -100,6 +99,18 @@ const setupFetchMocks = () => {
   vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [] });
 };
 
+const setupFetchMocksNoDocs = () => {
+  vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: true, data: singleAFEResultSupabase });
+  vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: singleAFEHistoryResponse });
+  vi.mocked(fetchAFEEstimates).mockResolvedValue({ ok: true, data: singleAFEEstimatesResponse });
+  vi.mocked(fetchAFEDocs).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEAttachments).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFESignedNonOp).mockResolvedValue({ ok: true, data: [] });
+  vi.mocked(fetchAFEWells).mockResolvedValue({ ok: true, data: singleAFEWellResponse });
+  vi.mocked(fetchRelatedDocuments).mockResolvedValue({ ok: true, data: [] });
+};
+
+
 const setupFetchMocksNull = () => {
   vi.mocked(fetchAFEDetails).mockResolvedValue({ ok: false, message: 'Nothing here' });
   vi.mocked(fetchAFEHistory).mockResolvedValue({ ok: true, data: [] });
@@ -117,9 +128,21 @@ const renderAFEDetail = () => {
     routePath: afeDetailRoute,
     routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
     supabaseOverrides: {
-      loggedInUser: loggedInUserRachelGreen,
+      loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
       loading: false,
-      isSuperUser: false,
+      session: mockSession as any,
+    },
+  });
+};
+
+const renderAFEDetailNoDocs = () => {
+  setupFetchMocksNoDocs();
+  return renderWithProviders(<AFEDetailURL />, {
+    routePath: afeDetailRoute,
+    routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
+    supabaseOverrides: {
+      loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
+      loading: false,
       session: mockSession as any,
     },
   });
@@ -133,7 +156,6 @@ const renderAFEDetailNull = () => {
     supabaseOverrides: {
       loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
       loading: false,
-      isSuperUser: false,
       session: mockSession as any,
     },
   });
@@ -145,9 +167,8 @@ const renderAFEDetailPartner = () => {
     routePath: afeDetailRoute,
     routes: [{ path: afeDetailPath, element: <AFEDetailURL /> }],
     supabaseOverrides: {
-      loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
+      loggedInUser: JoeyTribiani_view_McKen_AFE,
       loading: false,
-      isSuperUser: false,
       session: mockSession as any,
     },
   });
@@ -191,9 +212,10 @@ describe('AFEDetailURL', () => {
       expect(screen.getByText(/Yes I did/i)).toBeInTheDocument();
       expect(screen.getByText(/1. DRILLING/i)).toBeInTheDocument();
       expect(screen.getAllByText(/\$275,000.00/)[0]).toBeInTheDocument();
-      expect(screen.getByText(/DR26NAVAT/i)).toBeInTheDocument();
+      expect(screen.getByText(/26D014/i)).toBeInTheDocument();
       expect(screen.getAllByText(/DRAKE SURVEY-MASON #1/i)[0]).toBeInTheDocument();
     });
+
     const approveButton = document.querySelector('button[name="partnerApprove"]');
     expect(approveButton).toBeInTheDocument();
     expect(approveButton).not.toBeVisible();
@@ -237,7 +259,7 @@ describe('AFEDetailURL', () => {
       expect(screen.getByText(/Yes I did/i)).toBeInTheDocument();
       expect(screen.getByText(/1. DRILLING/i)).toBeInTheDocument();
       expect(screen.getAllByText(/\$275,000.00/)[0]).toBeInTheDocument();
-      expect(screen.getByText(/DR26NAVAT/i)).toBeInTheDocument();
+      expect(screen.getByText(/26D014/i)).toBeInTheDocument();
       expect(screen.getAllByText(/DRAKE SURVEY-MASON #1/i)[0]).toBeInTheDocument();
     });
     const approveButton = document.querySelector('button[name="partnerApprove"]');
@@ -281,9 +303,9 @@ describe('AFEDetailURL', () => {
         'Approved',
         `The ${afeTransformed.partner_name} status on the AFE changed from ${afeTransformed.partner_status} to Approved`,
         'action',
-        loggedInUserRossGeller.firstName,
-        loggedInUserRossGeller.lastName,
-        loggedInUserRossGeller.email,
+        JoeyTribiani_view_McKen_AFE.firstName,
+        JoeyTribiani_view_McKen_AFE.lastName,
+        JoeyTribiani_view_McKen_AFE.email,
         'fake-token'
       );
     });
@@ -320,9 +342,9 @@ it('shows the Reject button and calls status functions when clicked', async () =
         'Rejected',
         `The ${afeTransformed.partner_name} status on the AFE changed from ${afeTransformed.partner_status} to Rejected`,
         'action',
-        loggedInUserRossGeller.firstName,
-        loggedInUserRossGeller.lastName,
-        loggedInUserRossGeller.email,
+        JoeyTribiani_view_McKen_AFE.firstName,
+        JoeyTribiani_view_McKen_AFE.lastName,
+        JoeyTribiani_view_McKen_AFE.email,
         'fake-token'
       );
     });
@@ -348,7 +370,7 @@ describe('AFEDetailURL documents', () => {
   });
 
   it('shows the no documents message when there are no documents', async () => {
-    renderAFEDetail(); // default mocks return []
+    renderAFEDetailNoDocs(); // default mocks return []
 
     await waitFor(() => {
       expect(screen.getByText(/There are no documents for this AFE/i)).toBeVisible();
@@ -375,7 +397,7 @@ describe('AFEDetailURL documents', () => {
   const viewLink = book1Item?.querySelector('li[hidden]');
   expect(viewLink).toBeInTheDocument();
   });
-});
+  });
 describe('AFEDetailURL document actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -397,7 +419,6 @@ describe('AFEDetailURL document actions', () => {
       supabaseOverrides: {
         loggedInUser: loggedInUserRachelGreen,
         loading: false,
-        isSuperUser: false,
         session: mockSession as any,
       },
     });
@@ -429,7 +450,6 @@ describe('AFEDetailURL document actions', () => {
       supabaseOverrides: {
         loggedInUser: loggedInUserRachelGreen,
         loading: false,
-        isSuperUser: false,
         session: mockSession as any,
       },
     });

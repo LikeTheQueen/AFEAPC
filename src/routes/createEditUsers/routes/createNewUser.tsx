@@ -37,7 +37,7 @@ export default function CreateNewUser() {
   const [opRoles, setOpRoles] = useState<RoleEntryWrite[] | []>([]);
   const [nonOpRoles, setNonOpRoles] = useState<RoleEntryWrite[] | []>([]);
   const [rolesGeneric, setRolesGeneric] = useState<RoleTypesGeneric[] | []>([]);
-  const [loadingPermissions, setLoadingPermissions] = useState(true);
+  const [loadingPermissions, setLoadingPermissions] = useState(false);
   const [userHavePermissions, setUserHavePermissions] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [opAPCID, setOpAPCID] = useState('');
@@ -50,11 +50,22 @@ export default function CreateNewUser() {
     }
 
     if (loggedInUser && token !== '') {
-      if(!loggedInUser.is_super_user) setOpAPCID(loggedInUser.apc_op_id_umbrella!);
+      if(loggedInUser.is_super_user) {
+        setUserHavePermissions(true);
+      }
+      
+      if(!loggedInUser.is_super_user) {
+        
+      setOpAPCID(loggedInUser.apc_op_id_umbrella!);
+      if(loggedInUser.is_org_super_user) {
+        setUserHavePermissions(true);
+      } else {
       const userPermissionCheck = doesUserHaveRole(loggedInUser,operatorEditUsers,nonOperatorEditUsers);
       if(!userPermissionCheck) return;
       setUserHavePermissions(userPermissionCheck);
     }
+  }
+  }
 
     let isMounted = true;
     async function getOperatorList() {
@@ -63,8 +74,8 @@ export default function CreateNewUser() {
       
       try {
         const [opListResult, partnerListResult] = await Promise.all([
-          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 4, 5], token),
-          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 4, 5], token)
+          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'OPERATOR_USER_PERMISSIONS', 'OPERATOR_ADDRESS', [1, 4, 5, 11], token),
+          fetchListOfOperatorsOrPartnersForUser(loggedInUser?.user_id!, 'PARTNER_USER_PERMISSIONS', 'PARTNER_ADDRESS', [1, 4, 5, 11], token)
         ]);
 
         if (opListResult.ok) {
@@ -193,13 +204,15 @@ export default function CreateNewUser() {
     );
   };
   const handleSaveNewUser = async () => {
-    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token, opAPCID);
+    handleNewUser(newUser.firstName, newUser.lastName, newUser.email, newUser.active, opRoles, nonOpRoles, newUser.is_super_user, token, opAPCID, newUser.is_org_super_user);
   };
 
+  const canCreateUsers = loggedInUser?.is_org_super_user || loggedInUser?.is_super_user;
+  
   if (!loggedInUser) return <LoadingPage />;
 
   return (
-    <> {!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
+    <> {!canCreateUsers ? 
      ( <NoSelectionOrEmptyArrayMessage
                 message={'You do not have permission to create users'}
         /> ) :(
@@ -302,6 +315,7 @@ export default function CreateNewUser() {
                       </Label>
                     </Field>                    
                   </div>
+                  {(loggedInUser?.is_super_user || loggedInUser.is_org_super_user) && (
                   <div className="sm:col-span-6 flex justify-start">
                     <Field className={`flex items-end justify-start  ${!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user ? 'invisible pointer-events-none' : ''
                       }`}>
@@ -316,12 +330,14 @@ export default function CreateNewUser() {
                       </Switch>
                       <Label as="span" className="ml-3 text-sm">
                         <span className="font-medium text-[var(--darkest-teal)] custom-style">Org Super User</span>{' '}
-                        <span className="text-gray-500 custom-style-long-text">(User can create, active or deactivate other users)</span>
+                        <span className="text-gray-500 custom-style-long-text">(User can create, activate or deactivate other users)</span>
                       </Label>
                     </Field>
                   </div>
+                  )}
+                  {loggedInUser?.is_super_user && (
                   <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-3">
-                    <label htmlFor="selectedOperator" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                    <label htmlFor="partnerMapID" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                       Parent Company
                     </label>
                     <div className="mt-2 ">
@@ -332,6 +348,8 @@ export default function CreateNewUser() {
                       />
                     </div>
                   </div>
+                  )}
+                  {loggedInUser?.is_super_user && (
                   <div hidden={!loggedInUser?.is_super_user} className="sm:col-span-4 flex justify-start">
                     <Field className={`flex items-end justify-start  ${!loggedInUser?.is_super_user ? 'invisible pointer-events-none' : ''
                       }`}>
@@ -351,6 +369,7 @@ export default function CreateNewUser() {
                       </Label>
                     </Field>
                   </div>
+                  )}
                 </div>
                 {loadingPermissions ? (
                   <LoadingPage></LoadingPage>
@@ -537,7 +556,13 @@ export default function CreateNewUser() {
               hidden={!userHavePermissions}
               className="flex items-center justify-end px-4 py-4 sm:px-8">
                 <button type="button"
-                  disabled={(newUser.firstName !== '' && newUser.lastName !== '' && newUser.email !== '') ? false : true}
+                  disabled={
+                    newUser.firstName === '' || 
+                    newUser.lastName === '' || 
+                    newUser.email === '' ||
+                    (newUser.is_super_user && opAPCID !== '') ||
+                    (!newUser.is_super_user && opAPCID === '')
+                  }
                   onClick={(e: any) => {
                     e.preventDefault();
                     handleSaveNewUser();

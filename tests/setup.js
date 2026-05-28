@@ -44,6 +44,13 @@ global.DOMMatrix = class DOMMatrix {
   transformPoint(p) { return p || { x: 0, y: 0 }; }
 };
 
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 // WebGL mock - also at top level
 HTMLCanvasElement.prototype.getContext = function(type) {
   if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') {

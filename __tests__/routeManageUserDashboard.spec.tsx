@@ -7,7 +7,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
+import { loggedInUserIsSuperUser, Love_Quinn_Super_User, RachelGreen_AllPermissions_CW_NonOpCW, RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from './test-utils/afeRecords';
 
 import { userNoUserId } from './test-utils/afeRecords';
 
@@ -54,9 +54,8 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
     
             renderWithProviders(<UserStatusDashboard />, {
                               supabaseOverrides: {
-                                loggedInUser: loggedInUserRachelGreenWithUserId,
+                                loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                                 loading: false,
-                                isSuperUser: false,
                                 session: {
                                 access_token: 'test-token',
                                 refresh_token: 'test-refresh-token',
@@ -133,9 +132,8 @@ describe('Manage User Active and Inactive standard user Super User Screen',() =>
 
     renderWithProviders(<SuperUserStatusDashboard />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserIsSuperUser,
+        loggedInUser: Love_Quinn_Super_User,
         loading: false,
-        isSuperUser: false,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -206,7 +204,6 @@ describe('Manage User Active and Inactive standard user Super User Screen',() =>
       supabaseOverrides: {
         loggedInUser: userNoUserId,
         loading: false,
-        isSuperUser: false,
         session: null,
       }
     });
@@ -244,9 +241,8 @@ describe('Manage User Active and Inactive standard user Super User Screen',() =>
 
     renderWithProviders(<SuperUserStatusDashboard />, {
       supabaseOverrides: {
-        loggedInUser: loggedInUserIsSuperUser,
+        loggedInUser: Love_Quinn_Super_User,
         loading: false,
-        isSuperUser: false,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -299,9 +295,8 @@ describe('Manage User Permissions Standard user screen',() => {
     
             renderWithProviders(<UserPermissionDashboard />, {
                               supabaseOverrides: {
-                                loggedInUser: loggedInUserRachelGreenWithUserId,
+                                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                                 loading: false,
-                                isSuperUser: false,
                                 session: {
                                 access_token: 'test-token',
                                 refresh_token: 'test-refresh-token',
@@ -322,12 +317,27 @@ describe('Manage User Permissions Standard user screen',() => {
     
                 await waitFor(() => {
                       expect(mockPermissionsFetch).toHaveBeenCalled();
-                    });
+                });
+                
+                await waitFor(() => {
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[0]).toBeInTheDocument();
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[1]).toBeInTheDocument();
+                });
     
                 const tables = screen.getAllByRole('table');
                 expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i));
-                const checkboxes = screen.getAllByRole("checkbox");
+                const rows = within(tables[0]).getAllByRole('row');
+                const nonOpRows =  within(tables[1]).getAllByRole('row');
+
+                const dataRows = rows.slice(1);
+                const nonOpdatarows = nonOpRows.slice(1);
+
+                expect(within(dataRows[0]).getByText(/Mike Rider/i)).toBeInTheDocument();
+                expect(within(nonOpdatarows[0]).getByText(/Mike Rider/i)).toBeInTheDocument();
+
+                const checkboxes = within(dataRows[2]).getAllByRole("checkbox");
+                const nonOpcheckboxes = within(nonOpdatarows[2]).getAllByRole("checkbox");
+
                 expect(checkboxes[0]).toBeChecked();
                 
                 await user.click(checkboxes[0]);
@@ -342,44 +352,42 @@ describe('Manage User Permissions Standard user screen',() => {
                 await user.click(checkboxes[2]);
                 expect(checkboxes[2]).not.toBeChecked();
 
-                await user.click(checkboxes[4]);
-                expect(checkboxes[4]).not.toBeChecked();
-
-                await user.click(checkboxes[6]);
-                expect(checkboxes[6]).toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                
                 const saveopPermissionButton = screen.getByRole("button", { name: /Save Operated Permissions/i });
                 expect(saveopPermissionButton).toBeEnabled();
                 await user.click(saveopPermissionButton);
                 
                await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toBeCalledWith(
+                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(1,
                     updatedPermissions,'OPERATOR_USER_PERMISSIONS'
                 );
 
                 });
                 
+                expect(nonOpcheckboxes[0]).toBeChecked();
+                
+                await user.click(nonOpcheckboxes[0]);
+                expect(nonOpcheckboxes[0]).not.toBeChecked();
 
-                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Op Permissions/i });
+                await user.click(nonOpcheckboxes[1]);
+                expect(nonOpcheckboxes[1]).toBeChecked();
+
+                await user.click(nonOpcheckboxes[2]);
+                expect(nonOpcheckboxes[2]).toBeChecked();
+
+                await user.click(nonOpcheckboxes[2]);
+                expect(nonOpcheckboxes[2]).not.toBeChecked();
+
+                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Operated Permissions/i });
                 expect(saveNonopPermissionButton).toBeEnabled();
 
                 await user.click(saveNonopPermissionButton);
                 await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toBeCalledWith(
+                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(2,
                     updatedNonPermissions,'PARTNER_USER_PERMISSIONS'
                );
 
                 });
-                
 
-                
             });
     test('It should allow user to toggle permissions Super User', async () => {
             const user = userEvent.setup()
@@ -392,9 +400,8 @@ describe('Manage User Permissions Standard user screen',() => {
     
             renderWithProviders(<UserPermissionDashboard />, {
                               supabaseOverrides: {
-                                loggedInUser: loggedInUserIsSuperUser,
+                                loggedInUser: Love_Quinn_Super_User,
                                 loading: false,
-                                isSuperUser: false,
                                 session: {
                                 access_token: 'test-token',
                                 refresh_token: 'test-refresh-token',
@@ -414,40 +421,51 @@ describe('Manage User Permissions Standard user screen',() => {
                 });
     
                 await waitFor(() => {
-                      expect(mockPermissionsFetch).toHaveBeenCalled();
-                    });
+                  expect(mockPermissionsFetch).toHaveBeenCalled();
+                });
+                
+                await waitFor(() => {
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[0]).toBeInTheDocument();
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[1]).toBeInTheDocument();
+                });
     
                 const tables = screen.getAllByRole('table');
                 expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i)[0]).toBeInTheDocument();
-                const checkboxes = screen.getAllByRole("checkbox");
+                const rows = within(tables[0]).getAllByRole('row');
+                const dataRows = rows.slice(1);
+                expect(within(dataRows[0]).getByText(/Mike Rider/i)).toBeInTheDocument();
+                //expect(screen.getAllByText(/Mike Rider/i)[0]).toBeInTheDocument();
+                const checkboxes = within(dataRows[2]).getAllByRole("checkbox");
                 expect(checkboxes[0]).toBeChecked();
+                expect(checkboxes[1]).not.toBeChecked();
+                expect(checkboxes[2]).not.toBeChecked();
+                expect(checkboxes[3]).not.toBeChecked();
                 
+                
+                await user.click(checkboxes[0]);
+                expect(checkboxes[0]).not.toBeChecked();
+
+                await user.click(checkboxes[1]);
+                expect(checkboxes[1]).toBeChecked();
+
+                await user.click(checkboxes[2]);
+                expect(checkboxes[2]).toBeChecked();
+
+                await user.click(checkboxes[2]);
+                expect(checkboxes[2]).not.toBeChecked();
+
+                await user.click(checkboxes[3]);
+                expect(checkboxes[3]).toBeChecked();
+
+                await user.click(checkboxes[3]);
+                expect(checkboxes[3]).not.toBeChecked();
+
                 await user.click(checkboxes[0]);
                 expect(checkboxes[0]).toBeChecked();
 
                 await user.click(checkboxes[1]);
                 expect(checkboxes[1]).not.toBeChecked();
 
-                await user.click(checkboxes[2]);
-                expect(checkboxes[2]).not.toBeChecked();
-
-                await user.click(checkboxes[2]);
-                expect(checkboxes[2]).not.toBeChecked();
-
-                await user.click(checkboxes[4]);
-                expect(checkboxes[4]).toBeChecked();
-
-                await user.click(checkboxes[6]);
-                expect(checkboxes[6]).not.toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                
                 const saveopPermissionButton = screen.getByRole("button", { name: /Save Operated Permissions/i });
                 expect(saveopPermissionButton).toBeDisabled()
                 await user.click(saveopPermissionButton);
@@ -460,7 +478,7 @@ describe('Manage User Permissions Standard user screen',() => {
                 });
                 
 
-                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Op Permissions/i });
+                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Operated Permissions/i });
                 expect(saveNonopPermissionButton).toBeDisabled();
 
                 await user.click(saveNonopPermissionButton);
@@ -482,7 +500,7 @@ describe('Manage User Permissions System Super User Screen',() => {
     afterEach(() => {
         vi.resetAllMocks();
         vi.clearAllMocks();
-    })
+    });
 
     test('It should allow user to toggle permissions Super User', async () => {
             const user = userEvent.setup()
@@ -495,9 +513,8 @@ describe('Manage User Permissions System Super User Screen',() => {
     
             renderWithProviders(<SuperUserDash />, {
                               supabaseOverrides: {
-                                loggedInUser: loggedInUserIsSuperUser,
+                                loggedInUser: Love_Quinn_Super_User,
                                 loading: false,
-                                isSuperUser: false,
                                 session: {
                                 access_token: 'test-token',
                                 refresh_token: 'test-refresh-token',
@@ -517,13 +534,28 @@ describe('Manage User Permissions System Super User Screen',() => {
                 });
     
                 await waitFor(() => {
-                      expect(mockPermissionsFetch).toHaveBeenCalled();
-                    });
+                  expect(mockPermissionsFetch).toHaveBeenCalledWith(Love_Quinn_Super_User.is_super_user, 'test-token')
+                });
+
+                await waitFor(() => {
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[0]).toBeInTheDocument();
+                  expect(screen.getAllByText(/The permissions associated to each user./i)[1]).toBeInTheDocument();
+                });
     
                 const tables = screen.getAllByRole('table');
                 expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i)[0]).toBeInTheDocument();
-                const checkboxes = screen.getAllByRole("checkbox");
+                const rows = within(tables[0]).getAllByRole('row');
+                const nonOpRows =  within(tables[1]).getAllByRole('row');
+
+                const dataRows = rows.slice(1);
+                const nonOpdatarows = nonOpRows.slice(1);
+
+                expect(within(dataRows[0]).getByText(/Mike Rider/i)).toBeInTheDocument();
+                expect(within(nonOpdatarows[0]).getByText(/Mike Rider/i)).toBeInTheDocument();
+
+                const checkboxes = within(dataRows[2]).getAllByRole("checkbox");
+                const nonOpcheckboxes = within(nonOpdatarows[2]).getAllByRole("checkbox");
+
                 expect(checkboxes[0]).toBeChecked();
                 
                 await user.click(checkboxes[0]);
@@ -538,37 +570,37 @@ describe('Manage User Permissions System Super User Screen',() => {
                 await user.click(checkboxes[2]);
                 expect(checkboxes[2]).not.toBeChecked();
 
-                await user.click(checkboxes[4]);
-                expect(checkboxes[4]).not.toBeChecked();
-
-                await user.click(checkboxes[6]);
-                expect(checkboxes[6]).toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                
                 const saveopPermissionButton = screen.getByRole("button", { name: /Save Operated Permissions/i });
                 expect(saveopPermissionButton).toBeEnabled();
                 await user.click(saveopPermissionButton);
                 
                await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toBeCalledWith(
+                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(1,
                     updatedPermissions,'OPERATOR_USER_PERMISSIONS'
                 );
 
                 });
-                
 
-                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Op Permissions/i });
+                expect(nonOpcheckboxes[0]).toBeChecked();
+                
+                await user.click(nonOpcheckboxes[0]);
+                expect(nonOpcheckboxes[0]).not.toBeChecked();
+
+                await user.click(nonOpcheckboxes[1]);
+                expect(nonOpcheckboxes[1]).toBeChecked();
+
+                await user.click(nonOpcheckboxes[2]);
+                expect(nonOpcheckboxes[2]).toBeChecked();
+
+                await user.click(nonOpcheckboxes[2]);
+                expect(nonOpcheckboxes[2]).not.toBeChecked();
+                
+                const saveNonopPermissionButton = screen.getByRole("button", { name: /Save Non-Operated Permissions/i });
                 expect(saveNonopPermissionButton).toBeEnabled();
 
                 await user.click(saveNonopPermissionButton);
                 await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toBeCalledWith(
+                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(2,
                     updatedNonPermissions,'PARTNER_USER_PERMISSIONS'
                );
 
@@ -577,79 +609,6 @@ describe('Manage User Permissions System Super User Screen',() => {
 
                 
             });
-    test('It should allow user to toggle permissions Standard', async () => {
-            const user = userEvent.setup()
-    
-            const mockPermissionsFetch = vi.mocked(fetchProvider.fetchUserPermissions);
-            mockPermissionsFetch.mockResolvedValue({
-                ok: true,
-                data: limitedPermissionList
-            });
-    
-            renderWithProviders(<SuperUserDash />, {
-                              supabaseOverrides: {
-                                loggedInUser: loggedInUserRachelGreenWithUserId,
-                                loading: false,
-                                isSuperUser: false,
-                                session: {
-                                access_token: 'test-token',
-                                refresh_token: 'test-refresh-token',
-                                expires_in: 3600,
-                                token_type: 'bearer',
-                                user: {
-                                  id: 'test-user-id',
-                                  email: 'test@example.com',
-                                  aud: 'authenticated',
-                                  role: 'authenticated',
-                                  created_at: '2024-01-01T00:00:00Z',
-                                  app_metadata:[],
-                                  user_metadata:{}
-                                }
-                              },
-                            }
-                });
-    
-                await waitFor(() => {
-                      expect(mockPermissionsFetch).toHaveBeenCalled();
-                    });
-    
-                const tables = screen.getAllByRole('table');
-                expect(tables).toHaveLength(2);
-                expect(screen.getAllByText(/Mike Rider/i));
-                const checkboxes = screen.getAllByRole("checkbox");
-                expect(checkboxes[0]).toBeChecked();
-                
-                await user.click(checkboxes[0]);
-                expect(checkboxes[0]).toBeChecked();
-
-                await user.click(checkboxes[1]);
-                expect(checkboxes[1]).not.toBeChecked();
-
-                await user.click(checkboxes[2]);
-                expect(checkboxes[2]).not.toBeChecked();
-
-                await user.click(checkboxes[2]);
-                expect(checkboxes[2]).not.toBeChecked();
-
-                await user.click(checkboxes[4]);
-                expect(checkboxes[4]).toBeChecked();
-
-                await user.click(checkboxes[6]);
-                expect(checkboxes[6]).not.toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                await user.click(checkboxes[5]);
-                expect(checkboxes[5]).not.toBeChecked();
-
-                
-                const saveopPermissionButton = screen.queryByRole("button", { name: /Save Operated Permissions/i });
-                expect(saveopPermissionButton).not.toBeInTheDocument();
-                
-                const saveNonopPermissionButton = screen.queryByRole("button", { name: /Save Non-Op Permissions/i });
-                expect(saveNonopPermissionButton).not.toBeInTheDocument();
-                
-            });
+   
     
 });

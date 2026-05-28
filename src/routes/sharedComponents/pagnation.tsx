@@ -23,12 +23,10 @@ export default function UniversalPagination<T>({
     const [maxPageNumber, setMaxPageNumber] = useState(4);
 
     // Calculate total pages and pagnation array when data changes
-    useMemo(() => {
-        console.log(data.length,'the length of the datarows')
+   useEffect(() => {
+
         if(data.length < 1) return;
         const pages = Math.ceil(data.length / rowsPerPage);
-        console.log(pages, 'the math')
-        console.log(rowsPerPage, 'the rows')
         setTotalPages(pages);
         setPaginationArray(Array(pages).fill(null).map((_, i) => i));
 
@@ -131,7 +129,7 @@ export default function UniversalPagination<T>({
         </>
     );
 
-}
+};
 
 export function UniversalPaginationForDarkBackground<T>({
     data,
@@ -228,4 +226,4 @@ export function UniversalPaginationForDarkBackground<T>({
         </>
     );
 
-}
+};

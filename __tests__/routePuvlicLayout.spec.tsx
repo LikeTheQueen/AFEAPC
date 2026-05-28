@@ -4,8 +4,11 @@ vi.mock('src/blocks/LiquidEther', () => ({
 
 import { render, screen, fireEvent, waitFor, cleanup, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LandingPage from 'src/routes/unusedRoutes/landing';
+import PublicLayout from 'src/routes/webpage/publicLayout';
+import Homepage from 'src/routes/webpage/homepage';
+import NavHeader from 'src/routes/webpage/navHeader';
 import LoginForm from 'src/routes/userLogin/routes/login';
+import { APP_LOGO } from 'src/constants/variables';
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router';
 import supabase from 'provider/supabase';
 import * as writeProvider from 'provider/write';
@@ -32,8 +35,14 @@ vi.mock('provider/write', () => ({
 }))
 
 const routes = [
-    { path: '/', element: <LandingPage /> },
-    { path: '/login', element: <LoginForm /> },
+    { 
+        path: '/', 
+        element: <PublicLayout />,
+        children: [
+            { index: true, element: <Homepage /> },
+            { path: 'login', element: <LoginForm /> },
+        ]
+    },
     { path: '/mainscreen/afe', element: <div>Main Screen</div> },
 ];
 

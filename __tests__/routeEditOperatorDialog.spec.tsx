@@ -40,7 +40,6 @@ describe('Edit Operators',() => {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -78,7 +77,6 @@ describe('Edit Operators',() => {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -144,7 +142,6 @@ describe('Edit Operators',() => {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -209,7 +206,6 @@ describe('Edit Operators',() => {
                       supabaseOverrides: {
                         loggedInUser: loggedInUserRachelGreen,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',

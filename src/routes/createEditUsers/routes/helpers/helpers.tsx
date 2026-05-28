@@ -33,6 +33,7 @@ export const handleNewUser = async(
         is_super_user: boolean,
         token: string,
         apc_op_id_umbrella: string,
+        is_org_super_user: boolean,
 
     ) => {
       
@@ -47,7 +48,7 @@ export const handleNewUser = async(
             await updateUserActiveStatusToInactive(newUser.data, token)
          }
 
-         await createNewUserProfile(newUser.data, firstName, lastName, email, active, is_super_user, token, apc_op_id_umbrella);
+         const userresult = await createNewUserProfile(newUser.data, firstName, lastName, email, active, is_super_user, token, apc_op_id_umbrella, is_org_super_user);
 
          if(roles.length>0) {
             const opRoles = filterOperatorRolePermissions(roles, newUser.data);
@@ -85,6 +86,7 @@ export function checkedByRole(roles: RoleEntryRead[], roleVal: number) {
 };
 
 export function checkedByRoleEntryWrite(roles: RoleEntryWrite[], roleVal: number) {
+
     const rolemapfilter = roles.filter(role => (role.role === roleVal && role.active === true));
     const isChecked = rolemapfilter.length===1 ? true : false;
 
@@ -195,6 +197,7 @@ export function buildGroupedUsers(
       apcrole,
     };
   }).filter(roles => roles.user_id !== null);
+  console.log(grouped, 'grouped', editableApcAddressIds,'edit address')
 
   return { grouped, editableApcAddressIds };
 };

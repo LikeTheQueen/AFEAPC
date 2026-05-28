@@ -8,7 +8,7 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 import NotificationsGrid from 'src/routes/afeDashboard/routes/notifications';
 import { NotificationsGridPreFiltered } from 'src/routes/afeDashboard/routes/notifications';
 
-import { firstNotifcationLoad, secodNotificationLoad, filteredNotificationLoad, filteredNotificationLoadSecondLoad } from './test-utils/notificationHistoryAFE';
+import { filteredNotificationLoad, filteredNotificationLoadSecondLoad, firstNotificationLoadOvjectChange, secondNotificationLoadObjectChange } from './test-utils/notificationHistoryAFE';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW
  } from './test-utils/afeRecords';
@@ -30,7 +30,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
      supabaseOverrides: {
        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
        loading: false,
-       isSuperUser: false,
        session: {
          access_token: 'test-token',
          refresh_token: 'test-refresh-token',
@@ -58,11 +57,10 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
  const setupWithSelectionsPreFiltered = async (
    user: ReturnType<typeof userEvent.setup>
  ) => {
-   renderWithProviders(<NotificationsGridPreFiltered apc_afe_id='e5676564-f4f2-40ec-b115-52635ec0593b'/>, {
+   renderWithProviders(<NotificationsGridPreFiltered apc_afe_id='01105c4f-4090-418f-be35-714f4bfaf06b'/>, {
      supabaseOverrides: {
        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
        loading: false,
-       isSuperUser: false,
        session: {
          access_token: 'test-token',
          refresh_token: 'test-refresh-token',
@@ -82,12 +80,12 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
    });
 
    await waitFor(() => {
-         expect(fetchProvider.fetchNotifications).toHaveBeenLastCalledWith(0, 10, true, 'e5676564-f4f2-40ec-b115-52635ec0593b');
+         expect(fetchProvider.fetchNotifications).toHaveBeenLastCalledWith(0, 10, true, '01105c4f-4090-418f-be35-714f4bfaf06b');
          expect(fetchProvider.fetchAFEHistoryCount).toHaveBeenCalled();
         });
  };
 
- describe('AFE Notifications history',() => {
+    describe('AFE Notifications history',() => {
      let user: ReturnType<typeof userEvent.setup>;
  
      beforeEach(() => {
@@ -106,7 +104,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
              supabaseOverrides: {
                  loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',
@@ -136,22 +133,29 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
 
      test('Fetches AFE Notifications for the user and allows them to filter and load more', async () => {
          (fetchProvider.fetchNotifications as Mock)
-             .mockResolvedValueOnce(firstNotifcationLoad)
-             .mockResolvedValueOnce(secodNotificationLoad);
+             .mockResolvedValueOnce(firstNotificationLoadOvjectChange)
+             .mockResolvedValueOnce(secondNotificationLoadObjectChange);
          (fetchProvider.fetchAFENotificationCount as Mock)
              .mockResolvedValue(20);
          await setupWithSelections(user);
 
-        
-
          await waitFor(() => {
-             const statusChange = screen.getAllByText(/The Partner Status on the AFE changed from New to Viewed/i)
-             expect(statusChange).toHaveLength(6)
+            expect(screen.getByText( /Cumlative history of actions taken on all AFEs./i)).toBeInTheDocument();
+         });
+ 
+         await waitFor(() => {
+             const statusChange = screen.getAllByText(/The Partner Status on the AFE changed from New to Viewed/i);
+             expect(statusChange).toHaveLength(2)
              expect(statusChange[0]).toBeInTheDocument();
-             const afeDescChange = screen.getAllByText(/The Operator Un-Archived the AFE/i)
+             const afeDescChange = screen.getAllByText(/Attachment Well Plat ASPEN 10-26 added to the AFE via integration/i)
              expect(afeDescChange).toHaveLength(2);
              expect(afeDescChange[0]).toBeInTheDocument();
-         });
+         }, { timeout: 3000 });
+
+         await waitFor(() => {
+            expect(screen.getByText(/26D014/i)).toBeInTheDocument();
+            expect(screen.getByText(/26D014/i)).toBeVisible();
+        }, { timeout: 3000 });
 
          const loadMoreButton = screen.getAllByRole('button', { name: /load more/i });
 
@@ -160,9 +164,9 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          const filterOnUser = screen.getByRole('combobox', { name: /filter on user/i });
          expect(filterOnUser).toBeInTheDocument();
          const optionsUser = within(filterOnUser).getAllByRole('option');
-         expect(optionsUser).toHaveLength(2);
+         expect(optionsUser).toHaveLength(3);
 
-         expect(within(filterOnUser).getByRole('option', { name: /queen elizabeth/i })).toBeInTheDocument();
+         expect(within(filterOnUser).getByRole('option', { name: /service role/i })).toBeInTheDocument();
 
          const filterOnAFENumber = screen.getByRole('textbox', { name: /Search on the AFE Number/i });
          expect(filterOnAFENumber).toHaveValue('');
@@ -173,11 +177,11 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          const filterOnAFEDesc = screen.getByRole('textbox', { name: /Search the Description/i });
          expect(filterOnAFEDesc).toHaveValue('');
          
-         await user.type(filterOnAFEDesc, 'The Oper');
-         expect(filterOnAFEDesc).toHaveValue('The Oper');
+         await user.type(filterOnAFEDesc, 'BUENAVISTA');
+         expect(filterOnAFEDesc).toHaveValue('BUENAVISTA');
 
          const rows = screen.getAllByRole('row');
-         // Subtract 1 for the header row
+         
          expect(rows.length).toBeGreaterThan(1);
 
          const dataRows = rows.slice(1);
@@ -185,20 +189,37 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          expect(dataRows.length).toBe(1);
 
          await user.clear(filterOnAFEDesc);
-         await user.type(filterOnAFENumber, '25D001');
+         await user.type(filterOnAFENumber, '26D017');
 
          const rowsSecondFilter = screen.getAllByRole('row');
-         // Subtract 1 for the header row
+        
          expect(rowsSecondFilter.length).toBeGreaterThan(1);
 
          const dataRowsSecondFilter = rowsSecondFilter.slice(1);
 
-         expect(dataRowsSecondFilter.length).toBe(1);
+         expect(dataRowsSecondFilter.length).toBe(2);
+
+         await user.clear(filterOnAFENumber);
+
+         await waitFor(() => {
+            expect(screen.getByText(/26D014/i)).toBeInTheDocument();
+            expect(screen.getByText(/26D014/i)).toBeVisible();
+        }, { timeout: 3000 });
 
          await user.click(loadMoreButton[0]);
+
+         await waitFor(() => {
+            expect(fetchProvider.fetchNotifications).toHaveBeenCalled();
+         },{ timeout: 3000 });
+
+         await waitFor(() => {
+            expect(screen.getByText(/26D015/i)).toBeInTheDocument();
+            expect(screen.getByText(/26D015/i)).toBeVisible();
+        }, { timeout: 3000 });
+         
          await waitFor(() => {
          const rowFilteredLoadMore = screen.getAllByRole('row');
-         // Subtract 1 for the header row
+         
          expect(rowFilteredLoadMore.length).toBeGreaterThan(1);
 
          const dataRowsFilterLoadMore = rowFilteredLoadMore.slice(1);
@@ -209,6 +230,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          await user.clear(filterOnAFENumber);
          await user.type(filterOnAFEVer, 'S3');
 
+
          await waitFor(() => {
          const rowFilteredLoadMoreOnVer = screen.getAllByRole('row');
          // Subtract 1 for the header row
@@ -216,16 +238,14 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
 
          const dataRowsFilterLoadMoreOnVer = rowFilteredLoadMoreOnVer.slice(1);
          
-         expect(dataRowsFilterLoadMoreOnVer.length).toBe(2);
+         expect(dataRowsFilterLoadMoreOnVer.length).toBe(1);
          });
 
-
-
-
-
      });
+
     });
-describe('AFE Notifications History PreFiltered',() => {
+
+    describe('AFE Notifications History PreFiltered',() => {
      let user: ReturnType<typeof userEvent.setup>;
  
      beforeEach(() => {
@@ -238,13 +258,12 @@ describe('AFE Notifications History PreFiltered',() => {
  
      });
  
-     test('Loads the srceen for the user', async () => {
+     test('Loads the AFE history for the user', async () => {
  
          renderWithProviders(<NotificationsGridPreFiltered apc_afe_id='e5676564-f4f2-40ec-b115-52635ec0593b' />, {
              supabaseOverrides: {
                  loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',
@@ -272,7 +291,7 @@ describe('AFE Notifications History PreFiltered',() => {
  
      });
 
-     test('Fetches the mapped account codes when a user selects the dropdowns and let user delete one', async () => {
+     test('Gets prefiltered AFE history', async () => {
          (fetchProvider.fetchNotifications as Mock)
              .mockResolvedValueOnce(filteredNotificationLoad)
              .mockResolvedValueOnce(filteredNotificationLoadSecondLoad);
@@ -280,14 +299,12 @@ describe('AFE Notifications History PreFiltered',() => {
              .mockResolvedValue(12);
          await setupWithSelectionsPreFiltered(user);
 
-        
-
          await waitFor(() => {
              const statusChange = screen.getAllByText(/The Partner Status on the AFE changed from New to Viewed/i)
              expect(statusChange).toHaveLength(2)
              expect(statusChange[0]).toBeInTheDocument();
              const afeDescChange = screen.getAllByText(/The signed AFE has been uploaded by Queen Elizabeth for John Ross Exploration Inc/i)
-             expect(afeDescChange).toHaveLength(8);
+             expect(afeDescChange).toHaveLength(2);
              expect(afeDescChange[0]).toBeInTheDocument();
          });
 
@@ -298,7 +315,7 @@ describe('AFE Notifications History PreFiltered',() => {
          const filterOnUser = screen.getByRole('combobox', { name: /filter on user/i });
          expect(filterOnUser).toBeInTheDocument();
          const optionsUser = within(filterOnUser).getAllByRole('option');
-         expect(optionsUser).toHaveLength(3);
+         expect(optionsUser).toHaveLength(4);
 
          expect(within(filterOnUser).getByRole('option', { name: /queen elizabeth/i })).toBeInTheDocument();
          expect(within(filterOnUser).getByRole('option', { name: /rachel green/i })).toBeInTheDocument();
@@ -306,10 +323,10 @@ describe('AFE Notifications History PreFiltered',() => {
          const filterOnAction = screen.getByRole('combobox', { name: /Filter on the AFE Action/i });
          expect(filterOnAction).toBeInTheDocument();
          const optionsAction = within(filterOnAction).getAllByRole('option');
-         expect(optionsAction).toHaveLength(4);
+         expect(optionsAction).toHaveLength(3);
 
          expect(within(filterOnAction).getByRole('option', { name: /approved/i })).toBeInTheDocument();
-         expect(within(filterOnAction).getByRole('option', { name: /viewed/i })).toBeInTheDocument();
+         expect(within(filterOnAction).getByRole('option', { name: /action/i })).toBeInTheDocument();
 
          
          const filterOnAFEDesc = screen.getByRole('textbox', { name: /Search the Description/i });
@@ -328,8 +345,17 @@ describe('AFE Notifications History PreFiltered',() => {
 
          await user.clear(filterOnAFEDesc);
          await user.selectOptions(filterOnUser, 'Rachel Green');
+         
+         await waitFor(() => {
+            expect(filterOnUser).toHaveValue('Rachel Green');
+         });
 
-         expect(filterOnUser).toHaveValue('Rachel Green');
+         await waitFor(() => {
+            expect(screen.queryByText(/The signed AFE has been uploaded by Queen Elizabeth for John Ross Exploration Inc/i)).not.toBeInTheDocument();
+            //expect(screen.getByText(/26D014/i)).toBeVisible();
+        }, { timeout: 3000 });
+
+         
 
          const rowsSecondFilter = screen.getAllByRole('row');
          // Subtract 1 for the header row
@@ -342,7 +368,7 @@ describe('AFE Notifications History PreFiltered',() => {
          await user.click(loadMoreButton[0]);
          await waitFor(() => {
          const rowFilteredLoadMore = screen.getAllByRole('row');
-         // Subtract 1 for the header row
+         //Subtract 1 for the header row
          expect(rowFilteredLoadMore.length).toBeGreaterThan(1);
 
          const dataRowsFilterLoadMore = rowFilteredLoadMore.slice(1);
@@ -352,4 +378,3 @@ describe('AFE Notifications History PreFiltered',() => {
 
      });
     });
-

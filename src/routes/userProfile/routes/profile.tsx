@@ -29,8 +29,6 @@ export default function Profile() {
               
               try{
                 const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
-                console.log(userPermissionsRaw, 'the raw user permissions');
-                console.log(loggedInUser.is_super_user, 'the raw user permissions')
         
                 if(!userPermissionsRaw.ok) {
                   throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');

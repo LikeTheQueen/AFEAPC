@@ -29,11 +29,13 @@ export default function UserPermissionDashboard() {
         
         try{
           const userPermissionsRaw = await fetchUserPermissions(loggedInUser.is_super_user, token);
+          
   
           if(!userPermissionsRaw.ok) {
             throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
           }
           if(isMounted) {
+            console.log(userPermissionsRaw.data)
             setPermissionData(userPermissionsRaw.data);
             setUserPermissionListLoading(false);
           }

@@ -127,8 +127,7 @@ export default function OperatorExecuteFilters() {
                 if (!operatorFilters.ok) {
                     throw new Error(operatorFilters.message as string);
                 }
-                console.log(operatorFilters.data)
-                console.log(opAPCID)
+
                 if (operatorFilters.data !== undefined && operatorFilters.data?.length > 0) {
                     
                     const record = operatorFilters.data[0];

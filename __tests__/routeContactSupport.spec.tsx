@@ -37,7 +37,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
      supabaseOverrides: {
        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
        loading: false,
-       isSuperUser: false,
        session: {
          access_token: 'test-token',
          refresh_token: 'test-refresh-token',
@@ -75,7 +74,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
              supabaseOverrides: {
                  loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                  loading: false,
-                 isSuperUser: false,
                  session: {
                      access_token: 'test-token',
                      refresh_token: 'test-refresh-token',

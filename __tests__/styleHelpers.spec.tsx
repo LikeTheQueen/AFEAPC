@@ -1,8 +1,6 @@
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
 import { activeTab, formatDate, isLoggedInUserOperator } from "src/helpers/styleHelpers";
-import type { AFEType } from 'src/types/interfaces';
 import { vi } from 'vitest';
-import { singleAFE, twoAFErecords } from './test-utils/afeRecords';
 
 describe('Determine values when partner status is null', () => {
     afterEach(() => {

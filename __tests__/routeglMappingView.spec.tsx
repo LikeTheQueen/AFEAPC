@@ -8,9 +8,6 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 import GLMapping from 'src/routes/glConfigurations/routes/glMappingView';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
-    OperatorDropDown,
-    PartnerDropdown,
-    partnerAccountCodes
  } from './test-utils/afeRecords';
 
  import { mappedGLCodes } from './test-utils/accountCodeGls';

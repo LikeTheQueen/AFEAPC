@@ -604,12 +604,12 @@ import type { UUID } from 'crypto';
     return callEdge<TogglePayload, ToggleResult>("create_New_User", { email, password }, token);
   };
 
-  export async function createNewUserProfile(id: string, first_name: string, last_name: string, email: string, active: boolean, is_super_user: boolean, token: string, apc_op_id_umbrella: string) {
-    console.log('The new user', apc_op_id_umbrella); 
-    type TogglePayload = { id: string; first_name: string; last_name: string; email: string; active: boolean; is_super_user: boolean; apc_op_id_umbrella: string;};
+  export async function createNewUserProfile(id: string, first_name: string, last_name: string, email: string, active: boolean, is_super_user: boolean, token: string, apc_op_id_umbrella: string, is_org_super_user: boolean) {
+    
+    type TogglePayload = { id: string; first_name: string; last_name: string; email: string; active: boolean; is_super_user: boolean; apc_op_id_umbrella: string; is_org_super_user: boolean;};
     type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string; };
     
-    return callEdge<TogglePayload, ToggleResult>("create_New_User_Profile", { id, first_name, last_name, email, active, is_super_user, apc_op_id_umbrella }, token);
+    return callEdge<TogglePayload, ToggleResult>("create_New_User_Profile", { id, first_name, last_name, email, active, is_super_user, apc_op_id_umbrella, is_org_super_user }, token);
   };
 
   export async function createUserRolesOperator(roles: RoleEntryWrite[], token: string) {

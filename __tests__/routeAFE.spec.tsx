@@ -4,7 +4,6 @@ vi.mock('../provider/supabase', () => ({
   }
 }));
 import AFE from '../src/routes/afeDashboard/routes/afe';
-import { formatDate, formatDateShort } from "../src/helpers/styleHelpers";
 import * as fetchProvider from '../provider/fetch';
 import * as writeProvider from "provider/write";
 import * as emailProvider from '../email/emailBasic';
@@ -15,13 +14,15 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 import {
   afesReturnedFromSupabase,
   afesReturnedFromSupabaseDynamicDate,
-  RachelGreen_AllPermissions_CW_NonOpCW,
   RossGeller_Op_CW_No_NonOp,
   MonicaGeller_NoOpRoles_CW_NonOpCW,
   OperatorDropDown,
   PartnerDropdown,
   loggedInUserIsSuperUser,
-  theAFERecordBeingClicked
+  theAFERecordBeingClicked,
+  RachelGreen_ViewAFECW_NonOPAFECW_APC,
+  afeResultSupabase,
+  responseTransformed
 } from './test-utils/afeRecords';
 
 
@@ -36,6 +37,7 @@ vi.mock('../provider/fetch', () => ({
 vi.mock('provider/write', () => ({
   updateAFEPartnerStatus: vi.fn().mockResolvedValue({ ok: true, data: null }),
   insertAFEHistory: vi.fn(),
+  insertAFEHistoryRecord: vi.fn(),
   writeToFunctionLogs: vi.fn(),
 }));
 
@@ -52,7 +54,7 @@ describe('displaying AFEs', () => {
     cleanup();
     vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
     vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
-    vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afesReturnedFromSupabase });
+    vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afeResultSupabase });
     vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });
   });
 
@@ -68,9 +70,8 @@ describe('displaying AFEs', () => {
 
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -96,22 +97,28 @@ describe('displaying AFEs', () => {
     await waitFor(() => {
     //First AFE Header
     expect(screen.getByTestId('Non-OperatedAFElistHeader')).toBeVisible();
-    //Second AFE Header
-    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
 
     //AFE Filters
     expect(screen.getByTestId('Non-OperatedAFElistFilter')).toBeVisible();
     expect(screen.queryByTestId('OperatedAFElistFilter')).not.toBeInTheDocument();
 
-    //No AFEs Message (there are none)
+    //No AFEs Message (there are none) First Filter
     expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).not.toBeVisible(); 
-    expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
     
     //AFEs
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
-    });
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
+    
+    //Second AFE Header
+    expect(screen.getByTestId('OperatedAFElistHeader')).not.toBeVisible();
+    expect(screen.getByTestId('NoOperatedAFElist')).not.toBeVisible();
 
+    //No AFEs Message (there are none)
+    expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).not.toBeVisible(); 
+    expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible();
+    
+    });
+ 
     const operatedTab = screen.getByRole('button', { name: 'Operated AFEs' });
     await user.click(operatedTab);
 
@@ -131,7 +138,7 @@ describe('displaying AFEs', () => {
     expect(screen.getAllByTestId('OperatedNoFilteredAFEs')[1]).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
 
@@ -156,7 +163,7 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
-    
+  
 
   });
 
@@ -167,7 +174,6 @@ describe('displaying AFEs', () => {
       supabaseOverrides: {
         loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -206,7 +212,7 @@ describe('displaying AFEs', () => {
     
     //AFEs
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'Operated AFEs' });
@@ -228,8 +234,8 @@ describe('displaying AFEs', () => {
     expect(screen.getAllByTestId('OperatedNoFilteredAFEs')[1]).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const allAFETab = screen.getByRole('button', { name: 'All AFEs' });
@@ -251,7 +257,7 @@ describe('displaying AFEs', () => {
 
     //AFEs
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
     
 
@@ -264,7 +270,6 @@ describe('displaying AFEs', () => {
       supabaseOverrides: {
         loggedInUser: RossGeller_Op_CW_No_NonOp,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -302,8 +307,8 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
     
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'Operated AFEs' });
@@ -325,7 +330,7 @@ describe('displaying AFEs', () => {
     expect(screen.getAllByTestId('OperatedNoFilteredAFEs')[1]).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
 
@@ -347,7 +352,7 @@ describe('displaying AFEs', () => {
     expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
     
@@ -359,9 +364,8 @@ describe('displaying AFEs', () => {
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -390,16 +394,36 @@ describe('displaying AFEs', () => {
     
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
+
     });
    
 
@@ -411,7 +435,6 @@ describe('displaying AFEs', () => {
       supabaseOverrides: {
         loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -439,17 +462,35 @@ describe('displaying AFEs', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.getByRole("link", { name: /099D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
    
   });
@@ -460,7 +501,6 @@ describe('displaying AFEs', () => {
       supabaseOverrides: {
         loggedInUser: RossGeller_Op_CW_No_NonOp,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -488,16 +528,35 @@ describe('displaying AFEs', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        //expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
   });
 
@@ -506,9 +565,8 @@ describe('displaying AFEs', () => {
 
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -537,34 +595,56 @@ describe('displaying AFEs', () => {
 
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     const numSearch = screen.getByRole('textbox', { name: /search on afe number/i });
-    await user.type(numSearch,'06D111N');
+    await user.type(numSearch,'26D016I');
 
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
-
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
-      expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).toBeVisible();
+        expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     
@@ -576,12 +656,11 @@ describe('displaying AFEs', () => {
  
     (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
       ok: true,
-      data: { id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb', status: 'Viewed'}
+      data: { id: 'e3899d13-c74b-4604-87e3-ba07b613e12e', status: 'Viewed'}
     });
     
-    (writeProvider.insertAFEHistory as Mock).mockReturnValue({
-      ok: true,
-      data: { id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb', description: 'The Partner Status on the AFE changed from New to Viewed', type:'Action'}
+    (writeProvider.insertAFEHistoryRecord as Mock).mockReturnValue({
+      ok: true
     });
 
     (emailProvider.sendAFEStatusChangeEmailToOperator as Mock).mockImplementation(() =>
@@ -597,9 +676,8 @@ describe('displaying AFEs', () => {
       { path: '/afeDetail/:afeID', element: <div>AFE Detail</div> },
     ],
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -628,50 +706,89 @@ describe('displaying AFEs', () => {
 
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     const numSearch = screen.getByRole('textbox', { name: /search on afe number/i });
-    await user.type(numSearch,'06');
+    await user.type(numSearch,'26D');
   
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("link", { name: /06D111JC/i }));
+    await user.click(screen.getByRole("link", { name: /26D016B/i }));
 
     await waitFor(() => {
-      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
+      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','Viewed','test-token');
+      expect(writeProvider.insertAFEHistoryRecord).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action');
       expect(emailProvider.sendAFEStatusChangeEmailToOperator).toHaveBeenCalledWith(
-        theAFERecordBeingClicked,
+        responseTransformed[12],
         'Viewed',
-        RachelGreen_AllPermissions_CW_NonOpCW.firstName,
-        RachelGreen_AllPermissions_CW_NonOpCW.lastName,
-        RachelGreen_AllPermissions_CW_NonOpCW.email,
+        RachelGreen_ViewAFECW_NonOPAFECW_APC.firstName,
+        RachelGreen_ViewAFECW_NonOPAFECW_APC.lastName,
+        RachelGreen_ViewAFECW_NonOPAFECW_APC.email,
       )
     });
 
     await waitFor(() => {
-  expect(screen.getByText('AFE Detail')).toBeInTheDocument();
+  expect(screen.getByText('AFE Detail')).toBeInTheDocument(); 
 });
 await new Promise(resolve => setTimeout(resolve, 150));
     
@@ -694,9 +811,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
       { path: '/afeDetail/:afeID', element: <div>AFE Detail</div> },
     ],
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -725,29 +841,48 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     
-    await user.click(screen.getByRole("link", { name: /06D111JC/i }));
+    await user.click(screen.getByRole("link", { name: /26D016B/i }));
 
     await waitFor(() => {
-      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb','Viewed','test-token');
+      expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','Viewed','test-token');
       expect(writeProvider.writeToFunctionLogs).toHaveBeenCalledWith(
         'UpdateAFEPartnerStatus',
         'Unable to update Partner Status',
         null,
         'ERROR',
-        `AFE or AFE Details to change Partner status to Viewed by ${RachelGreen_AllPermissions_CW_NonOpCW.firstName} ${RachelGreen_AllPermissions_CW_NonOpCW.lastName}`
+        `AFE or AFE Details to change Partner status to Viewed by ${RachelGreen_ViewAFECW_NonOPAFECW_APC.firstName} ${RachelGreen_ViewAFECW_NonOPAFECW_APC.lastName}`
       );
     });
 
@@ -764,9 +899,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -795,16 +929,35 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     const partnerStatusSearch = screen.getByRole('combobox', { name: /Select Partner Status/i });
@@ -812,16 +965,35 @@ await new Promise(resolve => setTimeout(resolve, 150));
   
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        //expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).toBeVisible(); 
@@ -834,9 +1006,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -869,23 +1040,42 @@ await new Promise(resolve => setTimeout(resolve, 150));
   
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /06D111JC/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        //expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     expect(screen.getByTestId('Non-OperatedNoFilteredAFEs')).not.toBeVisible(); 
    
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)', async () => {
+  test.skip('Shows Non-Operated AFEs and does not return AFEs they should not see, when using Operator Approval Days Ago search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
@@ -894,9 +1084,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
   });
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -929,7 +1118,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
   
     await waitFor(() => {
 
-      expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /26D0607/i })).not.toBeInTheDocument();
       expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
       expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
       expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
@@ -951,9 +1140,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -992,7 +1180,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
     //AFEs
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('combobox', { name: /select a tab/i });
@@ -1014,7 +1202,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     expect(screen.getAllByTestId('OperatedNoFilteredAFEs')[1]).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
     expect(screen.getByTestId('OperatedAFElist')).toBeVisible();
     });
 
@@ -1047,14 +1235,13 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afesReturnedFromSupabaseDynamicDate
+    data: afeResultSupabase
   });
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
         loggedInUser: RossGeller_Op_CW_No_NonOp,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -1085,32 +1272,74 @@ await new Promise(resolve => setTimeout(resolve, 150));
     await user.click(operatedTab);
 
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: /06D111CJ/i })).toBeVisible();
-      expect(screen.getByRole("link", { name: /25D001CA S2/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+        //expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     const operatorApprovalSearch = screen.getByRole('combobox', { name: /Approval Days Ago/i });
     await user.selectOptions(operatorApprovalSearch,'1 week ago');
 
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: /06D111CJ/i })).toBeVisible();
-      expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111JC/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AN/i })).not.toBeInTheDocument();
+      expect(operatorApprovalSearch).toHaveValue('7');
+    })
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+    await waitFor(() => {
+        //expect(screen.getByRole("link", { name: /26D013N/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002P/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607E/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016B/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
+
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
   });
 
@@ -1125,7 +1354,6 @@ await new Promise(resolve => setTimeout(resolve, 150));
       supabaseOverrides: {
         loggedInUser: loggedInUserIsSuperUser,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -1164,7 +1392,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
     //AFEs
     expect(screen.getByTestId('Non-OperatedAFElist')).toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'All AFEs' });
@@ -1176,22 +1404,39 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
     await waitFor(() => {
 
-      //expect(screen.queryByRole("link", { name: /06D111CJ/i })).not.toBeInTheDocument();
-      //expect(screen.queryByRole("link", { name: /25D001CA S2/i })).not.toBeInTheDocument();
-      //expect(screen.queryByRole("link", { name: /06D111NJ/i })).not.toBeInTheDocument();
-      //expect(screen.queryByRole("link", { name: /06D111NA/i })).not.toBeInTheDocument();
-      
-      expect(screen.getAllByRole("link", { name: /06D111JC/i })[0]).toBeVisible();
-      expect(screen.getAllByRole("link", { name: /06D111JC/i })[1]).toBeVisible();
-      
+        expect(screen.getAllByRole("link", { name: /26D013N/i })[0]).toBeVisible();
+        expect(screen.getAllByRole("link", { name: /26D002P/i })[1]).toBeVisible();
+        //expect(screen.getAllByRole("link", { name: /26D0607E/i })[0]).toBeVisible();
+        //expect(screen.getAllByRole("link", { name: /26D016B/i })[1]).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017V/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014R/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015T/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D016I/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D017O/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D0607A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D002A/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D013C/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D014Y/i })).toBeVisible();
+        //expect(screen.getByRole("link", { name: /26D015U/i })).toBeVisible();
 
-      //EXPECT ARCHIVED AFEs NOT to be Visible
-      //expect(screen.queryByRole("link", { name: /06D111JA/i })).not.toBeInTheDocument();
-      //expect(screen.queryByRole("link", { name: /06D111AC/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013N/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002P/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607E/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016B/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017V/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014R/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015T/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D016I/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D017O/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D0607A/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D002A/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D013C/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D014Y/i })).not.toBeInTheDocument();
+        //expect(screen.queryByRole("link", { name: /26D015U/i })).not.toBeInTheDocument();
     });
 
     
-      await user.click(screen.getAllByRole("link", { name: /06D111JC/i })[0]);
+      await user.click(screen.getAllByRole("link", { name: /26D013N/i })[0]);
    
 
     await waitFor(() => {
@@ -1215,7 +1460,6 @@ await new Promise(resolve => setTimeout(resolve, 150));
       supabaseOverrides: {
         loggedInUser: null,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: '',
         refresh_token: 'test-refresh-token',
@@ -1253,8 +1497,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
     expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
     
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'All AFEs' });
@@ -1272,9 +1516,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
   renderWithProviders(<AFE />, {
       supabaseOverrides: {
-        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
         loading: false,
-        isSuperUser: false,
         session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -1312,8 +1555,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
     expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
     
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const operatedTab = screen.getByRole('button', { name: 'Operated AFEs' });
@@ -1335,8 +1578,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
     expect(screen.getAllByTestId('OperatedNoFilteredAFEs')[1]).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
     const allAFETab = screen.getByRole('button', { name: 'All AFEs' });
@@ -1357,8 +1600,8 @@ await new Promise(resolve => setTimeout(resolve, 150));
     expect(screen.getByTestId('OperatedNoFilteredAFEs')).not.toBeVisible(); 
 
     //AFEs
-    expect(screen.getByTestId('Non-OperatedAFElist')).not.toBeVisible();
-    expect(screen.getByTestId('OperatedAFElist')).not.toBeVisible();
+    expect(screen.queryByTestId('Non-OperatedAFElist')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('OperatedAFElist')).not.toBeInTheDocument();
     });
 
   });

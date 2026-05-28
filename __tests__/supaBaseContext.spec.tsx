@@ -55,7 +55,7 @@ const TestComponent = () => {
 
 describe('SupabaseProvider', () => {
   const mockAFEs = [{ id: 1, afe_number: 'AFE123' }];
-  const transformedAFEs: AFEType[] = [{ id:'123e4567-e89b-12d3-a456-426614174000', operator:'123e4567-e89b-12d3-a456-426614174000', created_at: new Date(), afe_type: 'Drilling', afe_number:'TESTNum1', description:'Desc', total_gross_estimate:100, version_string:'', supp_gross_estimate:0, operator_wi:10, partnerID:'', partner_name:'PartnerNaem', partner_wi:23, partner_status:'New', op_status:'IAPP', iapp_date:'May5', last_mod_date:'Jun3', legacy_chainID:1, legacy_afeid:2, chain_version:1, source_system_id:'ex ID', sortID:1,partner_status_date:new Date(),archived: false,apc_op_id:'', partner_archived: false, well_name:'Many', apc_partner_id:'' }];
+  const transformedAFEs: AFEType[] = [{ id:'123e4567-e89b-12d3-a456-426614174000', operator:'123e4567-e89b-12d3-a456-426614174000', created_at: new Date(), afe_type: 'Drilling', afe_number:'TESTNum1', description:'Desc', total_gross_estimate:100, version_string:'', supp_gross_estimate:0, operator_wi:10, partnerID:'', partner_name:'PartnerNaem', partner_wi:23, partner_status:'New', op_status:'IAPP', iapp_date:'May5', last_mod_date:'Jun3', legacy_chainID:1, legacy_afeid:2, chain_version:1, source_system_id:'ex ID', sortID:1,partner_status_date:new Date(),archived: false,apc_op_id:'', partner_archived: false, well_name:'Many', apc_partner_id:'',currency_code: 'USD' }];
   const mockSession: Session = { access_token: 'abc', token_type: 'bearer', user: { id: '123' } } as any;
 
   beforeEach(() => {

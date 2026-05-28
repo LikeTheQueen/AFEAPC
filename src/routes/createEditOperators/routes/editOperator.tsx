@@ -289,7 +289,6 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
             throw new Error(insertPartnerResult.message);
           }
         } catch(error) {
-          console.log(error)
           handlenotification(false, error as string, true, 'name change');
         }
   };
@@ -325,7 +324,6 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
     handlenotification(true, 'Non-Operated', updatedPartner.apc_name_active, "active change");
     
   } catch (error) {
-    console.log(error)
       handlenotification(false, 'Non-Operated', updatedPartner.apc_name_active, "active change");
      
     }
@@ -391,7 +389,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
     }
   }
   };
-  console.log(relatedNonOpAddress, ' the related addresses')
+
   return (
     <>
     {opToEdit === null || !opToEdit.apc_id || !opToEdit ? (<div className="flex items-start justify-start bg-white shadow-m ring-1 ring-[var(--darkest-teal)]/70 sm:rounded-xl">

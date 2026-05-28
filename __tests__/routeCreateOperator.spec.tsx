@@ -16,7 +16,8 @@ import {
   partnerID1,
   operatorAddedtoSupabaseReturnWithoutSourceSystem,
   operatorAddedtoSupabaseReturnNoID, 
-  partnerAddedtoSupabaseReturnNoID
+  partnerAddedtoSupabaseReturnNoID,
+  parentCompanyAddressAddedResponse
 } from './test-utils/operatorRecords';
 
 import { 
@@ -24,10 +25,12 @@ import {
     sourceSystems
 
  } from './test-utils/superUserAndSourceList';
+import { apc_parent_company_CWFriends, ParentCompanyDropdown } from './test-utils/afeRecords';
 
  vi.mock('../provider/fetch', () => ({
   fetchSourceSystems: vi.fn(),
   fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
+  fetchAllParentCompanies: vi.fn(),
 }));
 
 vi.mock('../provider/write', () => ({
@@ -35,6 +38,8 @@ vi.mock('../provider/write', () => ({
   addOperatorAdressSupabase: vi.fn(),
   addPartnerSupabase: vi.fn(),
   addOperatorPartnerAddressSupabase: vi.fn(),
+  addOParentCompanySupabase: vi.fn(),
+  addParentCompanyAdressSupabase: vi.fn(),
 }));
 
 describe('Create New Operator',() => {
@@ -46,6 +51,7 @@ describe('Create New Operator',() => {
 
   test('Displays the values of the Operator that is being created', async () => {
     const user = userEvent.setup();
+    const parentID = 'b8e859fb-fd2e-4995-8338-741552803bf2';
 
     const mockFetch = vi.mocked(fetchProvider.fetchSourceSystems);
 
@@ -60,11 +66,28 @@ describe('Create New Operator',() => {
       message: undefined
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
+    vi.mocked(writeProvider.addOParentCompanySupabase).mockResolvedValue({
+      ok: true,
+      data: {
+      id: parentID,
+      created_at: '2024-01-01T00:00:00Z',
+      name: 'Corr Mike Oils',
+      created_by: 'user-uuid-here',
+      active: true,
+      max_users: 1,
+      license_expires: '2024-01-01T00:00:00Z',
+    },
+      message: undefined
+    });
+
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -158,7 +181,6 @@ describe('Create New Operator',() => {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -252,7 +274,6 @@ describe('Create New Operator',() => {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -327,6 +348,7 @@ describe('Create New Operator',() => {
 
   test('Displays the values of the Operator that is being created; Verfies the return of Operator created maps correctly and ID is included in NonOp record', async () => {
     const user = userEvent.setup();
+    const parentID = 'b8e859fb-fd2e-4995-8338-741552803bf2';
 
     const mockFetch = vi.mocked(fetchProvider.fetchSourceSystems);
 
@@ -341,38 +363,54 @@ describe('Create New Operator',() => {
       message: undefined
     });
 
+    vi.mocked(writeProvider.addOParentCompanySupabase).mockResolvedValue({
+      ok: true,
+      data: {
+      id: parentID,
+      created_at: '2024-01-01T00:00:00Z',
+      name: 'Corr Mike Oils',
+      created_by: 'user-uuid-here',
+      active: true,
+      max_users: 1,
+      license_expires: '2024-01-01T00:00:00Z',
+    },
+      message: undefined
+    });
+
     vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
+
+    vi.mocked(writeProvider.addParentCompanyAdressSupabase).mockResolvedValue({
+        ok: true,
+        data: parentCompanyAddressAddedResponse,
+        message: undefined
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
         ok: true,
         data: nonOpAddressAddedResponse,
         message: undefined
-    })
-
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -437,18 +475,18 @@ describe('Create New Operator',() => {
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
 
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
+      expect(writeProvider.addOParentCompanySupabase).toHaveBeenCalledWith('Corr Mike Oils');
+      expect(writeProvider.addParentCompanyAdressSupabase).toHaveBeenCalledWith(parentID, operatorBillingAddressToCreate);
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, parentID);
        expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
         '2323232', operatorBillingAddressToCreate
       );
@@ -524,6 +562,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -535,34 +577,30 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: true,
         data: operatorAddedtoSupabaseReturnWithoutSourceSystem,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
         ok: true,
         data: nonOpAddressAddedResponse,
         message: undefined
-    })
-
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -589,6 +627,9 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -632,13 +673,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
 
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
@@ -710,6 +749,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -721,34 +764,30 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: false,
         data: null,
         message: 'Role Security Issue'
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
         ok: true,
         data: nonOpAddressAddedResponse,
         message: undefined
-    })
-
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -775,6 +814,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
+
+    await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -813,19 +857,17 @@ expect(savedAddressesList).toHaveAttribute('hidden');
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
 
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
-       expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
+      expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
     });
 
     expect(operatorSave).toBeDisabled();
@@ -862,7 +904,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     expect(operatorSaveOpNonOpAdddress).toBeDisabled();
 
     expect(savedAddressesList).toHaveAttribute('hidden');
-     expect(partnerWriteErrorMessage).not.toBeVisible();
+    expect(partnerWriteErrorMessage).not.toBeVisible();
  
   });
 
@@ -875,6 +917,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -886,27 +932,24 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: true,
         data: operatorAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: false,
         data: null,
         message: 'Row level security error'
-    })
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -933,6 +976,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
+
+    await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -982,7 +1030,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
        expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
         '2323232', operatorBillingAddressToCreate
       );
@@ -1052,6 +1100,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -1063,34 +1115,30 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: true,
         data: operatorAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: false,
         data: null,
         message: 'Role Security'
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
         ok: true,
         data: nonOpAddressAddedResponse,
         message: undefined
-    })
-
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -1117,6 +1165,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
+
+    await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -1155,18 +1208,16 @@ expect(savedAddressesList).toHaveAttribute('hidden');
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
 
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
       expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
         '2323232', operatorBillingAddressToCreate
       );
@@ -1179,7 +1230,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const partnerWriteErrorMessage = screen.getByText(/There was an error writing the Operators Partner Record or Address:/i);
     expect(partnerWriteErrorMessage).not.toBeVisible();
     expect(fetchError).not.toBeVisible();
-    expect(operatorSaved).toBeVisible();
+    expect(operatorSaved).not.toBeVisible();
     expect(writeError).toBeVisible();
 
     const operatorSaveOpNonOpAdddress = saveButtons[2];
@@ -1203,7 +1254,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     
     await user.type(operatorCityInput[1], 'Austin');
     expect(operatorCityInput[1]).toHaveValue('Austin');
-    expect(operatorSaveOpNonOpAdddress).not.toBeDisabled();
+    expect(operatorSaveOpNonOpAdddress).toBeDisabled();
 
     expect(savedAddressesList).toHaveAttribute('hidden');
     expect(partnerWriteErrorMessage).not.toBeVisible();
@@ -1219,6 +1270,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -1230,34 +1285,30 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: true,
         data: operatorAddedtoSupabaseReturnNoID,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
         ok: true,
         data: nonOpAddressAddedResponse,
         message: undefined
-    })
-
-
+    });
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -1284,6 +1335,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
+
+    await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -1322,18 +1378,16 @@ expect(savedAddressesList).toHaveAttribute('hidden');
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
-
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
+    
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
       expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
     });
 
@@ -1344,7 +1398,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const partnerWriteErrorMessage = screen.getByText(/There was an error writing the Operators Partner Record or Address:/i);
     expect(partnerWriteErrorMessage).not.toBeVisible();
     expect(fetchError).not.toBeVisible();
-    expect(operatorSaved).toBeVisible();
+    expect(operatorSaved).not.toBeVisible();
     expect(writeError).toBeVisible();
 
     const operatorSaveOpNonOpAdddress = saveButtons[2];
@@ -1384,6 +1438,10 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
+    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
+      ParentCompanyDropdown
+    );
+
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
     mockPartnersFetch.mockResolvedValue({
       ok: true,
@@ -1395,27 +1453,24 @@ expect(savedAddressesList).toHaveAttribute('hidden');
         ok: true,
         data: operatorAddedtoSupabaseReturn,
         message: undefined
-    })
+    });
 
     vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
         ok: true,
         data: operatorAddressAddedResponse,
         message: undefined
-    })
-    
+    });
     
     vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
         ok: true,
         data: partnerAddedtoSupabaseReturnNoID,
         message: undefined
-    })
+    });
 
-    
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
         loading: false,
-        isSuperUser: true,
         session: {
           access_token: 'test-token',
           refresh_token: 'test-refresh-token',
@@ -1442,6 +1497,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     const saveButtons = screen.getAllByRole('button', { name: /save/i });
     const operatorSave = saveButtons[0];
     expect(operatorSave).toBeDisabled();
+
+    const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
+    expect(parentCompaniesDropdown).toBeInTheDocument();
+
+    await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
     const operatorNameInput = screen.getAllByRole('textbox', { name: /name/i });
     await user.type(operatorNameInput[0], 'Corr Mike Oils');
@@ -1480,18 +1540,16 @@ expect(savedAddressesList).toHaveAttribute('hidden');
 
     const allLists = screen.getAllByRole('list', { hidden: true });
 
-
-const savedAddressesList = allLists.find(list => 
-  list.textContent?.includes('The addresses below have been saved')
-);
-
-
-expect(savedAddressesList).toHaveAttribute('hidden');
+    const savedAddressesList = allLists.find(list => 
+      list.textContent?.includes('The addresses below have been saved')
+    );
+    
+    expect(savedAddressesList).toHaveAttribute('hidden');
 
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2);
+      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
       expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
         '2323232', operatorBillingAddressToCreate
       );

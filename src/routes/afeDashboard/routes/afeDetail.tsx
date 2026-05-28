@@ -173,8 +173,9 @@ export default function AFEDetailURL() {
       const uri = file.data[0].uri;
         setDocToView(uri);
         if (uri !== '') setOpen(true);
+        if(!loggedInUser?.is_super_user) {
         insertAFEHistoryRecord(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed')
-
+        }
     } catch {
       notifyFailure(`Blind Well.  The file couldn’t be opened for viewing`);
     }
@@ -261,7 +262,9 @@ export default function AFEDetailURL() {
   }
   } ;
 
-  
+  console.log(loggedInUser?.operatorRoles, 'op role');
+  console.log(loggedInUser?.partnerRoles);
+  console.log(doesUserHaveAcceptRejectRole);
   return (
     <>
       <main >
@@ -360,68 +363,65 @@ export default function AFEDetailURL() {
             <div className="px-2 py-1 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:px-8 sm:pb-8 xl:col-span-2 xl:row-span-2 xl:row-end-2 xl:px-8 xl:pt-0 xl:pb-8">
                 <>
                {/* AFE Header 1 */}
-              <div className="m-0 max-w-2xl sm:w-full sm:flex justify-between text-xs/6 2xl:text-sm/6 ">
-                <div>
-                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left sm:mt-2">{afeRecord?.partner_name} Status<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
-                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
+              <div className="m-0 w-full flex flex-col 2xl:flex-row xl:justify-between text-xs/6 2xl:text-sm/6">
+                <div className="2xl:flex-auto">
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left mt-2">{afeRecord?.partner_name} Status:<span className={`font-semibold ml-2 pl-2 rounded-md bg-${statusBackgroundColor} px-2 text-${statusColor} ring-1 ring-${statusRingColor} ring-inset`}>{afePartnerStatus}</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-left">{afeRecord?.partner_name.toLowerCase()} WI:<span className="font-normal pl-2">{afeRecord?.partner_wi.toFixed(6)}%</span></h2>
                 </div>
-                <div>
-                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-right sm:mt-2">Operator<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
-                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] sm:text-right">{afeRecord?.operator} WI<span className="font-normal pl-2">{afeRecord?.operator_wi.toFixed(6)}%</span></h2>
+                <div className="2xl:flex-auto">
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] text-left 2xl:text-right mt-4 2xl:mt-2">Operator:<span className="font-normal pl-2">{afeRecord?.operator}</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] text-left 2xl:text-right">{afeRecord?.operator} WI:<span className="font-normal pl-2">{afeRecord?.operator_wi.toFixed(6)}%</span></h2>
+                <h2 className="font-semibold custom-style text-[var(--darkest-teal)] text-left 2xl:text-right">{afeRecord?.operator} Approved:<span className="font-normal pl-2">{afeRecord?.iapp_date}</span></h2>
                 </div>
               </div>
               {/* AFE Header 2 */}
               <div className="mt-4 sm:w-full border-t border-t-1 border-b border-b-4 border-double border-[var(--darkest-teal)]/70">
-                <div className="mt-2 mb-2 pl-2 sm:rounded-xs grid grid-cols-2 text-xs/6 2xl:text-sm/6 bg-[var(--darkest-teal)]/10 sm:grid-cols-15">
-                  <div className="2xl:pr-4 text-left sm:col-span-4 col-span-7">
+                <div className="mt-2 mb-2 px-4 py-2 sm:rounded-xs grid grid-cols-2 text-xs/6 2xl:text-sm/6 bg-[var(--darkest-teal)]/10 2xl:grid-cols-12">
+                  
+                  <div className="text-left col-span-1 2xl:col-span-3">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">AFE Number</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.afe_number}
                     </dd>
                   </div>
-                  <div className="2xl:pr-4 text-left sm:col-span-3 col-span-7">
+                  <div className="text-right col-span-1 2xl:col-span-3 2xl:text-left">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">Version</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.version_string}
                     </dd>
                   </div>
-                  <div className="2xl:pr-4 text-left sm:col-span-4 col-span-7">
+                  <div className="text-left col-span-1 2xl:col-span-3">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">AFE Type</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.afe_type}
                     </dd>
                   </div>
-                  <div className="sm:pr-2 sm:text-right sm:col-span-4 col-span-7">
+                  <div className="text-right col-span-1 2xl:col-span-3 2xl:text-right ">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)] ">Well Name</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)] capitalize">
                       {afeRecord?.well_name}
                     </dd>
                   </div>
 
-                  <div className="2xl:pr-4 text-left sm:col-start-1 col-span-7">
+                  <div className="text-left col-span-1 2xl:col-span-6">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Gross Total</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       ${ afeRecord?.supp_gross_estimate! > 0 ?
                       afeRecord?.supp_gross_estimate!.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) :
                       afeRecord?.total_gross_estimate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
-                      } {afeRecord?.currency_code}
+                      } <span className="hidden sm:inline">{afeRecord?.currency_code}</span>
                     </dd>
                   </div>
-                  <div className="2xl:pr-4 text-left col-span-7">
+                  <div className="text-right col-span-1 2xl:col-span-6 2xl:text-left">
                     <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">Net Total</dt>{' '}
                     <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
                       { afeRecord?.supp_gross_estimate! > 0 ?
                       calcPartnerNet(afeRecord?.supp_gross_estimate!, afeRecord?.partner_wi) :
                       calcPartnerNet(afeRecord?.total_gross_estimate, afeRecord?.partner_wi)
-                      } {afeRecord?.currency_code}
+                      } <span className="hidden sm:inline">{afeRecord?.currency_code}</span>
                     </dd>
                   </div>
-                  <div className="sm:pr-4 col-span-15 sm:row-start-3 sm:text-right">
-                    <dt className="inline font-semibold custom-style text-[var(--darkest-teal)]">{afeRecord?.operator} Approved</dt>{' '}
-                    <dd className="inline custom-style-long-text text-[var(--dark-teal)]">
-                      {afeRecord?.iapp_date}
-                    </dd>
-                  </div>
+                  
                   
                 </div>
               </div>
@@ -440,13 +440,7 @@ export default function AFEDetailURL() {
                         <br />
                         {item.well_number}
                       </>
-                    )}
-                    {item.description !== null && (
-                      <>
-                        <br />
-                        {item.description}
-                      </>
-                    )}
+                    )}                   
                   </div>
                 ))}
               </div>
@@ -460,27 +454,27 @@ export default function AFEDetailURL() {
                   <tbody key={accountGroup} >
 
                     <tr className="border-t border-[var(--darkest-teal)]/90 text-[var(--darkest-teal)] font-semibold custom-style h-10">
-                      <td className="hidden sm:table-cell w-2/6 pl-0">{accountGroup.toUpperCase()}</td>
-                      <td className="table-cell px-0 py-0 text-left sm:text-center w-1/6 ">Operator Account#</td>
-                      <td className="hidden sm:table-cell px-0 py-0 text-center w-1/6 ">Account#</td>
-                      <td className="hidden sm:table-cell px-0 py-0 text-right w-1/6 ">Gross Amount</td>
-                      <td className="table-cell px-0 py-0 text-right w-1/6 ">Net Amount</td>
+                      <td className="hidden md:table-cell w-2/6 pl-0">{accountGroup.toUpperCase()}</td>
+                      <td className="table-cell px-0 py-0 text-left md:text-center w-1/2 sm:w-1/3 md:w-1/6">Operator Account#</td>
+                      <td className="hidden md:table-cell px-0 py-0 text-center w-1/6 ">Account#</td>
+                      <td className="hidden sm:table-cell px-0 py-0 text-center w-1/2 sm:w-1/3 md:w-1/6">Gross Amount</td>
+                      <td className="table-cell px-0 py-0 text-right w-1/2 sm:w-1/3 md:w-1/6">Net Amount</td>
                     </tr>
                     {accounts.map((item) => (
                       <tr key={item.id} className="border-t border-[var(--darkest-teal)]/30 text-[var(--darkest-teal)] custom-style-long-text tabular-nums">
-                        <td className="hidden sm:table-cell px-0 py-3 text-left sm:w-2/6">
+                        <td className="hidden md:table-cell px-0 py-3 text-left ">
                           {item.operator_account_description}
                         </td>
-                        <td className="table-cell px-0 py-3 text-left sm:text-center w-1/6">
+                        <td className="table-cell px-0 py-3 text-left md:text-center ">
                           {item.operator_account_number}
                         </td>
-                        <td className="hidden sm:table-cell px-0 py-3 text-center w-1/6">
+                        <td className="hidden md:table-cell px-0 py-3 text-center">
                           {item.partner_account_number}
                         </td>
-                        <td className="hidden sm:table-cell px-0 py-3 text-right w-1/6">
+                        <td className="hidden sm:table-cell px-0 py-3 text-center ">
                           ${item.amount_gross.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td className="table-cell px-0 py-3 text-right w-1/6">
+                        <td className="table-cell px-0 py-3 text-right ">
                           ${item.partner_net_amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
 
@@ -533,7 +527,7 @@ export default function AFEDetailURL() {
                             }
                           )
                         }}
-                        className={`flex-1 text-center custom-style transition-colors ease-in-out duration-300 text-xs/6 2xl:text-sm/6
+                        className={`flex-1 text-center custom-style transition-colors ease-in-out duration-300 text-xs 2xl:text-sm/6
                     
                     ${item.current
                             ? 'bg-[var(--dark-teal)] text-white border-t-3 border-t-[var(--bright-pink)] py-2 font-medium shadow-sm z-10'
@@ -566,12 +560,12 @@ export default function AFEDetailURL() {
                     <ul role="list" className="divide-y divide-[var(--darkest-teal)]/20">
                       {afeDocs?.map((afeDoc) => (
                         <li key={afeDoc.id}>
-                          <div className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
+                          <div className="text-xs/5 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium">
                             {afeDoc.filename_display}
                           </div>
-                          <div className="flex items-center gap-x-3 pl-5 custom-style-long-text font-semibold underline text-xs/6 2xl:text-sm/6 mb-3 mt-1">
+                          <div className="flex 2xl:pl-5 custom-style-long-text font-semibold underline text-xs/6 2xl:text-sm/6 mb-3 mt-1">
                             <ul
-                              className="flex justify-center items-center align-center gap-x-[10px]"
+                              className="flex xl:justify-between 2xl:justify-start w-full gap-x-6"
                               role="navigation"
                               aria-label="View Document">
                               <li className="cursor-pointer"

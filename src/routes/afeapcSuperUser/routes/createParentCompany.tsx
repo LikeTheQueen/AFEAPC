@@ -83,7 +83,7 @@ let parentCompanyID =''
   }
   };
   
-  console.log(parentCompanySelected)
+
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-4">

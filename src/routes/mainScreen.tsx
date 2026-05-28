@@ -31,15 +31,19 @@ const afeNavigation = [
   { id: 2, name: 'Archived AFEs', href: "afeArchived", initial: 'A' },
   { id: 3, name: 'AFE History', href: "notifications", initial: 'H'  },
 ]
-//Users that have permission 4 or 5 or a Super User can see these.
-const userSettingsNavigation = [
+//Users are a Super User can see these.
+const userSettingsNavigationSuperUser = [
   { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'A' },
   { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
   { id: 3, name: 'Create Users', href: "createUser", initial: 'C' },
 ]
+//Users that have permission 4 or 5 can see these
+const userSettingsNavigation = [
+  { id: 1, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
+]
 //Users that have permission 8 or 9 or a Super User can see these.
 const libraryNavigation = [
-  { id: 1, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+  
   { id: 2, name: 'Configurations', href: "configurations", initial: 'C' },
   { id: 3, name: 'System History', href: "systemhistory", initial: 'S' },
 ]
@@ -56,6 +60,7 @@ const onboarding = [
   { id: 4, name: 'Create Users', href: "createUser", initial: 'U' },
   { id: 5, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
   { id: 6, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+  { id: 7, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
 ]
 const userNavigation = [
   { name: 'Your profile', href: 'profile' },
@@ -144,7 +149,41 @@ export default function MainScreen() {
                       )}
                     </li>
                     {/* USER MENU OPTIONS*/}
-                    {doesUserHaveRole(loggedInUser, 4, 5) && (
+                    {loggedInUser?.is_super_user && (
+                    <li>
+                      <div className="relative">
+                        <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white" />
+                        </div>
+                        <div className="relative flex justify-center">
+                          <span className="bg-[var(--darkest-teal)] px-3 custom-style text-s/6 text-white">Users</span>
+                        </div>
+                      </div>
+                      <ul role="list" className="-mx-2 mt-2 space-y-1">
+                        {userSettingsNavigationSuperUser.map((setting) => (
+                          <li key={setting.name}>
+                            <NavLink
+                              className={({ isActive, isPending }) =>
+                                isActive
+                                  ? 'bg-[var(--dark-teal)] text-white text-sm/6 custom-style group flex gap-x-3 rounded-md p-2  hover:bg-[var(--bright-pink)]'
+                                  : isPending
+                                    ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold'
+                                    : 'text-white font-normal text-sm/6 custom-style hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                              }
+                              to={setting.href}
+                              onClick={handleClick}
+                            >
+                              <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                                {setting.initial}
+                              </span>
+                              <span className="truncate">{setting.name}</span>
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                    )}
+                    {(doesUserHaveRole(loggedInUser, 4, 5) && !loggedInUser?.is_super_user)&& (
                     <li>
                       <div className="relative">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
@@ -333,7 +372,40 @@ export default function MainScreen() {
                   )}
                 </li>
                 {/* USER MENU OPTIONS*/}
-                {doesUserHaveRole(loggedInUser, 4, 5) && (
+                {loggedInUser?.is_org_super_user && (
+                <li>
+                  <div className="relative">
+                    <div aria-hidden="true" className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[var(--darkest-teal)] px-3 custom-style text-white">Users</span>
+                    </div>
+                  </div>
+
+                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                    {userSettingsNavigationSuperUser.map((setting) => (
+                      <li key={setting.name}>
+                        <NavLink
+                          className={({ isActive, isPending }) =>
+                            isActive
+                              ? 'bg-[var(--bright-pink)] text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold custom-style hover:bg-[var(--bright-pink)] items-center'
+                              : isPending
+                                ? 'text-gray-800 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-m/6 font-semibold items-center'
+                                : 'text-white font-normal text-m/6 custom-style transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:text-white hover:font-semibold group flex gap-x-3 rounded-md p-2 items-center'
+                          }
+                          to={setting.href}>
+                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--dark-teal)] bg-[var(--darkest-teal)] text-[0.625rem] font-medium text-white group-hover:text-white">
+                            {setting.initial}
+                          </span>
+                          <span className="">{setting.name}</span>
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                )}
+                {(doesUserHaveRole(loggedInUser, 4, 5) && !loggedInUser?.is_org_super_user)&& (
                 <li>
                   <div className="relative">
                     <div aria-hidden="true" className="absolute inset-0 flex items-center">

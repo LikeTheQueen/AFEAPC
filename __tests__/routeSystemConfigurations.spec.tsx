@@ -5,14 +5,9 @@ import { vi, type Mock } from 'vitest';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
-
-import ContactSupport from 'src/routes/support/routes/contactSupport';
 import TestExecuteConnections from 'src/routes/systemConfigurations';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
-    OperatorDropDown,
-    PartnerDropdown,
-    partnerAccountCodes
  } from './test-utils/afeRecords';
 
  vi.mock('provider/fetch', () => ({

@@ -31,6 +31,7 @@ describe('Configurations', () => {
 
   });
 
+  
   it('Displays /executeafefilters in the Outlet when clicked', async () => {
     await user.click(screen.getByRole('link', { name: /Data Integration Parameters/i }));
 

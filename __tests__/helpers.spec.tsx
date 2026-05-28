@@ -3,7 +3,7 @@ import * as fetchProvider from '../provider/fetch';
 import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole } from '../src/helpers/helpers'
 import { operatorEditUsers } from "src/constants/variables";
 import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from 'src/types/interfaces';
-import { singleAFE, twoAFErecords, singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
+import { singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
 import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2, loggedInUserNoAFEViewRights } from './test-utils/rachelGreenuser';
 import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
 

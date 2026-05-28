@@ -31,7 +31,6 @@ const setupWithSelections = async (
     supabaseOverrides: {
       loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -59,7 +58,6 @@ const setupWithSelectionsSuperUser = async (
     supabaseOverrides: {
       loggedInUser: loggedInUserIsSuperUser,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -87,7 +85,6 @@ const setupWithSelectionsNoUserID = async (
     supabaseOverrides: {
       loggedInUser: userNoUserId,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',

@@ -85,7 +85,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
         <>
             <div className="h-full flex flex-col">
                 <div className="overflow-y-auto flex-1 sm:max-h-130 sm:min-h-130">
-                <ul role="list" className="mt-2 mr-1 space-y-4 mb-1 ">
+                <ul role="list" className="mt-6 mr-1 space-y-4 mb-1 ">
                     {
                         afeHistories.map((afeHistory, afeHistoryIdx) => (
                             <li key={afeHistory.id} className="relative flex gap-x-4">
@@ -129,7 +129,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
                 </ul>
                 
                 {/* New comment form */}
-                <div hidden={hideCommentBox} className="mt-4 sm:mt-10 flex gap-x-3">
+                <div hidden={hideCommentBox} className="mt-4 sm:mt-6 flex gap-x-3">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--bright-pink)] bg-[var(--darkest-teal)] text-sm font-medium text-white ">
                         {userName?.charAt(0)}
                     </span>
@@ -180,7 +180,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
                 </div>
             </div>
             <div className="relative h-full">
-                  <Dialog open={open} onClose={setOpen} className="relative z-10">
+                  <Dialog open={open} onClose={setOpen} className="relative z-60">
                     <div className="fixed inset-0" />
                     <div className="fixed inset-0 overflow-hidden">
                       <div className="absolute inset-0 overflow-hidden">

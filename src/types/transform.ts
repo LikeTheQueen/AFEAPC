@@ -693,16 +693,27 @@ export const transformNotifications = (data: any[]) : Notifications[] => {
     return data.map(item => ({
         id: item.id,
         created_at: item.created_at,
+        partner_status: item.afe_id.partner_status,
         user: {
             name: item.user_id.first_name +' '+item.user_id.last_name,
             email: item.user_id.email
         },
         description: item.description,
-         afe_number: item.afe_id.afe_number,
+        afe_number: item.afe_id.afe_number,
         afe_version: item.afe_id.version_string,
         afe_id: item.afe_id.id,
         user_id: item.user_id.id,
-        type: item.type
+        type: item.type,
+        apc_op: {
+            apc_id: item.afe_id.apc_op_id.id,
+            apc_name: item.afe_id.apc_op_id.name,
+            apc_address: null
+        },
+        apc_partner: {
+            apc_id: item.afe_id.apc_partner_id.id,
+            apc_name: item.afe_id.apc_partner_id.name,
+            apc_address: null
+        }
     }))
 };
 

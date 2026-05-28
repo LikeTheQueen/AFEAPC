@@ -6,8 +6,8 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
+import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from '__tests__/test-utils/afeRecords';
 import { loggedInUserRachelGreenWithUserId, limitedPermissionList, userListActiveOrInactive, updatedPermissions, updatedNonPermissions } from './test-utils/rachelGreenuser';
 import * as createEditUserHelpers from '__tests__/test-utils/routeCreateEditUsersHelpersVariables';
 

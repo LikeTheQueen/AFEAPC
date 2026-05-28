@@ -38,6 +38,7 @@ vi.mock('react-toastify', () => ({
 }));
 
 import { toast } from 'react-toastify';
+import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from './test-utils/afeRecords';
 
 
 describe('Execute Filters for Operator',() => {
@@ -50,9 +51,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show [] in the filters for the Operators AFEs and Well Fields when no Operator is selected', async () => {
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -90,9 +90,8 @@ describe('Execute Filters for Operator',() => {
         });
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -141,9 +140,8 @@ describe('Execute Filters for Operator',() => {
         });
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -192,9 +190,8 @@ describe('Execute Filters for Operator',() => {
         });
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -232,9 +229,8 @@ describe('Execute Filters for Operator',() => {
         const user = userEvent.setup();
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -286,9 +282,8 @@ describe('Execute Filters for Operator',() => {
         });
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -385,9 +380,8 @@ describe('Execute Filters for Operator',() => {
 
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',
@@ -478,9 +472,8 @@ describe('Execute Filters for Operator',() => {
 
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
-                        loggedInUser: loggedInUserRachelGreen,
+                        loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                         loading: false,
-                        isSuperUser: false,
                         session: {
                         access_token: 'test-token',
                         refresh_token: 'test-refresh-token',

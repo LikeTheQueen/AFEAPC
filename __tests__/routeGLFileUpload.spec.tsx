@@ -89,7 +89,6 @@ describe('Account File Upload', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -149,8 +148,8 @@ describe('Account File Upload', () => {
             expect(rows).toHaveLength(2)
 
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('Drill')
-            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[1]).toHaveTextContent('Drill')
+            expect(cells[0]).toHaveTextContent('acct-1')
             expect(cells[2]).toHaveTextContent('Rig')
         });
 
@@ -179,7 +178,6 @@ describe('Account File Upload', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -238,8 +236,8 @@ describe('Account File Upload', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('Drill')
-            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[1]).toHaveTextContent('Drill')
+            expect(cells[0]).toHaveTextContent('acct-1')
             expect(cells[2]).toHaveTextContent('Rig')
         });
 
@@ -299,7 +297,6 @@ describe('Account File Upload', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -358,8 +355,8 @@ describe('Account File Upload', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('Drill')
-            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[1]).toHaveTextContent('Drill')
+            expect(cells[0]).toHaveTextContent('acct-1')
             expect(cells[2]).toHaveTextContent('Rig')
         });
 
@@ -445,7 +442,6 @@ describe('Account File Upload - incorrect headers', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -525,7 +521,6 @@ describe('Account File Upload - incorrect headers', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -606,7 +601,6 @@ describe('Account File Upload - incorrect headers', () => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',
@@ -667,8 +661,8 @@ describe('Account File Upload - incorrect headers', () => {
 
             // Assert specific cells within the first data row
             const cells = within(rows[1]).getAllByRole('cell')
-            expect(cells[0]).toHaveTextContent('')
-            expect(cells[1]).toHaveTextContent('acct-1')
+            expect(cells[1]).toHaveTextContent('')
+            expect(cells[0]).toHaveTextContent('acct-1')
             expect(cells[2]).toHaveTextContent('')
         });
 

@@ -62,7 +62,6 @@ describe('Mainscreen', async () => {
       supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -139,7 +138,6 @@ describe('Mainscreen User Experience with a role for ops 2,4,8 and partners 3,9,
         supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -210,7 +208,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -264,7 +261,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -297,7 +293,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: ChandlerBing_NoAFEViewRights,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -337,7 +332,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: JoeyGreen_NoUserEditRights_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -392,7 +386,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: RossGeller_Op_CW_No_NonOp,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -447,7 +440,6 @@ describe('Sidebar visibility by permissions', () => {
         supabaseOverrides: {
                 loggedInUser: loggedInUserIsSuperUser,
                 loading: false,
-                isSuperUser: true,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',

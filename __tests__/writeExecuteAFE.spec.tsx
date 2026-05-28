@@ -1,6 +1,6 @@
 import { vi, test, expect, describe, afterEach } from 'vitest';
 import { writeExecuteAFEtoSupabase, writeExecuteAFEEstimatesSupabase } from '../provider/writeExecuteRecords';
-import { error } from 'console';
+
 
 const mockInsert = vi.fn();
 

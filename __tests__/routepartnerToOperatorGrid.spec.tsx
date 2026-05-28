@@ -53,7 +53,6 @@ test('Displays a message that there are no unclaimed addresses when the return h
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -94,7 +93,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -140,7 +138,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -192,7 +189,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -259,7 +255,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -327,7 +322,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -429,7 +423,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -554,7 +547,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -672,7 +664,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -778,7 +769,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -883,7 +873,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1006,7 +995,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1132,7 +1120,6 @@ message: undefined
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1255,7 +1242,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1320,7 +1306,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1387,7 +1372,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1513,7 +1497,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1634,7 +1617,6 @@ test('Displays a message that there are no unclaimed addresses when there is an 
           supabaseOverrides: {
             loggedInUser: loggedInUserRachelGreen,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',
@@ -1681,7 +1663,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           supabaseOverrides: {
             loggedInUser: loggedInUserSuperUser,
             loading: false,
-            isSuperUser: false,
             session: {
               access_token: 'test-token',
               refresh_token: 'test-refresh-token',

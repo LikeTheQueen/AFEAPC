@@ -4,7 +4,8 @@ import type { AddressType, OperatorType } from "src/types/interfaces";
 describe('Should toggle the disabled button to create the Operator correctly',() => {
     afterEach(() => {
     vi.resetAllMocks()
-})
+});
+
 test('It should return true (to disable save button) when Operator and Address is not valid and there is NOT error message', () => {
     const mockOp: OperatorType | null = {
       name:'',

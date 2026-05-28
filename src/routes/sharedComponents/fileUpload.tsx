@@ -118,70 +118,64 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
   };
 
   return (
-    <>
-    <div className="mt-4 rounded-lg shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 sm:rounded-b-lg text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style font-medium p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 items-center">
-              <div>
-                  <label
-                      htmlFor="file-upload">
-                    <input 
-                      ref={fileInputRef}
-                      id="file-upload" 
-                      name="file-upload" 
-                      type="file" 
-                      onChange={handleFileUpload}
-                      className="peer sr-only" 
-                     />
-                      <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-[var(--bright-pink)] peer-disabled:bg-[var(--darkest-teal)]/20 peer-disabled:text-[var(--darkest-teal)]/40
-                             peer-disabled:hover:bg-[var(--darkest-teal)]/20 peer-disabled:cursor-not-allowed custom-style">Choose File</span>
-                  </label>
+    
+    <div className="mb-10 mt-4 rounded-lg shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 sm:mx-0 px-3 py-3 text-xs/6 2xl:text-sm/7 custom-style">
+          <div className="max-w-7xl">
+              <div className="flex flex-col 2xl:flex-row justify-between max-w-2xl gap-x-1 xl:mx-0 xl:max-w-none ">
+                <div>
+                <label
+                    htmlFor="file-upload">
+                  <input 
+                    ref={fileInputRef}
+                    id="file-upload" 
+                    name="file-upload" 
+                    type="file" 
+                    onChange={handleFileUpload}
+                    className="peer sr-only" 
+                    />
+                    <span className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 font-semibold text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">Choose File</span>
+                </label>
+              <div className={`mt-2 pl-2 ${fileToUpload === null ? 'text-[var(--darkest-teal)]/50' :'text-[var(--darkest-teal)] font-semibold'}`}>{fileToUpload === null ? 'No File Chosen' : fileToUpload.name}</div>
               </div>
               
-              <div  className='items-center'>
-  
-    <fieldset hidden={mode === 'Operator' ? true : false} className='text-left mt-4'>
-      <legend className="text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]">Is this a signed Non-Op AFE?*</legend>
-      <div className="text-xs/6 2xl:text-sm/6 flex flex-row items-center justify-start space-x-6">
-        {isSignedNonOpAgreement.map((nonOpAgreement) => (
-          <div key={nonOpAgreement.id} className="flex flex-row items-center">
-            <input
-              checked={isNonOpAFEAgreement === nonOpAgreement.value}
-              onChange={e => {setIsNonOpAFEAgreement(nonOpAgreement.value)}}
-              id={nonOpAgreement.id}
-              name="notification-method"
-              type="radio"
-              className="relative size-4 appearance-none rounded-full border border-[var(--darkest-teal)]/80 bg-white before:absolute before:inset-1 before:rounded-full before:bg-[var(--bright-pink)] not-checked:before:hidden checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:border-[var(--darkest-teal)]/30 disabled:bg-[var(--darkest-teal)]/20 disabled:before:bg-[var(--darkest-teal)]/20 forced-colors:appearance-auto forced-colors:before:hidden"
-            />
-            <label
-              htmlFor={nonOpAgreement.id}
-              className="ml-3 block text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]"
-            >
-              {nonOpAgreement.title}
-            </label>
-          </div>
-        ))}
-      </div>
-    </fieldset>
+              <fieldset hidden={mode === 'Operator' ? true : false} className='text-left 2xl:text-right mb-2 mt-2'>
+                <legend className="text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]">Is this a signed Non-Op AFE?*</legend>
+                <div className="text-xs/6 2xl:text-sm/6 flex flex-row items-center 2xl:justify-end space-x-6">
+                  {isSignedNonOpAgreement.map((nonOpAgreement) => (
+                    <div key={nonOpAgreement.id} className="flex flex-row items-center">
+                      <input
+                        checked={isNonOpAFEAgreement === nonOpAgreement.value}
+                        onChange={e => { setIsNonOpAFEAgreement(nonOpAgreement.value) }}
+                        id={nonOpAgreement.id}
+                        name="notification-method"
+                        type="radio"
+                        className="relative size-4 appearance-none rounded-full border border-[var(--darkest-teal)]/80 bg-white before:absolute before:inset-1 before:rounded-full before:bg-[var(--bright-pink)] not-checked:before:hidden checked:border-[var(--bright-pink)] checked:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bright-pink)] disabled:border-[var(--darkest-teal)]/30 disabled:bg-[var(--darkest-teal)]/20 disabled:before:bg-[var(--darkest-teal)]/20 forced-colors:appearance-auto forced-colors:before:hidden"
+                      />
+                      <label
+                        htmlFor={nonOpAgreement.id}
+                        className="ml-3 block text-xs/6 2xl:text-sm/6 font-medium text-[var(--darkest-teal)]"
+                      >
+                        {nonOpAgreement.title}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
               </div>
-              <div className="mt-2 col-span-2 text-[var(--darkest-teal)]/50">{fileToUpload === null ? 'No File Chosen' : fileToUpload.name}</div>
-              <div className='col-span-2 items-end text-end'>
-                <div 
-              className="mt-1 -mb-6 hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 py-4">
-                <button
+              <div className="hidden sm:flex items-center justify-end border-t border-[var(--darkest-teal)]/30 pt-4">
+              <button
                 disabled={fileToUpload === null || isNonOpAFEAgreement === undefined} 
                   onClick={async (e: any) => {
                     e.preventDefault();
                     submitFile();
 
                   }}
-                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-xs/6 2xl:text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
+                  className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-2 py-1 font-semibold text-white transition-colors ease-in-out duration-300 hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                   Save File
                 </button>
-              </div>
               </div>
           </div>
     </div>
     
-    </>
   );
 }

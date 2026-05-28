@@ -29,7 +29,10 @@ export default defineConfig({
     exclude: ['__tests__/_archive/**'],
     testTimeout: 30000, 
     hookTimeout: 30000,
-    fileParallelism: false, 
+    fileParallelism: false,
+    alias: {
+      '\\.(png|jpg|jpeg|gif|svg|webp)$': path.resolve(__dirname, '__mocks__/fileMock.ts'),
+    }, 
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

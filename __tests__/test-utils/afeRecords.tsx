@@ -1,8 +1,10 @@
+import { transformAFEs } from "src/types/transform";
 import type { AFEType, 
     EstimatesSupabaseType, 
     OperatorOrPartnerList, 
     UserProfileRecordSupabaseType,
-    AddressType } from "../../src/types/interfaces";
+    AddressType, 
+    ParentCompany} from "../../src/types/interfaces";
 
 // Postgres timestamp format
 const postgresTimestamp = '2026-01-15 10:30:00';
@@ -22,227 +24,7 @@ export const apc_op_id_CWz = '3b34a78a-13ad-40b5-aecd-268d56dd5e0d';
 export const apc_part_id_John = '8ed0a285-0011-4f56-962f-c46bc0889d1b';
 export const apc_part_id_Athena = '626390b5-6f63-4caa-a0aa-b333a15eaf59';
 
-const apc_afe_id1 = '025439e7-c970-44f0-9e50-f7b28f70199a';
-const apc_afe_id2 = '34d7bd01-d43b-4e3a-a586-34f0297a8008';
-
 const userID1 = '13e69340-d14c-45a9-96a8-142795925487'
-
-export const singleAFE: AFEType[] = [{
-    id: apc_afe_id1,
-    operator: 'Gas & Oil Company',
-    created_at: testDateTimeStampTZ,
-    afe_type: 'Drilling',
-    afe_number: 'AFE Test 1',
-    description: 'Description AFE 1',
-    total_gross_estimate: 1000,
-    version_string: '',
-    supp_gross_estimate: 0,
-    operator_wi: 10,
-    partnerID: '',
-    partner_name: 'Partner Name AFE1',
-    partner_wi: 23,
-    partner_status: 'New',
-    op_status: 'IAPP',
-    iapp_date: 'Jan 5, 2026',
-    last_mod_date: 'Jan 4, 2026',
-    legacy_chainID: 427,
-    legacy_afeid: 1,
-    chain_version: 427,
-    source_system_id: 'external source ID',
-    sortID: 1,
-    partner_status_date: postgresDate,
-    apc_op_id: apc_op_id,
-    archived: false,
-    partner_archived: false,
-    apc_partner_id: apc_part_id,
-    well_name: 'Many'
-}];
-
-export const twoAFErecords: AFEType[] = [
-    {
-    id: apc_afe_id1,
-    operator: 'Gas & Oil Company',
-    created_at: testDateTimeStampTZ,
-    afe_type: 'Drilling',
-    afe_number: 'AFE Test 1',
-    description: 'Description AFE 1',
-    total_gross_estimate: 1000,
-    version_string: '',
-    supp_gross_estimate: 0,
-    operator_wi: 10,
-    partnerID: '',
-    partner_name: 'Partner Name AFE1',
-    partner_wi: 23,
-    partner_status: 'New',
-    op_status: 'IAPP',
-    iapp_date: 'Jan 5, 2026',
-    last_mod_date: 'Jan 4, 2026',
-    legacy_chainID: 427,
-    legacy_afeid: 1,
-    chain_version: 427,
-    source_system_id: 'external source ID',
-    sortID: 1,
-    partner_status_date: postgresDate,
-    apc_op_id: apc_op_id,
-    archived: false,
-    partner_archived: false,
-    apc_partner_id: apc_part_id,
-    well_name: 'Many'
-    },
-    {
-    id: apc_afe_id2,
-    operator: 'Gas & Oil Company',
-    created_at: testDateTimeStampTZ,
-    afe_type: 'Drilling',
-    afe_number: 'AFE Test 2',
-    description: 'Description AFE 2',
-    total_gross_estimate: 1000,
-    version_string: 'S1',
-    supp_gross_estimate: 0,
-    operator_wi: 10,
-    partnerID: '',
-    partner_name: 'Partner Name AFE2',
-    partner_wi: 23,
-    partner_status: 'New',
-    op_status: 'IAPP',
-    iapp_date: 'Jan 5, 2026',
-    last_mod_date: 'Jan 4, 2026',
-    legacy_chainID: 428,
-    legacy_afeid: 2,
-    chain_version: 428,
-    source_system_id: 'external source ID',
-    sortID: 2,
-    partner_status_date: postgresDate,
-    apc_op_id: apc_op_id,
-    archived: false,
-    partner_archived: false,
-    apc_partner_id: apc_part_id,
-    well_name: 'Many'
-    }];
-
-export const twoOperatedAFErecords: AFEType[] = [
-    {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        operator: 'Navigator Corporation',
-        created_at: testDateTimeStampTZ,
-        afe_type: 'Drilling',
-        afe_number: 'Op Test 1',
-        description: 'Op Test 1 Description',
-        total_gross_estimate: 100,
-        version_string: 'S1',
-        supp_gross_estimate: 0,
-        operator_wi: 10,
-        partnerID: '',
-        partner_name: 'Partner 1',
-        partner_wi: 23,
-        partner_status: 'Viewed',
-        op_status: 'IAPP',
-        iapp_date: 'May5',
-        last_mod_date: 'Jun3',
-        legacy_chainID: 1,
-        legacy_afeid: 2,
-        chain_version: 1,
-        source_system_id: 'ex ID',
-        sortID: 1,
-        partner_status_date: postgresDate,
-        apc_op_id: apc_op_id,
-        archived: false,
-        partner_archived: false,
-        apc_partner_id: apc_part_id,
-        well_name: 'Many'
-    },
-    {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        operator: 'Navigator Corporation',
-        created_at: testDateTimeStampTZ,
-        afe_type: 'Drilling',
-        afe_number: 'Op Test 2',
-        description: 'Op Test 2 Description',
-        total_gross_estimate: 100,
-        version_string: '',
-        supp_gross_estimate: 0,
-        operator_wi: 10,
-        partnerID: '',
-        partner_name: 'Partner 1',
-        partner_wi: 23,
-        partner_status: 'New',
-        op_status: 'IAPP',
-        iapp_date: 'May5',
-        last_mod_date: 'Jun3',
-        legacy_chainID: 12,
-        legacy_afeid: 1,
-        chain_version: 12,
-        source_system_id: 'ex ID',
-        sortID: 1,
-        partner_status_date: postgresDate,
-        apc_op_id: apc_op_id,
-        archived: false,
-        partner_archived: false,
-        apc_partner_id: apc_part_id,
-        well_name: 'Many'
-    }];
-
-export const twoNonOperatedAFErecords: AFEType[] = [
-    {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        operator: 'Other Operator',
-        created_at: testDateTimeStampTZ,
-        afe_type: 'Drilling',
-        afe_number: 'NonOp Test 1',
-        description: 'NonOp Test 1 Description',
-        total_gross_estimate: 100,
-        version_string: 'S1',
-        supp_gross_estimate: 0,
-        operator_wi: 10,
-        partnerID: '',
-        partner_name: 'Op as Partner',
-        partner_wi: 23,
-        partner_status: 'New',
-        op_status: 'IAPP',
-        iapp_date: 'May5',
-        last_mod_date: 'Jun3',
-        legacy_chainID: 1,
-        legacy_afeid: 2,
-        chain_version: 1,
-        source_system_id: 'ex ID',
-        sortID: 1,
-        partner_status_date: postgresDate,
-        apc_op_id: apc_op_id,
-        archived: false,
-        partner_archived: false,
-        apc_partner_id: apc_part_id,
-        well_name: 'Many'
-    },
-    {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        operator: 'Other Operator',
-        created_at: testDateTimeStampTZ,
-        afe_type: 'Drilling',
-        afe_number: 'NonOp Test 2',
-        description: 'NonOp Test 2 Description',
-        total_gross_estimate: 100,
-        version_string: '',
-        supp_gross_estimate: 0,
-        operator_wi: 10,
-        partnerID: '',
-        partner_name: 'Partner 1',
-        partner_wi: 23,
-        partner_status: 'New',
-        op_status: 'IAPP',
-        iapp_date: 'May5',
-        last_mod_date: 'Jun3',
-        legacy_chainID: 13,
-        legacy_afeid: 1,
-        chain_version: 13,
-        source_system_id: 'ex ID',
-        sortID: 1,
-        partner_status_date: postgresDate,
-        apc_op_id: apc_op_id,
-        archived: false,
-        partner_archived: false,
-        apc_partner_id: apc_part_id,
-        well_name: 'Many'
-    }];
 
 export const singleEstimateRecord: EstimatesSupabaseType[] = [
     {
@@ -299,7 +81,8 @@ export const parterNewStatus: AFEType = {
     archived: false,
     partner_archived: false,
     apc_partner_id: apc_part_id,
-    well_name: 'Many'
+    well_name: 'Many',
+    currency_code: 'USD'
 };
 
 export const parterViewStatus: AFEType = {
@@ -330,7 +113,8 @@ export const parterViewStatus: AFEType = {
     archived: false,
     partner_archived: false,
     apc_partner_id: apc_part_id,
-    well_name: 'Many'
+    well_name: 'Many',
+    currency_code: 'USD'
 };
 export const parterApprovedStatus: AFEType = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -360,7 +144,8 @@ export const parterApprovedStatus: AFEType = {
     archived: false,
     partner_archived: false,
     apc_partner_id: apc_part_id,
-    well_name: 'Many'
+    well_name: 'Many',
+    currency_code:'USD'
 };
 export const parterRejectedStatus: AFEType = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -390,258 +175,8 @@ export const parterRejectedStatus: AFEType = {
     archived: false,
     partner_archived: false,
     apc_partner_id: apc_part_id,
-    well_name: 'Many'
-};
-
-export const loggedInUser: UserProfileRecordSupabaseType = {
-    firstName: 'User lock',
-    lastName: 'Athena',
-    email: 'user@email',
-    active: true,
-    is_super_user: false,
-    is_org_super_user: false,
-    apc_op_id_umbrella: apc_op_id,
-    operatorRoles: [
-        {
-        apc_name: 'Corr and Whit Oils',
-        apc_op_id: apc_op_id,
-        apc_address: {
-            address_active: true,
-            id: 66,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 120,
-        role: 2,
-        active: true,
-        apc_id: apc_op_id,
-        apc_address_id: 66
-    },
-    {
-        apc_name: 'Corr and Whit Oils',
-        apc_op_id: apc_op_id,
-        apc_address: {
-            address_active: true,
-            id: 66,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 121,
-        role: 4,
-        active: true,
-        apc_id: apc_op_id,
-        apc_address_id: 66
-    },
-    {
-        apc_name: 'Corr and Whit Oils',
-        apc_op_id: apc_op_id,
-        apc_address: {
-            address_active: true,
-            id: 66,
-            street: '1234 Main',
-            suite:'',
-            city: 'Houston',
-            state: 'Texas',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: true,
-        is_partner_permission: false,
-        id: 122,
-        role: 8,
-        active: true,
-        apc_id: apc_op_id,
-        apc_address_id: 66
-    }
-    ],
-    partnerRoles: [
-        {
-        apc_name: 'John Ross',
-        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 35,
-        role: 3,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 72,
-        role: 9,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 74,
-        role: 5,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 185,
-        role: 6,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_op_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address: {
-            address_active: true,
-            id: 7,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 186,
-        role: 3,
-        active: true,
-        apc_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
-        apc_address_id: 7
-    }
-    
-    ],
-};
-
-//User has no view rights to Operated and Non Op view rights to Athena can approve
-/////DOES THIS NED TOBE FIXED
-export const loggedInUserNoOpViewRightsAthena: UserProfileRecordSupabaseType = {
-    firstName: 'Jane',
-    lastName: 'Athena',
-    email: 'user@email',
-    active: true,
-    is_super_user: false,
-    is_org_super_user: false,
-     apc_op_id_umbrella: apc_op_id,
-    operatorRoles: [],
-    partnerRoles:[],
-};
-
-//User has view rights to operated AFEs for Nav Oils and Non Op view rights to John Ross and can Approve NonOp AFEs
-//DOES THIS NEED TI VE FIXED
-export const loggedInUserOpNavOilsPartnerJohnRoss: UserProfileRecordSupabaseType = {
-    firstName: 'Tim',
-    lastName: 'Ross',
-    email: 'user@email',
-    active: true,
-    is_super_user: false,
-    is_org_super_user: false,
-     apc_op_id_umbrella: apc_op_id,
-    operatorRoles: [],
-    partnerRoles: [],
+    well_name: 'Many',
+    currency_code:'USD'
 };
 
 export const loggedInUserIsSuperUser: UserProfileRecordSupabaseType = {
@@ -669,219 +204,6 @@ export const userNoUserId: UserProfileRecordSupabaseType = {
     operatorRoles: [],
     partnerRoles: [],
 };
-
-export const OperatorDropDown: OperatorOrPartnerList[] = [
-    {
-        apc_id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
-        apc_name: "Corr and Whit Oils",
-        apc_address: {
-            street: "6789 S Blvd",
-            suite: "",
-            city: "Houston",
-            state: "Texas",
-            zip: "90078",
-            country: "United States",
-            address_active: true,
-            id: 66
-        }
-    },
-    {
-        apc_id: "da4bac27-30eb-40cf-9b33-ba93e3c3b3b5",
-        apc_name: "Corr Mike oil",
-        apc_address: {
-            street: "123213",
-            suite: "",
-            city: "Houston",
-            state: "Texas",
-            zip: "90021",
-            country: "United States",
-            address_active: false,
-            id: 67
-        }
-    },
-    {
-        apc_id: "e769175a-5d6c-48b7-a639-489f4a39e647",
-        apc_name: "Corr Oil",
-        apc_address: {
-            street: "1234 Main",
-            suite: "",
-            city: "Austin",
-            state: "Texas",
-            zip: "90087",
-            country: "United States",
-            address_active: true,
-            id: 52
-        }
-    },
-    {
-        apc_id: "1bcad1a0-9419-49da-999e-f7bf95339e90",
-        apc_name: "Denver Oil",
-        apc_address: {
-            street: "5454 Broad Street",
-            suite: "",
-            city: "Denver",
-            state: "CO",
-            zip: "80202",
-            country: "United States",
-            address_active: true,
-            id: 54
-        }
-    },
-    {
-        apc_id: "d0bc769a-b709-4d58-b563-acdf1d99c5a2",
-        apc_name: "Denver Oil 2",
-        apc_address: {
-            street: "5434",
-            suite: "",
-            city: "Denv",
-            state: "CO",
-            zip: "90909",
-            country: "United States",
-            address_active: true,
-            id: 55
-        }
-    },
-    {
-        apc_id: "f3f7d47d-bd77-41c7-8647-cb4b3761279c",
-        apc_name: "Fortnite Oil",
-        apc_address: {
-            street: "98987",
-            suite: "678",
-            city: "Houston",
-            state: "Texas",
-            zip: "00988",
-            country: "United States",
-            address_active: true,
-            id: 60
-        }
-    },
-    {
-        apc_id: "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
-        apc_name: "McKenzie Oil",
-        apc_address: {
-            street: "7898 Lousiana Blvd",
-            suite: "",
-            city: "Houston",
-            state: "Texas",
-            zip: "90087",
-            country: "United States",
-            address_active: true,
-            id: 70
-        }
-    },
-    {
-        apc_id: "108ab43c-c1d6-4e6d-9305-c7ac3a622cc7",
-        apc_name: "Mtn Bike Oil",
-        apc_address: {
-            street: "1234 Main Ave",
-            suite: "",
-            city: "Houston",
-            state: "Texas",
-            zip: "70020",
-            country: "United States",
-            address_active: true,
-            id: 53
-        }
-    },
-    {
-        apc_id: "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
-        apc_name: "Navigator Corporation",
-        apc_address: {
-            street: "897 South Street",
-            suite: "",
-            city: "Dallas",
-            state: "Texas",
-            zip: "98987",
-            country: "United States",
-            address_active: true,
-            id: 51
-        }
-    },
-    {
-        apc_id: "1c738a5b-1fd1-4eb1-8710-fb87cadac4d1",
-        apc_name: "Raiders Operator Energy Co",
-        apc_address: {
-            street: "6768 S Marion Street",
-            suite: "3232",
-            city: "Dallas",
-            state: "Texas",
-            zip: "00987",
-            country: "United States",
-            address_active: true,
-            id: 65
-        }
-    },
-    {
-        apc_id: "8093e89f-85f1-4e24-ab91-a9df11e092f6",
-        apc_name: "Third Wheel Oil and Gas",
-        apc_address: {
-            street: "8787 S Ogden",
-            suite: "3232",
-            city: "Dallas",
-            state: "Texas",
-            zip: "90078",
-            country: "United States",
-            address_active: true,
-            id: 68
-        }
-    },
-    {
-        apc_id: "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
-        apc_name: "This Third Wheel Oil and Gas",
-        apc_address: {
-            street: "6546 Logan Av",
-            suite: "9999",
-            city: "Midland",
-            state: "Texas",
-            zip: "09879",
-            country: "United States",
-            address_active: false,
-            id: 69
-        }
-    },
-    {
-        apc_id: "a45536f3-ac27-4f3b-9a70-b0bb536d9fc6",
-        apc_name: "Thorton Oil and Company",
-        apc_address: {
-            street: "3456 LandMine Way",
-            suite: "67787",
-            city: "Dallas",
-            state: "Texas",
-            zip: "77789",
-            country: "United States",
-            address_active: true,
-            id: 72
-        }
-    },
-    {
-        apc_id: "01b272f7-ea18-48bc-9443-ba2f0c9376ff",
-        apc_name: "Whit and Corr Oil",
-        apc_address: {
-            street: "1234 Snake Street",
-            suite: "",
-            city: "Fortnite Land",
-            state: "CO",
-            zip: "90900",
-            country: "United States",
-            address_active: true,
-            id: 50
-        }
-    },
-    {
-        apc_id: "509165a9-532d-41ee-a2d5-c35c6c2124f3",
-        apc_name: "Whitaker's Oil Company",
-        apc_address: {
-            street: "343456 La Ave",
-            suite: "",
-            city: "Dnver",
-            state: "Colorado",
-            zip: "90087",
-            country: "United States",
-            address_active: true,
-            id: 71
-        }
-    }
-];
 
 export const PartnerDropdown: OperatorOrPartnerList[] = [
     {
@@ -1525,29 +847,1142 @@ export const afeReturnFromSupabase = [
     }
 ];
 
+export const afeResultSupabaseOLD = [
+    {
+        id: '7c5cf27b-4312-4a5e-817b-8f54820d0bc1',
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D0607",
+        "description": "DRILLING",
+        "total_gross_estimate": 688098,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Mewbourne Oil Company",
+        "partner_wi": 10,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-19",
+        "last_mod_date": "2026-05-19",
+        "legacy_chainID": 460,
+        "legacy_afeid": 460,
+        "chain_version": 1,
+        "source_system_id": "f8d12db4-875d-45b8-8348-72392109ebf2",
+        "apc_partner_id": "019cf7ba-3775-46bc-a3f7-8aee7af30bb1",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1296,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:06.822+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "CHINCHAGA 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "94be7ac2-7079-4918-a2f5-cd90814f1ea9",
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D002",
+        "description": "DRILLING",
+        "total_gross_estimate": 688098,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 58.5,
+        "apc_partner_name": "Navigator Corporation",
+        "partner_wi": 18.5,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 462,
+        "legacy_afeid": 462,
+        "chain_version": 1,
+        "source_system_id": "dad67e1d-aac4-49ac-a2b1-f96c4e9c2f1a",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1297,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:08.588+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "CHINCHAGA 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "b04abc87-6388-4d9a-ae80-3b8141fd21f4",
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D013",
+        "description": "DRILLING",
+        "total_gross_estimate": 472144,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 58.5,
+        "apc_partner_name": "Navigator Corporation",
+        "partner_wi": 28.5,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 464,
+        "legacy_afeid": 464,
+        "chain_version": 1,
+        "source_system_id": "6453bd3c-e82e-44d5-8583-2e6dc971128c",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1298,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:10.278+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "Many",
+        "currency_code": "USD"
+    },
+    {
+        "id": "01105c4f-4090-418f-be35-714f4bfaf06b",
+        "created_at": "2026-05-21T21:33:25.088604+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D017",
+        "description": "DRILLING",
+        "total_gross_estimate": 372221,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 56.44,
+        "apc_partner_name": "Corr And Whit Oils Company & Friends",
+        "partner_wi": 32,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 472,
+        "legacy_afeid": 472,
+        "chain_version": 1,
+        "source_system_id": "4a40c467-4203-4eca-8636-96fc0dbeaa71",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1303,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:28.097+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "138502ba-bbbd-4575-a5c6-1efb7280cda1",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "ASPEN 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "b2a8ea74-408f-4b0d-b50d-47bf4c065260",
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D0607",
+        "description": "DRILLING",
+        "total_gross_estimate": 688098,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 80,
+        "apc_partner_name": "Corr And Whit Oils Company & Friends",
+        "partner_wi": 10,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-19",
+        "last_mod_date": "2026-05-19",
+        "legacy_chainID": 460,
+        "legacy_afeid": 460,
+        "chain_version": 1,
+        "source_system_id": "f8d12db4-875d-45b8-8348-72392109ebf2",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1299,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:11.934+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "138502ba-bbbd-4575-a5c6-1efb7280cda1",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "CHINCHAGA 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "7a69eb26-e0ce-436d-88db-d114db6a1f2b",
+        "created_at": "2026-05-21T21:33:21.966627+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D014",
+        "description": "DRILLING",
+        "total_gross_estimate": 429191,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 54.8,
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 18.5,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 466,
+        "legacy_afeid": 466,
+        "chain_version": 1,
+        "source_system_id": "e0cc394c-19b8-4e4e-8699-97797a1e385c",
+        "apc_partner_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1292,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:18.614+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company & Friends"
+        },
+        "well_name": "BUENAVISTA 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "82d6b847-8872-4aa2-b1f2-c42ade17a4ed",
+        "created_at": "2026-05-21T21:33:21.966627+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D015",
+        "description": "DRILLING",
+        "total_gross_estimate": 359213,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 83.3,
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 0,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 468,
+        "legacy_afeid": 468,
+        "chain_version": 1,
+        "source_system_id": "40fe6239-81b3-4e69-9220-32c5ff724ffa",
+        "apc_partner_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1293,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:20.298+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company & Friends"
+        },
+        "well_name": "ROLLTIDE 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "0f4b11d6-f85a-472d-b674-0d404d2b2e4f",
+        "created_at": "2026-05-21T21:33:21.966627+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D014",
+        "description": "DRILLING",
+        "total_gross_estimate": 429191,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 54.8,
+        "apc_partner_name": "Navigator Corporation",
+        "partner_wi": 26.7,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 466,
+        "legacy_afeid": 466,
+        "chain_version": 1,
+        "source_system_id": "e0cc394c-19b8-4e4e-8699-97797a1e385c",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1294,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:22.105+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company & Friends"
+        },
+        "well_name": "BUENAVISTA 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "18eb0a11-7dad-462a-ab8d-def810d3cf07",
+        "created_at": "2026-05-21T21:33:21.966627+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D015",
+        "description": "DRILLING",
+        "total_gross_estimate": 359213,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 83.3,
+        "apc_partner_name": "Navigator Corporation",
+        "partner_wi": 16.7,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 468,
+        "legacy_afeid": 468,
+        "chain_version": 1,
+        "source_system_id": "40fe6239-81b3-4e69-9220-32c5ff724ffa",
+        "apc_partner_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1295,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:23.745+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb",
+        "apc_op_id": {
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company & Friends"
+        },
+        "well_name": "ROLLTIDE 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "d3c46375-d75c-49fd-bd70-db104c642e5b",
+        "created_at": "2026-05-21T21:33:25.088604+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D016",
+        "description": "DRILLING",
+        "total_gross_estimate": 390221,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 55.5,
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 24.8,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 470,
+        "legacy_afeid": 470,
+        "chain_version": 1,
+        "source_system_id": "daaae4f1-1666-41ea-90c5-66f09d018a42",
+        "apc_partner_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1304,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:31.801+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "FRUITA 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "2ba841bb-1fdc-4f43-a64e-644dc3d645b8",
+        "created_at": "2026-05-21T21:33:25.088604+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D017",
+        "description": "DRILLING",
+        "total_gross_estimate": 372221,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 56.44,
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 11.56,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 472,
+        "legacy_afeid": 472,
+        "chain_version": 1,
+        "source_system_id": "4a40c467-4203-4eca-8636-96fc0dbeaa71",
+        "apc_partner_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1305,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:33.487+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "ASPEN 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "ab5e0517-f322-4d7e-88c2-818deac0dea8",
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D002",
+        "description": "DRILLING",
+        "total_gross_estimate": 688098,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 58.5,
+        "apc_partner_name": "Corr And Whit Oils Company & Friends",
+        "partner_wi": 23,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 462,
+        "legacy_afeid": 462,
+        "chain_version": 1,
+        "source_system_id": "dad67e1d-aac4-49ac-a2b1-f96c4e9c2f1a",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1300,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:13.613+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "138502ba-bbbd-4575-a5c6-1efb7280cda1",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "CHINCHAGA 10-25",
+        "currency_code": "USD"
+    },
+    {
+        "id": "e3899d13-c74b-4604-87e3-ba07b613e12e",
+        "created_at": "2026-05-21T21:33:25.088604+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D016",
+        "description": "DRILLING",
+        "total_gross_estimate": 390221,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 55.5,
+        "apc_partner_name": "Corr And Whit Oils Company & Friends",
+        "partner_wi": 19.7,
+        "partner_status": "New",
+        "op_status": "FAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 470,
+        "legacy_afeid": 470,
+        "chain_version": 1,
+        "source_system_id": "daaae4f1-1666-41ea-90c5-66f09d018a42",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1302,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:26.443+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "138502ba-bbbd-4575-a5c6-1efb7280cda1",
+        "apc_op_id": {
+            "id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "name": "Navigator Corporation"
+        },
+        "well_name": "FRUITA 10-26",
+        "currency_code": "USD"
+    },
+    {
+        "id": "203c465b-a295-4770-ab54-11fb5d903528",
+        "created_at": "2026-05-21T21:33:28.157157+00:00",
+        "afe_type": "DRILLING",
+        "afe_number": "26D013",
+        "description": "DRILLING",
+        "total_gross_estimate": 472144,
+        "version_string": "Base",
+        "supp_gross_estimate": 0,
+        "operator_wi": 58.5,
+        "apc_partner_name": "Corr And Whit Oils Company & Friends",
+        "partner_wi": 13,
+        "partner_status": "Viewed",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 464,
+        "legacy_afeid": 464,
+        "chain_version": 1,
+        "source_system_id": "6453bd3c-e82e-44d5-8583-2e6dc971128c",
+        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "apc_operator_id": null,
+        "partner_status_date": null,
+        "sortID": 1301,
+        "archived": false,
+        "partner_archived": false,
+        "source_partner_id": null,
+        "doc_fetch_status": "done",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:15.449+00:00",
+        "doc_last_error": null,
+        "source_system_partner_id": "138502ba-bbbd-4575-a5c6-1efb7280cda1",
+        "apc_op_id": {
+            "id": "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+            "name": "McKenzie Oil"
+        },
+        "well_name": "Many",
+        "currency_code": "USD"
+    }
+];
+export const afeResultSupabase = [
+    {
+        id: '7c5cf27b-4312-4a5e-817b-8f54820d0bc1',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D0607A',
+        description: 'DRILLING',
+        total_gross_estimate: 688098,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 80,
+        apc_partner_name: 'Mewbourne Oil Company',
+        partner_wi: 10,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-19',
+        last_mod_date: '2026-05-19',
+        legacy_chainID: 460,
+        legacy_afeid: 460,
+        chain_version: 1,
+        source_system_id: 'f8d12db4-875d-45b8-8348-72392109ebf2',
+        apc_partner_id: '019cf7ba-3775-46bc-a3f7-8aee7af30bb1',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1296,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:06.822+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'CHINCHAGA 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: '94be7ac2-7079-4918-a2f5-cd90814f1ea9',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D002A',
+        description: 'DRILLING',
+        total_gross_estimate: 688098,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 58.5,
+        apc_partner_name: 'Navigator Corporation',
+        partner_wi: 18.5,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 462,
+        legacy_afeid: 462,
+        chain_version: 1,
+        source_system_id: 'dad67e1d-aac4-49ac-a2b1-f96c4e9c2f1a',
+        apc_partner_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1297,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:08.588+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'CHINCHAGA 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: 'b04abc87-6388-4d9a-ae80-3b8141fd21f4',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D013C',
+        description: 'DRILLING',
+        total_gross_estimate: 472144,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 58.5,
+        apc_partner_name: 'Navigator Corporation',
+        partner_wi: 28.5,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 464,
+        legacy_afeid: 464,
+        chain_version: 1,
+        source_system_id: '6453bd3c-e82e-44d5-8583-2e6dc971128c',
+        apc_partner_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1298,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:10.278+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'Many',
+        currency_code: 'USD',
+    },
+    {
+        id: '01105c4f-4090-418f-be35-714f4bfaf06b',
+        created_at: '2026-05-21T21:33:25.088604+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D017V',
+        description: 'DRILLING',
+        total_gross_estimate: 372221,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 56.44,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 32,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 472,
+        legacy_afeid: 472,
+        chain_version: 1,
+        source_system_id: '4a40c467-4203-4eca-8636-96fc0dbeaa71',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1303,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:28.097+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c',
+            name: 'Navigator Corporation',
+        },
+        well_name: 'ASPEN 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: 'b2a8ea74-408f-4b0d-b50d-47bf4c065260',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D0607E',
+        description: 'DRILLING',
+        total_gross_estimate: 688098,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 80,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 10,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-19',
+        last_mod_date: '2026-05-19',
+        legacy_chainID: 460,
+        legacy_afeid: 460,
+        chain_version: 1,
+        source_system_id: 'f8d12db4-875d-45b8-8348-72392109ebf2',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1299,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:11.934+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'CHINCHAGA 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
+        created_at: '2026-05-21T21:33:21.966627+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D014R',
+        description: 'DRILLING',
+        total_gross_estimate: 429191,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 54.8,
+        apc_partner_name: 'Mckenzie Oil',
+        partner_wi: 18.5,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 466,
+        legacy_afeid: 466,
+        chain_version: 1,
+        source_system_id: 'e0cc394c-19b8-4e4e-8699-97797a1e385c',
+        apc_partner_id: '4045d710-476a-4ee0-b97b-be64933133ba',
+        apc_operator_id: null,
+        partner_status_date: '2026-05-21',
+        sortID: 1292,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:18.614+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'd0d06a20-9469-42e1-9080-78cad31353e9',
+        apc_op_id: {
+            id: '3b34a78a-13ad-40b5-aecd-268d56dd5e0d',
+            name: 'Corr and Whit Oils Company & Friends',
+        },
+        well_name: 'BUENAVISTA 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: '82d6b847-8872-4aa2-b1f2-c42ade17a4ed',
+        created_at: '2026-05-21T21:33:21.966627+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D015T',
+        description: 'DRILLING',
+        total_gross_estimate: 359213,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 83.3,
+        apc_partner_name: 'Mckenzie Oil',
+        partner_wi: 0,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 468,
+        legacy_afeid: 468,
+        chain_version: 1,
+        source_system_id: '40fe6239-81b3-4e69-9220-32c5ff724ffa',
+        apc_partner_id: '4045d710-476a-4ee0-b97b-be64933133ba',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1293,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:20.298+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'd0d06a20-9469-42e1-9080-78cad31353e9',
+        apc_op_id: {
+            id: '3b34a78a-13ad-40b5-aecd-268d56dd5e0d',
+            name: 'Corr and Whit Oils Company & Friends',
+        },
+        well_name: 'ROLLTIDE 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: '0f4b11d6-f85a-472d-b674-0d404d2b2e4f',
+        created_at: '2026-05-21T21:33:21.966627+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D014Y',
+        description: 'DRILLING',
+        total_gross_estimate: 429191,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 54.8,
+        apc_partner_name: 'Navigator Corporation',
+        partner_wi: 26.7,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 466,
+        legacy_afeid: 466,
+        chain_version: 1,
+        source_system_id: 'e0cc394c-19b8-4e4e-8699-97797a1e385c',
+        apc_partner_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1294,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:22.105+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb',
+        apc_op_id: {
+            id: '3b34a78a-13ad-40b5-aecd-268d56dd5e0d',
+            name: 'Corr and Whit Oils Company & Friends',
+        },
+        well_name: 'BUENAVISTA 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: '18eb0a11-7dad-462a-ab8d-def810d3cf07',
+        created_at: '2026-05-21T21:33:21.966627+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D015U',
+        description: 'DRILLING',
+        total_gross_estimate: 359213,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 83.3,
+        apc_partner_name: 'Navigator Corporation',
+        partner_wi: 16.7,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 468,
+        legacy_afeid: 468,
+        chain_version: 1,
+        source_system_id: '40fe6239-81b3-4e69-9220-32c5ff724ffa',
+        apc_partner_id: '8ed0a285-0011-4f56-962f-c46bc0889d1b',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1295,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:23.745+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb',
+        apc_op_id: {
+            id: '3b34a78a-13ad-40b5-aecd-268d56dd5e0d',
+            name: 'Corr and Whit Oils Company & Friends',
+        },
+        well_name: 'ROLLTIDE 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: 'd3c46375-d75c-49fd-bd70-db104c642e5b',
+        created_at: '2026-05-21T21:33:25.088604+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D016I',
+        description: 'DRILLING',
+        total_gross_estimate: 390221,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 55.5,
+        apc_partner_name: 'Mckenzie Oil',
+        partner_wi: 24.8,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 470,
+        legacy_afeid: 470,
+        chain_version: 1,
+        source_system_id: 'daaae4f1-1666-41ea-90c5-66f09d018a42',
+        apc_partner_id: '4045d710-476a-4ee0-b97b-be64933133ba',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1304,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:31.801+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'd0d06a20-9469-42e1-9080-78cad31353e9',
+        apc_op_id: {
+            id: 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c',
+            name: 'Navigator Corporation',
+        },
+        well_name: 'FRUITA 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: '2ba841bb-1fdc-4f43-a64e-644dc3d645b8',
+        created_at: '2026-05-21T21:33:25.088604+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D017O',
+        description: 'DRILLING',
+        total_gross_estimate: 372221,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 56.44,
+        apc_partner_name: 'Mckenzie Oil',
+        partner_wi: 11.56,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 472,
+        legacy_afeid: 472,
+        chain_version: 1,
+        source_system_id: '4a40c467-4203-4eca-8636-96fc0dbeaa71',
+        apc_partner_id: '4045d710-476a-4ee0-b97b-be64933133ba',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1305,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:33.487+00:00',
+        doc_last_error: null,
+        source_system_partner_id: 'd0d06a20-9469-42e1-9080-78cad31353e9',
+        apc_op_id: {
+            id: 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c',
+            name: 'Navigator Corporation',
+        },
+        well_name: 'ASPEN 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: 'ab5e0517-f322-4d7e-88c2-818deac0dea8',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D002P',
+        description: 'DRILLING',
+        total_gross_estimate: 688098,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 58.5,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 23,
+        partner_status: 'New',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 462,
+        legacy_afeid: 462,
+        chain_version: 1,
+        source_system_id: 'dad67e1d-aac4-49ac-a2b1-f96c4e9c2f1a',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1300,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:13.613+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'CHINCHAGA 10-25',
+        currency_code: 'USD',
+    },
+    {
+        id: 'e3899d13-c74b-4604-87e3-ba07b613e12e',
+        created_at: '2026-05-21T21:33:25.088604+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D016B',
+        description: 'DRILLING',
+        total_gross_estimate: 390221,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 55.5,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 19.7,
+        partner_status: 'New',
+        op_status: 'FAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 470,
+        legacy_afeid: 470,
+        chain_version: 1,
+        source_system_id: 'daaae4f1-1666-41ea-90c5-66f09d018a42',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1302,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:26.443+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c',
+            name: 'Navigator Corporation',
+        },
+        well_name: 'FRUITA 10-26',
+        currency_code: 'USD',
+    },
+    {
+        id: '203c465b-a295-4770-ab54-11fb5d903528',
+        created_at: '2026-05-21T21:33:28.157157+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D013N',
+        description: 'DRILLING',
+        total_gross_estimate: 472144,
+        version_string: 'Base',
+        supp_gross_estimate: 0,
+        operator_wi: 58.5,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 13,
+        partner_status: 'Viewed',
+        op_status: 'IAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 464,
+        legacy_afeid: 464,
+        chain_version: 1,
+        source_system_id: '6453bd3c-e82e-44d5-8583-2e6dc971128c',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
+        partner_status_date: null,
+        sortID: 1301,
+        archived: false,
+        partner_archived: false,
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:15.449+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: '1beb7989-c65e-4c71-b68c-1a01b5e5850b',
+            name: 'McKenzie Oil',
+        },
+        well_name: 'Many',
+        currency_code: 'USD',
+    },
+];
+export const responseTransformed = transformAFEs(afeResultSupabase);
+// ── Parent Compay IDs  ─────────────────────────
+export const apc_parent_company_oil_company = '76b82137-454a-4c30-afc1-2bf934877c73' //Oil Company for  Navigator Corporation
+export const apc_parent_company_CWFriends   = 'cb12f050-05b6-4d0e-b7b8-0871f9835fd5' //Corr Whit Oils
+export const apc_parent_company_mckenzie    = 'd975f19f-7efa-4956-92a2-25a78080b6be' //McKenzie Oil
+
 // ── Operator IDs (apc_op_id.id on AFEs they generate) ─────────────────────────
 export const apc_op_id_CW       = '3b34a78a-13ad-40b5-aecd-268d56dd5e0d'; // Corr and Whit Oils
 export const apc_op_id_Nav      = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c'; // Navigator Corporation
+export const apc_op_id_mckenzie = '1beb7989-c65e-4c71-b68c-1a01b5e5850b'; // McKenzie Oils
+
 export const apc_op_id_JohnRoss = '8ed0a285-0011-4f56-962f-c46bc0889d1b'; // John Ross Exploration Inc
 export const apc_op_id_Athena   = '626390b5-6f63-4caa-a0aa-b333a15eaf59'; // Athena Minerals Inc.
  
 // ── Partner IDs (apc_partner_id on AFEs they receive) ─────────────────────────
-export const apc_partner_id_CW       = '712abc45-def0-4321-9876-abcdef012345'; // Corr and Whit Oils (as partner)
-export const apc_partner_id_Nav      = '891bcd56-ef01-4abc-8765-bcdef0123456'; // Navigator Corporation (as partner)
+export const apc_partner_id_CW       = '626390b5-6f63-4caa-a0aa-b333a15eaf59'; // Corr and Whit Oils (as partner)
+export const apc_partner_id_Nav      = '8ed0a285-0011-4f56-962f-c46bc0889d1b'; // Navigator Corporation (as partner)
+export const apc_partner_id_McKen    = '4045d710-476a-4ee0-b97b-be64933133ba'; // McKenzie Oil (as Partner)
+export const apc_partner_id_Mew      = '019cf7ba-3775-46bc-a3f7-8aee7af30bb1'; //Mewbourne Oil Company
 export const apc_partner_id_JohnRoss = '603ea163-a6b2-4f32-a8c5-67678401bf54'; // John Ross Exploration Inc (as partner)
 export const apc_partner_id_Athena   = '475e4d12-8a0b-4264-933d-d960936852b2'; // Athena Minerals Inc. (as partner)
  
 // ── Company Name Labels ────────────────────────────────────────────────────────
 export const apc_name_CW       = 'Corr and Whit Oils';
-export const apc_name_CWCO      = 'Corr and Whit Oils Company';
+export const apc_name_CWCO     = 'Corr and Whit Oils Company & Friends';
 export const apc_name_Nav      = 'Navigator Corporation';
+export const apc_name_Mc       = 'McKenzie Oil';
+export const apc_name_Oil      = 'Oil Company';
+export const apc_name_Mew      = 'Mewbourne Oil Company';
 export const apc_name_JohnRoss = 'John Ross Exploration Inc';
 export const apc_name_Athena   = 'Athena Minerals Inc.';
  
 // ── Address IDs ────────────────────────────────────────────────────────────────
-export const apc_address_id_CW       = 66;
-export const apc_address_id_partner_CW       = 76;
-export const apc_address_id_Nav      = 20;
+export const apc_address_id_CW               = 66;
+export const apc_address_id_partner_CW       = 7;
+export const apc_address_id_Nav              = 51;
+export const apc_address_id_partner_Nav      = 10;
+export const apc_address_id_McKen            = 70;
+export const apc_address_id_partner_McKen    = 18;
+export const apc_address_id_partner_mew      = 70;
 export const apc_address_id_JohnRoss = 10;
 export const apc_address_id_Athena   = 30;
  
@@ -1558,7 +1993,17 @@ const src_Harmon  = '8c7a4be7-e577-499d-8c7b-266a1549a020'; // Harmon #1
 const src_Tillman = 'c3e12abc-9911-4f01-b123-7d89ef012345'; // Tillman #2
 const src_Garrett = 'f9b34c12-1234-4abc-8def-0987654321ab'; // Garrett #3
 
+const src_Rolltide = '40fe6239-81b3-4e69-9220-32c5ff724ffa'; // ROLLTIDE
+const src_Aspen  = '4a40c467-4203-4eca-8636-96fc0dbeaa71'; // ASPEN
+const src_Apaloosa   = '6453bd3c-e82e-44d5-8583-2e6dc971128c'; // APALOOSA
+const src_Chinchange= 'f8d12db4-875d-45b8-8348-72392109ebf2'; // CHINCHANGA
+const src_Chinchange2= 'dad67e1d-aac4-49ac-a2b1-f96c4e9c2f1a'; // CHINCHANGA
+const src_BuenaVista = 'e0cc394c-19b8-4e4e-8699-97797a1e385c'; // BUENAVISTA
+const src_Fruita = 'daaae4f1-1666-41ea-90c5-66f09d018a42'; // FRUITA
+
 const todayDate = '2026-05-14';
+
+
  
 // ── AFE Fixtures ───────────────────────────────────────────────────────────────
 //
@@ -2479,34 +2924,43 @@ export const afesReturnedFromSupabaseDynamicDate = [
 ];
 
 export const theAFERecordBeingClicked = {
-        id: '2b3c4d5e-0002-4bbb-9000-bbbbbbbbbbbb',
-        created_at: new Date("2025-10-01T12:00:00.000Z"),
-        afe_type: 'drilling',
-        afe_number: '06D111JC',
-        description: 'Drill TILLMAN #2',
-        total_gross_estimate: 420000,
-        version_string: null,
+        id: 'e3899d13-c74b-4604-87e3-ba07b613e12e',
+        created_at: '2026-05-21T21:33:25.088604+00:00',
+        afe_type: 'DRILLING',
+        afe_number: '26D016B',
+        description: 'DRILLING',
+        total_gross_estimate: 390221,
+        version_string: 'Base',
         supp_gross_estimate: 0,
-        operator_wi: 60,
-        partner_wi: 40,
+        operator_wi: 55.5,
+        apc_partner_name: 'Corr And Whit Oils Company & Friends',
+        partner_wi: 19.7,
         partner_status: 'New',
-        op_status: 'IAPP',
-        operator: "John Ross Exploration Inc",
-        iapp_date: '9/29/2025',
-        last_mod_date: '9/29/2025',
-        legacy_chainID: 300,
-        legacy_afeid: 300,
+        op_status: 'FAPP',
+        iapp_date: '2026-05-21',
+        last_mod_date: '2026-05-21',
+        legacy_chainID: 470,
+        legacy_afeid: 470,
         chain_version: 1,
-        source_system_id: src_Tillman,
-        partnerID: apc_partner_id_CW,
+        source_system_id: 'daaae4f1-1666-41ea-90c5-66f09d018a42',
+        apc_partner_id: '626390b5-6f63-4caa-a0aa-b333a15eaf59',
+        apc_operator_id: null,
         partner_status_date: null,
-        sortID: 180,
+        sortID: 1302,
         archived: false,
         partner_archived: false,
-        partner_name: "Corr and Whit Oils",
-        apc_op_id : "8ed0a285-0011-4f56-962f-c46bc0889d1b",
-        apc_partner_id: "712abc45-def0-4321-9876-abcdef012345",
-        well_name: 'TILLMAN #2',
+        source_partner_id: null,
+        doc_fetch_status: 'done',
+        doc_fetch_attempts: 1,
+        doc_last_fetch_at: '2026-05-21T21:40:26.443+00:00',
+        doc_last_error: null,
+        source_system_partner_id: '138502ba-bbbd-4575-a5c6-1efb7280cda1',
+        apc_op_id: {
+            id: 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c',
+            name: 'Navigator Corporation',
+        },
+        well_name: 'FRUITA 10-26',
+        currency_code: 'USD',
     };
 
 
@@ -2530,8 +2984,8 @@ export const user_id_AprilLudgate   = 'c3e69340-d14c-45a9-96a8-142795925498';
 const address_CW: AddressType = {
     address_active: true,
     id: apc_address_id_CW,
-    street: '6789 S Blvd',
-    suite: '',
+    street: '6789 S Blvd NWES',
+    suite: '679',
     city: 'Houston',
     state: 'Texas',
     zip: '90078',
@@ -2541,17 +2995,57 @@ const address_CW: AddressType = {
 const address_partner_CW: AddressType = {
     address_active: true,
     id: apc_address_id_partner_CW,
-    street: '6789 S Main Ave',
-    suite: '1234',
-    city: 'Houston',
-    state: 'TX',
-    zip: '90078',
+    street: '6767 Main Lane',
+    suite: '89',
+    city: 'Denver',
+    state: 'Colorado',
+    zip: '80020',
     country: 'United States',
 };
 
 const address_Nav: AddressType = {
     address_active: true,
     id: apc_address_id_Nav,
+    street: '100 Navigator Way',
+    suite: '45',
+    city: 'Dallas',
+    state: 'TX',
+    zip: '75201',
+    country: 'United States',
+};
+const address_partner_Nav: AddressType = {
+    address_active: true,
+    id: apc_address_id_partner_Nav,
+    street: '100 Navigator Way',
+    suite: '45',
+    city: 'Dallas',
+    state: 'TX',
+    zip: '75201',
+    country: 'United States',
+};
+const address_Mc: AddressType = {
+    address_active: true,
+    id: apc_address_id_McKen,
+    street: '100 Navigator Way',
+    suite: '45',
+    city: 'Dallas',
+    state: 'TX',
+    zip: '75201',
+    country: 'United States',
+};
+const address_partner_Mc: AddressType = {
+    address_active: true,
+    id: apc_address_id_partner_McKen,
+    street: '100 Navigator Way',
+    suite: '45',
+    city: 'Dallas',
+    state: 'TX',
+    zip: '75201',
+    country: 'United States',
+};
+const address_partner_Mew: AddressType = {
+    address_active: true,
+    id: apc_address_id_partner_mew,
     street: '100 Navigator Way',
     suite: '45',
     city: 'Dallas',
@@ -2582,14 +3076,331 @@ const address_Athena: AddressType = {
     country: 'United States',
 };
 
+export const OperatorDropDown: OperatorOrPartnerList[] = [
+    {
+        apc_id: apc_op_id,
+        apc_name: apc_name_CWCO,
+        apc_address: address_CW
+    },
+    {
+        apc_id: apc_op_id_Nav,
+        apc_name: apc_name_Nav,
+        apc_address: address_Nav
+    },
+    {
+        apc_id: apc_name_Mc,
+        apc_name: apc_op_id_mckenzie,
+        apc_address: address_Mc
+    },
+    {
+        apc_id: "1bcad1a0-9419-49da-999e-f7bf95339e90",
+        apc_name: "Denver Oil",
+        apc_address: {
+            street: "5454 Broad Street",
+            suite: "",
+            city: "Denver",
+            state: "CO",
+            zip: "80202",
+            country: "United States",
+            address_active: true,
+            id: 54
+        }
+    },
+    {
+        apc_id: "d0bc769a-b709-4d58-b563-acdf1d99c5a2",
+        apc_name: "Denver Oil 2",
+        apc_address: {
+            street: "5434",
+            suite: "",
+            city: "Denv",
+            state: "CO",
+            zip: "90909",
+            country: "United States",
+            address_active: true,
+            id: 55
+        }
+    },
+    {
+        apc_id: "f3f7d47d-bd77-41c7-8647-cb4b3761279c",
+        apc_name: "Fortnite Oil",
+        apc_address: {
+            street: "98987",
+            suite: "678",
+            city: "Houston",
+            state: "Texas",
+            zip: "00988",
+            country: "United States",
+            address_active: true,
+            id: 60
+        }
+    },
+    {
+        apc_id: "1beb7989-c65e-4c71-b68c-1a01b5e5850b",
+        apc_name: "McKenzie Oil",
+        apc_address: {
+            street: "7898 Lousiana Blvd",
+            suite: "",
+            city: "Houston",
+            state: "Texas",
+            zip: "90087",
+            country: "United States",
+            address_active: true,
+            id: 70
+        }
+    },
+    {
+        apc_id: "108ab43c-c1d6-4e6d-9305-c7ac3a622cc7",
+        apc_name: "Mtn Bike Oil",
+        apc_address: {
+            street: "1234 Main Ave",
+            suite: "",
+            city: "Houston",
+            state: "Texas",
+            zip: "70020",
+            country: "United States",
+            address_active: true,
+            id: 53
+        }
+    },
+    {
+        apc_id: "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+        apc_name: "Navigator Corporation",
+        apc_address: {
+            street: "897 South Street",
+            suite: "",
+            city: "Dallas",
+            state: "Texas",
+            zip: "98987",
+            country: "United States",
+            address_active: true,
+            id: 51
+        }
+    },
+    {
+        apc_id: "1c738a5b-1fd1-4eb1-8710-fb87cadac4d1",
+        apc_name: "Raiders Operator Energy Co",
+        apc_address: {
+            street: "6768 S Marion Street",
+            suite: "3232",
+            city: "Dallas",
+            state: "Texas",
+            zip: "00987",
+            country: "United States",
+            address_active: true,
+            id: 65
+        }
+    },
+    {
+        apc_id: "8093e89f-85f1-4e24-ab91-a9df11e092f6",
+        apc_name: "Third Wheel Oil and Gas",
+        apc_address: {
+            street: "8787 S Ogden",
+            suite: "3232",
+            city: "Dallas",
+            state: "Texas",
+            zip: "90078",
+            country: "United States",
+            address_active: true,
+            id: 68
+        }
+    },
+    {
+        apc_id: "4482e4ea-29ad-4f57-a30a-d67a6b3d8ec1",
+        apc_name: "This Third Wheel Oil and Gas",
+        apc_address: {
+            street: "6546 Logan Av",
+            suite: "9999",
+            city: "Midland",
+            state: "Texas",
+            zip: "09879",
+            country: "United States",
+            address_active: false,
+            id: 69
+        }
+    },
+    {
+        apc_id: "a45536f3-ac27-4f3b-9a70-b0bb536d9fc6",
+        apc_name: "Thorton Oil and Company",
+        apc_address: {
+            street: "3456 LandMine Way",
+            suite: "67787",
+            city: "Dallas",
+            state: "Texas",
+            zip: "77789",
+            country: "United States",
+            address_active: true,
+            id: 72
+        }
+    },
+    {
+        apc_id: "01b272f7-ea18-48bc-9443-ba2f0c9376ff",
+        apc_name: "Whit and Corr Oil",
+        apc_address: {
+            street: "1234 Snake Street",
+            suite: "",
+            city: "Fortnite Land",
+            state: "CO",
+            zip: "90900",
+            country: "United States",
+            address_active: true,
+            id: 50
+        }
+    },
+    {
+        apc_id: "509165a9-532d-41ee-a2d5-c35c6c2124f3",
+        apc_name: "Whitaker's Oil Company",
+        apc_address: {
+            street: "343456 La Ave",
+            suite: "",
+            city: "Dnver",
+            state: "Colorado",
+            zip: "90087",
+            country: "United States",
+            address_active: true,
+            id: 71
+        }
+    }
+];
+export const ParentCompanyResponse = [
+    {
+        "apc_id": "cb12f050-05b6-4d0e-b7b8-0871f9835fd5",
+        "apc_name": "Corr and Whit Oils Company & Friend",
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "6789 S Blvd",
+            "suite": "679",
+            "city": "Houston",
+            "state": "Texas",
+            "zip": "90078",
+            "country": "United States",
+            "id": 3,
+            "address_active": true
+        }
+    },
+    {
+        "apc_id": "d975f19f-7efa-4956-92a2-25a78080b6be",
+        "apc_name": "McKenzie Oil",
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "345 16th Street",
+            "suite": "67",
+            "city": "Denver",
+            "state": "CO",
+            "zip": "80113",
+            "country": "United States",
+            "id": 4,
+            "address_active": true
+        }
+    },
+    {
+        "apc_id": "76b82137-454a-4c30-afc1-2bf934877c73",
+        "apc_name": "Oil Company",
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "7889 S Main",
+            "suite": "88",
+            "city": "Austin",
+            "state": "Texas",
+            "zip": "90087",
+            "country": "United States",
+            "id": 2,
+            "address_active": true
+        }
+    }
+];
+export const ParentCompanyDropdown: ParentCompany[] = [
+    {
+        "apc_id": apc_parent_company_CWFriends,
+        "apc_name": "Corr and Whit Oils Company & Friend",
+        "is_active": true,
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "6789 S Blvd",
+            "suite": "679",
+            "city": "Houston",
+            "state": "Texas",
+            "zip": "90078",
+            "country": "United States",
+            "id": 3,
+            "address_active": true
+        }
+    },
+    {
+        "apc_id": "d975f19f-7efa-4956-92a2-25a78080b6be",
+        "apc_name": "McKenzie Oil",
+        "is_active": true,
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "345 16th Street",
+            "suite": "67",
+            "city": "Denver",
+            "state": "CO",
+            "zip": "80113",
+            "country": "United States",
+            "id": 4,
+            "address_active": true
+        }
+    },
+    {
+        "apc_id": "76b82137-454a-4c30-afc1-2bf934877c73",
+        "apc_name": "Oil Company",
+        "is_active": true,
+        "max_users": 1,
+        "license_expires": "2026-05-17",
+        "apc_address": {
+            "street": "7889 S Main",
+            "suite": "88",
+            "city": "Austin",
+            "state": "Texas",
+            "zip": "90087",
+            "country": "United States",
+            "id": 2,
+            "address_active": true
+        }
+    }
+];
 // ── Role Builders ──────────────────────────────────────────────────────────────
 // Operator roles: 2 = view operated AFEs, 4 = view partner AFEs, 8 = billing
 // Partner roles:  3 = view, 5 = edit, 6 = approve/reject, 9 = library
+
+const buildSuperUserRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 1, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id,  apc_address, apc_address_id,  is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
 
 const buildOpRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
     { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
     { id: startId + 1, role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
     { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 11, active: false, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
+
+const buildOpRolesAllRoles = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 1, role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 11, active: false, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
+const buildOpRolesViewAFES = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 11, active: false, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
+const buildOpRolesViewAFESManageLibrary = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId+1,     role: 8, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 11, active: false, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
+const buildOpRolesViewAFESManageUsers = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 2, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId,     role: 4, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+    { id: startId + 2, role: 11, active: false, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
+];
+const buildOpRolesViewAFESSupUser = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
+    { id: startId,     role: 11, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_id, apc_address, apc_address_id, is_op_permission: true,  is_partner_permission: false, user_active: true },
 ];
 
 const buildOpRolesNoAFEViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
@@ -2613,8 +3424,8 @@ const buildPartnerRoles = (user_id: string, user_firstname: string, user_lastNam
     { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
-const buildPartnerRolesAFEOnlyViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
-    { id: startId,     role: 3, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
+const buildPartnerRolesSuperUser = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number, apc_op_id: string) => [
+    { id: startId,     role: 1, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
 
 const buildPartnerRolesNoAFEViewRights = (user_id: string, user_firstname: string, user_lastName: string, user_email: string, apc_id: string, apc_name: string, apc_address: AddressType, apc_address_id: number, startId: number) => [
@@ -2628,7 +3439,33 @@ const buildPartnerRolesNoUserEditRights = (user_id: string, user_firstname: stri
     { id: startId + 2, role: 6, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
     { id: startId + 3, role: 9, active: true, user_id, user_firstname, user_lastName, user_email, apc_id, apc_name, apc_name_active: true, apc_op_id: apc_op_id, apc_address, apc_address_id, is_op_permission: false, is_partner_permission: true,  user_active: true },
 ];
+//-----SuperUserRoles
+export const Love_Quinn_Super_User: UserProfileRecordSupabaseType = {
+    firstName: 'Love',
+    lastName: 'Quinn',
+    email: 'love.quinn@afepartner.com',
+    active: true,
+    is_super_user: true,
+    is_org_super_user: false,
+    apc_op_id_umbrella: null,
+    user_id: user_id_RachelGreen,
+    operatorRoles: buildSuperUserRoles(user_id_RachelGreen, 'Love', 'Quinn','love.quinn@afepartner.com',apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
+    partnerRoles: buildPartnerRolesSuperUser(user_id_RachelGreen, 'Love', 'Quinn','love.quinn@afepartner.com',apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110, apc_op_id_CW),
+};
 
+// ---- McKensie Partner
+export const JoeyTribiani_view_McKen_AFE: UserProfileRecordSupabaseType = {
+    firstName: 'Joey',
+    lastName: 'Green',
+    email: 'joey.green@mckenoil.com',
+    active: true,
+    is_super_user: false,
+    is_org_super_user: false,
+    apc_op_id_umbrella: apc_op_id_CW,
+    user_id: user_id_RachelGreen,
+    operatorRoles: [],
+    partnerRoles:  buildPartnerRolesNoUserEditRights(user_id_JoeyGreen, 'Joey', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_McKen, apc_name_Mc, address_partner_Mc, apc_address_id_partner_McKen, 110),
+};
 // ── CW (Operator) / John Ross (Partner) Users ──────────────────────────────────
 
 // All permissions: Can see Operated AFEs for CW and Non-Op AFEs.
@@ -2643,6 +3480,31 @@ export const RachelGreen_AllPermissions_CW_NonOpCW: UserProfileRecordSupabaseTyp
     user_id: user_id_RachelGreen,
     operatorRoles: buildOpRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
     partnerRoles:  buildPartnerRoles(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110, apc_op_id_CW),
+};
+
+export const RachelGreen_ViewAFECW_NonOPAFECW_APC: UserProfileRecordSupabaseType = {
+    firstName: 'Rachel',
+    lastName: 'Green',
+    email: 'rachel.green@corrwhitoils.com',
+    active: true,
+    is_super_user: false,
+    is_org_super_user: false,
+    apc_op_id_umbrella: apc_parent_company_CWFriends,
+    user_id: user_id_RachelGreen,
+    operatorRoles: buildOpRolesViewAFESManageLibrary(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
+    partnerRoles:  buildPartnerRolesNoUserEditRights(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110),
+};
+export const RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser: UserProfileRecordSupabaseType = {
+    firstName: 'Rachel',
+    lastName: 'Green',
+    email: 'rachel.green@corrwhitoils.com',
+    active: true,
+    is_super_user: false,
+    is_org_super_user: true,
+    apc_op_id_umbrella: apc_parent_company_CWFriends,
+    user_id: user_id_RachelGreen,
+    operatorRoles: buildOpRolesViewAFESManageLibrary(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
+    partnerRoles:  buildPartnerRolesNoUserEditRights(user_id_RachelGreen, 'Rachel', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110),
 };
 
 export const RachelGreen_AllPermissions_CW_NonOpCWAthena: UserProfileRecordSupabaseType = {
@@ -2713,7 +3575,7 @@ export const RossGeller_Op_CW_No_NonOp: UserProfileRecordSupabaseType = {
     active: true,
     is_super_user: false,
     is_org_super_user: false,
-    apc_op_id_umbrella: apc_op_id_CW,
+    apc_op_id_umbrella: apc_parent_company_CWFriends,
     user_id: user_id_RossGeller,
     operatorRoles: buildOpViewOnlyRoles(user_id_RossGeller, 'Ross', 'Geller', 'ross.geller@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 130),
     partnerRoles:  [],

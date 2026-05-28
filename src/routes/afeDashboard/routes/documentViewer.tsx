@@ -64,7 +64,7 @@ export default function DocumentBrowser( {file}:{file:string}) {
   function nextPage() {
     changePage(1);
   }
- console.log(pageNumber)
+
 return (
     <>
     {docToView.url==='' ? (

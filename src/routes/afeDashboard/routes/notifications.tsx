@@ -1,21 +1,25 @@
-import { fetchAFEHistoryCount, fetchAFENotificationCount, fetchNotifications } from "provider/fetch";
+import { fetchAFEDetails, fetchAFEHistoryCount, fetchAFENotificationCount, fetchNotifications } from "provider/fetch";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react"
 import { formatDateShort } from "src/helpers/styleHelpers";
-import { type Notifications } from "src/types/interfaces";
-import { transformNotifications } from "src/types/transform";
+import { type AFEType, type Notifications } from "src/types/interfaces";
+import { transformNotifications, transformSingleAFE } from "src/types/transform";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
 import { doesUserHaveRole } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { getViewRoleNonOperatorIds, getViewRoleOperatorIds, handleThePartnerStatusChange } from "./helpers/helpers";
+import { useNavigate } from "react-router";
 
 type FilterNotificationProp = {
   apc_afe_id: string;
 }
 
 export default function NotificationsGrid() {
-  const { loggedInUser, loading } = useSupabaseData();
+  const navigate = useNavigate();
+  const { loggedInUser, loading, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
   const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
 // State for paginated data
   const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
@@ -28,8 +32,12 @@ export default function NotificationsGrid() {
 //Filtering variables
   const [actionList, setActionList] = useState<string [] | []>([]);
   const [userList, setUserList] = useState<string [] | []>([]);
+  const [operatorList, setOperatorList] = useState<string [] | []>([]);
+  const [partnerList, setPartnerList] = useState<string [] | []>([]);
   const [selectedAction, setSelectedAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
+  const [selectedOperator, setSelectedOperator] = useState('');
+  const [selectedPartner, setSelectedPartner] = useState('');
   const [afeSearch, setAFESearch] = useState('');
   const [verSearch, setVerSearch] = useState('');
   const [descriptionSearch, setDescriptionSearch] = useState('');
@@ -48,7 +56,6 @@ useEffect(() => {
           }
         try {
             const result = await fetchNotifications(minRange, maxRange, false);
-         
             if(result.length > 0 ) {
                 const transformedNotifications = transformNotifications(result);
                 setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
@@ -63,7 +70,7 @@ useEffect(() => {
             isMounted = false;
         };
     
-},[maxRange, loggedInUser, loading])
+},[maxRange, loggedInUser, loading]);
 
 useMemo(() => {
   async function getNotificationHistoryRowCount() {
@@ -78,10 +85,14 @@ useEffect(() => {
   async function getList() {
     const userArray = notifications.map(notification => notification.user.name);
     const actionArray = notifications.map(notification => notification.type);
+    const operatorArray = notifications.map(notification => notification.apc_op.apc_name);
+    const partnerArray = notifications.map(notification => notification.apc_partner.apc_name);
         
     if(isMounted) {
         setUserList([...new Set(userArray)]);
         setActionList([...new Set(actionArray)]);
+        setOperatorList([...new Set(operatorArray)]);
+        setPartnerList([...new Set(partnerArray)]);
       }
   }; getList();
   
@@ -115,26 +126,59 @@ function handleUserListChange(e: React.ChangeEvent<HTMLSelectElement>) {
   setSelectedUser(e.target.value);
 };
 
+function handleOperatorListChange(e: React.ChangeEvent<HTMLSelectElement>) {
+  setSelectedOperator(e.target.value);
+};
+
+function handlePartnerListChange(e: React.ChangeEvent<HTMLSelectElement>) {
+  setSelectedPartner(e.target.value);
+}
+
 const filterNotifications = (notificationsList: Notifications[]) => {
     return notificationsList.filter(notice => {
       const matchesUser = notice.user.name === selectedUser || selectedUser === '';
+      const matchesOperator = notice.apc_op.apc_name === selectedOperator || selectedOperator === '';
+      const matchesPartner = notice.apc_partner.apc_name === selectedPartner || selectedPartner === '';
       const matchesAFENumber = notice.afe_number.toUpperCase().includes(afeSearch.toUpperCase()) || afeSearch === '';
       const matchesDescription = notice.description.toUpperCase().includes(descriptionSearch.toUpperCase()) || descriptionSearch === '';
-      const matchesVersion = notice.afe_version !== null && notice.afe_version.toUpperCase().includes(verSearch.toUpperCase()) || verSearch === '';
+      const matchesVersion = notice.afe_version.toUpperCase().includes(verSearch.toUpperCase()) || verSearch === '';
 
-      return matchesUser && matchesDescription && matchesAFENumber && matchesVersion
+      return matchesUser && matchesOperator && matchesPartner && matchesDescription && matchesAFENumber && matchesVersion
     })
   };
 
 const filteredNotifiations = useMemo(() => {
   return filterNotifications(notifications);
-},[notifications, selectedUser, selectedAction, afeSearch, descriptionSearch, verSearch]);
+},[notifications, selectedUser, selectedOperator, selectedPartner, selectedAction, afeSearch, descriptionSearch, verSearch]);
 
 const handlePageChange = (paginatedData: Notifications[], page: number) => {
         setRowsToShow(paginatedData);
         setCurrentPage(page);
     };
-console.log(loading, 'the loading')
+
+async function handlePartnerStatusChanged(notification: Notifications) {
+    if(loggedInUser?.is_super_user) return;
+    if(notification.partner_status !== 'New') return;
+    const allowedPartnerIds = new Set(getViewRoleNonOperatorIds(loggedInUser));
+    
+    if(allowedPartnerIds.has(notification.apc_partner.apc_id)) {
+      const afeDetailsResults = await fetchAFEDetails(notification.afe_id, token);
+      if(afeDetailsResults.ok) {
+        const transfromedResult = transformSingleAFE(afeDetailsResults.data);
+        handleThePartnerStatusChange(
+          transfromedResult,
+          'Viewed',
+          'The Partner Status on the AFE changed from New to Viewed',
+          'action',
+          loggedInUser?.firstName!,
+          loggedInUser?.lastName!,
+          loggedInUser?.email!,
+          token);
+      };
+      }
+      
+    };
+  
   return (
     <>
     <div hidden={loading || doesUserHaveViewOpAFERole === null || doesUserHaveViewNonOpAFERole === null || doesUserHaveViewOpAFERole || doesUserHaveViewNonOpAFERole} className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
@@ -154,7 +198,7 @@ console.log(loading, 'the loading')
       {/* Filter out System History */}
       <div className="ml-2 mr-2 sm:mt-4 p-3 rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70">
         <h2 className="text-sm/6 2xl:text-base/7 font-semibold text-[var(--darkest-teal)] custom-style">Filter AFE Histories</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6">
             {/* Filter on the User */}
             <div>
             <label htmlFor="userMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on User</label>
@@ -168,6 +212,54 @@ console.log(loading, 'the loading')
               className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
               <option></option>
               {userList.map((option) => (
+                  <option key={option} value={option}>
+                      {option}
+                  </option>
+              ))}
+          </select>
+          <ChevronDownIcon
+              aria-hidden="true"
+              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+          />
+          </div>
+            </div>
+            {/* Filter on the Operator */}
+            <div>
+            <label htmlFor="operatorMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on AFE Operator</label>
+             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+          <select
+              id="operatorMapID"
+              name="operatorMapID"
+              autoComplete="off"
+              value={selectedOperator}
+              onChange={handleOperatorListChange}
+              className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
+              <option></option>
+              {operatorList.map((option) => (
+                  <option key={option} value={option}>
+                      {option}
+                  </option>
+              ))}
+          </select>
+          <ChevronDownIcon
+              aria-hidden="true"
+              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+          />
+          </div>
+            </div>
+            {/* Filter on the Partner */}
+            <div>
+            <label htmlFor="partnerMapID" className="text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style">Filter on AFE Partner</label>
+             <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 ">
+          <select
+              id="partnerMapID"
+              name="partnerMapID"
+              autoComplete="off"
+              value={selectedPartner}
+              onChange={handlePartnerListChange}
+              className="cursor-pointer col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style outline-1 -outline-offset-1 outline-[var(--dark-teal)] focus:outline-2 focus:-outline-offset-2 focus:outline-[var(--bright-pink)] sm:text-sm/6">
+              <option></option>
+              {partnerList.map((option) => (
                   <option key={option} value={option}>
                       {option}
                   </option>
@@ -284,7 +376,7 @@ console.log(loading, 'the loading')
                   <div className="custom-style-long-text text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)]">{item.description}</div>
               </td>
               <td className="px-1 py-1 pl-3 sm:pl-0 text-xs/6 2xl:text-sm/6 sm:pr-8 lg:pr-20">
-                  <div className="block text-[var(--darkest-teal)] custom-style text-center sm:block">{item.afe_number} {item.afe_version}</div>
+                  <div className="block text-[var(--darkest-teal)] custom-style text-center sm:block">{item.afe_number} {item.afe_version} {item.partner_status}</div>
               </td>
               <td className="hidden px-1 py-1 pl-0 text-center text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style md:table-cell lg:pr-20">
                 {formatDateShort(item.created_at)}
@@ -292,8 +384,13 @@ console.log(loading, 'the loading')
               <td className="hidden px-1 py-1 pl-0 text-right text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] sm:table-cell sm:pr-6 lg:pr-8 whitespace-nowrap">
                       <a
                           href={`/mainscreen/afeDetail/${item.afe_id}`}
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              await handlePartnerStatusChanged(item);
+                              navigate(`/mainscreen/afeDetail/${item.afe_id}`);
+                            }}
                           className="cursor-pointer rounded-md bg-[var(--dark-teal)] px-4 py-2 text-sm leading-6 font-semibold text-white shadow-lg hover:bg-[var(--bright-pink)] custom-style transition-colors w-full max-w-28">
-                          View<span className="sr-only">, {item.afe_number}</span>
+                          View
                       </a>
               </td>
             </tr>
@@ -325,7 +422,7 @@ console.log(loading, 'the loading')
     </div>
     </>
   )
-}
+};
 
 export function NotificationsGridPreFiltered({apc_afe_id}: FilterNotificationProp) {
   
@@ -595,4 +692,4 @@ const handlePageChange = (paginatedData: Notifications[], page: number) => {
     </div>
     </>
   )
-}
+};

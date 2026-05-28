@@ -59,7 +59,7 @@ describe('PartnerDropdownMultiSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Corr and Whit Oils Company')).toBeInTheDocument();
+      expect(screen.getByText('Corr and Whit Oils Company & Friends')).toBeInTheDocument();
       expect(screen.getByText('Athena Minerals Inc.')).toBeInTheDocument();
     });
   });
@@ -72,7 +72,7 @@ describe('PartnerDropdownMultiSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Corr and Whit Oils Company')).toBeInTheDocument();
+      expect(screen.getByText('Corr and Whit Oils Company & Friends')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -92,13 +92,13 @@ describe('PartnerDropdownMultiSelect', () => {
       <PartnerDropdownMultiSelect 
         onChange={vi.fn()} 
         isDisabled={false}
-        initialSelectedIds={['712abc45-def0-4321-9876-abcdef012345']} 
+        initialSelectedIds={['626390b5-6f63-4caa-a0aa-b333a15eaf59']} 
       />,
       { supabaseOverrides }
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Corr and Whit Oils Company')).toBeInTheDocument();
+      expect(screen.getByText('Corr and Whit Oils Company & Friends')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -113,7 +113,7 @@ describe('PartnerDropdownMultiSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Corr and Whit Oils Company')).toBeInTheDocument();
+      expect(screen.getByText('Corr and Whit Oils Company & Friends')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');

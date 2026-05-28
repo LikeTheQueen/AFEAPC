@@ -8,7 +8,6 @@ import { renderWithProviders } from './test-utils/renderWithOptions';
 
 import {
     operatorDeactivatedFromSupabase,
-    operatorDectivatedSentToSupabase,
     operatorActivatedFromSupabase,
     operatorListReturnFromSupabaseWithoutIDs,
     partnersLinkedOrUnlinked,
@@ -24,7 +23,7 @@ vi.mock('react-toastify', () => ({
 }));
 
 import { toast } from 'react-toastify';
-import { MichaelScott_AllPermissions_Nav_Athena, MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_AllPermissions_CW_NonOpCW } from './test-utils/afeRecords';
+import { Love_Quinn_Super_User, MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from './test-utils/afeRecords';
 
 vi.mock('provider/fetch', () => ({
   fetchOperatorsOrPartnersToEdit: vi.fn(),
@@ -48,9 +47,8 @@ describe('View and Edit Operators',() => {
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
-                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+                loggedInUser: Love_Quinn_Super_User,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -81,7 +79,7 @@ describe('View and Edit Operators',() => {
 
         expect(within(dataRows[0]).getByRole('button', { name: /edit/i })).toBeInTheDocument();
         expect(within(dataRows[0]).getByText('Corr and Whit Oils')).toBeInTheDocument();
-        expect(within(dataRows[0]).getByText('6789 S Blvd Houston, Texas 90078 United States')).toBeInTheDocument();
+        expect(within(dataRows[0]).getByText('6789 S Blvd NWES #679 Houston, Texas 90078 United States')).toBeInTheDocument();
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).not.toBeVisible();
@@ -93,7 +91,6 @@ describe('View and Edit Operators',() => {
               supabaseOverrides: {
                 loggedInUser: null,
                 loading: false,
-                isSuperUser: false,
                 session: null,
             }
           });
@@ -117,7 +114,6 @@ describe('View and Edit Operators',() => {
               supabaseOverrides: {
                 loggedInUser: MonicaGeller_NoOpRoles_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -156,9 +152,8 @@ describe('View and Edit Operators',() => {
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
-                loggedInUser: MichaelScott_AllPermissions_Nav_Athena,
+                loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -189,8 +184,8 @@ describe('View and Edit Operators',() => {
         const dataRows = rows.slice(1);
 
         expect(within(dataRows[0]).getByRole('button', { name: /edit/i })).toBeInTheDocument();
-        expect(within(dataRows[0]).getByText('Navigator Corporation')).toBeInTheDocument();
-        expect(within(dataRows[0]).getByText('100 Navigator Way #45 Dallas, TX 75201 United States')).toBeInTheDocument();
+        expect(within(dataRows[0]).getByText('Corr and Whit Oils')).toBeInTheDocument();
+        expect(within(dataRows[0]).getByText('6789 S Blvd NWES #679 Houston, Texas 90078 United States')).toBeInTheDocument();
 
         const noOpsToView = screen.getByText('There are no Operators you have access to manage');
         expect(noOpsToView).not.toBeVisible();
@@ -209,9 +204,8 @@ describe('View and Edit Operators',() => {
 
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
-                loggedInUser: MichaelScott_AllPermissions_Nav_Athena,
+                loggedInUser: Love_Quinn_Super_User,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -241,7 +235,7 @@ describe('View and Edit Operators',() => {
         const dataRows = rows.slice(1);
 
         expect(within(dataRows[0]).getByRole('button', { name: /edit/i })).toBeInTheDocument();
-        expect(within(dataRows[0]).getByText('Navigator Corporation')).toBeInTheDocument();
+        expect(within(dataRows[0]).getByText('Corr and Whit Oils')).toBeInTheDocument();
 
         const editButton = within(dataRows[0]).getByRole('button', { name: /edit/i });
 
@@ -252,35 +246,24 @@ describe('View and Edit Operators',() => {
         expect(screen.getByText('Edit the Operator Addresses for Non-Op AFEs')).toBeInTheDocument();
 
         const dialog = await screen.findByRole('dialog', { name: /edit the operator billing address/i });
-        const allTextboxes = within(dialog).getAllByRole('textbox');
+        const relatedPartner = within(dialog).getAllByRole('textbox', { name: 'Non-Op Name'});
 
-        const nameInputsWithoutLabels = allTextboxes.filter((input, index) => {
-        // The ones without labels start after the first 6 (which have labels)
-        return index >= 6;
-    });
+        await waitFor(() => {
+            expect(relatedPartner[0]).toHaveValue('Corr and Whit Oils');
+        });
 
-    await waitFor(() => {
-        expect(nameInputsWithoutLabels[0]).toHaveValue('Athena Minerals Inc.');
-    });
-
-    const partnerNameInput = await screen.findByDisplayValue('Athena Minerals Inc.');
-    expect(partnerNameInput).toBeInTheDocument();
-
-    
-
-    const partnerList = screen.getByRole('list');
-    expect(partnerList).toBeInTheDocument();
-    expect(partnerList).not.toHaveAttribute('hidden');
-    
-    // Check list items
-    const listItems = within(partnerList).getAllByRole('listitem');
-    expect(listItems.length).toBeGreaterThan(0);
-    
-    // Check first partner details
-    expect(screen.getByText(/Whit and Corr Oils Company/i)).toBeInTheDocument();
-    expect(screen.getByText(/1875 Lawrence St /i)).toBeInTheDocument();
-
+        const partnerList = screen.getByRole('list');
+        expect(partnerList).toBeInTheDocument();
+        expect(partnerList).not.toHaveAttribute('hidden');
         
+        // Check list items
+        const listItems = within(partnerList).getAllByRole('listitem');
+        expect(listItems.length).toBeGreaterThan(0);
+        
+        // Check first partner details - What was returned from the call to to Supavase
+        expect(screen.getByText(/Whit and Corr Oils Company/i)).toBeInTheDocument();
+        expect(screen.getByText(/1875 Lawrence St /i)).toBeInTheDocument();
+
     });
 
     test('Expect the Operator to claim the address when the box is checked and saved', async () => {
@@ -295,9 +278,8 @@ describe('View and Edit Operators',() => {
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
-                loggedInUser: MichaelScott_AllPermissions_Nav_Athena,
+                loggedInUser: Love_Quinn_Super_User,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -327,7 +309,7 @@ describe('View and Edit Operators',() => {
         const dataRows = rows.slice(1);
 
         expect(within(dataRows[0]).getByRole('button', { name: /edit/i })).toBeInTheDocument();
-        expect(within(dataRows[0]).getByText('Navigator Corporation')).toBeInTheDocument();
+        expect(within(dataRows[0]).getByText('Corr and Whit Oils')).toBeInTheDocument();
 
         const editButton = within(dataRows[0]).getByRole('button', { name: /edit/i });
 
@@ -338,59 +320,49 @@ describe('View and Edit Operators',() => {
         expect(screen.getByText('Edit the Operator Addresses for Non-Op AFEs')).toBeInTheDocument();
 
         const dialog = await screen.findByRole('dialog', { name: /edit the operator billing address/i });
-        const allTextboxes = within(dialog).getAllByRole('textbox');
+        const relatedPartner = within(dialog).getAllByRole('textbox', { name: 'Non-Op Name'});
 
-        const nameInputsWithoutLabels = allTextboxes.filter((input, index) => {
-        // The ones without labels start after the first 6 (which have labels)
-        return index >= 6;
-    });
+        await waitFor(() => {
+            expect(relatedPartner[0]).toHaveValue('Corr and Whit Oils');
+        });
 
-    await waitFor(() => {
-        expect(nameInputsWithoutLabels[0]).toHaveValue('Athena Minerals Inc.');
-    });
+        await waitFor(() => {
+            expect(mockPartnersFetch).toHaveBeenCalled();
+        });
 
-    const partnerNameInput = await screen.findByDisplayValue('Athena Minerals Inc.');
-    expect(partnerNameInput).toBeInTheDocument();
+        const partnerList = screen.getByRole('list');
+        expect(partnerList).toBeInTheDocument();
+        expect(partnerList).not.toHaveAttribute('hidden');
+        
+        // Check list items
+        const listItems = within(partnerList).getAllByRole('listitem');
+        expect(listItems.length).toBeGreaterThan(0);
+        
+        // Check first partner details
+        expect(screen.getByText(/Whit and Corr Oils Company/i)).toBeInTheDocument();
+        expect(screen.getByText(/1875 Lawrence St Denver, CO 80202/i)).toBeInTheDocument();
 
+        const checkboxes = screen.getAllByRole('checkbox');
+        expect(checkboxes[0]).not.toBeChecked();
+        expect(checkboxes[1]).not.toBeChecked();
 
-    await waitFor(() => {
-        expect(mockPartnersFetch).toHaveBeenCalled();
-    });
+        const saveButtons = screen.getAllByRole('button', { name: /save/i });
+        expect(saveButtons[2]).toBeDisabled();
+        
 
-    const partnerList = screen.getByRole('list');
-    expect(partnerList).toBeInTheDocument();
-    expect(partnerList).not.toHaveAttribute('hidden');
-    
-    // Check list items
-    const listItems = within(partnerList).getAllByRole('listitem');
-    expect(listItems.length).toBeGreaterThan(0);
-    
-    // Check first partner details
-    expect(screen.getByText(/Whit and Corr Oils Company/i)).toBeInTheDocument();
-    expect(screen.getByText(/1875 Lawrence St Denver, CO 80202/i)).toBeInTheDocument();
+        await user.click(checkboxes[0]);
 
-    const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes[0]).not.toBeChecked();
-    expect(checkboxes[1]).not.toBeChecked();
-
-    const saveButtons = screen.getAllByRole('button', { name: /save/i });
-    expect(saveButtons[2]).toBeDisabled();
-    
-
-    await user.click(checkboxes[0]);
-
-    await waitFor(() => {
-      expect(checkboxes[0]).toBeChecked();
-    });
-    expect(checkboxes[1]).not.toBeChecked();
-    expect(saveButtons[2]).not.toBeDisabled();
+        await waitFor(() => {
+          expect(checkboxes[0]).toBeChecked();
+        });
+        expect(checkboxes[1]).not.toBeChecked();
+        expect(saveButtons[2]).not.toBeDisabled();
         
     });
 
     test('deactivates an active operator when clicking deactivate button then reacivates it when the button is pushed again', async () => {
         const user = userEvent.setup();
         
-
        vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
             ok: true,
             data: operatorDeactivatedFromSupabase,
@@ -405,9 +377,8 @@ describe('View and Edit Operators',() => {
         
         renderWithProviders(<OperatorViewAndEdit />, {
               supabaseOverrides: {
-                loggedInUser: loggedInUserRachelGreen,
+                loggedInUser: Love_Quinn_Super_User,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -443,9 +414,9 @@ describe('View and Edit Operators',() => {
         // Verify the call was made with new values and the Operator was deactivated
         await waitFor(() => {
             expect(writeProvider.updateOperatorNameAndStatus).toHaveBeenCalledWith(
-                operatorDectivatedSentToSupabase.name,
-                operatorDectivatedSentToSupabase.active,
-                operatorDectivatedSentToSupabase.apc_id,
+                Love_Quinn_Super_User.operatorRoles[0].apc_name,
+                !Love_Quinn_Super_User.operatorRoles[0].apc_name_active,
+                Love_Quinn_Super_User.operatorRoles[0].apc_id,
             );
         });
         
@@ -467,9 +438,9 @@ describe('View and Edit Operators',() => {
         // Verify the call was made with new values
         await waitFor(() => {
             expect(writeProvider.updateOperatorNameAndStatus).toHaveBeenCalledWith(
-                operatorDectivatedSentToSupabase.name,
-                operatorDectivatedSentToSupabase.active,
-                operatorDectivatedSentToSupabase.apc_id,
+                Love_Quinn_Super_User.operatorRoles[0].apc_name,
+                Love_Quinn_Super_User.operatorRoles[0].apc_name_active,
+                Love_Quinn_Super_User.operatorRoles[0].apc_id,
             );
         });
 
@@ -499,7 +470,6 @@ describe('View and Edit Operators',() => {
               supabaseOverrides: {
                 loggedInUser: loggedInUserRachelGreen,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',
@@ -558,7 +528,6 @@ describe('View and Edit Operators',() => {
               supabaseOverrides: {
                 loggedInUser: loggedInUserRachelGreen,
                 loading: false,
-                isSuperUser: false,
                 session: {
                 access_token: 'test-token',
                 refresh_token: 'test-refresh-token',

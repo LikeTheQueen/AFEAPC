@@ -49,7 +49,6 @@ describe('Document Browser',() => {
             expect(screen.getByText(/Showing page 1 of 4 Pages/i)).toBeInTheDocument();
         });
 
-        
         const firstButton = screen.getByRole('listitem', {name: 'page 1'});
         const secondTolastButton = screen.getByRole('listitem', {name: 'page 3'});
         const previousPageButton = screen.getByRole('listitem', {name: 'Previous Page'});

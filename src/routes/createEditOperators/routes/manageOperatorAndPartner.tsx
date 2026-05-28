@@ -37,7 +37,6 @@ export default function OperatorViewAndEdit() {
 
     useEffect(() => {
         if(!loggedInUser) return;
-    fetchCompanyProfile();
         const operatorList = (loggedInUser.operatorRoles ?? [])
         .filter(operator => operator.role === superUserPermission || operator.role === orgSuperUser);
         setFilteredOperators(operatorList.sort((a, b) => a.apc_name.localeCompare(b.apc_name)));
@@ -87,11 +86,12 @@ export default function OperatorViewAndEdit() {
 
     const handleEditClick = (operator: RoleEntryRead) => {
         const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id && (nonOp.role === superUserPermission || nonOp.role === editNonOpLibrary)) ?? [];
+        console.log(nonOperatedAddresses);
         setOpToEdit(operator);
         setRelatedNonOpAddresses(nonOperatedAddresses);
         setOpen(true);
     };
-
+console.log(loggedInUser)
     return (
         <>
             <div className="px-4 w-full sm:px-10 sm:py-16">

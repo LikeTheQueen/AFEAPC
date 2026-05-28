@@ -312,6 +312,7 @@ export default function AFE() {
       mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
       >
       </AFEHeader>
+
       {/*AFE Filters - Hidden on view all AFE */}
       <div hidden={currentTab === 3}>
         <AFEFilters
@@ -330,16 +331,17 @@ export default function AFE() {
       handleExport={handleExport}
       ></AFEFilters> 
       </div>
+
       {/*No AFE Message when filtered or [] On all Tabs, for Tab 2 it's operated*/}
       <div hidden ={ afeFetchError ? true : (
         currentTab === 2 ? 
         ((filteredOperatedAFEs.length > 0 ) ? true : false)
       : ((filteredNonOperatedAFEs.length > 0 ) ? true : false) )} >
       <NoFilteredAFEsToView
-      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
-      >        
+      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}>        
       </NoFilteredAFEsToView>
       </div>
+
       {/*Non Operated AFEs List.  Hidden on tab 2 or if there are no AFEs*/}
       {currentTab !== 2 && filteredNonOperatedAFEs.length > 0 && nonOperatedAFEs.length > 0 && (
         <>
@@ -370,7 +372,8 @@ export default function AFE() {
           <div className="h-4"></div>
           </>
       )}
-    <div hidden={currentTab === 2 || (currentTab === 1 && (doesUserHaveViewNonOpAFERole)) || (currentTab === 3 && (doesUserHaveViewNonOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
+    
+      <div hidden={currentTab === 2 || (currentTab === 1 && (doesUserHaveViewNonOpAFERole)) || (currentTab === 3 && (doesUserHaveViewNonOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
           <NoSelectionOrEmptyArrayMessage
           message={
         <>
@@ -379,6 +382,7 @@ export default function AFE() {
     }>
           </NoSelectionOrEmptyArrayMessage>
       </div>
+
     {/*No AFE Message when filtered or [] On all Tabs, hidden on all tabs except 3 and only for Operated AFEs*/}
     <div hidden={currentTab !==3}>
       <AFEHeader

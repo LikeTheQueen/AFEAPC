@@ -278,7 +278,7 @@ export const loggedInUserRachelGreenNoAddress: UserProfileRecordSupabaseType = {
             apc_name: 'Corr and Whit Oils Company',
             apc_op_id: apc_op_id_CW,
             apc_name_active: true,
-            apc_address: {},
+            apc_address: null,
             user_id: userID1,
             user_firstname: 'Rachel',
             user_lastName: 'Green',
@@ -1053,100 +1053,7 @@ export const loggedInUserRachelGreenCannotEditUsersNoRole4or5: UserProfileRecord
     ],
 };
 
-export const loggedInUserRachelGreenCannotEditUsersNoRole4or5or8or9: UserProfileRecordSupabaseType = {
-    firstName: 'Rachel',
-    lastName: 'Green',
-    email: 'elizabeth.rider.shaw@gmail.com',
-    active: true,
-    is_super_user: false,
-    operatorRoles: [
-        {
-            apc_name: 'Corr and Whit Oils Company',
-            apc_op_id: apc_op_id_CW,
-            apc_name_active: true,
-            apc_address: {
-                address_active: true,
-                id: 66,
-                street: '6789 S Blvd',
-                suite: '',
-                city: 'Houston',
-                state: 'Texas',
-                zip: '90078',
-                country: 'United States'
-            },
-            user_id: userID1,
-            user_firstname: 'Rachel',
-            user_lastName: 'Green',
-            user_email: 'elizabeth.rider.shaw@gmail.com',
-            user_active: true,
-            is_op_permission: true,
-            is_partner_permission: false,
-            id: 120,
-            role: 2,
-            active: true,
-            apc_id: apc_op_id_CW,
-            apc_address_id: 66
-        },
-        
-    ],
-    partnerRoles: [
-        {
-        apc_name: 'John Ross',
-        apc_op_id: apc_part_id_John,
-        apc_name_active: true,
-            apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 35,
-        role: 3,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    },
-    {
-        apc_name: 'John Ross',
-        apc_op_id: apc_part_id_John,
-        apc_name_active: true,
-            apc_address: {
-            address_active: true,
-            id: 10,
-            street: '2900 S Emerson St',
-            suite:'878',
-            city: 'Englewood',
-            state: 'CO',
-            zip: '80093',
-            country: 'United States'
-        },
-        user_id: userID1,
-        user_firstname: 'Rachel',
-        user_lastName: 'Green',
-        user_email: 'elizabeth.rider.shaw@gmail.com',
-        user_active: true,
-        is_op_permission: false,
-        is_partner_permission: true,
-        id: 185,
-        role: 6,
-        active: true,
-        apc_id: apc_part_id_John,
-        apc_address_id: 10
-    }
-    
-    ],
-};
+
 
 export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     firstName: 'Rachel',
@@ -1154,6 +1061,7 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
     email: 'elizabeth.rider.shaw@gmail.com',
     active: true,
     is_super_user: false,
+    is_org_super_user:false,
     operatorRoles: [
         {
             apc_name: 'Corr and Whit Oils Company',
@@ -1301,42 +1209,43 @@ export const loggedInUserNoAFEViewRights: UserProfileRecordSupabaseType = {
 // SINGLE AFE RETURN
 export const singleAFEResultSupabase = 
     {
-        "id": "4b6cebbf-ca88-4e9e-8479-dd50cc13e03W",
-        "created_at": "2025-11-15T00:00:06.292558+00:00",
+        "id": "7a69eb26-e0ce-436d-88db-d114db6a1f2b",
+        "created_at": "2026-05-21T21:33:21.966627+00:00",
         "afe_type": "DRILLING",
-        "afe_number": "DR26NAVAT",
-        "description": "Drill DRAKE SURVEY-MASON #1",
-        "total_gross_estimate": 275000,
-        "version_string": null,
+        "afe_number": "26D014",
+        "description": "DRILLING",
+        "total_gross_estimate": 429191,
+        "version_string": "Base",
         "supp_gross_estimate": 0,
-        "operator_wi": 80,
-        "apc_partner_name": "Athena Minerals",
-        "partner_wi": 20,
-        "partner_status": "Viewed",
-        "op_status": "FAPP",
-        "iapp_date": "2025-11-14",
-        "last_mod_date": "2025-11-14",
-        "legacy_chainID": 176,
-        "legacy_afeid": 176,
+        "operator_wi": 54.8,
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 18.5,
+        "partner_status": "New",
+        "op_status": "IAPP",
+        "iapp_date": "2026-05-21",
+        "last_mod_date": "2026-05-21",
+        "legacy_chainID": 466,
+        "legacy_afeid": 466,
         "chain_version": 1,
-        "source_system_id": "ba0c1c4f-81e5-4509-8089-6c9bc4919264",
-        "apc_partner_id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+        "source_system_id": "e0cc394c-19b8-4e4e-8699-97797a1e385c",
+        "apc_partner_id": "4045d710-476a-4ee0-b97b-be64933133ba",
         "apc_operator_id": null,
         "partner_status_date": null,
-        "sortID": 166,
+        "sortID": 1292,
         "archived": false,
         "partner_archived": false,
         "source_partner_id": null,
         "doc_fetch_status": "done",
-        "doc_fetch_attempts": 2,
-        "doc_last_fetch_at": "2025-12-30T20:09:51.423+00:00",
+        "doc_fetch_attempts": 1,
+        "doc_last_fetch_at": "2026-05-21T21:40:18.614+00:00",
         "doc_last_error": null,
-        "source_system_partner_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
+        "source_system_partner_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
         "apc_op_id": {
-            "id": apc_op_id_CW,
-            "name": "Corr and Whit Oils"
+            "id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "name": "Corr and Whit Oils Company & Friends"
         },
-        "well_name": "DRAKE SURVEY-MASON #1"
+        "well_name": "BUENAVISTA 10-26",
+        "currency_code": "USD"
     };
 export const singleAFEEstimatesResponse = [
     {
@@ -2586,7 +2495,7 @@ export const limitedPermissionList = [
         "is_partner_permission": false
     },
     {
-        "role_id": 237,
+        "role_id": 238,
         "role": 4,
         "role_active": false,
         "apc_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
@@ -2612,7 +2521,7 @@ export const limitedPermissionList = [
         "role_active": true,
         "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
         "apc_name": "John Ross Exploration Inc",
-        "apc_address_id": 10,
+        "apc_address_id": 7,
         "street": "2900 S Emerson St",
         "suite": "878",
         "city": "Englewood",
@@ -2628,12 +2537,12 @@ export const limitedPermissionList = [
         "is_partner_permission": true
     },
     {
-        "role_id": 146,
+        "role_id": 147,
         "role": 5,
         "role_active": false,
         "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
         "apc_name": "John Ross Exploration Inc",
-        "apc_address_id": 10,
+        "apc_address_id": 7,
         "street": "2900 S Emerson St",
         "suite": "878",
         "city": "Englewood",
@@ -2648,6 +2557,7 @@ export const limitedPermissionList = [
         "is_op_permission": false,
         "is_partner_permission": true
     },
+    
 ];
 
 export const updatedPermissions = [
@@ -2663,7 +2573,7 @@ export const updatedPermissions = [
        "active": true,
        "apc_address_id": 66,
        "apc_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
-       "id": 237,
+       "id": 238,
        "role": 4,
        "user_id": "77ef7dd6-bd03-4500-b599-ad1447e8c489",
    },
@@ -2672,7 +2582,7 @@ export const updatedPermissions = [
 export const updatedNonPermissions = [
     {
        "active": false,
-       "apc_address_id": 10,
+       "apc_address_id": 7,
        "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
        "id": 146,
        "role": 3,
@@ -2680,10 +2590,10 @@ export const updatedNonPermissions = [
      },
      {
        "active": true,
-       "apc_address_id": 10,
+       "apc_address_id": 7,
        "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
-       "id": NaN,
-       "role": 9,
+       "id": 147,
+       "role": 5,
        "user_id": "77ef7dd6-bd03-4500-b599-ad1447e8c489",
    },
 ]

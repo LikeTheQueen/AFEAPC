@@ -494,11 +494,14 @@ export interface Notifications {
   afe_number: string;
   afe_version: string;
   afe_id: string;
+  partner_status: string;
   user: UserNameAndEmail;
   user_id: string;
   description: string;
   created_at: Date;
   type: string;
+  apc_op: OperatorOrPartnerList;
+  apc_partner: OperatorOrPartnerList;
 };
 
 export interface SystemHistory {
