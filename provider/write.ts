@@ -262,29 +262,7 @@ import type { UUID } from 'crypto';
       return {ok: true, data:data, message: undefined};
   };
 
-  export const addNewUser = async(email: string, password: string) => {
-    'use server';
-    const { data, error } = await supabase.auth.admin.createUser({
-      email:email,
-      password:password,
-    });
-    if (error) {
-        console.error(`Error adding User`, error);
-        return null;
-      }
-      
-      return (data);
-  };
 
-  export const deactivateUser = async(userID: string) => {
-    const { data: user, error } = await supabase.rpc('deactivateUser',{user_id: userID});
-    if (error) {
-        console.error(`Error Deactivating User`, error);
-        return null;
-      }
-      const { data } = await supabase.from('USER_PROFILE').update({'active': false}).eq('id',userID);
-      return (user);
-  };
 
   export const updateUserProfile = async(id:string, is_org_super_user: boolean) => {
     const { data, error } = await supabase.from('USER_PROFILE')

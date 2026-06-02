@@ -37,7 +37,6 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
         try {
           const partnerFetchResult = await fetchNonOpList(token);
 
-
           if (isMounted && partnerFetchResult.ok) {
             
             const dataTransformed = transformOperatorPartnerAddressWithOpName(partnerFetchResult.data);
