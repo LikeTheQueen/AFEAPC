@@ -4,7 +4,6 @@ import { type GLCodeType } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { writeGLCodeMapping } from "provider/write";
-import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -528,7 +527,6 @@ export default function GLMapping() {
                     </>
                 )}
             </div>
-            <ToastContainer />
             {useWarnUnsavedChanges(cumaltiveGLMap.length > 0, "You have NOT saved your Partner Mappings")}
         </>
     )

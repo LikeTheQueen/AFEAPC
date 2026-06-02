@@ -4,7 +4,6 @@ import { type OperatorType, type AddressType } from 'src/types/interfaces';
 import { useState } from 'react';
 import { addUnrelatedPartnerSupabase } from 'provider/write';
 import { isAddressValid, notifyFailure } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { useSupabaseData } from 'src/types/SupabaseContext';
@@ -247,7 +246,6 @@ export default function CreateOperator() {
       </div>
       
     </div>
-    <ToastContainer icon={false} />
     </>
   )
 }

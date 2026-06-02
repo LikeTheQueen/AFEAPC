@@ -48,9 +48,9 @@ vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-    fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
+    fetchNonOpList: vi.fn(),
     fetchPartnersFromSourceSystemInSupabase: vi.fn(),
-    fetchPartnersFromPartnersCrosswalk: vi.fn()
+    fetchPartnersFromPartnersCrosswalk: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -106,8 +106,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Shows a list of Operators and APC Partners to the user for mapping', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-        .mockResolvedValue({ok: true, data: partnerListInAPC, message: undefined});
+        (fetchProvider.fetchNonOpList as Mock)
+        .mockResolvedValue({ok: true, data: partnerListInAPC});
 
         renderWithProviders(<PartnerMapping />, {
             supabaseOverrides: {
@@ -133,7 +133,7 @@ describe('View and edit the partner mappings',() => {
 
         expect(screen.getByText('Map Partners from your AFE System to Partners in AFE Partner Connections')).toBeInTheDocument();
         expect(screen.getByText('Select your company, as the Operator, to Create Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchNonOpList).toHaveBeenCalledTimes(1);
         await waitFor(() => {
         expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         expect(screen.getByText('Corr and Whit Oil')).toBeInTheDocument();
@@ -142,8 +142,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and returns an empty array since no partners are loaded', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue(undefined);
 
@@ -161,8 +161,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Error getting the list of APC Partners', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: false, data: [], message: 'Connection Error' });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: false, message: 'Connection Error' });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue(undefined);
 
@@ -180,8 +180,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -227,8 +227,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Filters out already mapped Partners for both Operator and APC', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -264,8 +264,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map, with address mostly undefined', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-        .mockResolvedValue({ok: true, data: partnerListInAPC, message: undefined});
+        (fetchProvider.fetchNonOpList as Mock)
+        .mockResolvedValue({ok: true, data: partnerListInAPC});
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
         .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -312,8 +312,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map: User attempts to create the save map twice', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -368,8 +368,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-        .mockResolvedValue({ok: true, data: partnerListInAPC, message: undefined});
+        (fetchProvider.fetchNonOpList as Mock)
+        .mockResolvedValue({ok: true, data: partnerListInAPC});
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
         .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -430,8 +430,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map of multiples', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -482,8 +482,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping MOBILE and save map', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -545,8 +545,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping DESKTOP and save map', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
@@ -608,8 +608,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, clear all mappings', async () => {
-        (fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator as Mock)
-            .mockResolvedValue({ ok: true, data: partnerListInAPC, message: undefined });
+        (fetchProvider.fetchNonOpList as Mock)
+            .mockResolvedValue({ ok: true, data: partnerListInAPC });
         (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
         (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)

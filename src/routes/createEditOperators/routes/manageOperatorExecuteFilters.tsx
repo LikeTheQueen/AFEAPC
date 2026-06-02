@@ -3,7 +3,6 @@ import { updateOperatorFilterFields } from 'provider/write';
 import { useEffect, useState } from 'react';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { notifyStandard } from 'src/helpers/helpers';
-import { toast, ToastContainer } from 'react-toastify';
 
 interface AFEFilterCondition {
   LeftParenthesis?: string;
@@ -204,7 +203,6 @@ export default function OperatorExecuteFilters() {
 
                 </div>
             </div>
-            <ToastContainer/>
         </>
     )
 };

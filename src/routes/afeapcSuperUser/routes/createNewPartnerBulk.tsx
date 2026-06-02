@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { AddressType, OperatorType, UnrelatedPartnerRowData } from 'src/types/interfaces';
 import { addUnrelatedPartnerSupabase } from 'provider/write';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { parseRowsToUnrelatedPartnerData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
 
@@ -175,7 +174,6 @@ export default function PartnerFileUploadAFEAPC() {
         </div>
 
     </div>
-        <ToastContainer icon={false} />  
     </>
   )
 }

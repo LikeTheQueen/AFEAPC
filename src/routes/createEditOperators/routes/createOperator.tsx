@@ -2,10 +2,9 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase } from 'provider/write';
+import { addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
-import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import { fetchSourceSystems } from 'provider/fetch';
 import { transformAddressSupabase, transformOperatorSingle, transformPartnerSingle, transformSourceSystemSupabase } from 'src/types/transform';
@@ -570,7 +569,6 @@ let parentCompanyID =''
         </form>
       </div>
     </div>
-    <ToastContainer />
             {useWarnUnsavedChanges((operator.name !=='' && operator.id !=='' && !showSaved), "You have not saved the Operator")}
     </>
   )

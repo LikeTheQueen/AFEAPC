@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { PartnerRowData } from 'src/types/interfaces';
 import { writePartnerlistFromSourceToDB } from 'provider/write';
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { getDistinctItemsByProperties, parseRowsToPartnerData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
@@ -193,9 +192,7 @@ export default function PartnerFileUpload() {
                     onClick={handleClickSave}>
                         Save Partner List
                     </button>
-            </div>     
-           <ToastContainer icon={false} />
-          
+            </div> 
     </>
   )
 }

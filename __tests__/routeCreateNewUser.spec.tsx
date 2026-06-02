@@ -9,10 +9,10 @@ import { getByRole, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import { apc_parent_company_CWFriends, loggedInUserIsSuperUser, ParentCompanyDropdown } from './test-utils/afeRecords';
-import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from '__tests__/test-utils/afeRecords';
+import { apc_parent_company_CWFriends, JoeyGreen_NoUserEditRights_CW_NonOpCW, loggedInUserIsSuperUser, ParentCompanyDropdown } from './test-utils/afeRecords';
+import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser, RachelGreen_AllPermissions_CW_NonOpCW } from '__tests__/test-utils/afeRecords';
 
-import { permissionResponseRachel, permissionResponseRachelNonOp, genericRoleList, loggedInUserRachelGreenCannotEditUsersNoRole4or5 } from './test-utils/rachelGreenuser';
+import { permissionResponseRachel, permissionResponseRachelNonOp, genericRoleList } from './test-utils/rachelGreenuser';
 
 vi.mock('provider/fetch', () => ({
   fetchRolesGeneric: vi.fn(),
@@ -619,7 +619,7 @@ describe('Create New User',() => {
 
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
-                            loggedInUser: loggedInUserRachelGreenCannotEditUsersNoRole4or5,
+                            loggedInUser: JoeyGreen_NoUserEditRights_CW_NonOpCW,
                             loading: false,
                             session: {
                             access_token: 'test-token',

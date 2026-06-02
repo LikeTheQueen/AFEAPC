@@ -3,8 +3,7 @@ import * as fetchProvider from '../provider/fetch';
 import { setAFEHistoryMaxID, groupByAccountGroup, calcPartnerNet, toggleStatusButtonDisable, doesUserHaveRole } from '../src/helpers/helpers'
 import { operatorEditUsers } from "src/constants/variables";
 import type { AFEHistorySupabaseType, AFEType, EstimatesSupabaseType } from 'src/types/interfaces';
-import { singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus } from './test-utils/afeRecords';
-import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2, loggedInUserNoAFEViewRights } from './test-utils/rachelGreenuser';
+import { singleEstimateRecord, parterNewStatus, parterApprovedStatus, parterRejectedStatus, parterViewStatus, MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_AllPermissions_CW_NonOpCW, ChandlerBing_NoAFEViewRights } from './test-utils/afeRecords';
 import { loggedInUserIsSuperUser } from './test-utils/afeRecords';
 
 describe('Determining the max HistoryID', () => {
@@ -170,13 +169,19 @@ test('If the partner status is Viewed it should return false (it is NOT disabled
 describe('User Permissions to view AFEs', () => {
     
 it('If the user can view Operated and Non Operated AFEs return true', () => {
-    expect(doesUserHaveRole(loggedInUserRachelGreen, 2, 3)).toBe(true);
+    expect(doesUserHaveRole(RachelGreen_AllPermissions_CW_NonOpCW, 2, 3)).toBe(true);
+});
+it('If the user can edit User Permissions', () => {
+    expect(doesUserHaveRole(RachelGreen_AllPermissions_CW_NonOpCW, 4, 4)).toBe(true);
+});
+it('If the user can edit User Permissions for non op', () => {
+    expect(doesUserHaveRole(RachelGreen_AllPermissions_CW_NonOpCW, 5, 5)).toBe(true);
 });
 it('If the user can view Non Operated AFEs return true', () => {
-    expect(doesUserHaveRole(loggedInUserRachelGreenNoRole2, 2, 3)).toBe(true);
+    expect(doesUserHaveRole(MonicaGeller_NoOpRoles_CW_NonOpCW, 2, 3)).toBe(true);
 });
 it('If the user has no view rights return false', () => {
-    expect(doesUserHaveRole(loggedInUserNoAFEViewRights, 2, 3)).toBe(false);
+    expect(doesUserHaveRole(ChandlerBing_NoAFEViewRights, 2, 3)).toBe(false);
 });
 it('If the user has no roles but is a super user return true', () => {
     expect(doesUserHaveRole(loggedInUserIsSuperUser, 2, 3)).toBe(true);
@@ -184,4 +189,4 @@ it('If the user has no roles but is a super user return true', () => {
 it('If the user has no roles but is a super user return true', () => {
     expect(doesUserHaveRole(loggedInUserIsSuperUser, operatorEditUsers, 5)).toBe(true);
 });
-})
+});

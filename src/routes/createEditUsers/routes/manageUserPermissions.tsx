@@ -96,7 +96,7 @@ console.log(doesUserHaveEditOpUserRole, 'does user have op edit role')
                     <NoSelectionOrEmptyArrayMessage
                     message={
                   <>
-                     Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to view AFEs and that means you are not able to see the history either.  For that you will need to reach out to your admin.
+                     Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to edit the permissions for other users.  For that you will need to reach out to your admin.
                   </>
                     }>
                     </NoSelectionOrEmptyArrayMessage>

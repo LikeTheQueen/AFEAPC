@@ -31,7 +31,6 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
      supabaseOverrides: {
        loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
        loading: false,
-       isSuperUser: false,
        session: {
          access_token: 'test-token',
          refresh_token: 'test-refresh-token',
@@ -74,11 +73,17 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
          expect(screen.getByText(/Select an Operator and we'll poke the integration to make sure it's working./i)).toBeInTheDocument();
 
          const runTestButton = screen.getByRole('button', { name: /run test/i });
+         const operatorSelect = screen.getAllByRole('combobox', { name: /Select an Operator to Test the Connection For:/i});
+         expect(operatorSelect[0]).toBeInTheDocument();
          expect(runTestButton).toBeDisabled();
          await user.selectOptions(
              screen.getAllByRole('combobox')[0],
              RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_name
          );
+
+         await waitFor(() => {
+            expect(operatorSelect[0]).toHaveValue(RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_id);
+         })
 
          await waitFor(() => {
              expect(runTestButton).toBeEnabled();
@@ -87,7 +92,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
          await user.click(runTestButton);
 
          await waitFor(() => {
-         expect(fetchProvider.testExecuteConnection).toHaveBeenLastCalledWith(RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_id);
+         expect(fetchProvider.testExecuteConnection).toHaveBeenLastCalledWith(RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_id, RachelGreen_AllPermissions_CW_NonOpCW.user_id);
             });
 
          expect(notifyStandard).toHaveBeenCalledWith(
@@ -125,7 +130,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW,
          await user.click(runTestButton);
 
          await waitFor(() => {
-         expect(fetchProvider.testExecuteConnection).toHaveBeenLastCalledWith(RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_id);
+         expect(fetchProvider.testExecuteConnection).toHaveBeenLastCalledWith(RachelGreen_AllPermissions_CW_NonOpCW.operatorRoles[0].apc_id, RachelGreen_AllPermissions_CW_NonOpCW.user_id);
             });
 
          expect(notifyFailure).toHaveBeenCalledWith(

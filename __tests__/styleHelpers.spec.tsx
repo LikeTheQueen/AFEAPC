@@ -1,5 +1,5 @@
 import { setStatusBackgroundColor, setStatusRingColor, setStatusTextColor } from "src/routes/afeDashboard/routes/helpers/styleHelpers";
-import { activeTab, formatDate, isLoggedInUserOperator } from "src/helpers/styleHelpers";
+import { activeTab, formatDate } from "src/helpers/styleHelpers";
 import { vi } from 'vitest';
 
 describe('Determine values when partner status is null', () => {
@@ -164,46 +164,4 @@ describe('it should change the current tab based on id', () => {
 
  });
 
- describe('it should determine if the logged in user is associated to the Operator of the AFE', () => {
-    afterEach(() => {
-        vi.resetAllMocks()
-    })
-    test('It should return true if the logged in user is associated to the operator on the AFE', () => {
-        const operator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-        const loggedInUserOperator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-
-        const result = isLoggedInUserOperator(operator, loggedInUserOperator)
-
-        expect(result).toBe(true);
-    });
-
-    test('It should return true if there is an undefined op value', () => {
-        const operator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-        const loggedInUserOperator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-
-        const result = isLoggedInUserOperator(undefined, loggedInUserOperator)
-
-        expect(result).toBe(true);
-    });
-
-    test('It should return true if there is an undefined partner op value', () => {
-        const operator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-        const loggedInUserOperator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-
-        const result = isLoggedInUserOperator(operator, undefined)
-
-        expect(result).toBe(true);
-    });
-
-    test('It should return false if the logged in user is NOT associated to the operator', () => {
-        const operator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58c';
-        const loggedInUserOperator = 'a4367e56-14bf-4bd1-b0f1-fecc7d97b58';
-
-        const result = isLoggedInUserOperator(operator, loggedInUserOperator)
-
-        expect(result).toBe(false);
-    });
-
-    
-    
- });
+ 

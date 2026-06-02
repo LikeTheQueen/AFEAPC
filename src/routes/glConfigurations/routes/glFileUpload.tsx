@@ -1,10 +1,7 @@
-import * as XLSX from 'xlsx';
 import { useMemo, useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import type { GLCodeRowData } from 'src/types/interfaces';
 import { writeGLAccountlistFromSourceToDB } from 'provider/write';
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
@@ -191,8 +188,6 @@ export default function GLFileUpload() {
           Save GL Account Code List
         </button>
       </div>
-      <ToastContainer icon={false}/>
-     
     </>
   )
 }

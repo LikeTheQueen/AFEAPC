@@ -22,8 +22,11 @@ import {
 
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useSupabaseData } from "../types/SupabaseContext";
-import { doesUserHaveRole } from "src/helpers/helpers";
+import { doesUserHaveRole, notifyFailure } from "src/helpers/helpers";
 import { APP_LOGO } from "src/constants/variables";
+import { ToastContainer } from "react-toastify";
+
+//Role 6 for approving or rejecing AFEs does not apply view rules to the main screen navigation
 
 //Users that have permission 2 or 3 or a Super User can see these.
 const afeNavigation = [
@@ -35,24 +38,24 @@ const afeNavigation = [
 const userSettingsNavigationSuperUser = [
   { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'A' },
   { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
-  { id: 3, name: 'Create Users', href: "createUser", initial: 'C' },
+  { id: 3, name: 'Create User', href: "createUser", initial: 'C' },
 ]
 //Users that have permission 4 or 5 can see these
 const userSettingsNavigation = [
-  { id: 1, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
+  { id: 1, name: 'Manage User Permission', href: "managePermissions", initial: 'P' },
 ]
 //Users that have permission 8 or 9 or a Super User can see these.
 const libraryNavigation = [
-  
   { id: 2, name: 'Configurations', href: "configurations", initial: 'C' },
   { id: 3, name: 'System History', href: "systemhistory", initial: 'S' },
 ]
+//All users can see these items
 const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
   { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
   { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
 ]
-
+// Only AFE Partner Super User can see these items
 const onboarding = [
   { id: 1, name: 'Create & Manage Parent Companies', href: "createparentcompany", initial: 'P' },
   { id: 2, name: 'Create Operator', href: "createOperator", initial: 'O' },
@@ -62,6 +65,7 @@ const onboarding = [
   { id: 6, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
   { id: 7, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
 ]
+//All users can see these items
 const userNavigation = [
   { name: 'Your profile', href: 'profile' },
   { name: 'Sign out' },
@@ -81,11 +85,12 @@ export default function MainScreen() {
       if (error) throw error
       location.href = '/'
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.name : 'An error occurred')
+      notifyFailure(``)
     } finally {
       setIsLoading(false)
     }
   };
+
 
   const handleClick = () => {
     setSidebarOpen(false);
@@ -616,11 +621,15 @@ export default function MainScreen() {
           </div>
 
           <main>
-            <div ><Outlet /></div>
+            <div >
+              <Outlet />
+            <ToastContainer icon={false}></ToastContainer>
+            </div>
           </main>
         </div>
         
       </div>
+      
     </>
   )
 }

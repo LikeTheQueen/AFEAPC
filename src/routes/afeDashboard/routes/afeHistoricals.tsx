@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useSupabaseData } from "../../../types/SupabaseContext";
-import { getViewRoleNonOperatorIds, getViewRoleOperatorIds } from "./helpers/helpers";
+import { getViewRoleNonOperatorIds, getViewRoleOperatorIds, handleThePartnerStatusChange } from "./helpers/helpers";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@headlessui/react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
@@ -73,7 +73,6 @@ export default function AFE() {
           setAFELoading(false);
           return;
         }
-    
     try{
           const afes = await fetchAFEs(token, signal);
 
@@ -184,6 +183,20 @@ export default function AFE() {
           setRowsToShowNonOperated(paginatedData);
           setCurrentPageNonOperated(page);
   };
+
+  async function handlePartnerStatusChanged(afe: AFEType) {
+      if(loggedInUser?.is_super_user) return;
+      if(afe.partner_status !== 'New') return;
+      handleThePartnerStatusChange(
+        afe,
+        'Viewed',
+        'The Partner Status on the AFE changed from New to Viewed',
+        'action',
+        loggedInUser?.firstName!, 
+        loggedInUser?.lastName!,
+        loggedInUser?.email!,
+        token);
+    };
 
   const afeMapping = (afes: AFEType[]) => {
             return afes.map(item => ({
@@ -298,6 +311,7 @@ export default function AFE() {
       mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
       >
       </AFEHeader>
+
       {/*AFE Filters - Hidden on view all AFE */}
       <div hidden={currentTab === 3}>
         <AFEFilters
@@ -316,23 +330,26 @@ export default function AFE() {
       handleExport={handleExport}
       ></AFEFilters> 
       </div>
+
       {/*No AFE Message when filtered or [] On all Tabs, for Tab 2 it's operated*/}
       <div hidden ={ afeFetchError ? true : (
         currentTab === 2 ? 
         ((filteredOperatedAFEs.length > 0 ) ? true : false)
       : ((filteredNonOperatedAFEs.length > 0 ) ? true : false) )} >
       <NoFilteredAFEsToView
-      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}
-      >        
+      mode={currentTab === 2 ? 'Operated' : 'Non-Operated'}>        
       </NoFilteredAFEsToView>
       </div>
+      
       {/*Non Operated AFEs List.  Hidden on tab 2 or if there are no AFEs*/}
-      <div hidden ={ (nonOperatedAFEs.length < 1 || filteredNonOperatedAFEs.length < 1) || currentTab === 2 ? true : false} >
+      {currentTab !== 2 && filteredNonOperatedAFEs.length > 0 && nonOperatedAFEs.length > 0 && (
+        <>
       <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="Non-OperatedAFElist">
       {rowsToShowNonOperated.map((afe) => (
         <Link key={afe.id} 
         aria-label={`AFE ${afe.afe_number} ${afe.version_string ?? ""}`.trim()}
         to={`../afeDetail/${afe.id}`}
+        onClick={ (e:any) =>{handlePartnerStatusChanged(afe)}}
         className="col-span-1 divide-y divide-[var(--darkest-teal)]/40 rounded-lg bg-white shadow-2xl hover:shadow-lg hover:shadow-[#F61067] transition-shadow ease-in-out duration-500 custom-style ring-1 ring-[var(--darkest-teal)]/70">
        
           <AFECard 
@@ -352,8 +369,9 @@ export default function AFE() {
           />
           </div>
           <div className="h-4"></div>
-          
-    </div>
+          </>
+      )}         
+
     <div hidden={currentTab === 2 || (currentTab === 1 && (doesUserHaveViewNonOpAFERole)) || (currentTab === 3 && (doesUserHaveViewNonOpAFERole))} className="flex max-w-7xl mx-auto justify-center px-4 sm:py-4">
           <NoSelectionOrEmptyArrayMessage
           message={
@@ -363,6 +381,7 @@ export default function AFE() {
     }>
           </NoSelectionOrEmptyArrayMessage>
       </div>
+      
     {/*No AFE Message when filtered or [] On all Tabs, hidden on all tabs except 3 and only for Operated AFEs*/}
     <div hidden={currentTab !==3}>
       <AFEHeader
@@ -373,7 +392,8 @@ export default function AFE() {
       </AFEHeader>
 
     </div>
-    <div  hidden ={ (operatedAFEs.length < 1 && filteredOperatedAFEs.length < 1) || currentTab === 1 ? true : false } >
+    {currentTab !== 1 && filteredOperatedAFEs.length > 0 && operatedAFEs.length > 0 && (
+    <>
     <ul role="list" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="OperatedAFElist">
       {rowsToShowOperated?.map((afe) => (
         <Link key={afe.id} 
@@ -397,8 +417,8 @@ export default function AFE() {
           </div>
           
           <div className="h-4"></div>
-          
-          </div>
+      </>    
+    )}
 {/*Operated AFEs Header.  Hidden on tab 1 and 2 or if there are no AFEs*/}
     <div hidden ={afeFetchError || currentTab !== 3 || (currentTab === 3 && filteredOperatedAFEs.length > 0 ) || (currentTab === 3 && operatedAFEs.length > 0) ? true : false}>
       <NoFilteredAFEsToView
@@ -419,7 +439,6 @@ export default function AFE() {
       </div>
     </>
     )}
-
     </>
     
   )

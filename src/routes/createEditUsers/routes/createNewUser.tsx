@@ -9,7 +9,6 @@ import { doesUserHaveRole, notifyFailure } from 'src/helpers/helpers';
 import { operatorEditUsers, nonOperatorEditUsers } from "src/constants/variables";
 import LoadingPage from 'src/routes/sharedComponents/loadingPage';
 import { handleSendEmail } from 'email/emailBasic';
-import { ToastContainer } from 'react-toastify';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { supportEmail } from 'src/constants/variables';
 import { ParentCompanyDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -592,7 +591,6 @@ export default function CreateNewUser() {
         </div>
       </div>
       )}
-      <ToastContainer />
     </>
   )
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GLCodeType } from 'src/types/interfaces';
 import { updateGLAccountCodeStatus } from 'provider/write';
-import { ToastContainer } from 'react-toastify';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from 'src/routes/sharedComponents/partnerDropdown';
@@ -167,8 +166,6 @@ export default function GLLibrary() {
           </SingleCheckbox>
         </div>
       </div>
-      
-      <ToastContainer />
     </>
   )
 }

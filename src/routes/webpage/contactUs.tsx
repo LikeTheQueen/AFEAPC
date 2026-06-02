@@ -1,6 +1,5 @@
 import { handleSendEmail } from "email/emailBasic";
 import { useState } from "react";
-import { ToastContainer } from "react-toastify";
 import { supportEmail } from "src/constants/variables";
 import { useLocation } from "react-router";
 

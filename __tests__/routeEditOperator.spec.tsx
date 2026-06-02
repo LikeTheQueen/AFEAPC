@@ -27,6 +27,7 @@ import { Love_Quinn_Super_User, MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_V
 
 vi.mock('provider/fetch', () => ({
   fetchOperatorsOrPartnersToEdit: vi.fn(),
+  fetchNonOpList: vi.fn(),
   fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
 }));
 
@@ -195,11 +196,10 @@ describe('View and Edit Operators',() => {
     test('Expect the Module to Open when the user clicks Edit', async () => {
         const user = userEvent.setup();
 
-        const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+        const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: partnersLinkedOrUnlinked,
-            message: undefined
+            data: partnersLinkedOrUnlinked
         });
 
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -269,11 +269,10 @@ describe('View and Edit Operators',() => {
     test('Expect the Operator to claim the address when the box is checked and saved', async () => {
         const user = userEvent.setup();
         
-        const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+        const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: partnersLinkedOrUnlinked,
-            message: undefined
+            data: partnersLinkedOrUnlinked
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -517,11 +516,10 @@ describe('View and Edit Operators',() => {
         const user = userEvent.setup();
         
         
-        const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+        const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
             ok: true,
-            data: partnersLinkedOrUnlinked,
-            message: undefined
+            data: partnersLinkedOrUnlinked
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {

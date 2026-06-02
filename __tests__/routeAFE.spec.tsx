@@ -22,7 +22,8 @@ import {
   theAFERecordBeingClicked,
   RachelGreen_ViewAFECW_NonOPAFECW_APC,
   afeResultSupabase,
-  responseTransformed
+  responseTransformed,
+  operatorDropDownResult
 } from './test-utils/afeRecords';
 
 
@@ -31,6 +32,7 @@ vi.mock('../provider/fetch', () => ({
   addAFEHistorySupabase: vi.fn(),
   fetchAFEs: vi.fn(),
   fetchAllOperators: vi.fn(), 
+  fetchOpList: vi.fn(),
   fetchAllPartners: vi.fn(),
 }));
 
@@ -53,6 +55,7 @@ describe('displaying AFEs', () => {
   beforeEach(() => {
     cleanup();
     vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
+    vi.mocked(fetchProvider.fetchOpList as Mock).mockResolvedValue({ok: true, data:operatorDropDownResult});
     vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
     vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afeResultSupabase });
     vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });

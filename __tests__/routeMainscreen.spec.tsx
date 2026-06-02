@@ -10,36 +10,53 @@ import { loggedInUserIsSuperUser,
   MonicaGeller_NoOpRoles_CW_NonOpCW,
   ChandlerBing_NoAFEViewRights,
   JoeyGreen_NoUserEditRights_CW_NonOpCW,
-  RossGeller_Op_CW_No_NonOp
+  RossGeller_Op_CW_No_NonOp,
+  RachelGreen_ViewAFECW_NonOPAFECW_APC,
+  RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser
  } from './test-utils/afeRecords';
 
 vi.mock('provider/supabase');
 
-const navItems = ['AFEs', 'Archived AFEs', 'AFE History'];
+//Users that have permission 2 or 3 or a Super User can see these.
 const afeNavigation = [
   { id: 1, name: 'AFEs', href: "afe", initial: 'A' },
   { id: 2, name: 'Archived AFEs', href: "afeArchived", initial: 'A' },
   { id: 3, name: 'AFE History', href: "notifications", initial: 'H'  },
 ]
-    const userSettingsNavigation = [
+//Users are a Super User can see these.
+const userSettingsNavigationSuperUser = [
   { id: 1, name: 'Manage User Access', href: "manageUsers", initial: 'A' },
   { id: 2, name: 'Manage User Permissions', href: "managePermissions", initial: 'P' },
-  { id: 3, name: 'Create Users', href: "createUser", initial: 'C' },
-    ]
-    const libraryNavigation = [
-  { id: 1, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+  { id: 3, name: 'Create User', href: "createUser", initial: 'C' },
+]
+//Users that have permission 4 or 5 can see these
+const userSettingsNavigation = [
+  { id: 1, name: 'Manage User Permission', href: "managePermissions", initial: 'P' },
+]
+//Users that have permission 8 or 9 or a Super User can see these.
+const libraryNavigation = [
+  
   { id: 2, name: 'Configurations', href: "configurations", initial: 'C' },
   { id: 3, name: 'System History', href: "systemhistory", initial: 'S' },
 ]
-    const help = [
+const help = [
   { id: 1, name: 'Missing an Operated AFE?', href: "missingAFEsupport", initial: 'M' },
   { id: 3, name: 'Contact Support', href: "contactsupport", initial: 'C' },
   { id: 4, name: 'Support History', href: "supporthistory", initial: 'S' }
 ]
+
 const onboarding = [
-  { id: 1, name: 'Create Operator', href: "createOperator", initial: 'O' },
-  { id: 3, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
-  { id: 4, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+  { id: 1, name: 'Create & Manage Parent Companies', href: "createparentcompany", initial: 'P' },
+  { id: 2, name: 'Create Operator', href: "createOperator", initial: 'O' },
+  { id: 3, name: 'Create Partners', href: "createPartner", initial: 'P' },
+  { id: 4, name: 'Create Users', href: "createUser", initial: 'U' },
+  { id: 5, name: 'Manage All Users', href: "manageUsersSystem", initial: 'M' },
+  { id: 6, name: 'Manage All User Permissions', href: "manageUserPermissionsSystem", initial: 'P' },
+  { id: 7, name: 'Manage Operator Addresses', href: "editOperator", initial: 'O' },
+]
+const userNavigation = [
+  { name: 'Your profile', href: 'profile' },
+  { name: 'Sign out' },
 ]
 
 describe('Mainscreen', async () => {
@@ -136,7 +153,7 @@ describe('Mainscreen User Experience with a role for ops 2,4,8 and partners 3,9,
     beforeEach(() => {
       renderWithProviders(<MainScreen />, {
         supabaseOverrides: {
-                loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
+                loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APC,
                 loading: false,
                 session: {
                 access_token: 'test-token',
@@ -172,29 +189,30 @@ describe('Mainscreen User Experience with a role for ops 2,4,8 and partners 3,9,
     expect(supabase.auth.signOut).toHaveBeenCalled();
   });
   
-});
+  });
   it('renders all main navigation items', () => {
     
-    navItems.forEach(name => {
+    afeNavigation.forEach(name => {
       // getAllByText because items appear in both mobile + desktop sidebars
-      const elements = screen.getAllByText(name);
-      expect(elements.length).toBeGreaterThan(0);
-      elements.forEach(el => expect(el).toBeInTheDocument());
-    });
-    userSettingsNavigation.forEach(name => {
       const elements = screen.getAllByText(name.name);
       expect(elements.length).toBeGreaterThan(0);
       elements.forEach(el => expect(el).toBeInTheDocument());
-    })
+    });
     libraryNavigation.forEach(name => {
       const elements = screen.getAllByText(name.name);
       expect(elements.length).toBeGreaterThan(0);
       elements.forEach(el => expect(el).toBeInTheDocument());
-    })
+    });
     help.forEach(name => {
       expect(screen.queryByText(name.name)).toBeInTheDocument();
-    })
+    });
     onboarding.forEach(item => {
+    expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+    });
+    userSettingsNavigation.forEach(item => {
+    expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+    });
+    userSettingsNavigationSuperUser.forEach(item => {
     expect(screen.queryByText(item.name)).not.toBeInTheDocument();
     });
   });
@@ -250,6 +268,69 @@ describe('Sidebar visibility by permissions', () => {
 
     it('cannot see onboarding section', () => {
       onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+    it('cannot see user settings for the Org Super User section', () => {
+      userSettingsNavigationSuperUser.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Rachel Green is Org Super User', () => {
+    beforeEach(() => {
+      renderWithProviders(<MainScreen />, {
+        supabaseOverrides: {
+                loggedInUser: RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser,
+                loading: false,
+                session: {
+                access_token: 'test-token',
+                refresh_token: 'test-refresh-token',
+                expires_in: 3600,
+                token_type: 'bearer',
+                user: {
+                  id: 'test-user-id',
+                  email: 'test@example.com',
+                  aud: 'authenticated',
+                  role: 'authenticated',
+                  created_at: '2024-01-01T00:00:00Z',
+                  app_metadata:[],
+                  user_metadata:{}
+                }
+              },
+            }
+      });
+    });
+
+    it('can see AFE navigation', () => {
+      afeNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see User Settings navigation', () => {
+      userSettingsNavigationSuperUser.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see Library navigation', () => {
+      libraryNavigation.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+    it('can see Help navigation', () => {
+      help.forEach(item => {
+        expect(screen.getAllByText(item.name).length).toBeGreaterThan(0);
+      });
+    });
+
+    it('cannot see onboarding section', () => {
+      onboarding.forEach(item => {
+        expect(screen.queryByText(item.name)).not.toBeInTheDocument();
+      });
+    });
+    it('cannot see onboarding section', () => {
+      userSettingsNavigation.forEach(item => {
         expect(screen.queryByText(item.name)).not.toBeInTheDocument();
       });
     });

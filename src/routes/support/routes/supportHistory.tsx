@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ToastContainer } from "react-toastify";
 import { ChatBubbleLeftEllipsisIcon, ClockIcon } from "@heroicons/react/24/outline";
 
 import { handleSendEmail } from "email/emailBasic";
@@ -225,7 +224,6 @@ export default function SupportHistory() {
           </div>
         </div>
       </div>
-      <ToastContainer icon={false}/>
     </>
   );
 }

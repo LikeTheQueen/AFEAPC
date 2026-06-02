@@ -32,7 +32,7 @@ export default function TestExecuteEstablishedConnection() {
       notifyFailure('An error occurred while testing the connection');
     }
   };
-    
+   
   return (
     <>
     <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
@@ -43,7 +43,7 @@ export default function TestExecuteEstablishedConnection() {
                 </div>   
           <div className="col-span-2 grid grid-cols-1 gap-x-8 gap-y-4 ">
             <div>
-            <h1 className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to Test the Connection For:</h1>
+            <label htmlFor="operatorMapID" className="text-base/7 font-medium text-[var(--darkest-teal)] custom-style">Select an Operator to Test the Connection For:</label>
             <div>
             <OperatorDropdown
               value={opAPCID}

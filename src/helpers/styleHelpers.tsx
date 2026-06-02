@@ -1,17 +1,6 @@
 import { superUserPermission } from "src/constants/variables";
 import type { RoleEntryRead } from "src/types/interfaces";
 
-export function isLoggedInUserOperator(apc_op_id:string | undefined, logged_in_user_op_id: string | undefined) {
-    if(apc_op_id === null || logged_in_user_op_id === null || apc_op_id === undefined || logged_in_user_op_id === undefined) {
-        return true;
-    } else if(apc_op_id === logged_in_user_op_id) {
-        return true;
-    } else if (apc_op_id !== logged_in_user_op_id) {
-        return false;
-    } else {
-        return true;
-    }
-};
 
 export function activeTab(tabList: any[], selected: number | null) {
     if (!selected) {

@@ -341,7 +341,7 @@ import type { UUID } from 'crypto';
       role: item.role
     }))
   const { data, error } = await supabase.from(table).insert(removeIDColumn);
-  console.log(data, 'the data', error, 'the error');
+  
   if (error) {
         writeToFunctionLogs('writeorUpadateUserRoles',error.message, null, 'WARN', 'Manage Permissions UI');
         return {ok:false, message: error.message};

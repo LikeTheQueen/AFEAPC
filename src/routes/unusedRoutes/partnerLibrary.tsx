@@ -1,4 +1,4 @@
-import { fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
+import { fetchNonOpList } from "provider/fetch";
 import { useEffect, useState } from "react";
 import { type OperatorPartnerAddressType, type SourceSystemPartnerAddressType } from "src/types/interfaces";
 import * as XLSX from 'xlsx';
@@ -37,7 +37,7 @@ export default function PartnerLibrary({selectedSubTab}:{ selectedSubTab: number
           async function getPartnerLists() {
               setLoading(true);
               try {
-                  const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
+                  const apcPartList = await fetchNonOpList();
                   if (isMounted) {
                       if (!apcPartList.ok) {
                           throw new Error(apcPartList.message);

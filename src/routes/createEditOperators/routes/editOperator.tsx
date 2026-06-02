@@ -1,12 +1,10 @@
 import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { addOperatorPartnerAddressSupabase, addPartnerSupabase, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
+import { addPartnerSupabase, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
-import { ToastContainer } from 'react-toastify';
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
-import { transformPartnerSingle } from 'src/types/transform';
 
 type EditOperatorProps = {
     token: string;
@@ -473,7 +471,6 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
             </div>
           </div>
     )}
-    <ToastContainer icon={false}/>
     </>
   )
 }

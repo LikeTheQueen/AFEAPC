@@ -1,13 +1,11 @@
 
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { Button } from "@headlessui/react";
-import { type OperatorType, type AFESourceSystemType, type AddressType, type ParentCompanyWrite, type ParentCompany, type OperatorOrPartnerList } from 'src/types/interfaces';
+import { type AddressType, type ParentCompanyWrite, type ParentCompany, type OperatorOrPartnerList } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
 import { addOParentCompanyRecordSupabase, addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
-import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { useSupabaseData } from 'src/types/SupabaseContext';
 import { handleTabChanged } from 'src/routes/sharedComponents/tabChange';
 import { CreateParentCompany, EditParentCompany } from './createEditParentCompanies';
@@ -177,7 +175,6 @@ let parentCompanyID =''
               </div>
             </div>
     </div>
-    <ToastContainer />
     </>
   )
 };

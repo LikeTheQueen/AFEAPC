@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { fetchUsersForOperator } from "provider/fetch";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import type { UserFullNameAndEmail } from "src/types/interfaces";
-import UserDashboard from "src/routes/sharedComponents/userDashboardSystem";
+import UserDashboard from "src/routes/manageUserGrid";
 import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
-import { ToastContainer } from "react-toastify";
-
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 export default function UserStatusDashboard() {
   const { loggedInUser, session } = useSupabaseData();
@@ -61,19 +60,26 @@ export default function UserStatusDashboard() {
       isMounted = false;
     }
 
-  }, [token, loggedInUser])
+  }, [token, loggedInUser]);
+  
   return (
     <>
     <div className="px-4 sm:px-10 sm:py-16"> 
     {userListLoading ? (
       <LoadingPage></LoadingPage>
-    ) : ( 
+    ) : ( !loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user ? 
+      (<NoSelectionOrEmptyArrayMessage
+                message={
+              <>
+                  Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  Currently you do not have permission to manage user statuses.  For that you will need to reach out to your admin.
+              </>
+          }>
+                </NoSelectionOrEmptyArrayMessage> ) : (
     <UserDashboard 
     userList={userList}>
     </UserDashboard >
-    )}
+    ))}
     </div>
-    <ToastContainer icon={false}></ToastContainer>
     </>
   )
 }

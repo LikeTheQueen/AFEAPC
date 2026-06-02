@@ -48,7 +48,6 @@ export default function AFE() {
   const [rowsToShowNonOperated, setRowsToShowNonOperated] = useState<AFEType[]>([]);
   const [currentPageNonOperated, setCurrentPageNonOperated] = useState(0);
  
-  
   const operatorApprovedCutoffDate = useMemo(() => {
     const date = new Date();
     date.setDate(date.getDate() - operatorApprovedDaysAgo);

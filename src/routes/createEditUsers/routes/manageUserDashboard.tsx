@@ -6,7 +6,6 @@ import UserDashboard from "../../../routes/manageUserGrid";
 import { transformUserNameAndEmail } from "src/types/transform";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
-import { ToastContainer } from "react-toastify";
 
 
 export default function UserStatusDashboard() {
@@ -83,12 +82,10 @@ export default function UserStatusDashboard() {
           }>
                 </NoSelectionOrEmptyArrayMessage> ) : (
     <UserDashboard 
-    userList={userList}
-    isError={isError}>
+    userList={userList}>
     </UserDashboard >
     ))}
     </div>
-    <ToastContainer icon={false}></ToastContainer>
     </>
   )
 }

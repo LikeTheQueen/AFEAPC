@@ -5,7 +5,6 @@ import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { updateOperatorNameAndStatus } from "provider/write";
-import { ToastContainer } from "react-toastify";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
@@ -86,12 +85,11 @@ export default function OperatorViewAndEdit() {
 
     const handleEditClick = (operator: RoleEntryRead) => {
         const nonOperatedAddresses = loggedInUser?.partnerRoles.filter(nonOp => nonOp.apc_op_id === operator.apc_id && (nonOp.role === superUserPermission || nonOp.role === editNonOpLibrary)) ?? [];
-        console.log(nonOperatedAddresses);
         setOpToEdit(operator);
         setRelatedNonOpAddresses(nonOperatedAddresses);
         setOpen(true);
     };
-console.log(loggedInUser)
+
     return (
         <>
             <div className="px-4 w-full sm:px-10 sm:py-16">
@@ -254,7 +252,6 @@ console.log(loggedInUser)
                     </Dialog>
                 </div>
             </div>
-            <ToastContainer />
         </>
     );
 }

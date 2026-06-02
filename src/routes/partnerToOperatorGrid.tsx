@@ -1,5 +1,5 @@
-import { fetchPartnersLinkedOrUnlinkedToOperator, fetchClaimProofPrompt, verifyClaimProof } from 'provider/fetch';
-import { useEffect, useMemo, useState, memo, useRef } from 'react';
+import { fetchClaimProofPrompt, verifyClaimProof, fetchNonOpList } from 'provider/fetch';
+import { useEffect, useMemo, useState, memo } from 'react';
 import type { OperatorPartnerAddressWithOpNameType, PartnerRecordToUpdate, ClaimProof } from 'src/types/interfaces';
 import LoadingPage from './sharedComponents/loadingPage';
 import { updatePartnerWithOpID } from 'provider/write';
@@ -24,7 +24,8 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     const [partnerDocIDFocused, setPartnerDocIDFocused] = useState(false);
     const [verificationErrorMessage, setVerificationErrorMessage] = useState<string | null>(null);
     const [claimProofNoRecordToVerify, setClaimProofNoRecordToVerify] = useState(false);
-    const { loggedInUser } = useSupabaseData();
+    const { loggedInUser, session } = useSupabaseData();
+    
 
 
     const opId = currentOpID;
@@ -34,15 +35,17 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       async function loadPartnersToOperatorsList() {
         setLoading(true);
         try {
-          const partnerFetchResult = await fetchPartnersLinkedOrUnlinkedToOperator();
+          const partnerFetchResult = await fetchNonOpList(token);
+          console.log(partnerFetchResult);
 
           if (isMounted && partnerFetchResult.ok) {
             
             const dataTransformed = transformOperatorPartnerAddressWithOpName(partnerFetchResult.data);
+            
             const filterNull = dataTransformed.filter(record => record.apc_op_id === "");
             setPartnerListToOperator(filterNull);
             setLoading(false);
-          } else if (isMounted) {
+          } else if (isMounted && !partnerFetchResult.ok) {
             throw new Error(partnerFetchResult.message);
           }
         } catch (error) {
@@ -162,7 +165,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     return (
         <>
     <div className="px-4 py-4 sm:py-6">
-      <div hidden={gridData.length > 0}>
+      <div hidden={gridData.length > 0 || fetchErrorMessage !== null}>
       <NoSelectionOrEmptyArrayMessage message={'There are no unclaimed addresses to show'}      
       ></NoSelectionOrEmptyArrayMessage>
       </div>

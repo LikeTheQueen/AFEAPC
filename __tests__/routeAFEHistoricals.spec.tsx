@@ -3,7 +3,7 @@ vi.mock('../provider/supabase', () => ({
     rpc: vi.fn()
   }
 }));
-import AFE from '../src/routes/afeDashboard/routes/afe';
+import AFE from '../src/routes/afeDashboard/routes/afeHistoricals';
 import * as fetchProvider from '../provider/fetch';
 import * as writeProvider from "provider/write";
 import * as emailProvider from '../email/emailBasic';
@@ -12,17 +12,16 @@ import { cleanup, getByTestId, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import {
-  afesReturnedFromSupabase,
   afesReturnedFromSupabaseDynamicDate,
   RossGeller_Op_CW_No_NonOp,
   MonicaGeller_NoOpRoles_CW_NonOpCW,
   OperatorDropDown,
   PartnerDropdown,
   loggedInUserIsSuperUser,
-  theAFERecordBeingClicked,
   RachelGreen_ViewAFECW_NonOPAFECW_APC,
-  afeResultSupabase,
-  responseTransformed
+  afeResultSupabaseArchived,
+  archivedResponseTransformed,
+  operatorDropDownResult
 } from './test-utils/afeRecords';
 
 
@@ -31,6 +30,7 @@ vi.mock('../provider/fetch', () => ({
   addAFEHistorySupabase: vi.fn(),
   fetchAFEs: vi.fn(),
   fetchAllOperators: vi.fn(), 
+  fetchOpList: vi.fn(),
   fetchAllPartners: vi.fn(),
 }));
 
@@ -49,12 +49,13 @@ vi.mock('../email/emailBasic', () => ({
 }));
 
 
-describe.skip('displaying AFEs', () => {
+describe('displaying AFEs Archived', () => {
   beforeEach(() => {
     cleanup();
     vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
+     vi.mocked(fetchProvider.fetchOpList as Mock).mockResolvedValue({ok: true, data: operatorDropDownResult});
     vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
-    vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afeResultSupabase });
+    vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afeResultSupabaseArchived });
     vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });
   });
 
@@ -65,7 +66,7 @@ describe.skip('displaying AFEs', () => {
         await new Promise(resolve => setTimeout(resolve, 200));
     })
 
-  test('Show all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab', async () => {
+  test('Archived Show all elements for Non Op AFEs when a user logs in, Operated AFE Elements on Operated tab and both, without filters, on All AFEs tab', async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<AFE />, {
@@ -167,7 +168,7 @@ describe.skip('displaying AFEs', () => {
 
   });
 
-  test('Show all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions', async () => {
+  test('Archived Show all elements for Non Op AFEs when a user logs in and hides anything related to Operated AFEs when a user (Monica Geller) logs in and does not have Operated AFE permissions', async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<AFE />, {
@@ -263,7 +264,7 @@ describe.skip('displaying AFEs', () => {
 
   });
 
-  test('Hides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions', async () => {
+  test('Archived Hides all elements for Non Op AFEs when a user logs in and hides anything related to Non-Operated AFEs when a user (Ross Geller) logs in and does not have Non-Operated AFE permissions', async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<AFE />, {
@@ -360,7 +361,7 @@ describe.skip('displaying AFEs', () => {
 
   });
 
-  test('Shows Non-Operated AFEs when a user (Rachel Green) logs in', async () => {
+  test('Archived Shows Non-Operated AFEs when a user (Rachel Green) logs in', async () => {
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
@@ -429,7 +430,7 @@ describe.skip('displaying AFEs', () => {
 
   });
 
-  test('Shows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs', async () => {
+  test('Archived Shows Non-Operated AFEs and hides anything related to Operated AFEs when a user (Monica Geller) logs in and only has permission for NonOp AFEs', async () => {
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
@@ -495,7 +496,7 @@ describe.skip('displaying AFEs', () => {
    
   });
 
-  test('Shows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs', async () => {
+  test('Archived Shows no AFE for a user (Ross Geller) that does not have view rights to see Non Op AFEs', async () => {
      
     renderWithProviders(<AFE />, {
       supabaseOverrides: {
@@ -560,7 +561,7 @@ describe.skip('displaying AFEs', () => {
     });
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)', async () => {
+  test('Archived Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
     renderWithProviders(<AFE />, {
@@ -651,7 +652,7 @@ describe.skip('displaying AFEs', () => {
 
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search', async () => {
+  test('Archived Shows Non-Operated AFEs and does not return AFEs they should not see when using AFE Number search (Rachel Green) fuzzy search', async () => {
     const user = userEvent.setup();
  
     (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
@@ -779,7 +780,7 @@ describe.skip('displaying AFEs', () => {
       expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','Viewed','test-token');
       expect(writeProvider.insertAFEHistoryRecord).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action');
       expect(emailProvider.sendAFEStatusChangeEmailToOperator).toHaveBeenCalledWith(
-        responseTransformed[12],
+        archivedResponseTransformed[12],
         'Viewed',
         RachelGreen_ViewAFECW_NonOPAFECW_APC.firstName,
         RachelGreen_ViewAFECW_NonOPAFECW_APC.lastName,
@@ -794,7 +795,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
   });
 
-  test('Write to function logs when the Partner Status is not updated', async () => {
+  test('Archived Write to function logs when the Partner Status is not updated', async () => {
     const user = userEvent.setup();
 
     (writeProvider.updateAFEPartnerStatus as Mock).mockReturnValue({
@@ -893,7 +894,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)', async () => {
+  test('Archived Shows Non-Operated AFEs and does not return AFEs they should not see when using Partner Status search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
      
@@ -1000,7 +1001,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
   
   });
 
-  test('Shows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)', async () => {
+  test('Archived Shows Non-Operated AFEs and does not return AFEs they should not see, only 1 they should see, when using Partner Status search (Rachel Green)', async () => {
     const user = userEvent.setup();
 
      
@@ -1135,7 +1136,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
    
   });
 
-  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)', async () => {
+  test('Archived Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs in the mobile menu and has view rights (Rachel Green)', async () => {
     const user = userEvent.setup();
 
   renderWithProviders(<AFE />, {
@@ -1230,12 +1231,12 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
   });
 
-  test('Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)', async () => {
+  test('Archived Shows Operated AFEs and hides anything related to Non-Operated AFEs after user clicks on Operated AFEs and has view rights (Ross Geller)', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
     ok: true,
-    data: afeResultSupabase
+    data: afeResultSupabaseArchived
   });
     
   renderWithProviders(<AFE />, {
@@ -1343,7 +1344,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
     });
   });
 
-  test('Shows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both', async () => {
+  test('Archived Shows Operated AFEs and Non-Operated AFEs after Super User clicks on All AFEs and has view right to both', async () => {
     const user = userEvent.setup();
 
   renderWithProviders(<AFE />, {
@@ -1448,7 +1449,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
    
   });
 
-  test('Shows No Operated AFEs and No Non-Operated AFEs when there is no logged in user', async () => {
+  test('Archived Shows No Operated AFEs and No Non-Operated AFEs when there is no logged in user', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({
@@ -1506,7 +1507,7 @@ await new Promise(resolve => setTimeout(resolve, 150));
 
   });
 
-  test('Shows No Operated AFEs and No Non-Operated AFEs when there is no Session', async () => {
+  test('Archived Shows No Operated AFEs and No Non-Operated AFEs when there is no Session', async () => {
     const user = userEvent.setup();
 
     (fetchProvider.fetchAFEs as Mock).mockResolvedValue({

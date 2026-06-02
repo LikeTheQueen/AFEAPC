@@ -1,10 +1,9 @@
-import { fetchPartnersFromPartnersCrosswalk, fetchPartnersFromSourceSystemInSupabase, fetchPartnersLinkedOrUnlinkedToOperator } from "provider/fetch";
+import { fetchNonOpList, fetchPartnersFromPartnersCrosswalk, fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
 import { useState, useEffect, useCallback } from "react";
 import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerMappingDisplayRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
-import { ToastContainer } from 'react-toastify';
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -31,8 +30,8 @@ interface PartnerMapDisplay {
 };
 
 export default function PartnerMapping() {
-    const { loggedInUser } = useSupabaseData();
-
+    const { loggedInUser, session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [apcPartnerList, setAPCPartnerList] = useState<OperatorPartnerAddressType[] | []>([]);
     const [sourcePartnerList, setSourcePartnerList] = useState<PartnerRowData[] | []>([]);
     const [currentPartnerMapDisplay, setCurrentPartnerMapDisplay] = useState<PartnerMapDisplay | null>(null);
@@ -79,10 +78,11 @@ export default function PartnerMapping() {
     }, [loggedInUser?.user_id, opAPCID]);
 
     const getPartnerLibrary = useCallback(async (signal: AbortSignal) => {
+        if(token === '') return;
         setLoading(true);
 
         try {
-            const apcPartList = await fetchPartnersLinkedOrUnlinkedToOperator();
+            const apcPartList = await fetchNonOpList(token);
 
             if (!apcPartList.ok) {
                 throw new Error(apcPartList.message);
@@ -103,7 +103,7 @@ export default function PartnerMapping() {
             }
         }
 
-    }, [loggedInUser?.user_id])
+    }, [loggedInUser?.user_id, token])
 
     useEffect(() => {
         if (opAPCID === '') return;
@@ -587,7 +587,6 @@ export default function PartnerMapping() {
                     </div>
                 )}
             </div>
-            <ToastContainer icon={false} />
             {useWarnUnsavedChanges(cumaltivePartnerMapDisplay.length > 0, "You have NOT saved your Partner Mappings")}
         </>
     )

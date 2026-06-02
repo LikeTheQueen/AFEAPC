@@ -34,6 +34,7 @@ export default function Profile() {
                   throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
                 }
                 if(isMounted) {
+                    console.log(userPermissionsRaw)
                   setPermissionData(userPermissionsRaw.data);
                   setUserPermissionListLoading(false);
                 }

@@ -21,10 +21,11 @@ import {
     loggedInUserSuperUser
  } from './test-utils/superUserAndSourceList';
 
- import { loggedInUserRachelGreen, loggedInUserRachelGreenNoRole2 } from './test-utils/rachelGreenuser'
+ import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
 
  vi.mock('../provider/fetch', () => ({
   fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
+  fetchNonOpList: vi.fn(),
   fetchClaimProofPrompt: vi.fn(),
   verifyClaimProof: vi.fn(),
 }));
@@ -42,11 +43,10 @@ describe('Link Partner Addresses to Operator',() => {
     })
 
 test('Displays a message that there are no unclaimed addresses when the return has zero unclaimed addresses', async () => {
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
           data: partnersLinkedOrUnlinkedNoUnclaimed,
-          message: undefined
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
@@ -82,11 +82,10 @@ test('Displays a message that there are no unclaimed addresses when the return h
 });
 
 test('Displays a list of 2 unclaimed partner addresses that are NOT checked and Save button is disabled', async () => {
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token' />, {
@@ -127,11 +126,10 @@ message: undefined
 
 test('Displays a list of unclaimed partner addresses with a null value for the Operator ID.  Checkbox and Save buttons are disabled', async () => {
   const user = userEvent.setup();  
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={null} token='test-token'/>, {
@@ -174,11 +172,10 @@ message: undefined
 //BELOW GETS CLAIM PROMPT
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt', async () => {
   const user = userEvent.setup();  
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -240,11 +237,10 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
 //OME BACK TO THIS TEST IT IS NOT DOING THE TEST
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that there is not an AFE record to test against', async () => {
   const user = userEvent.setup();  
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -307,11 +303,10 @@ message: undefined
 
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and an error that the claim proof id was not returned', async () => {
   const user = userEvent.setup();  
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -408,11 +403,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID.  Clicks cancel and save again to refresh screen', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -531,11 +525,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -649,11 +642,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters non UUID for AFE and UUID for Partner', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -754,11 +746,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters UUID for AFE and non UUID for Partner', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -857,11 +848,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters correct info and is VERIFIED', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -979,11 +969,10 @@ message: undefined
 test('Displays a list of unclaimed partner addresses and the user clicks an address to claim and is presented with a verification prompt and enters incorrect info NO VERIFICATION', async () => {
   const user = userEvent.setup();
 
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1104,11 +1093,10 @@ message: undefined
 
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses then unchecks first address to claim and save second with opID', async () => {
   const user = userEvent.setup();  
-  const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+  const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
-message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1227,11 +1215,10 @@ message: undefined
 });
 
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID', async () => {
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1291,11 +1278,10 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 });
 
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID', async () => {
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1356,11 +1342,10 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is VERIFIED', async () => {
   const user = userEvent.setup();
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1481,11 +1466,10 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 });
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED', async () => {
   const user = userEvent.setup();
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
@@ -1606,10 +1590,9 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 });
 //ERROR GET UNCLAIMED PARTNERS
 test('Displays a message that there are no unclaimed addresses when there is an error with the return', async () => {
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: false,
-          data: [],
           message: 'Row Level Security'
         });
     
@@ -1640,18 +1623,17 @@ test('Displays a message that there are no unclaimed addresses when there is an 
     });
 
     const noUnclaimedAddresses = screen.getByText(/There are no unclaimed addresses to show/i);
-    expect(noUnclaimedAddresses).toBeVisible();
+    expect(noUnclaimedAddresses).not.toBeVisible();
     const fetchErrorMessage = screen.getByText(/Error retrieving unclaimed addresses: /i);
     expect(fetchErrorMessage).toBeVisible();
 });
 //IF SUPER USER THERE IS NOT A VERIFICATION 
 test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID and the proof claim is NOT VERIFIED', async () => {
   const user = userEvent.setup();
-    const mockPartnersFetch = vi.mocked(fetchProvider.fetchPartnersLinkedOrUnlinkedToOperator);
+    const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
-          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName,
-          message: undefined
+          data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});

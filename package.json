@@ -58,6 +58,7 @@
     "@types/three": "^0.181.0",
     "@vitejs/plugin-react": "^4.4.1",
     "@vitest/coverage-v8": "^3.1.2",
+    "@vitest/ui": "^3.1.2",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^29.7.0",
     "identity-obj-proxy": "^3.0.0",

@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from 'react-router';
 import "../../../style.css";
 import { APP_LOGO, resendOTPCoolDown } from 'src/constants/variables';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
-import { ToastContainer } from 'react-toastify';
 import { useSearchParams } from 'react-router';
 import { writeToFunctionLogs } from 'provider/write';
 
@@ -146,7 +145,6 @@ useEffect(() => {
       
     </div>
   </div>
-  <ToastContainer icon={false}></ToastContainer>
   </>
   )
 }

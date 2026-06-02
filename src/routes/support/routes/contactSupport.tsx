@@ -1,7 +1,6 @@
 import { handleSendEmail } from "email/emailBasic";
 import { createSupportTicket } from "provider/write";
 import { useState } from "react";
-import { ToastContainer } from "react-toastify";
 import { notifyStandard, notifyFailure } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { AtSymbolIcon } from "@heroicons/react/24/outline";
@@ -125,7 +124,6 @@ export default function ContactSupport() {
         </div>
         </div>
       </div>
-      <ToastContainer icon={false}/>
     </>
   )
 }

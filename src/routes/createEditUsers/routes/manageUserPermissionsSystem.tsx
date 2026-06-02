@@ -5,7 +5,6 @@ import type { GroupedUser, UserPermissionFlatRow } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { buildGroupedUsers } from "./helpers/helpers";
 import  PermissionDashboards  from "src/routes/sharedComponents/permissionGrid";
-import { ToastContainer } from "react-toastify";
 
 export default function UserPermissionDashboard() {
   const { loggedInUser, session } = useSupabaseData();
@@ -94,7 +93,6 @@ export default function UserPermissionDashboard() {
       mode="Non-Operated">
     </PermissionDashboards>
     </div>
-    <ToastContainer icon={false}></ToastContainer>
     </>
     )}
     </div>

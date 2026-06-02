@@ -57,7 +57,6 @@ const setupWithSelections = async (
     supabaseOverrides: {
       loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
       loading: false,
-      isSuperUser: false,
       session: {
         access_token: 'test-token',
         refresh_token: 'test-refresh-token',
@@ -86,7 +85,7 @@ const setupWithSelections = async (
   );
 };
 
-describe('View and Edit Operators',() => {
+describe('View and Edit FLMAP',() => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -105,7 +104,6 @@ describe('View and Edit Operators',() => {
             supabaseOverrides: {
                 loggedInUser: RachelGreen_AllPermissions_CW_NonOpCW,
                 loading: false,
-                isSuperUser: false,
                 session: {
                     access_token: 'test-token',
                     refresh_token: 'test-refresh-token',

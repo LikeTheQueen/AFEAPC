@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllOperators, fetchAllParentCompanies } from "provider/fetch";
+import { fetchAllParentCompanies, fetchOpList } from "provider/fetch";
 import type { OperatorOrPartnerList, ParentCompany } from "src/types/interfaces";
 import { editOperatorLibrary, superUserPermission } from "src/constants/variables";
+import { transformOperatorForDropDown } from "src/types/transform";
 
 type Props = {
   value: string;
@@ -21,7 +22,9 @@ type ParentCompanyProps = {
 }
 
 export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: Props) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
+  const emptyArray: OperatorOrPartnerList[] = [];
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
   
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -30,13 +33,37 @@ export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: P
         onChange?.(id);
         valueLabel?.(name);
     };
+    
 
     useEffect(() => {
+      if(!loggedInUser || token === '') return;
       const load = async () => {
         if (!limitedList) {
-          const operatorList = await fetchAllOperators();
-          setFilteredOperators(operatorList ?? []);
+          const operatorList = await fetchOpList(token);
+          
+          if(operatorList.ok) {
+            console.log(operatorList.data)
+            if(operatorList.data.length < 1) {
+              setFilteredOperators([]);
+            }
+            
+            const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(operatorList.data);
+                const operatorListSorted = dataFormatted.sort((a,b) => {
+                  if (a.apc_name === undefined && b.apc_name === undefined) {
+                    return 0;
+                  }
+                  if (a.apc_name === undefined) {
+                    return 1;
+                  }
+                  if (b.apc_name === undefined) {
+                    return -1;
+                  }
+                  return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+                });
+            setFilteredOperators(operatorListSorted ?? []);
           return;
+          }
+          
         }
         if(!loggedInUser) return;
 

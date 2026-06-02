@@ -28,6 +28,14 @@ export const fetchSourceSystems = async() => {
   return {ok: true, data: data, message: ''};
 };
 
+export const fetchRolesGeneric = async() => {
+    const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
+    if (error || !data) {
+      console.error(`Error fetching Roles:`, error);
+      return [];
+    } return transformRolesGeneric(data);
+};
+
 export const fetchUserProfileRecordFromSupabase = async(session: string) => {
   const { data, error } = await supabase.from("USER_PROFILE").select('*, OPERATOR_USER_CROSSWALK:OPERATOR_USER_PERMISSIONS!id(*,apc_id(id,name, active),apc_address_id(id, street, suite, city, state, zip, country,active)), PARTNER_USER_CROSSWALK:PARTNER_USER_PERMISSIONS!id(*,apc_id(id,name,active, apc_op_id), apc_address_id(id, street, suite, city, state, zip, country, active)),is_super_user ')
   .eq('id', session)
@@ -69,17 +77,9 @@ export const fetchEmailsForNonOperatorUsers = async(apc_partner_id: string) => {
       return { ok: false, message: error.message, data: [supportEmail] };
     }
     return {ok: true, data: data.map((row: any) => row.user_id.email) as string[]}
-}
-
-
-
-export const fetchRolesGeneric = async() => {
-    const { data, error } = await supabase.from('ROLES').select('*').neq('id',1).order('id', { ascending: true });
-    if (error || !data) {
-      console.error(`Error fetching Roles:`, error);
-      return [];
-    } return transformRolesGeneric(data);
 };
+
+
 
 //I DON'T THINK THIS SECTION IS NEEDED
 export const fetchFromSupabase = async (table: string, select: string) => {
@@ -90,67 +90,7 @@ export const fetchFromSupabase = async (table: string, select: string) => {
     }
     return data;
   };
-//I DON'T THINK THIS SECTION IS NEEDED
-/*Delete NOT Used
-export const fetchUserFromSupabase = async (table: string, select: string, session: string) => {
-    const { data, error } = await supabase.from(table).select(select).eq('id', session).maybeSingle();
-    if (error || !data) {
-      console.error(`Error fetching ${table}:`, error);
-      return null;
-    }
-    return transformUserProfileSupabaseSingle(data);
-  };
 
-
-
-export const fetchUserOperatorListFromSupabase = async (equal: UUID) => {
-    const { data, error } = await supabase.from("OPERATOR_USER_CROSSWALK").select('apc_op_id(id,name)').eq('user_id',equal).eq('role_id',[2,4]);
-    if (error || !data) {
-      console.error(`Error fetching Operators:`, error);
-      return [];
-    }
-    return transformOperator(data);
-  };
-  */
-/* Delete After Tests
-export const updateAFEPartnerStatusSupabase = async (id:string, status:string) => {
-    const now = new Date();
-    const timestamp = now.toISOString();
-    let statusDate;
-    if(status === 'Approved' || status === 'Rejected'){
-      statusDate = timestamp;
-    } else {
-      statusDate = null;
-    }
-    const { data, error } = await supabase.from('AFE_PROCESSED').update({partner_status: status, partner_status_date: statusDate}).eq('id',id);
-    if (error) {
-        console.error(`Error Updating AFE Status`, error);
-        return [];
-      }
-  return 'success';
-  };
-*/
-/* Delete (no tests exist)
-export const updatePartnerArchiveStatus = async (id: string, status: boolean) => {
-    const { data, error } = await supabase.from('AFE_PROCESSED').update({partner_archived: status}).eq('id',id);
-    if (error) {
-        console.error(`Error Updating Partner AFE Archive Status`, error);
-        return [];
-      }
-      
-  return 'success';
-  };
-*/
-/* Delete After Tests
-  export const addAFEHistorySupabase = async (afe_id:string, description:string, type: string) => {
-    const { error } = await supabase.from('AFE_HISTORY').insert({afe_id: afe_id, description: description, type:type});
-    if (error) {
-        console.error(`Error Updating AFE History`, error);
-        return [];
-      }
-      return 'success'
-  };
-*/
 export const fetchFromSupabaseMatchOnString = async (table: string, select: string, col:string, equal:string) => {
     const { data, error } = await supabase.from(table).select(select).eq(col,equal);
     if (error) {
@@ -207,7 +147,7 @@ export const fetchIsUserSuperUser = async(loggedInUserID: string | null | undefi
       return false;
     }
   };
-*/
+
   //I THINK THIS CAN BE DELETED
 export const fetchOpUsersForEdit = async(table: string, addressTable: string, apc_id?: string[], user_id?: string ) => {
   
@@ -238,16 +178,9 @@ export const fetchOpUsersForEdit = async(table: string, addressTable: string, ap
   return formattedRoles;
   };
 
+*/
 
 
-
-export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
-  const { data, error } = await supabase.from("PARTNERS").select('apc_id:id,name, apc_op_id(name, id), address:PARTNER_ADDRESS!apc_id(id,street, suite, city, state, zip, country)');
-      if (error) {
-      return {ok: false, data: [], message: 'Error fetching partners: '+error.message};
-    }
-    return {ok: true, data: data as any[], message: undefined};
-};
 
  export const fetchPartnersFromSourceSystemInSupabase = async(apc_op_id:string) => {
   const { data, error } = await supabase.from("AFE_PARTNERS_PROCESSED").select('id, source_id, street, suite, city, state, zip, country, active, name')
@@ -293,7 +226,6 @@ export const fetchPartnersLinkedOrUnlinkedToOperator = async() => {
   const emptyArray: OperatorOrPartnerList[] = []
   const { data, error } = await supabase.from('OPERATOR_ADDRESS').select(`*,apc_id(id,name)`)
       if (error || !data) {
-      console.error(`Error fetching Operators and Partners:`, error);
       return emptyArray;
       }
     const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(data);
@@ -545,6 +477,20 @@ export const fetchOperatorExecuteFilters = async(apc_op_id: string) => {
 
 }
 //Edge Functions
+export async function fetchNonOpList( token: string) {
+    type TogglePayload = {};
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+
+    return callEdge<TogglePayload, ToggleResult>("fetch_linked_unlinked_partners", {}, token);
+};
+
+export async function fetchOpList( token: string) {
+    type TogglePayload = {};
+    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+
+    return callEdge<TogglePayload, ToggleResult>("fetch_operator_list", {}, token);
+};
+
 export async function fetchMappedGLAccountCode(apc_op_id: string, apc_part_id:string, token: string) {
     
     type TogglePayload = { apc_op_id: string; apc_part_id:string };

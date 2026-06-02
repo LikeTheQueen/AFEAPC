@@ -4,7 +4,6 @@ import { type GLMappedRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { updateGLCodeMapping } from "provider/write";
-import { ToastContainer } from 'react-toastify';
 import { notifyStandard } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -279,7 +278,6 @@ console.log(rowsToShow.length)
                     </div>
                 </>
             )}
-            <ToastContainer />
         </>
     )
 }

@@ -1,5 +1,5 @@
 import { vi, test, expect, describe, afterEach } from 'vitest';
-import { fetchSourceSystems, fetchPartnersLinkedOrUnlinkedToOperator } from '../provider/fetch';
+import { fetchSourceSystems, fetchNonOpList } from '../provider/fetch';
 
 const mockSelect = vi.fn();
 
@@ -48,36 +48,7 @@ describe('fetchSourceSystems', () => {
   });
 });
 
-describe('fetchPartnersLinkedOrUnlinkedToOperator', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
-  test('returns ok:false and empty data on error', async () => {
-    mockSelect.mockResolvedValueOnce({ ok: false, data: null, error: { message: 'DB connection failed' } });
-
-    const result = await fetchPartnersLinkedOrUnlinkedToOperator();
-
-    expect(result).toEqual({
-      ok: false,
-      data: [],
-      message: 'Error fetching partners: DB connection failed',
-    });
-  });
-
-  test('returns ok:true and data on success', async () => {
-    const mockData = [{ id: 1, name: 'Name1' }, { id: 2, name: 'Name2' }];
-    mockSelect.mockResolvedValueOnce({ data: mockData, error: null });
-
-    const result = await fetchPartnersLinkedOrUnlinkedToOperator();
-
-    expect(result).toEqual({
-      ok: true,
-      data: mockData,
-      message: undefined,
-    });
-  });
-});
 
 
 

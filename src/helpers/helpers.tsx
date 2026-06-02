@@ -218,6 +218,7 @@ if (user.is_super_user) return true;
 if (!user?.operatorRoles.length && !user?.partnerRoles.length) return false;
 // Check operator roles
 const hasOperatorAccess = user.operatorRoles?.some(r => r.role! === operatorRole && r.active) ?? false;  
+
 // Check non-operator roles
 const hasNonOperatorAccess = user.partnerRoles?.some(r => r.role! === nonOperatorRole && r.active) ?? false;
 

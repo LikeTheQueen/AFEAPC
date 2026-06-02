@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive, updateUserProfile } from 'provider/write';
+import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive, updateUserProfile, writeToFunctionLogs } from 'provider/write';
 import { type UserFullNameAndEmail } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { Field, Label, Switch } from "@headlessui/react";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 
 
-export default function UserDashboard({ userList =[], isError=false } : {  userList: UserFullNameAndEmail[]; isError:boolean;}) {
+export default function UserDashboard({ userList =[] } : {  userList: UserFullNameAndEmail[]}) {
     
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
@@ -16,8 +16,8 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
         setUsers(userList);
     }, [userList]);
 
-    function handleReactivate(userID: string) {
-        if(!token || !loggedInUser?.is_org_super_user) return;
+    async function handleReactivate(userID: string) {
+        if(!token || (!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user)) return;
 
         setUsers(prevUsers => 
             prevUsers.map(user => 
@@ -26,21 +26,25 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
         );
 
         try {
-            updateUserActiveStatusToActive(userID, token);
+            const userStatusChangeResult = await updateUserActiveStatusToActive(userID, token);
+            if(!userStatusChangeResult.ok) {
+                throw new Error(userStatusChangeResult.message);
+            }
+            notifyStandard(`Line Opened.  The user is now active in the system.\n\n(TLDR: The user is now ACTIVE)`);
         } catch(error) {
-
+            
             setUsers(prevUsers => 
                 prevUsers.map(user => 
                     user.id === userID ? { ...user, active: false } : user
                 )
             );
-
-            console.error('Failed to reactivate user:', error);
+            notifyFailure(`Pressure Never Built.  User activation failed before the line came online.\n\n(TLDR: The user is NOT ACTIVE)`);
+            writeToFunctionLogs('afeapc_reactivate_user','Unable to deactivate user '+userID+' '+error, null ,'ERROR','Manage User Grid');
         }
     };
     
-    function handleDeactivate(userID: string) {
-        if(!token|| !loggedInUser?.is_org_super_user) return;
+    async function handleDeactivate(userID: string) {
+        if(!token|| (!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user)) return;
         setUsers(prevUsers => 
             prevUsers.map(user => 
                 user.id === userID ? { ...user, active: false } : user
@@ -48,7 +52,11 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
         );
 
         try {
-            updateUserActiveStatusToInactive(userID, token);
+            const userStatusChangeResult = await updateUserActiveStatusToInactive(userID, token);
+            if(!userStatusChangeResult.ok) {
+                throw new Error(userStatusChangeResult.message);
+            }
+            notifyStandard(`Line Closed.  The user is now inactive in the system.\n\n(TLDR: The user is now INACTIVE)`);
         } catch(error) {
 
             setUsers(prevUsers => 
@@ -57,12 +65,13 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                 )
             );
 
-            console.error('Failed to deactivate user:', error);
+          notifyFailure(`Pressure Never Built.  User deactivation failed before the line came online.\n\n(TLDR: The user is IS STILL ACTIVE)`);
+          writeToFunctionLogs('afeapc_deactivate_user','Unable to deactivate user '+userID+' '+error, null ,'ERROR','Manage User Grid');
         }
     };
     
     async function handleSuperUserToggle(userID: string, is_super_org_user: boolean) {
-        if (!token || !loggedInUser?.is_org_super_user) return;
+        if (!token || (!loggedInUser?.is_super_user && !loggedInUser?.is_org_super_user)) return;
 
         setUsers(prevUsers =>
             prevUsers.map(user =>
@@ -153,7 +162,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={user.active}
-                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user) || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleReactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] mr-1">
                                     Activate User
@@ -161,7 +170,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={!user.active}
-                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user) || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleDeactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] mr-1">
                                     Deactivate User
@@ -223,7 +232,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={user.active}
-                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user) || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleReactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                                     Activate User
@@ -231,7 +240,7 @@ export default function UserDashboard({ userList =[], isError=false } : {  userL
                                 <button
                                     type="button"
                                     hidden={!user.active}
-                                    disabled={!loggedInUser?.is_org_super_user || loggedInUser?.user_id === user.id ? true : false}
+                                    disabled={(!loggedInUser?.is_org_super_user && !loggedInUser?.is_super_user) || loggedInUser?.user_id === user.id ? true : false}
                                     onClick={(e: any) => handleDeactivate(user.id)}
                                     className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
                                     Deactivate User

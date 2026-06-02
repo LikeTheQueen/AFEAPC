@@ -2,7 +2,6 @@ import { fetchPartnersFromPartnersCrosswalk } from "provider/fetch";
 import { useEffect, useState } from "react";
 import type { PartnerMappingDisplayRecord } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
-import { ToastContainer } from 'react-toastify';
 import { ArrowRightIcon, ArrowTurnDownLeftIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { updatePartnerMapping, updatePartnerProcessedMapping } from "provider/write";
@@ -239,7 +238,6 @@ export default function PartnerMappingView() {
 
                 )}
         </div>
-        <ToastContainer />
         </>
     )
 }

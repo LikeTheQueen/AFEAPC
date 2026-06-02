@@ -15,7 +15,6 @@ import { XMarkIcon} from '@heroicons/react/24/outline';
 import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
-import { ToastContainer } from "react-toastify";
 import { insertAFEHistoryRecord } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
@@ -630,7 +629,6 @@ export default function AFEDetailURL() {
         </div>
         )}
       </main>
-      <ToastContainer icon={false}/>
     </>
   )
 }

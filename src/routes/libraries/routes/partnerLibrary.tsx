@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PartnerRowData } from 'src/types/interfaces';
 import { updatePartnerProcessedStatus } from 'provider/write';
-import { ToastContainer } from 'react-toastify';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
@@ -168,8 +167,6 @@ export default function PartnerLibrary() {
           </SingleCheckbox>
         </div>
       </div>
-      
-      <ToastContainer />
     </>
   )
 }
