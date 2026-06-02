@@ -6,13 +6,12 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 
-import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
-import { operatorRecordNullValues, CorrWhitOilsOperatorRecord, CorrWhitOilsWithOnePartnerOperatorRecord } from './test-utils/operatorRecordsFormatted'
+import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser';
 import { operatorNameChangedFromSupabase } from './test-utils/operatorRecords';
 import { RachelGreen_AllPermissions_CW_NonOpCWAthena } from './test-utils/afeRecords';
 
 vi.mock('provider/write', () => ({
-  updateOperatorNameAndStatus: vi.fn(),
+  updateOperatorNameStatus: vi.fn(),
   updateOperatorAddress: vi.fn(),
   updatePartnerNameAndStatus: vi.fn(),
   updatePartnerAddress: vi.fn(),
@@ -63,12 +62,10 @@ describe('Edit Operators',() => {
 
     test('It should show the Operator address and save changes', async () => {
       const user = userEvent.setup();  
-      vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
+      vi.mocked(writeProvider.updateOperatorNameStatus).mockResolvedValueOnce({
                   ok: true,
-                  data: operatorNameChangedFromSupabase,
-                  message: undefined
-              });
-     
+                  data: operatorNameChangedFromSupabase
+              });    
 
       renderWithProviders(<EditOperator 
         token='test-token' 
@@ -97,11 +94,11 @@ describe('Edit Operators',() => {
 
         const operatorNameInput = screen.getByRole('textbox', { name: /Operator Name/i });
         const operatorCityInput = screen.getAllByRole('textbox', { name: /city/i });
+        
         await waitFor(() => {
-          expect(operatorNameInput).toHaveValue(loggedInUserRachelGreen.operatorRoles[0].apc_name);
+        expect(operatorNameInput).toHaveValue(loggedInUserRachelGreen.operatorRoles[0].apc_name);
         expect(operatorCityInput[0]).toHaveValue(loggedInUserRachelGreen.operatorRoles[0].apc_address.city);
-
-        })
+        });
         
         await user.clear(operatorNameInput);
         await user.type(operatorNameInput, 'Corr Mike Oils');
@@ -115,8 +112,69 @@ describe('Edit Operators',() => {
         await user.click(saveOpNameAddress[0]);
 
         await waitFor(() => {
-          expect(writeProvider.updateOperatorNameAndStatus).toHaveBeenCalled();
+          expect(writeProvider.updateOperatorNameStatus).toHaveBeenCalled();
         });
+      
+        expect(notifyStandard).toHaveBeenCalledWith(`Operated name and billing address have been saved. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE saved.)`)
+
+    });
+
+    test('It should show the Operator address and save changes resulting in an error response', async () => {
+      const user = userEvent.setup();  
+      vi.mocked(writeProvider.updateOperatorNameStatus).mockResolvedValueOnce({
+                  ok: false,
+                  message: 'Record cannot be updated'
+              });    
+
+      renderWithProviders(<EditOperator 
+        token='test-token' 
+        opToEdit={loggedInUserRachelGreen.operatorRoles[0]}
+        NonOpAddress={loggedInUserRachelGreen.partnerRoles.filter(nonOp => nonOp.apc_op_id === loggedInUserRachelGreen.operatorRoles[0].apc_id && (nonOp.role === 1 || nonOp.role === 9)) ?? []} />, {
+                      supabaseOverrides: {
+                        loggedInUser: loggedInUserRachelGreen,
+                        loading: false,
+                        session: {
+                        access_token: 'test-token',
+                        refresh_token: 'test-refresh-token',
+                        expires_in: 3600,
+                        token_type: 'bearer',
+                        user: {
+                          id: 'test-user-id',
+                          email: 'test@example.com',
+                          aud: 'authenticated',
+                          role: 'authenticated',
+                          created_at: '2024-01-01T00:00:00Z',
+                          app_metadata:[],
+                          user_metadata:{}
+                        }
+                      },
+                    }
+        });
+
+        const operatorNameInput = screen.getByRole('textbox', { name: /Operator Name/i });
+        const operatorCityInput = screen.getAllByRole('textbox', { name: /city/i });
+        
+        await waitFor(() => {
+        expect(operatorNameInput).toHaveValue(loggedInUserRachelGreen.operatorRoles[0].apc_name);
+        expect(operatorCityInput[0]).toHaveValue(loggedInUserRachelGreen.operatorRoles[0].apc_address.city);
+        });
+        
+        await user.clear(operatorNameInput);
+        await user.type(operatorNameInput, 'Corr Mike Oils');
+        expect(operatorNameInput).toHaveValue('Corr Mike Oils');
+        await user.clear(operatorCityInput[0]);
+        await user.type(operatorCityInput[0], 'Austin');
+        expect(operatorCityInput[0]).toHaveValue('Austin');
+
+        const saveOpNameAddress = screen.getAllByRole('button', { name: /save/i });
+        expect(saveOpNameAddress[0]).toBeInTheDocument();
+        await user.click(saveOpNameAddress[0]);
+
+        await waitFor(() => {
+          expect(writeProvider.updateOperatorNameStatus).toHaveBeenCalled();
+        });
+      
+        expect(notifyFailure).toHaveBeenCalledWith(`Operated name and billing address have NOT been saved. No tie-in.\n\n(TLDR: Operator and billing address are NOT saved.)`)
 
     });
 

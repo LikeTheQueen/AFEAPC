@@ -197,8 +197,7 @@ export function buildGroupedUsers(
       apcrole,
     };
   }).filter(roles => roles.user_id !== null);
-  console.log(grouped, 'grouped', editableApcAddressIds,'edit address')
-
+  
   return { grouped, editableApcAddressIds };
 };
 

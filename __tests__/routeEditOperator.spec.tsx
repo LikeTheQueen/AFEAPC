@@ -28,11 +28,10 @@ import { Love_Quinn_Super_User, MonicaGeller_NoOpRoles_CW_NonOpCW, RachelGreen_V
 vi.mock('provider/fetch', () => ({
   fetchOperatorsOrPartnersToEdit: vi.fn(),
   fetchNonOpList: vi.fn(),
-  fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
-  updateOperatorNameAndStatus: vi.fn(),
+  updateOperatorNameStatus: vi.fn(),
   updateOperatorAddress: vi.fn(),
 }));
 
@@ -362,16 +361,14 @@ describe('View and Edit Operators',() => {
     test('deactivates an active operator when clicking deactivate button then reacivates it when the button is pushed again', async () => {
         const user = userEvent.setup();
         
-       vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
+       vi.mocked(writeProvider.updateOperatorNameStatus).mockResolvedValueOnce({
             ok: true,
-            data: operatorDeactivatedFromSupabase,
-            message: undefined
+            data: operatorDeactivatedFromSupabase
         });
 
-        vi.mocked(writeProvider.updateOperatorNameAndStatus).mockResolvedValueOnce({
+        vi.mocked(writeProvider.updateOperatorNameStatus).mockResolvedValueOnce({
             ok: true,
-            data: operatorActivatedFromSupabase,
-            message: undefined
+            data: operatorActivatedFromSupabase
         });
         
         renderWithProviders(<OperatorViewAndEdit />, {
@@ -412,10 +409,11 @@ describe('View and Edit Operators',() => {
         
         // Verify the call was made with new values and the Operator was deactivated
         await waitFor(() => {
-            expect(writeProvider.updateOperatorNameAndStatus).toHaveBeenCalledWith(
+            expect(writeProvider.updateOperatorNameStatus).toHaveBeenCalledWith(
                 Love_Quinn_Super_User.operatorRoles[0].apc_name,
                 !Love_Quinn_Super_User.operatorRoles[0].apc_name_active,
                 Love_Quinn_Super_User.operatorRoles[0].apc_id,
+                "test-token"
             );
         });
         
@@ -436,10 +434,11 @@ describe('View and Edit Operators',() => {
 
         // Verify the call was made with new values
         await waitFor(() => {
-            expect(writeProvider.updateOperatorNameAndStatus).toHaveBeenCalledWith(
+            expect(writeProvider.updateOperatorNameStatus).toHaveBeenCalledWith(
                 Love_Quinn_Super_User.operatorRoles[0].apc_name,
                 Love_Quinn_Super_User.operatorRoles[0].apc_name_active,
                 Love_Quinn_Super_User.operatorRoles[0].apc_id,
+                "test-token"
             );
         });
 

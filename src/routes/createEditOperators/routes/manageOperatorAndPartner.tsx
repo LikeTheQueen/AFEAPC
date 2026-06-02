@@ -4,7 +4,7 @@ import { useSupabaseData } from "src/types/SupabaseContext";
 import EditOperator from "./editOperator";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { updateOperatorNameAndStatus } from "provider/write";
+import { updateOperatorNameStatus } from "provider/write";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
@@ -65,16 +65,27 @@ export default function OperatorViewAndEdit() {
 
         try {
 
-            const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id);
-            
+            const operatorStatusChangeResult = await updateOperatorNameStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id, token);
+
             if (!operatorStatusChangeResult.ok) {
                 throw new Error(operatorStatusChangeResult.message);
-            }
-
+            };
             notifyStandard(`Operator name and billing address have been ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}.)`);
-
         } catch (error) {
-            notifyFailure(`Operator name and billing address have been ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}.)`);
+            const resetOperator = {
+            ...operatorToUpdate,
+            apc_name_active: operatorToUpdate.apc_name_active,
+            address_active: operatorToUpdate.apc_address?.address_active
+        };
+        
+        setFilteredOperators(prevOperatorsList =>
+            prevOperatorsList.map((operator, index) =>
+                index === actualIndex
+                    ? resetOperator
+                    : operator
+            )
+        );
+            notifyFailure(`Operator name and billing address have NOT been ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}. Let's call it a busted pipe.\n\n(TLDR: Operator and billing address are NOT ${updatedOperator.apc_name_active ? 'activated' : 'deactivated'}.)`);
         }
     };
 
@@ -147,7 +158,6 @@ export default function OperatorViewAndEdit() {
                                                             onClick={async (e) => {
                                                                 e.preventDefault();
                                                                 handleClickActivateOrDeactivateOperator(operator.apc_id);
-                                                                notifyStandard(`Operator name and billing address have been ${operator.apc_name_active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                             }}
                                                             className={`sm:hidden cursor-pointer disabled:cursor-not-allowed rounded-md px-3 py-2 text-sm leading-6 font-semibold custom-style transition-colors min-w-24
                                                                 ${!operator.apc_name_active
@@ -177,7 +187,6 @@ export default function OperatorViewAndEdit() {
                                                     onClick={async (e) => {
                                                         e.preventDefault();
                                                         handleClickActivateOrDeactivateOperator(operator.apc_id);
-                                                        notifyStandard(`Operator name and billing address have been ${operator.apc_name_active ? 'deactivated' : 'activated'}. Let's call it a clean tie-in.\n\n(TLDR: Operator and billing address ARE ${operator.active ? 'deactivated' : 'activated'}.)`);
                                                     }}
                                                     className={`cursor-pointer disabled:cursor-not-allowed rounded-md px-4 py-2 text-sm leading-6 font-semibold custom-style transition-colors w-full max-w-28
                                                     ${!operator.apc_name_active

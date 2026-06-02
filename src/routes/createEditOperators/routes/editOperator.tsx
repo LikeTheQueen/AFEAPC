@@ -1,6 +1,6 @@
 import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { addPartnerSupabase, updateOperatorAddress, updateOperatorNameAndStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
+import { addPartnerSupabase, updateOperatorAddress, updateOperatorNameStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
@@ -181,7 +181,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
   };
   async function handleClickSaveOpName() {
     try {
-      const operatorToEdit = await updateOperatorNameAndStatus(opRecordToEdit.apc_name, opRecordToEdit.active, opRecordToEdit.apc_id!);
+      const operatorToEdit = await updateOperatorNameStatus(opRecordToEdit.apc_name, opRecordToEdit.active, opRecordToEdit.apc_id!, token);
 
       if(!operatorToEdit.ok) {
         throw new Error(operatorToEdit.message);
@@ -222,7 +222,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
 
     try {
 
-      const operatorStatusChangeResult = await updateOperatorNameAndStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id);
+      const operatorStatusChangeResult = await updateOperatorNameStatus(updatedOperator.apc_name, updatedOperator.apc_name_active!, updatedOperator.apc_id, token);
 
       if (!operatorStatusChangeResult.ok) {
         throw new Error(operatorStatusChangeResult.message);

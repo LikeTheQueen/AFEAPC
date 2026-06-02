@@ -43,21 +43,6 @@ import type { UUID } from 'crypto';
   };
   
 
-  export const updateOperatorNameAndStatus = async (operatorName: string, activeStatus: boolean, apc_id:string) => {
-    console.log(activeStatus,apc_id,operatorName)
-  const { data, error } = await supabase
-    .from('OPERATORS')
-    .update({name: operatorName, active: activeStatus})
-    .eq('id',apc_id)
-    .select();
-    if (error) {
-      writeToFunctionLogs('updateOperatorNameAndStatus', error.message, null, 'ERROR', 'Update Operator UI');
-        return {ok: false, data: [], message: error.message};
-      }
-      
-  return {ok:true, data: data, message: undefined};
-  };
-
   export const updateOperatorAddress = async (operatorAddress: AddressType) => {
       const { error } = await supabase
       .from('OPERATOR_ADDRESS')
@@ -670,8 +655,7 @@ import type { UUID } from 'crypto';
     return callEdge<TogglePayload, ToggleResult>("update_operator_archive_status_on_AFE", { id, status }, token);
   };
 
-
-export async function updateUserActiveStatusToInactive(user_id: string, token: string) {
+  export async function updateUserActiveStatusToInactive(user_id: string, token: string) {
     
     type TogglePayload = { user_id: string; };
     type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
@@ -679,23 +663,23 @@ export async function updateUserActiveStatusToInactive(user_id: string, token: s
     return callEdge<TogglePayload, ToggleResult>("deactivate_user", { user_id }, token);
   };
 
-export async function updateUserActiveStatusToActive(user_id: string, token: string) {
+  export async function updateUserActiveStatusToActive(user_id: string, token: string) {
     
     type TogglePayload = { user_id: string; };
     type ToggleResult  = { ok: true; data: { id: string; status: boolean; } } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("reactivate_user", { user_id }, token);
   };
-{/* 
-export async function updateOperatorNameAndStatus(operator: OperatorPartnerRecord, token: string) {
+ 
+export async function updateOperatorNameStatus(operatorName: string, activeStatus: boolean, apc_id:string, token: string) {
     
-    type TogglePayload = { operator: OperatorPartnerRecord; };
-    type ToggleResult  = { ok: true; data: { id: string; active: boolean; name: string; } } | { ok: false; message: string };
+    type TogglePayload = { operatorName: string; activeStatus: boolean; apc_id:string; };
+    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string };
     
-    return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operator }, token);
+    return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operatorName, activeStatus, apc_id }, token);
   };
   
-
+{/*
 export async function updateOperatorAddress(operatorAddress: OperatorPartnerRecord, token: string) {
     
     type TogglePayload = { operatorAddress: OperatorPartnerRecord; };

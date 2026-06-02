@@ -24,7 +24,6 @@ import {
  import { loggedInUserRachelGreen } from './test-utils/rachelGreenuser'
 
  vi.mock('../provider/fetch', () => ({
-  fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
   fetchNonOpList: vi.fn(),
   fetchClaimProofPrompt: vi.fn(),
   verifyClaimProof: vi.fn(),

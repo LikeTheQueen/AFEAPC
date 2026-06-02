@@ -261,9 +261,6 @@ export default function AFEDetailURL() {
   }
   } ;
 
-  console.log(loggedInUser?.operatorRoles, 'op role');
-  console.log(loggedInUser?.partnerRoles);
-  console.log(doesUserHaveAcceptRejectRole);
   return (
     <>
       <main >

@@ -42,7 +42,6 @@ export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: P
           const operatorList = await fetchOpList(token);
           
           if(operatorList.ok) {
-            console.log(operatorList.data)
             if(operatorList.data.length < 1) {
               setFilteredOperators([]);
             }

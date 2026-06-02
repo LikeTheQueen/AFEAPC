@@ -36,7 +36,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
         setLoading(true);
         try {
           const partnerFetchResult = await fetchNonOpList(token);
-          console.log(partnerFetchResult);
+
 
           if (isMounted && partnerFetchResult.ok) {
             

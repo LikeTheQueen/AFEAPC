@@ -105,8 +105,7 @@ export default function GLMapping() {
 
         }
     };
-console.log(cumaltiveGLMap.length, 'CU')
-console.log(rowsToShow.length)
+
     return (
         <>
             <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">

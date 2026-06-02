@@ -34,7 +34,7 @@ export default function UserPermissionDashboard() {
             throw new Error((userPermissionsRaw as any).message ?? 'Unable to get user permissions');
           }
           if(isMounted) {
-            console.log(userPermissionsRaw.data)
+
             setPermissionData(userPermissionsRaw.data);
             setUserPermissionListLoading(false);
           }
