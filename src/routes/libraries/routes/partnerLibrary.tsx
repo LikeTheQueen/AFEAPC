@@ -3,14 +3,18 @@ import type { PartnerRowData } from 'src/types/interfaces';
 import { updatePartnerProcessedStatus } from 'provider/write';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
-import { fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
+import { fetchSourceSystemPartners } from "provider/fetch";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
+import { useSupabaseData } from "src/types/SupabaseContext";
+import { transformPartnerSourceSystemAddress } from "src/types/transform";
 
 const headers = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country",""];
 
 export default function PartnerLibrary() {
+  const { session } = useSupabaseData();
+  const token = session?.access_token ?? "";
   const [rowsLimit] = useState(50);
   const [rowsToShow, setRowsToShow] = useState<PartnerRowData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -22,18 +26,31 @@ export default function PartnerLibrary() {
   const [loading, setLoading] = useState(false);
 
   const handlePageChange = (paginatedData: PartnerRowData[], page: number) => {
-          setRowsToShow(paginatedData);
-          setCurrentPage(page);
+    setRowsToShow(paginatedData);
+    setCurrentPage(page);
   };
 
   async function getPartners() {
-    if (opAPCID === '' ) return;
+    if (opAPCID === '' || token === '') return;
     setLoading(true);
     try {
-        const partnerList = await fetchPartnersFromSourceSystemInSupabase(opAPCID)
+        const partnerList = await fetchSourceSystemPartners(opAPCID, token);
 
         if(partnerList.ok) {
-            setPartnerList(partnerList.data);
+          const dataTransformed = transformPartnerSourceSystemAddress(partnerList.data);
+          const sourcePartListSorted = dataTransformed.sort((a,b) => {
+              if (a.name === undefined && b.name === undefined) {
+                  return 0;
+              }
+              if (a.name === undefined) {
+                  return 1;
+              }
+              if (b.name === undefined) {
+                  return -1;
+              }
+              return (a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
+          });
+            setPartnerList(sourcePartListSorted);
         }
     } finally {
         setLoading(false);

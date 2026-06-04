@@ -17,7 +17,7 @@ import { permissionResponseRachel, permissionResponseRachelNonOp, genericRoleLis
 vi.mock('provider/fetch', () => ({
   fetchRolesGeneric: vi.fn(),
   fetchListOfOperatorsOrPartnersForUser: vi.fn(),
-  fetchAllParentCompanies: vi.fn()
+  fetchParentCompanyList: vi.fn()
 }));
 
 vi.mock('provider/write', () => ({
@@ -76,9 +76,10 @@ describe('Create New User',() => {
         vi.mocked(fetchProvider.fetchRolesGeneric).mockResolvedValue(
             genericRoleList
         );
-        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-            []
-        );
+        vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue({
+            ok: true,
+            data: ParentCompanyDropdown
+        });
 
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
@@ -153,9 +154,10 @@ describe('Create New User',() => {
             genericRoleList
         );
 
-        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-            []
-        );
+        vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue({
+            ok: true,
+            data: ParentCompanyDropdown
+        });
 
         renderWithProviders(<CreateNewUser />, {
                           supabaseOverrides: {
@@ -481,8 +483,11 @@ describe('Create New User',() => {
             genericRoleList
         );
 
-        vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-            ParentCompanyDropdown
+        vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+            {
+                ok: true,
+                data: ParentCompanyDropdown
+            }
         );
 
         renderWithProviders(<CreateNewUser />, {

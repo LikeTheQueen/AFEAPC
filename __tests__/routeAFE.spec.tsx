@@ -31,9 +31,8 @@ vi.mock('../provider/fetch', () => ({
   updateAFEPartnerStatusSupabase: vi.fn(),
   addAFEHistorySupabase: vi.fn(),
   fetchAFEs: vi.fn(),
-  fetchAllOperators: vi.fn(), 
   fetchOpList: vi.fn(),
-  fetchAllPartners: vi.fn(),
+  fetchPartnerList: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -54,9 +53,8 @@ vi.mock('../email/emailBasic', () => ({
 describe('displaying AFEs', () => {
   beforeEach(() => {
     cleanup();
-    vi.mocked(fetchProvider.fetchAllOperators as Mock).mockResolvedValue(OperatorDropDown);
     vi.mocked(fetchProvider.fetchOpList as Mock).mockResolvedValue({ok: true, data:operatorDropDownResult});
-    vi.mocked(fetchProvider.fetchAllPartners as Mock).mockResolvedValue(PartnerDropdown);
+    vi.mocked(fetchProvider.fetchPartnerList as Mock).mockResolvedValue(PartnerDropdown);
     vi.mocked(fetchProvider.fetchAFEs).mockResolvedValue({ ok: true, data: afeResultSupabase });
     vi.mocked(writeProvider.updateAFEPartnerStatus).mockResolvedValue({ ok: true, data: {id: '', status: 'New' } });
   });
@@ -662,7 +660,7 @@ describe('displaying AFEs', () => {
       data: { id: 'e3899d13-c74b-4604-87e3-ba07b613e12e', status: 'Viewed'}
     });
     
-    (writeProvider.insertAFEHistoryRecord as Mock).mockReturnValue({
+    (writeProvider.insertAFEHistory as Mock).mockReturnValue({
       ok: true
     });
 
@@ -780,7 +778,7 @@ describe('displaying AFEs', () => {
 
     await waitFor(() => {
       expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','Viewed','test-token');
-      expect(writeProvider.insertAFEHistoryRecord).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action');
+      expect(writeProvider.insertAFEHistory).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action', 'test-token');
       expect(emailProvider.sendAFEStatusChangeEmailToOperator).toHaveBeenCalledWith(
         responseTransformed[12],
         'Viewed',

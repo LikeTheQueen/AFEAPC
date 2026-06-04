@@ -24,7 +24,7 @@ vi.mock('src/routes/sharedComponents/operatorDropdown', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-  fetchOperatorExecuteFilters: vi.fn(),
+  fetchAFEExecuteFilters: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -83,9 +83,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: true,
-            message: undefined,
             data: operatorFilters
         });
         renderWithProviders(<OperatorExecuteFilters />, {
@@ -133,9 +132,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show the DEFAULT AFE Filters and Well Fields when an Operator is selected for an Operator that does not have defined values', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: true,
-            message: undefined,
             data: nullOperatorFilters
         });
         renderWithProviders(<OperatorExecuteFilters />, {
@@ -183,10 +181,9 @@ describe('Execute Filters for Operator',() => {
     test('It should show empty arrays when the response fails and an error message.', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: false,
             message: 'Could Not Get Data',
-            data: []
         });
         renderWithProviders(<OperatorExecuteFilters />, {
                       supabaseOverrides: {
@@ -275,9 +272,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: true,
-            message: undefined,
             data: operatorFilters
         });
         renderWithProviders(<OperatorExecuteFilters />, {
@@ -366,9 +362,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and save response', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: true,
-            message: undefined,
             data: operatorFilters
         });
 
@@ -458,9 +453,8 @@ describe('Execute Filters for Operator',() => {
     test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and save response', async () => {
         const user = userEvent.setup()
 
-        vi.mocked(fetchProvider.fetchOperatorExecuteFilters).mockResolvedValue({
+        vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
             ok: true,
-            message: undefined,
             data: operatorFilters
         });
 

@@ -15,7 +15,7 @@ import { XMarkIcon} from '@heroicons/react/24/outline';
 import DocumentBrowser from './documentViewer';
 import * as XLSX from 'xlsx';
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
-import { insertAFEHistoryRecord } from "provider/write";
+import { insertAFEHistory } from "provider/write";
 import { handleTabChanged } from "src/routes/sharedComponents/tabChange";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import FileUpload from "src/routes/sharedComponents/fileUpload";
@@ -173,7 +173,7 @@ export default function AFEDetailURL() {
         setDocToView(uri);
         if (uri !== '') setOpen(true);
         if(!loggedInUser?.is_super_user) {
-        insertAFEHistoryRecord(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed')
+        insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', token)
         }
     } catch {
       notifyFailure(`Blind Well.  The file couldn’t be opened for viewing`);
@@ -196,7 +196,7 @@ export default function AFEDetailURL() {
       document.body.appendChild(a);
       a.click();
       a.remove(); 
-      insertAFEHistoryRecord(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', fileName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download')
+      insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', fileName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', token)
     } catch {
       notifyFailure(`Pressure Loss Detected.  The file couldn’t be delivered`);
     }
@@ -596,6 +596,7 @@ export default function AFEDetailURL() {
                   afe_number={afeRecord?.afe_number!}
                   afe_version={afeRecord?.version_string!}
                   mode={loggedInUser?.is_super_user ? 'Partner' : doesUserHaveOperatorViewAFERole ? 'Operator' : 'Partner'}
+                  token={token}
                   ></FileUpload>
                 </div>
               </div>
@@ -607,6 +608,7 @@ export default function AFEDetailURL() {
                 onlyShowRecentFileHistory={false}
                 hideCommentBox={false}
                 onCommentAdded={(comment) => setHistory(prev => [...prev, comment])}
+                token={token}
                 />
               </div>
               
@@ -617,6 +619,7 @@ export default function AFEDetailURL() {
                 maxRowsToShow={5}
                 onlyShowRecentFileHistory={true}
                 hideCommentBox={true}
+                token={token}
                 />
               </div>
               

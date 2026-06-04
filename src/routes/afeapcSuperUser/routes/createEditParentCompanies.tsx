@@ -2,7 +2,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType, type ParentCompanyWrite, type ParentCompany } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanyRecordSupabase, addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
+import { addOParentCompanyRecordSupabase, addParentCompanyAdressSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';

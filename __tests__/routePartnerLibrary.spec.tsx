@@ -10,17 +10,8 @@ import PartnerLibrary from 'src/routes/libraries/routes/partnerLibrary';
 import { RachelGreen_AllPermissions_CW_NonOpCW,
  } from './test-utils/afeRecords';
 import {
-    operatorPartnerLibrary,
-    partnerListInAPC,
-    savedMapOnePartner,
-    savedMapOnePartnerSelectDeselectSelectNew,
-    twoMappedPartnerRecords,
-    savedMapOnePartnerAddressUndefined,
-    operatorMappedLibrary,
     operatorPartnerLibrary4Records
 } from './test-utils/mapPatnerRecords';
-
-import { WhitAndCorrOilAccountCodes, WhitAndCorrOilAccountCodesNonOP } from './test-utils/accountCodeGls';
 
  vi.mock('src/routes/sharedComponents/operatorDropdown', () => ({
   OperatorDropdown: ({ value, onChange }: { value: string; onChange: (id: string) => void }) => (
@@ -51,7 +42,7 @@ vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-    fetchPartnersFromSourceSystemInSupabase: vi.fn(),
+    fetchSourceSystemPartners: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -135,13 +126,13 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Fetches the partners and allows users to delete a partner', async () => {
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
         (writeProvider.updatePartnerProcessedStatus as Mock)
           .mockResolvedValue({ok: true, message: undefined});
 
         await setupWithSelections(user);
-        expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchSourceSystemPartners).toHaveBeenCalledTimes(1);
         await waitFor(() => {
           expect(screen.getByText('A partner')).toBeInTheDocument();
           expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
@@ -156,13 +147,13 @@ describe('View and edit the partner mappings',() => {
 
 
     test('Fetches partners and allows users to bring one back from the dead', async () => {
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
           (writeProvider.updatePartnerProcessedStatus as Mock)
           .mockResolvedValue({ok: true, message: undefined});
 
         await setupWithSelections(user);
-       expect(fetchProvider.fetchPartnersFromSourceSystemInSupabase).toHaveBeenCalledTimes(1);
+       expect(fetchProvider.fetchSourceSystemPartners).toHaveBeenCalledTimes(1);
         await waitFor(() => {
           expect(screen.getByText('A partner')).toBeInTheDocument();
           expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();

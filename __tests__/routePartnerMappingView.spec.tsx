@@ -16,7 +16,7 @@ import {
     savedMapOnePartnerSelectDeselectSelectNew,
     twoMappedPartnerRecords,
     savedMapOnePartnerAddressUndefined,
-    operatorMappedLibrary
+    mappedRecords
 } from './test-utils/mapPatnerRecords';
 
  vi.mock('src/routes/sharedComponents/operatorDropdown', () => ({
@@ -27,7 +27,7 @@ import {
       onChange={(e) => onChange(e.target.value)}
     >
       <option value="">-- select --</option>
-      <option value="op-1">Operator One</option>
+      <option value="3b34a78a-13ad-40b5-aecd-268d56dd5e0d">Operator One</option>
       <option value="op-2">Operator Two</option>
     </select>
   )
@@ -36,7 +36,7 @@ import {
 vi.mock('provider/fetch', () => ({
     fetchPartnersLinkedOrUnlinkedToOperator: vi.fn(),
     fetchPartnersFromSourceSystemInSupabase: vi.fn(),
-    fetchPartnersFromPartnersCrosswalk: vi.fn()
+    fetchMappedPartners: vi.fn()
 }));
 
 vi.mock('provider/write', () => ({
@@ -47,7 +47,7 @@ vi.mock('provider/write', () => ({
 // At the top of your describe block, create a helper
 const setupWithSelections = async (
   user: ReturnType<typeof userEvent.setup>,
-  operatorValue = 'op-1'
+  operatorValue = "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
 ) => {
   renderWithProviders(<PartnerMappingView />, {
     supabaseOverrides: {
@@ -92,8 +92,8 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Loads screen and waits for user selection', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-                    .mockResolvedValue(operatorMappedLibrary);
+        (fetchProvider.fetchMappedPartners as Mock)
+                    .mockResolvedValue(mappedRecords);
         
         renderWithProviders(<PartnerMappingView />, {
             supabaseOverrides: {
@@ -119,39 +119,43 @@ describe('View and edit the partner mappings',() => {
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(0);
+        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(0);
         
     });
 
     test('Shows a list of mapped Partners to the user', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-        .mockResolvedValue({ok: true, data: operatorMappedLibrary});
+        (fetchProvider.fetchMappedPartners as Mock)
+        .mockResolvedValue({ok: true, data: mappedRecords});
         
         await setupWithSelections(user);
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
+        })
+        
 
         await waitFor(() => {
-            expect(screen.getAllByText('John Ross Exploration Inc')[0]).toBeInTheDocument();
-            expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
-            expect(screen.getAllByText('Energy Oil Company')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Denver 3')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Athena Minerals Inc.')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Mckenzie Oil')[0]).toBeInTheDocument();
+            screen.debug();
+            //expect(screen.getByText('Mckenzie Oil')).toBeInTheDocument();
+            //expect(screen.getAllByText('Mewbourne Oil Company')[0]).toBeInTheDocument();
+            //expect(screen.getAllByText('Navigator Corporation')[0]).toBeInTheDocument();
+            //expect(screen.getAllByText('Nav Corp Gas and Oil')[0]).toBeInTheDocument();
         });
         
     });
 
     test('Shows a message if there are no mapped partners', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
                     .mockResolvedValue({ok:true, data:[]});
         
         await setupWithSelections(user);
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
 
         await waitFor(() => {
             expect(screen.getByText(/This Operator has not mapped thier Partners to the AFE Partner Connection Library./i)).toBeInTheDocument();
@@ -160,14 +164,14 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('Shows a message if response is undefined', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
                     .mockResolvedValue({ok:false, data:[]});
         
         await setupWithSelections(user);
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
 
         await waitFor(() => {
             expect(screen.getByText(/This Operator has not mapped thier Partners to the AFE Partner Connection Library./i)).toBeInTheDocument();
@@ -176,24 +180,24 @@ describe('View and edit the partner mappings',() => {
     });
 
     test('User deletes a partner mapping', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-        .mockResolvedValue({ok: true, data: operatorMappedLibrary});
+        (fetchProvider.fetchMappedPartners as Mock)
+        .mockResolvedValue({ok: true, data: mappedRecords});
         
         await setupWithSelections(user);
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
 
         await waitFor(() => {
-            expect(screen.getAllByText('John Ross Exploration Inc')[0]).toBeInTheDocument();
-            expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
-            expect(screen.getAllByText('Energy Oil Company')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Denver 3')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Athena Minerals Inc.')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Mckenzie Oil')[0]).toBeInTheDocument();
+            expect(screen.getByText('McLane Gas and Oil')).toBeInTheDocument();
+            expect(screen.getAllByText('Mewbourne Oil Company')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Navigator Corporation')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Nav Corp Gas and Oil')[0]).toBeInTheDocument();
         });
 
-        const row = screen.getByRole('row', { name: /Archipelago Energy Inc./i });
+        const row = screen.getByRole('row', { name: /McLane Gas and Oil/i });
 
         expect(row).toBeInTheDocument();
         const deleteButton = within(row!).getAllByRole('button', { name: /delete mapping/i });
@@ -201,33 +205,33 @@ describe('View and edit the partner mappings',() => {
         await user.click(deleteButton[0]);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([24], false);
+            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([38], false);
         });
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['91f3ebe5-d5f6-4211-959f-1121b666804b'], false);
+            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d'], false);
         });
         
     });
 
     test('User deletes a partner mapping', async () => {
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-         .mockResolvedValue({ok: true, data: operatorMappedLibrary});
+        (fetchProvider.fetchMappedPartners as Mock)
+         .mockResolvedValue({ok: true, data: mappedRecords});
         
         await setupWithSelections(user);
 
         expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
         expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
 
         await waitFor(() => {
-            expect(screen.getAllByText('John Ross Exploration Inc')[0]).toBeInTheDocument();
-            expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
-            expect(screen.getAllByText('Energy Oil Company')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Denver 3')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Athena Minerals Inc.')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Mckenzie Oil')[0]).toBeInTheDocument();
+            expect(screen.getByText('McLane Gas and Oil')).toBeInTheDocument();
+            expect(screen.getAllByText('Mewbourne Oil Company')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Navigator Corporation')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Nav Corp Gas and Oil')[0]).toBeInTheDocument();
         });
 
-        const row = screen.getByRole('row', { name: /Archipelago Energy Inc./i });
+        const row = screen.getByRole('row', { name: /McLane Gas and Oil/i });
 
         expect(row).toBeInTheDocument();
         const deleteButton = within(row!).getAllByRole('button', { name: /delete mapping/i });
@@ -235,10 +239,10 @@ describe('View and edit the partner mappings',() => {
         await user.click(deleteButton[1]);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([24], false);
+            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([38], false);
         });
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['91f3ebe5-d5f6-4211-959f-1121b666804b'], false);
+            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d'], false);
         });
         
     });

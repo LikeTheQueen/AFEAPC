@@ -1,8 +1,9 @@
-import { fetchOperatorExecuteFilters } from 'provider/fetch';
+import { fetchAFEExecuteFilters } from 'provider/fetch';
 import { updateOperatorFilterFields } from 'provider/write';
 import { useEffect, useState } from 'react';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { notifyStandard } from 'src/helpers/helpers';
+import { useSupabaseData } from 'src/types/SupabaseContext';
 
 interface AFEFilterCondition {
   LeftParenthesis?: string;
@@ -64,6 +65,8 @@ const defaultWellFields: string[] = [
     ];
 
 export default function OperatorExecuteFilters() {
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? '';
     const [opAPCID, setOpAPCID] = useState('');
     const [afeFilter, setAFEFilter] = useState<AFEFilterCondition[]>(defaultAFEFilter);
     const [rawJson, setRawJson] = useState(JSON.stringify([], null, 2));
@@ -119,10 +122,11 @@ export default function OperatorExecuteFilters() {
     };
 
     useEffect(() => {
-        if (opAPCID === '') return;
+        if (opAPCID === '' || token === '') return;
         const getFilters = async () => {
             try {
-                const operatorFilters = await fetchOperatorExecuteFilters(opAPCID);
+                const operatorFilters = await fetchAFEExecuteFilters(opAPCID, token);
+
                 if (!operatorFilters.ok) {
                     throw new Error(operatorFilters.message as string);
                 }
@@ -144,7 +148,7 @@ export default function OperatorExecuteFilters() {
                 return;
             }
         }; getFilters();
-    }, [opAPCID]);
+    }, [opAPCID, token]);
 
     return (
         <>

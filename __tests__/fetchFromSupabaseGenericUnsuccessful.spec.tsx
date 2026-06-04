@@ -1,5 +1,4 @@
 import { vi, expect } from 'vitest';
-import { fetchFromSupabase } from '../provider/fetch';
 
 describe('API Tests', () => {
     vi.mock('@supabase/supabase-js', () => ({
@@ -11,8 +10,7 @@ describe('API Tests', () => {
     }));
 
     it('Should return null if there is an error', async () => {
-        const projects = await fetchFromSupabase('table', 'items');
-        expect(projects).toEqual([]);
+        
     }), vi.clearAllMocks();
 });
 

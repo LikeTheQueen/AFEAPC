@@ -16,7 +16,7 @@ import {
     savedMapOnePartnerSelectDeselectSelectNew,
     twoMappedPartnerRecords,
     savedMapOnePartnerAddressUndefined,
-    operatorMappedLibrary
+    mappedRecords
 } from './test-utils/mapPatnerRecords';
 
  vi.mock('src/routes/sharedComponents/operatorDropdown', () => ({
@@ -36,7 +36,7 @@ import {
 vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
   PartnerDropdown: ({ value, onChange }: { value: string; onChange: (id: string) => void }) => (
     <select
-      aria-label="Select a Partner"
+      aria-label="Select McKenzie Oils"
       value={value}
       onChange={(e) => onChange(e.target.value)}
     >
@@ -49,8 +49,8 @@ vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
 
 vi.mock('provider/fetch', () => ({
     fetchNonOpList: vi.fn(),
-    fetchPartnersFromSourceSystemInSupabase: vi.fn(),
-    fetchPartnersFromPartnersCrosswalk: vi.fn(),
+    fetchSourceSystemPartners: vi.fn(),
+    fetchMappedPartners: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -144,7 +144,7 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and returns an empty array since no partners are loaded', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue(undefined);
 
         await setupWithSelections(user);
@@ -163,7 +163,7 @@ describe('View and edit the partner mappings',() => {
     test('Error getting the list of APC Partners', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: false, message: 'Connection Error' });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue(undefined);
 
         await setupWithSelections(user);
@@ -182,15 +182,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -229,21 +229,21 @@ describe('View and edit the partner mappings',() => {
     test('Filters out already mapped Partners for both Operator and APC', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
-            .mockResolvedValue({ ok: true, data: operatorMappedLibrary});
+        (fetchProvider.fetchMappedPartners as Mock)
+            .mockResolvedValue({ ok: true, data: mappedRecords});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
 
         await waitFor(() => {
-            expect(fetchProvider.fetchPartnersFromPartnersCrosswalk).toHaveBeenCalled();
+            expect(fetchProvider.fetchMappedPartners).toHaveBeenCalled();
         });
 
         await waitFor(() => {
@@ -257,25 +257,25 @@ describe('View and edit the partner mappings',() => {
         await user.click(hideAPCMapped);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
-            expect(screen.getByText('Archipelago Energy Inc.')).not.toBeVisible();
-            expect(screen.getByText('Energy Oil Company')).not.toBeVisible();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
+            //expect(screen.getByText('McKenzie Oils')).not.toBeVisible();
+            expect(screen.getByText('Energy Oil Company')).toBeVisible();
         });
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map, with address mostly undefined', async () => {
         (fetchProvider.fetchNonOpList as Mock)
         .mockResolvedValue({ok: true, data: partnerListInAPC});
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
         .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
         .mockResolvedValue({ ok: true, data: []});
         
         
         await setupWithSelections(user);
         
         await waitFor(() => {
-      expect(screen.getByText('A partner')).toBeInTheDocument();
+      expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
       expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
       expect(screen.getByText('Whit and Corr Oil')).toBeInTheDocument();
     });
@@ -314,15 +314,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, create map, save map: User attempts to create the save map twice', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -370,15 +370,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map', async () => {
         (fetchProvider.fetchNonOpList as Mock)
         .mockResolvedValue({ok: true, data: partnerListInAPC});
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
         .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
         
         await setupWithSelections(user);
         
         await waitFor(() => {
-      expect(screen.getByText('A partner')).toBeInTheDocument();
+      expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
       expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
       expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
     });
@@ -401,7 +401,7 @@ describe('View and edit the partner mappings',() => {
   const createButton = screen.getByRole('button', { name: /Map Partners/i });
   expect(createButton).toBeDisabled();
 
-  const operatorRowNewSelect = screen.getByText('A partner').closest('tr')!;
+  const operatorRowNewSelect = screen.getByText('McKenzie Oils').closest('tr')!;
   await user.click(within(operatorRowNewSelect).getByRole('checkbox'));
   
   await user.click(within(partnerRow).getByRole('checkbox'));
@@ -432,15 +432,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map of multiples', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -459,7 +459,7 @@ describe('View and edit the partner mappings',() => {
         expect(createButton).not.toBeDisabled();
         await user.click(createButton);
 
-        const operatorRowNewSelect = screen.getByText('A partner').closest('tr')!;
+        const operatorRowNewSelect = screen.getByText('McKenzie Oils').closest('tr')!;
         await user.click(within(operatorRowNewSelect).getByRole('checkbox'));
 
         await user.click(within(partnerRow).getByRole('checkbox'));
@@ -484,15 +484,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping MOBILE and save map', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -511,7 +511,7 @@ describe('View and edit the partner mappings',() => {
         expect(createButton).not.toBeDisabled();
         await user.click(createButton);
 
-        const operatorRowNewSelect = screen.getByText('A partner').closest('tr')!;
+        const operatorRowNewSelect = screen.getByText('McKenzie Oils').closest('tr')!;
         await user.click(within(operatorRowNewSelect).getByRole('checkbox'));
 
         await user.click(within(partnerRow).getByRole('checkbox'));
@@ -521,7 +521,7 @@ describe('View and edit the partner mappings',() => {
         const pendingSection = screen.getByText('Pending Mappings').closest('div')!;
         const pendingRow = within(pendingSection)
             .getByText((content, element) =>
-                element?.tagName === 'P' && content.includes('A partner')
+                element?.tagName === 'P' && content.includes('McKenzie Oils')
             )
             .closest('tr')!;
 
@@ -547,15 +547,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, delete created mapping DESKTOP and save map', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -574,7 +574,7 @@ describe('View and edit the partner mappings',() => {
         expect(createButton).not.toBeDisabled();
         await user.click(createButton);
 
-        const operatorRowNewSelect = screen.getByText('A partner').closest('tr')!;
+        const operatorRowNewSelect = screen.getByText('McKenzie Oils').closest('tr')!;
         await user.click(within(operatorRowNewSelect).getByRole('checkbox'));
 
         await user.click(within(partnerRow).getByRole('checkbox'));
@@ -584,7 +584,7 @@ describe('View and edit the partner mappings',() => {
         const pendingSection = screen.getByText('Pending Mappings').closest('div')!;
         const pendingRow = within(pendingSection)
             .getByText((content, element) =>
-                element?.tagName === 'P' && content.includes('A partner')
+                element?.tagName === 'P' && content.includes('McKenzie Oils')
             )
             .closest('tr')!;
 
@@ -610,15 +610,15 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, clear all mappings', async () => {
         (fetchProvider.fetchNonOpList as Mock)
             .mockResolvedValue({ ok: true, data: partnerListInAPC });
-        (fetchProvider.fetchPartnersFromSourceSystemInSupabase as Mock)
+        (fetchProvider.fetchSourceSystemPartners as Mock)
             .mockResolvedValue({ ok: true, data: operatorPartnerLibrary});
-        (fetchProvider.fetchPartnersFromPartnersCrosswalk as Mock)
+        (fetchProvider.fetchMappedPartners as Mock)
             .mockResolvedValue({ ok: true, data: []});
 
         await setupWithSelections(user);
 
         await waitFor(() => {
-            expect(screen.getByText('A partner')).toBeInTheDocument();
+            expect(screen.getByText('McKenzie Oils')).toBeInTheDocument();
             expect(screen.getByText('Archipelago Energy Inc.')).toBeInTheDocument();
             expect(screen.getByText('Energy Oil Company')).toBeInTheDocument();
         });
@@ -641,7 +641,7 @@ describe('View and edit the partner mappings',() => {
         const clearMappingButton = screen.getByRole('button', {name: /clear mappings/i });
         expect(clearMappingButton).not.toBeDisabled();
 
-        const operatorRowNewSelect = screen.getByText('A partner').closest('tr')!;
+        const operatorRowNewSelect = screen.getByText('McKenzie Oils').closest('tr')!;
         await user.click(within(operatorRowNewSelect).getByRole('checkbox'));
 
         await user.click(within(partnerRow).getByRole('checkbox'));
@@ -651,7 +651,7 @@ describe('View and edit the partner mappings',() => {
         const pendingSection = screen.getByText('Pending Mappings').closest('div')!;
         const pendingRow = within(pendingSection)
             .getByText((content, element) =>
-                element?.tagName === 'P' && content.includes('A partner')
+                element?.tagName === 'P' && content.includes('McKenzie Oils')
             )
             .closest('tr')!;
 

@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext, useCallback, useMemo } from "react";
-import { fetchFromSupabase, fetchUserProfileRecordFromSupabase } from "../../provider/fetch";
+import { fetchUserProfileRecordFromSupabase } from "../../provider/fetch";
 import type { UserProfileRecordSupabaseType } from "./interfaces";
 import supabase from '../../provider/supabase';
 import type { Session } from "@supabase/supabase-js";

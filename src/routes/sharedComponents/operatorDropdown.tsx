@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllParentCompanies, fetchOpList } from "provider/fetch";
+import { fetchParentCompanyList, fetchOpList } from "provider/fetch";
 import type { OperatorOrPartnerList, ParentCompany } from "src/types/interfaces";
 import { editOperatorLibrary, superUserPermission } from "src/constants/variables";
-import { transformOperatorForDropDown } from "src/types/transform";
+import { transformOperatorForDropDown, transformParentCompany } from "src/types/transform";
 
 type Props = {
   value: string;
@@ -24,7 +24,6 @@ type ParentCompanyProps = {
 export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: Props) {
   const { loggedInUser, session } = useSupabaseData();
   const token = session?.access_token ?? "";
-  const emptyArray: OperatorOrPartnerList[] = [];
   const [filteredOperators, setFilteredOperators] = useState<OperatorOrPartnerList[] | []>([]);
   
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -73,7 +72,7 @@ export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: P
         setFilteredOperators(operatorList);
       };
       load();
-    }, [loggedInUser, limitedList]);
+    }, [loggedInUser, limitedList, token]);
     
   return (
     <>
@@ -102,7 +101,8 @@ export function OperatorDropdown({ value, onChange, limitedList, valueLabel }: P
 };
 
 export function ParentCompanyDropdown({ value, onChange, onRecordChange, limitedList, valueLabel }: ParentCompanyProps) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? "";
   const [filteredOperators, setFilteredOperators] = useState<ParentCompany[] | []>([]);
   
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -116,16 +116,34 @@ export function ParentCompanyDropdown({ value, onChange, onRecordChange, limited
 
     useEffect(() => {
       const load = async () => {
-        if(!loggedInUser) return;
+        if(!loggedInUser || token === '') return;
         
-          const operatorList = await fetchAllParentCompanies();
-          setFilteredOperators(operatorList ?? []);
+        try {
+          const operatorList = await fetchParentCompanyList(token);
+          if(operatorList.ok) {
+            const dataFormatted: ParentCompany[] = transformParentCompany(operatorList.data);
+                const operatorListSorted = dataFormatted.sort((a,b) => {
+                  if (a.apc_name === undefined && b.apc_name === undefined) {
+                    return 0;
+                  }
+                  if (a.apc_name === undefined) {
+                    return 1;
+                  }
+                  if (b.apc_name === undefined) {
+                    return -1;
+                  }
+                  return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+                });
+                setFilteredOperators(operatorListSorted ?? []);
+          }
+        } catch(err) {
           return;
-
+        } finally {
+          return;
+        }
       };
       load();
-    }, [loggedInUser, limitedList]);
-    
+    }, [loggedInUser, token, limitedList]);
     
   return (
     <>

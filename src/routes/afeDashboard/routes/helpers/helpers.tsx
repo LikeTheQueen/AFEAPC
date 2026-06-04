@@ -1,19 +1,17 @@
-import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus, writeToFunctionLogs, insertAFEHistoryRecord } from "provider/write";
+import { updateAFEPartnerStatus, updateAFEPartnerArchiveStatus, updateAFEOperatorArchiveStatus, writeToFunctionLogs, insertAFEHistory } from "provider/write";
 import type { AFEType, UserProfileRecordSupabaseType } from "src/types/interfaces";
-import { insertAFEHistory } from 'provider/write'
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { superUserPermission, supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
 import { handleSendEmail, sendAFEStatusChangeEmailToOperator, sendAFEStatusChangeEmailToPartner } from "email/emailBasic";
-import { useSupabaseData } from "src/types/SupabaseContext";
 
 export async function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
   await updateAFEPartnerArchiveStatus(id, archivedStatus, token);
-  await insertAFEHistoryRecord(id, description, type);
+  await insertAFEHistory(id, description, type, token);
 };
 
 export function handleOperatorArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
   updateAFEOperatorArchiveStatus(id, archivedStatus, token);
-  insertAFEHistoryRecord(id, description, type);
+  insertAFEHistory(id, description, type, token);
 };
 
 export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
@@ -50,7 +48,7 @@ export async function handleThePartnerStatusChange(
     notifyFailure(`Unable to update the AFE status.  Contact ${supportEmail} if the problem persists`);
     return { ok: false };
   } else {
-    const insertAFEHistoryResult = await insertAFEHistoryRecord(afeRecord.id, description, type);
+    await insertAFEHistory(afeRecord.id, description, type, token);
     
     //Send to Operator
     sendAFEStatusChangeEmailToOperator(afeRecord, newPartnerStatus, loggedInUserFirstName, loggedInUserLastName, loggedinUserEmail);

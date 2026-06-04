@@ -5,17 +5,7 @@ import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
 
   //INSERT FUNCTIONS API CALLS
-  export const insertAFEHistoryRecord = async (afe_id:string, description:string, type: string) => {
-    const { data, error } = await supabase
-    .from('AFE_HISTORY')
-    .insert({afe_id: afe_id, description: description, type:type})
-    .select();
-    if (error) {
-        writeToFunctionLogs('insertAFEHistoryRecord', 'Cannot add history to AFE '+afe_id, { message: error.message } as unknown as JSON , 'ERROR', 'AFE Detail screen')
-        return {ok: false}
-      }
-      return {ok: true}
-  };
+
   export const writeToFunctionLogs = async (function_name: string, message: string, details: JSON | null, level: string, triggered_from: string) => {
     
     const { data, error } = await supabase.from('FUNCTION_LOGS').insert({
@@ -40,48 +30,6 @@ import type { UUID } from 'crypto';
           return {ok: false};
         }
     return {ok: true};
-  };
-  
-
-  export const updateOperatorAddress = async (operatorAddress: AddressType) => {
-      const { error } = await supabase
-      .from('OPERATOR_ADDRESS')
-      .update({street: operatorAddress.street, suite: operatorAddress.suite, city: operatorAddress.city, state: operatorAddress.state, zip: operatorAddress.zip, country: operatorAddress.country, active: operatorAddress.address_active})
-      .eq('id',operatorAddress.id)
-      .select();
-      if (error) {
-        writeToFunctionLogs('updateOperatorAddress', error.message, null, 'ERROR', 'Update Operator Address UI');
-          return {ok: false, message: error.message};
-        }
-        
-    return {ok:true, message: undefined};
-  };
-
-  export const updatePartnerNameAndStatus = async (partnerRecord: RoleEntryRead) => {
-    const { data, error } = await supabase
-    .from('PARTNERS')
-    .update({name: partnerRecord.apc_name, active: partnerRecord.apc_name_active})
-    .eq('id',partnerRecord.apc_id)
-    .select();
-    if (error) {
-        writeToFunctionLogs('updatePartnerNameAndStatus', error.message, null, 'ERROR', 'Update Non Op Name UI');
-         return {ok: false, data: [], message: error.message};
-      }
-  return {ok:true, data: data, message: undefined};
-  };
-
-  export const updatePartnerAddress = async (partnerAddress: AddressType) => {
-      const { data, error } = await supabase
-      .from('PARTNER_ADDRESS')
-      .update({street: partnerAddress.street, suite: partnerAddress.suite, city: partnerAddress.city, state: partnerAddress.state, zip: partnerAddress.zip, country: partnerAddress.country, active: partnerAddress.address_active})
-      .eq('id',partnerAddress.id)
-      .select();
-      if (error) {
-          writeToFunctionLogs('updatePartnerAddress', error.message, null, 'ERROR', 'Update Non Op Address');
-          return {ok: false, data: [], message: error.message};
-        }
-        
-    return {ok:true, data: data, message: undefined};
   };
 
   export const addOParentCompanySupabase = async (name: string) => {
@@ -657,31 +605,29 @@ export async function updateOperatorNameStatus(operatorName: string, activeStatu
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Name_and_Status", { operatorName, activeStatus, apc_id }, token);
   };
   
-{/*
-export async function updateOperatorAddress(operatorAddress: OperatorPartnerRecord, token: string) {
+
+export async function updateOpAddress(operatorAddress: AddressType, token: string) {
     
-    type TogglePayload = { operatorAddress: OperatorPartnerRecord; };
-    type ToggleResult  = { ok: true; data: { id: string; active: boolean; } } | { ok: false; message: string };
+    type TogglePayload = { operatorAddress: AddressType; };
+    type ToggleResult  = { ok: true; message: string } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Operator_Address", { operatorAddress }, token);
   };
-  */}
-  {/* 
 
-export async function updatePartnerAddress(partnerAddress: OperatorPartnerRecord, token: string) {
+export async function updateNonOpAddress(partnerAddress: AddressType, token: string) {
     
-    type TogglePayload = { partnerAddress: OperatorPartnerRecord; };
-    type ToggleResult  = { ok: true; data: { id: string; active: boolean; } } | { ok: false; message: string };
+    type TogglePayload = { partnerAddress: AddressType; };
+    type ToggleResult  = { ok: true; message: string } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Partner_Address", { partnerAddress }, token);
   };
 
-export async function updatePartnerNameAndStatus(partnerRecord: OperatorPartnerRecord, token: string) {
+export async function updatePartnerNameStatus(partnerRecord: RoleEntryRead, token: string) {
     
-    type TogglePayload = { partnerRecord: OperatorPartnerRecord; };
-    type ToggleResult  = { ok: true; data: { id: string; active: boolean; name: string;} } | { ok: false; message: string };
+    type TogglePayload = { partnerRecord: RoleEntryRead; };
+    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Partner_Name_and_Status", { partnerRecord }, token);
   };
-  */}
+ 
   

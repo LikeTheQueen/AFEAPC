@@ -1,6 +1,6 @@
 import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { addPartnerSupabase, updateOperatorAddress, updateOperatorNameStatus, updatePartnerAddress, updatePartnerNameAndStatus, updatePartnerWithOpID, writeToFunctionLogs } from 'provider/write';
+import { addPartnerSupabase, updateOpAddress, updateOperatorNameStatus, updateNonOpAddress, updatePartnerNameStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
@@ -194,9 +194,10 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
     } 
   };
   async function handleClickSaveOpAddress() {
+
     try {
-      const operatorAddress = await updateOperatorAddress(opRecordToEdit.apc_address);
-      
+      const operatorAddress = await updateOpAddress(opRecordToEdit.apc_address, token);
+
       if(!operatorAddress.ok) {
         throw new Error(operatorAddress.message)
       } 
@@ -237,7 +238,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
 
   async function handleClickSaveNonOpName(nonOpRecord: RoleEntryRead, partnerIdx?: number) {
     try {
-      const partnerToEdit = await updatePartnerNameAndStatus(nonOpRecord);
+      const partnerToEdit = await updatePartnerNameStatus(nonOpRecord, token);
       
       if(!partnerToEdit.ok) {
         throw new Error(partnerToEdit.message as any).message
@@ -256,7 +257,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
   };
   async function handleClickSaveNonOpAddress(nonOpRecord: RoleEntryRead, partnerIdx?: number) {
     try {
-      const partnerAddress = await updatePartnerAddress(nonOpRecord.apc_address);
+      const partnerAddress = await updateNonOpAddress(nonOpRecord.apc_address, token);
       
       if(!partnerAddress.ok) {
         throw new Error(partnerAddress.message as any).message
@@ -313,7 +314,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
   
   try {
     
-   const partnerStatusChange = await updatePartnerNameAndStatus(updatedPartner);
+   const partnerStatusChange = await updatePartnerNameStatus(updatedPartner, token);
 
     if(!partnerStatusChange.ok) {
         throw new Error(partnerStatusChange.message as any).message;

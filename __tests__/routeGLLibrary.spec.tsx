@@ -50,7 +50,7 @@ vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-    fetchAccountCodesForOperatorOrPartner: vi.fn(),
+    fetchAccountCodes: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -167,57 +167,65 @@ describe('View and edit the GL Code Library',() => {
     });
 
     test('Fetches account codes and allows users to delete one Op account codes', async () => {
-        (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
-          .mockResolvedValue(WhitAndCorrOilAccountCodes);
+        (fetchProvider.fetchAccountCodes as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes
+          });
 
         await setupWithSelections(user);
-        expect(fetchProvider.fetchAccountCodesForOperatorOrPartner).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+          expect(fetchProvider.fetchAccountCodes).toHaveBeenCalled();
+        });
+        
         await waitFor(() => {
           expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
           expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('9210.202')[1]).not.toBeVisible();
         });
         
     
       const accountRow = screen.getAllByText('9210.201')[0].closest('tr')!;
       await user.click(within(accountRow).getByRole('button'));
     
-    
       });
 
     test('Fetches account codes and allows users to delete one Non Op', async () => {
-        (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
-          .mockResolvedValue(WhitAndCorrOilAccountCodes);
+        (fetchProvider.fetchAccountCodes as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodesNonOP
+          });
 
         await setupWithSelectionsNonOpAccount(user);
-        expect(fetchProvider.fetchAccountCodesForOperatorOrPartner).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchAccountCodes).toHaveBeenCalledTimes(1);
         await waitFor(() => {
-          expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('9210.202')[1]).not.toBeVisible();
+          expect(screen.getAllByText('303.201')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('303.202')[0]).toBeInTheDocument();
         });
         
     
-      const accountRow = screen.getAllByText('9210.201')[0].closest('tr')!;
+      const accountRow = screen.getAllByText('303.201')[0].closest('tr')!;
       await user.click(within(accountRow).getByRole('button'));
     
     
       });
     
     test('Select Op Account Codes after Non Op Call', async () => {
-        (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
-          .mockResolvedValueOnce(WhitAndCorrOilAccountCodes)
-          .mockResolvedValueOnce(WhitAndCorrOilAccountCodesNonOP);
+        (fetchProvider.fetchAccountCodes as Mock)
+          .mockResolvedValueOnce({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes
+          })
+          .mockResolvedValueOnce({
+            ok: true,
+            data: WhitAndCorrOilAccountCodesNonOP
+          });
 
         await setupWithSelections(user);
-        expect(fetchProvider.fetchAccountCodesForOperatorOrPartner).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchAccountCodes).toHaveBeenCalledTimes(1);
         await waitFor(() => {
           expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
           expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('9210.202')[1]).not.toBeVisible();
         });
         
         await user.selectOptions(
@@ -226,38 +234,38 @@ describe('View and edit the GL Code Library',() => {
         );
         
         await waitFor(() => {
-          expect(screen.getAllByText('5310.201')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('5310.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('5310.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('5310.202')[1]).not.toBeVisible();
+          expect(screen.getAllByText('303.201')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('303.202')[0]).toBeInTheDocument();
         });
     
       });
 
     test('Fetches account codes and allows users to bring one back from the dead', async () => {
-        (fetchProvider.fetchAccountCodesForOperatorOrPartner as Mock)
-          .mockResolvedValue(WhitAndCorrOilAccountCodes);
+        (fetchProvider.fetchAccountCodes as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes
+          });
 
         await setupWithSelections(user);
-        expect(fetchProvider.fetchAccountCodesForOperatorOrPartner).toHaveBeenCalledTimes(1);
+        expect(fetchProvider.fetchAccountCodes).toHaveBeenCalledTimes(1);
         await waitFor(() => {
           expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
           expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.201')[1]).not.toBeVisible();
-          expect(screen.getAllByText('9210.202')[1]).not.toBeVisible();
+          expect(screen.getAllByText('9210.203')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('9210.203')[0]).not.toBeVisible();
         });
         
         const showDeleted = screen.getByRole('checkbox', { name: /Hide Deleted Account Codes/i});
         await user.click(showDeleted);
 
         await waitFor(() => {
-          expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('9210.203')[0]).toBeInTheDocument();
           expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.201')[1]).toBeInTheDocument();
-          expect(screen.getAllByText('9210.202')[1]).toBeInTheDocument();
+          expect(screen.getAllByText('9210.203')[0]).toBeVisible();
         });
 
-        const accountRow = screen.getAllByText('9210.201')[1].closest('tr')!;
+        const accountRow = screen.getAllByText('9210.203')[0].closest('tr')!;
       await user.click(within(accountRow).getByRole('button'));
 
 

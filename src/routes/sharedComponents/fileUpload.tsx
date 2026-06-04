@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { insertAFEHistoryRecord, insertDocument, insertIntoAFEDocTable } from 'provider/write';
+import { insertAFEHistory, insertDocument, insertIntoAFEDocTable } from 'provider/write';
 import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { handleSendEmail } from 'email/emailBasic';
 import { fetchEmailsForNonOperatorUsers, fetchEmailsForOperatorUsers } from 'provider/fetch';
@@ -15,9 +15,10 @@ type FileUploadProps = {
   afe_number: string;
   afe_version: string;
   mode: 'Operator' | 'Partner';
+  token: string;
 }
 
-export default function FileUpload({apc_afe_id, apc_op_id, apc_part_id, userName, apc_partner_name, apc_operator_name, afe_number, afe_version, mode}: FileUploadProps) {
+export default function FileUpload({apc_afe_id, apc_op_id, apc_part_id, userName, apc_partner_name, apc_operator_name, afe_number, afe_version, mode, token}: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [isNonOpAFEAgreement, setIsNonOpAFEAgreement] = useState<boolean | undefined>(undefined);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
@@ -75,7 +76,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
 
         if(isNonOpAFEAgreement) {
         
-        await insertAFEHistoryRecord(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action');
+        await insertAFEHistory(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action', token);
         await handleSendEmail(
           `A signed AFE has been uploaded by ${userName} at ${apc_partner_name}`,
           `This message is to let you know that ${apc_partner_name} has uploaded a signed copy of the AFE.  The AFE Number is ${afe_number} (${afe_version})`,
@@ -87,7 +88,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
           'View AFE'
         );
       } else {
-          await insertAFEHistoryRecord(apc_afe_id, 'An attachment has been uploaded by ' + userName + ' for ' + companyName, 'action');
+          await insertAFEHistory(apc_afe_id, 'An attachment has been uploaded by ' + userName + ' for ' + companyName, 'action', token);
           await handleSendEmail(
           `An attachment has been uploaded by ${userName} at ${companyName}`,
           `This message is to let you know that ${companyName} has uploaded an attachment for the AFE.  The AFE Number is ${afe_number} (${afe_version})`,

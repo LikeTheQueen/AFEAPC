@@ -1,4 +1,4 @@
-import { fetchNonOpList, fetchPartnersFromPartnersCrosswalk, fetchPartnersFromSourceSystemInSupabase } from "provider/fetch";
+import { fetchNonOpList, fetchMappedPartners, fetchSourceSystemPartners } from "provider/fetch";
 import { useState, useEffect, useCallback } from "react";
 import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerMappingDisplayRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
@@ -11,7 +11,7 @@ import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { transformOperatorPartnerAddressWithOpName } from "src/types/transform";
+import { transformOperatorPartnerAddressWithOpName, transformPartnerMapRecordForDisplay, transformPartnerSourceSystemAddress } from "src/types/transform";
 
 interface PartnerMappingRecord {
     operator?: string;
@@ -52,19 +52,33 @@ export default function PartnerMapping() {
     };
 
     const getPartnersList = useCallback(async (signal: AbortSignal) => {
-        if(opAPCID === '' || !loggedInUser?.user_id) return;
+        if(opAPCID === '' || !loggedInUser?.user_id || token === '') return;
         setLoading(true);
 
         try{
 
             const [sourcePartList, mappedPartnerList] = await Promise.all([
-                fetchPartnersFromSourceSystemInSupabase(opAPCID),
-                fetchPartnersFromPartnersCrosswalk(opAPCID)
+                fetchSourceSystemPartners(opAPCID, token),
+                fetchMappedPartners(opAPCID, token)
             ]);
 
             if(sourcePartList.ok && mappedPartnerList.ok && !signal.aborted) {
-                setSourcePartnerList(sourcePartList.data ?? []);
-                setExistingPartnerMap(mappedPartnerList.data ?? []);
+                const dataTransformed = transformPartnerSourceSystemAddress(sourcePartList.data);
+                const sourcePartListSorted = dataTransformed.sort((a,b) => {
+                    if (a.name === undefined && b.name === undefined) {
+                        return 0;
+                    }
+                    if (a.name === undefined) {
+                        return 1;
+                    }
+                    if (b.name === undefined) {
+                        return -1;
+                    }
+                    return (a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }));
+                });
+                const mappedData = transformPartnerMapRecordForDisplay(mappedPartnerList.data);
+                setSourcePartnerList(sourcePartListSorted ?? []);
+                setExistingPartnerMap(mappedData ?? []);
             }
         } catch (err) {
             if(!signal.aborted) {
@@ -103,7 +117,7 @@ export default function PartnerMapping() {
             }
         }
 
-    }, [loggedInUser?.user_id, token])
+    }, [loggedInUser?.user_id, token]);
 
     useEffect(() => {
         if (opAPCID === '') return;

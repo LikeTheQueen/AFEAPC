@@ -452,7 +452,7 @@ export const operatorPartnerLibrary = [
     {
         "id": 90,
         "source_id": "91f3ebe5-d5f6-4211-959f-1121b666804G",
-        "name": "A partner",
+        "name": "McKenzie Oils",
         "street": "1900, 700 - 2nd Street S.W.",
         "suite": "",
         "city": "Calgary",
@@ -943,6 +943,45 @@ export const operatorPartnerLibrary = [
     }
 ];
 
+export const fetchSourceSystemPartners = [
+    {
+        "id": 1364,
+        "source_id": "d0d06a20-9469-42e1-9080-78cad31353e9",
+        "street": "2000 Main St",
+        "suite": "",
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77024",
+        "country": "United States",
+        "active": true,
+        "name": "McKenzie Oils"
+    },
+    {
+        "id": 1365,
+        "source_id": "86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d",
+        "street": "800 5th Ave SW",
+        "suite": "2020",
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77024",
+        "country": "United States",
+        "active": true,
+        "name": "McLane Gas and Oil"
+    },
+    {
+        "id": 1366,
+        "source_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb",
+        "street": "4 Green Ave",
+        "suite": "",
+        "city": "Dallas",
+        "state": "TX",
+        "zip": "75206",
+        "country": "United States",
+        "active": true,
+        "name": "Nav Corp Gas and Oil"
+    }
+];
+
 export const operatorMappedLibrary = [
     {
         "id": 1,
@@ -958,7 +997,7 @@ export const operatorMappedLibrary = [
             "country": "United States"
         },
         "source_partner": {
-            "apc_op_id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
             "name": "John Ross Exploration Inc",
             "source_id": "603ea163-a6b2-4f32-a8c5-67678401bf54",
             "street": "1 Green Ave",
@@ -984,7 +1023,7 @@ export const operatorMappedLibrary = [
             "country": "United States"
         },
         "source_partner": {
-            "apc_op_id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
             "name": "Athena Minerals Inc.",
             "source_id": "475e4d12-8a0b-4264-933d-d960936852b2",
             "street": "406, 999 - 8th Street S.W.",
@@ -1010,7 +1049,7 @@ export const operatorMappedLibrary = [
             "country": undefined
         },
         "source_partner": {
-            "apc_op_id": "a4367e56-14bf-4bd1-b0f1-fecc7d97b58c",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
             "name": "Archipelago Energy Inc.",
             "source_id": "91f3ebe5-d5f6-4211-959f-1121b666804b",
             "street": "1900, 700 - 2nd Street S.W.",
@@ -1023,7 +1062,89 @@ export const operatorMappedLibrary = [
         }
     }
 ];
-
+export const mappedRecords = [
+    {
+        "id": 36,
+        "apc_partner": {
+            "name": "Mckenzie Oil",
+            "apc_id": "4045d710-476a-4ee0-b97b-be64933133ba",
+            "address": {
+                "id": 18,
+                "zip": "87654",
+                "city": "Denver",
+                "state": "CO",
+                "suite": "7",
+                "street": "Kendall House Lane",
+                "country": "United States"
+            }
+        },
+        "source_partner": {
+            "zip": "77024",
+            "city": "Houston",
+            "name": "McKenzie Oils",
+            "state": "TX",
+            "suite": "",
+            "street": "2000 Main St",
+            "country": "United States",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "source_id": "d0d06a20-9469-42e1-9080-78cad31353e9"
+        }
+    },
+    {
+        "id": 37,
+        "apc_partner": {
+            "name": "Navigator Corporation",
+            "apc_id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+            "address": {
+                "id": 10,
+                "zip": "80113",
+                "city": "Englewood",
+                "state": "CO",
+                "suite": "878",
+                "street": "2900 S Emerson St",
+                "country": "United States"
+            }
+        },
+        "source_partner": {
+            "zip": "75206",
+            "city": "Dallas",
+            "name": "Nav Corp Gas and Oil",
+            "state": "TX",
+            "suite": "",
+            "street": "4 Green Ave",
+            "country": "United States",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "source_id": "eb050f2e-98c7-4b91-a5e1-ce817ed9cfcb"
+        }
+    },
+    {
+        "id": 38,
+        "apc_partner": {
+            "name": "Mewbourne Oil Company",
+            "apc_id": "019cf7ba-3775-46bc-a3f7-8aee7af30bb1",
+            "address": {
+                "id": 70,
+                "zip": "75711",
+                "city": "TYLER",
+                "state": "TEXAS",
+                "suite": "",
+                "street": "PO BOX 7698",
+                "country": "United States"
+            }
+        },
+        "source_partner": {
+            "zip": "77024",
+            "city": "Houston",
+            "name": "McLane Gas and Oil",
+            "state": "TX",
+            "suite": "2020",
+            "street": "800 5th Ave SW",
+            "country": "United States",
+            "apc_op_id": "3b34a78a-13ad-40b5-aecd-268d56dd5e0d",
+            "source_id": "86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d"
+        }
+    }
+];
 export const savedMapOnePartner = {
     "partner_id": "55817490-5603-4a65-9223-24c1f078dd81",
     "operator": "op-1",

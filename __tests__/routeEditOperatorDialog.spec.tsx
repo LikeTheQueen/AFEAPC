@@ -12,8 +12,8 @@ import { RachelGreen_AllPermissions_CW_NonOpCWAthena } from './test-utils/afeRec
 
 vi.mock('provider/write', () => ({
   updateOperatorNameStatus: vi.fn(),
-  updateOperatorAddress: vi.fn(),
-  updatePartnerNameAndStatus: vi.fn(),
+  updateOpAddress: vi.fn(),
+  updatePartnerNameStatus: vi.fn(),
   updatePartnerAddress: vi.fn(),
   addPartnerSupabase: vi.fn(),
 }));
@@ -180,7 +180,7 @@ describe('Edit Operators',() => {
 
     test('It should show the Operator Non Op address and save changes', async () => {
       const user = userEvent.setup();  
-      vi.mocked(writeProvider.updatePartnerNameAndStatus).mockResolvedValueOnce({
+      vi.mocked(writeProvider.updatePartnerNameStatus).mockResolvedValueOnce({
                   ok: true,
                   data: [{
                     created_at: "2025-04-20T23:05:38+00:00",
@@ -188,8 +188,7 @@ describe('Edit Operators',() => {
                     id: "record-d",
                     active: true,
                     apc_op_id: "3b34a78a-13ad-40b5-aecd-268d56dd5e0d"
-                  }],
-                  message: undefined
+                  }]
               });
      
 
@@ -235,7 +234,7 @@ describe('Edit Operators',() => {
         await user.click(saveOpNameAddress[1]);
 
         await waitFor(() => {
-          expect(writeProvider.updatePartnerNameAndStatus).toHaveBeenCalled();
+          expect(writeProvider.updatePartnerNameStatus).toHaveBeenCalled();
         });
 
     });

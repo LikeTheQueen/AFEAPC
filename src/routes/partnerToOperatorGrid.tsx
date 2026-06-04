@@ -31,6 +31,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     const opId = currentOpID;
     
     useEffect(() => {
+      if(token === '') return;
       let isMounted = true;
       async function loadPartnersToOperatorsList() {
         setLoading(true);
@@ -60,7 +61,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       return () => {
         isMounted = false;
       };
-    }, []);
+    }, [token]);
 
     const gridData = useMemo(() => {
         return [...partnerListToOperator].sort((a, b) => {

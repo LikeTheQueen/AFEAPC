@@ -1,5 +1,5 @@
-import { fetchPartnersFromPartnersCrosswalk } from "provider/fetch";
-import { useEffect, useState } from "react";
+import { fetchMappedPartners } from "provider/fetch";
+import { useCallback, useEffect, useState } from "react";
 import type { PartnerMappingDisplayRecord } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { ArrowRightIcon, ArrowTurnDownLeftIcon } from "@heroicons/react/24/outline";
@@ -8,45 +8,52 @@ import { updatePartnerMapping, updatePartnerProcessedMapping } from "provider/wr
 import { notifyStandard } from "src/helpers/helpers";
 import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { transformPartnerMapRecordForDisplay } from "src/types/transform";
+import { useSupabaseData } from "src/types/SupabaseContext";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 export default function PartnerMappingView() {
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [partnerMapRecord, setPartnerMapRecord] = useState<PartnerMappingDisplayRecord[] | []>([]);
     const [opAPCID, setOpAPCID] = useState('');
     const [loading, setLoading] = useState(false);
+    const [errorGettingMappedPartners, setErrorGettingMappedPartners] = useState(false);
     const [rowsToShow, setRowsToShow] = useState<PartnerMappingDisplayRecord[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const maxRowsToShow = (5);
         
     const handlePageChange = (paginatedData: PartnerMappingDisplayRecord[], page: number) => {
-                  setRowsToShow(paginatedData);
-                  setCurrentPage(page);
+        setRowsToShow(paginatedData);
+        setCurrentPage(page);
     };
- 
-    useEffect(() => {
-        let isMounted = true;
-                async function getPartnerLists() { 
-                    setLoading(true);
-                    try {
-                        const apcPartList = await fetchPartnersFromPartnersCrosswalk(opAPCID);
-                        if (isMounted) {
-                            setPartnerMapRecord(apcPartList.data ?? [])
-                            
-                        }
-                    } finally {
-                        if (isMounted) {
-                            setLoading(false);
-                        }
-                    }
-                }
-                if(opAPCID===''){
-                    return;
-                }
-                getPartnerLists();
-                return () => {
-                    isMounted = false;
-                };
+    const getMappedPartners = useCallback(async (signal: AbortSignal) => {
+        if(opAPCID === '' || token === '') return;
+        setLoading(true);
 
-    },[opAPCID]);
+        try {
+            const apcPartList = await fetchMappedPartners(opAPCID, token);
+            if (apcPartList.ok && !signal.aborted) {
+                const mappedData = transformPartnerMapRecordForDisplay(apcPartList.data);
+                setPartnerMapRecord(mappedData ?? [])
+            }
+        } catch (err) {
+            if(!signal.aborted) {
+                setErrorGettingMappedPartners(true);
+          }
+        } finally {
+            if (!signal.aborted) {
+                setLoading(false);
+            }
+        }
+    }, [token, opAPCID]);
+    
+    useEffect(() => {
+        if (opAPCID === '') return;
+        const controller = new AbortController();
+        void getMappedPartners(controller.signal);
+        return () => controller.abort();
+    }, [getMappedPartners]);
 
     const removeMapping = (partnerIDX: number) => {
         const actualIndex = currentPage * maxRowsToShow + partnerIDX;
@@ -109,11 +116,16 @@ export default function PartnerMappingView() {
                             </div>
                         </div>
                         <div
-                            hidden={(opAPCID !== '' && partnerMapRecord.length < 1) ? false : true}
+                            hidden={(opAPCID !== '' && partnerMapRecord.length < 1 && !errorGettingMappedPartners) ? false : true}
                             className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">
                             <div className="my-0 max-h-80 flex items-center justify-center">
                                 <h2 className="font-normal text-[var(--darkest-teal)] custom-style-long-text py-2 text-sm/6 xl:text-base/7">This Operator has not mapped thier Partners to the AFE Partner Connection Library.</h2>
                             </div>
+                        </div>
+                        <div className="sm:mt-14" hidden={!errorGettingMappedPartners}>
+                            <NoSelectionOrEmptyArrayMessage
+                                message={"Unable to get the list of mapped Partners from the AFE Partner Connections Library.  Please contact AFE Partner Connections Support."}
+                            ></NoSelectionOrEmptyArrayMessage>
                         </div>
                             <div hidden={(opAPCID !== '' && partnerMapRecord.length > 0 ? false : true)} className="">
                                 <div className="rounded-lg bg-white shadow-2xl outline-1 outline-offset-1 outline-[var(--dark-teal)] flow-root overflow-hidden">

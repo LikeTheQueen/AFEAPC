@@ -4,13 +4,17 @@ import { updateGLAccountCodeStatus } from 'provider/write';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from 'src/routes/sharedComponents/partnerDropdown';
-import { fetchAccountCodesForOperatorOrPartner } from "provider/fetch";
+import { fetchAccountCodes } from "provider/fetch";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
+import { useSupabaseData } from "src/types/SupabaseContext";
+import { transformGLCodes } from "src/types/transform";
 
 const headers = ["Account Group", "Account Number", "Account Description",""];
 
 export default function GLLibrary() {
+  const { session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [rowsLimit] = useState(50);
   const [rowsToShow, setRowsToShow] = useState<GLCodeType[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -30,11 +34,11 @@ export default function GLLibrary() {
     if (opAPCID === '' && partnerAPCID === '') return;
     setLoading(true);
     try {
-        const glCodeList = await fetchAccountCodesForOperatorOrPartner(opAPCID, partnerAPCID)
+        const glCodeList = await fetchAccountCodes(opAPCID, partnerAPCID, token)
 
-        if(glCodeList) {
-          
-            setAccountCodes(glCodeList);
+        if(glCodeList.ok) {
+console.log(glCodeList.data)
+            setAccountCodes(transformGLCodes(glCodeList.data));
         }
     } finally {
         setLoading(false);
@@ -47,14 +51,14 @@ export default function GLLibrary() {
   }
 
   useEffect(() => {
-    if (opAPCID === '') return;
+    if (opAPCID === '' || token === '') return;
     getAccountCodes();
-  }, [opAPCID]);
+  }, [opAPCID, token]);
 
   useEffect(() => {
-    if (partnerAPCID === '') return;
+    if (partnerAPCID === '' || token === '') return;
     getAccountCodes();
-  }, [partnerAPCID]);
+  }, [partnerAPCID, token]);
   return (
     <>
       <div className="rounded-lg bg-white shadow-2xl ring-1 ring-[var(--darkest-teal)]/70 p-4 mb-5">
@@ -169,3 +173,5 @@ export default function GLLibrary() {
     </>
   )
 }
+
+

@@ -30,7 +30,7 @@ import { apc_parent_company_CWFriends, ParentCompanyDropdown } from './test-util
  vi.mock('../provider/fetch', () => ({
   fetchSourceSystems: vi.fn(),
   fetchNonOpList: vi.fn(),
-  fetchAllParentCompanies: vi.fn(),
+  fetchParentCompanyList: vi.fn(),
 }));
 
 vi.mock('../provider/write', () => ({
@@ -65,8 +65,11 @@ describe('Create New Operator',() => {
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     vi.mocked(writeProvider.addOParentCompanySupabase).mockResolvedValue({
@@ -558,8 +561,11 @@ describe('Create New Operator',() => {
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
@@ -744,8 +750,11 @@ describe('Create New Operator',() => {
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
@@ -811,6 +820,10 @@ describe('Create New Operator',() => {
 
     const parentCompaniesDropdown = screen.getByRole('combobox', { name: /Parent Company/i});
     expect(parentCompaniesDropdown).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(fetchProvider.fetchParentCompanyList).toHaveBeenCalled();
+    });
 
     await user.selectOptions(parentCompaniesDropdown, apc_parent_company_CWFriends);
 
@@ -911,8 +924,11 @@ describe('Create New Operator',() => {
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
@@ -1093,8 +1109,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
@@ -1262,8 +1281,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
@@ -1429,8 +1451,11 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       ok: true, data: sourceSystems, message: ''
     });
 
-    vi.mocked(fetchProvider.fetchAllParentCompanies).mockResolvedValue(
-      ParentCompanyDropdown
+    vi.mocked(fetchProvider.fetchParentCompanyList).mockResolvedValue(
+      {
+      ok: true,
+      data:ParentCompanyDropdown
+      }
     );
 
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);

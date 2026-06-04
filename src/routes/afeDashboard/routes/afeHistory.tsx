@@ -2,7 +2,7 @@ import { ChatBubbleBottomCenterTextIcon, XMarkIcon, DocumentIcon, UserCircleIcon
 import { useEffect, useMemo, useState } from 'react';
 import type { AFEHistorySupabaseType } from 'src/types/interfaces';
 import { setAFEHistoryMaxID } from 'src/helpers/helpers';
-import { insertAFEHistoryRecord } from 'provider/write';
+import { insertAFEHistory } from 'provider/write';
 import { AFEHistoryBlock } from 'src/routes/sharedComponents/shatedUIBlocks';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { NotificationsGridPreFiltered } from 'src/routes/afeDashboard/routes/notifications';
@@ -16,9 +16,10 @@ type AFEHistoryProps = {
     onlyShowRecentFileHistory: boolean;
     hideCommentBox: boolean;
     onCommentAdded?: (comment: AFEHistorySupabaseType) => void;
+    token: string;
 };
 
-export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsToShow, onlyShowRecentFileHistory, hideCommentBox, onCommentAdded }: AFEHistoryProps) {
+export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsToShow, onlyShowRecentFileHistory, hideCommentBox, onCommentAdded, token }: AFEHistoryProps) {
     
     //Status for dialog box
     const [open, setOpen] = useState(false);
@@ -76,7 +77,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
 
     function handleComment() {
         const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: apc_afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
-        insertAFEHistoryRecord(apc_afe_id, commentVal, 'comment');
+        insertAFEHistory(apc_afe_id, commentVal, 'comment', token);
         setCommentVal('');
         onCommentAdded?.(newComment);
     };

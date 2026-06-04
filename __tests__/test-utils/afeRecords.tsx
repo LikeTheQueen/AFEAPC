@@ -205,96 +205,114 @@ export const userNoUserId: UserProfileRecordSupabaseType = {
     partnerRoles: [],
 };
 
-export const PartnerDropdown: OperatorOrPartnerList[] = [
+export const PartnerDropdown = [
     {
-        apc_id: "626390b5-6f63-4caa-a0aa-b333a15eaf59",
-        apc_name: "Athena Minerals Inc.",
-        apc_address: null
+        "apc_id": {
+            "id": "626390b5-6f63-4caa-a0aa-b333a15eaf59",
+            "name": "Corr And Whit Oils Company"
+        }
     },
     {
-        apc_id: "d09da985-e6be-48cd-8f52-c639353792c2",
-        apc_name: "Corr and Whit Oil",
-        apc_address: null
+        "apc_id": {
+            "id": "b8e859fb-fd2e-4995-8338-741552803bf2",
+            "name": "Oxyrock Operating, LLC"
+        }
     },
     {
-        apc_id: "dcfb31dd-1f04-45b0-8b70-5512c1fd4b24",
-        apc_name: "Corr and Whit Oil",
-        apc_address: null
+        "apc_id": {
+            "id": "4e457edb-d654-4c22-9f14-2cfb0e80fb73",
+            "name": "Permian Resources Operating, LLC"
+        }
     },
     {
-        apc_id: "996917a3-415a-4e9d-a7a9-c04c6050fd3f",
-        apc_name: "Corr and Whit Oil Partner",
-        apc_address: null
+        "apc_id": {
+            "id": "0348c65d-d6db-4466-8cdc-01296701b838",
+            "name": "Civitas Permian Operating, LLC"
+        }
     },
     {
-        apc_id: "9e96df60-9fa3-4330-8318-972504f1af66",
-        apc_name: "Corr and white",
-        apc_address: null
+        "apc_id": {
+            "id": "999c80a7-5b78-4dd1-9b89-962efd90a711",
+            "name": "Greenlake Energy Operating, LLC"
+        }
     },
     {
-        apc_id: "77cea5bb-5adf-40d6-a945-9aef30dd3b69",
-        apc_name: "Denver 3",
-        apc_address: null
+        "apc_id": {
+            "id": "9f72cedc-2081-48a2-a2a6-eac7e9141157",
+            "name": "Basin Oil & Gas Operating, LLC"
+        }
     },
     {
-        apc_id: "03559b6a-a1c5-43b3-8623-78d9acf2697a",
-        apc_name: "Denver Oil 2",
-        apc_address: null
+        "apc_id": {
+            "id": "b1192665-7839-4d70-9314-771292ef8fc8",
+            "name": "Diamondback E&P LLC"
+        }
     },
     {
-        apc_id: "3d721e36-a900-4506-a120-2be2793bb163",
-        apc_name: "Denver Oil 2",
-        apc_address: null
+        "apc_id": {
+            "id": "23e381bf-81b5-4b8e-b989-25dfbbe22601",
+            "name": "Ring Energy, INC."
+        }
     },
     {
-        apc_id: "55817490-5603-4a65-9223-24c1f078dd81",
-        apc_name: "Energy Oil Company",
-        apc_address: null
+        "apc_id": {
+            "id": "73a0cfa1-9da0-4649-9614-a1df624aab73",
+            "name": "Fasken Oil And Ranch, LTD."
+        }
     },
     {
-        apc_id: "2606ec4f-7849-41bc-8b3d-85d96f1c6948",
-        apc_name: "Fortnite Oil",
-        apc_address: null
+        "apc_id": {
+            "id": "8ed0a285-0011-4f56-962f-c46bc0889d1b",
+            "name": "Navigator Corporation"
+        }
     },
     {
-        apc_id: "8ed0a285-0011-4f56-962f-c46bc0889d1b",
-        apc_name: "John Ross Exploration Inc",
-        apc_address: null
+        "apc_id": {
+            "id": "af9184f0-879e-4f95-92ff-0c0a03e32ef4",
+            "name": "Capitan Energy, Incorporated"
+        }
     },
     {
-        apc_id: "db863d3c-606e-4fa6-b044-812d1f3cf6eb",
-        apc_name: "Last Company",
-        apc_address: null
+        "apc_id": {
+            "id": "b7f4c08f-f333-489a-b5ae-e7cc7623c64b",
+            "name": "Coterra Energy Operating CO."
+        }
     },
     {
-        apc_id: "4045d710-476a-4ee0-b97b-be64933133ba",
-        apc_name: "McKenzie Oil",
-        apc_address: null
+        "apc_id": {
+            "id": "9b463346-5759-4708-8008-071070fa3d4c",
+            "name": "Test Partner"
+        }
     },
     {
-        apc_id: "e21bc803-be42-47d5-ab2d-6fe85ed15659",
-        apc_name: "McKenzie Oil Energy",
-        apc_address: null
+        "apc_id": {
+            "id": "019cf7ba-3775-46bc-a3f7-8aee7af30bb1",
+            "name": "Mewbourne Oil Company"
+        }
     },
     {
-        apc_id: "c99bacdd-8ee2-40b2-bbf2-2830a0b314d1",
-        apc_name: "Third Wheel Energy Co.",
-        apc_address: null
+        "apc_id": {
+            "id": "7df36772-0734-47ca-b6a3-9daa23502153",
+            "name": "BPX Operating Company"
+        }
     },
     {
-        apc_id: "a6606212-9c6a-44b2-9a8c-a04e48ea6f1f",
-        apc_name: "Third Wheel Oil and Gas",
-        apc_address: null
+        "apc_id": {
+            "id": "4045d710-476a-4ee0-b97b-be64933133ba",
+            "name": "Mckenzie Oil"
+        }
     },
     {
-        apc_id: "74d7066b-d046-452d-8e04-ae3059e38dec",
-        apc_name: "Thorton Oil and Company",
-        apc_address: null
+        "apc_id": {
+            "id": "9a9eda3c-12e6-4b92-8aa7-1288a970d524",
+            "name": "EOG Resources, INC."
+        }
     },
     {
-        apc_id: "3ab29a40-8ef0-4778-95fd-6c427b56496a",
-        apc_name: "Whit and Corr Oil",
-        apc_address: null
+        "apc_id": {
+            "id": "440821f1-c3fc-4705-9148-c4cb4b592b71",
+            "name": "Blackbeard Operating, LLC"
+        }
     }
 ];
 
@@ -3894,59 +3912,62 @@ export const ParentCompanyResponse = [
         }
     }
 ];
-export const ParentCompanyDropdown: ParentCompany[] = [
+export const ParentCompanyDropdown = [
     {
-        "apc_id": apc_parent_company_CWFriends,
-        "apc_name": "Corr and Whit Oils Company & Friend",
-        "is_active": true,
-        "max_users": 1,
-        "license_expires": "2026-05-17",
-        "apc_address": {
-            "street": "6789 S Blvd",
-            "suite": "679",
-            "city": "Houston",
-            "state": "Texas",
-            "zip": "90078",
-            "country": "United States",
-            "id": 3,
-            "address_active": true
-        }
+        "id": 2,
+        "created_at": "2026-05-13T19:41:37.324462+00:00",
+        "apc_id": {
+            "id": "76b82137-454a-4c30-afc1-2bf934877c73",
+            "name": "Oil Company",
+            "active": true,
+            "max_users": 1,
+            "license_expires": "2026-05-17T22:00:22+00:00"
+        },
+        "street": "7889 S Main",
+        "suite": "88",
+        "city": "Austin",
+        "state": "Texas",
+        "zip": "90087",
+        "country": "United States",
+        "active": true
     },
     {
-        "apc_id": "d975f19f-7efa-4956-92a2-25a78080b6be",
-        "apc_name": "McKenzie Oil",
-        "is_active": true,
-        "max_users": 1,
-        "license_expires": "2026-05-17",
-        "apc_address": {
-            "street": "345 16th Street",
-            "suite": "67",
-            "city": "Denver",
-            "state": "CO",
-            "zip": "80113",
-            "country": "United States",
-            "id": 4,
-            "address_active": true
-        }
+        "id": 4,
+        "created_at": "2026-05-13T20:11:07.950643+00:00",
+        "apc_id": {
+            "id": "d975f19f-7efa-4956-92a2-25a78080b6be",
+            "name": "McKenzie Oil",
+            "active": true,
+            "max_users": 1,
+            "license_expires": "2026-05-17T22:00:30+00:00"
+        },
+        "street": "345 16th Street",
+        "suite": "67",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80113",
+        "country": "United States",
+        "active": true
     },
     {
-        "apc_id": "76b82137-454a-4c30-afc1-2bf934877c73",
-        "apc_name": "Oil Company",
-        "is_active": true,
-        "max_users": 1,
-        "license_expires": "2026-05-17",
-        "apc_address": {
-            "street": "7889 S Main",
-            "suite": "88",
-            "city": "Austin",
-            "state": "Texas",
-            "zip": "90087",
-            "country": "United States",
-            "id": 2,
-            "address_active": true
-        }
+        "id": 3,
+        "created_at": "2026-05-13T19:47:46.586432+00:00",
+        "apc_id": {
+            "id": "cb12f050-05b6-4d0e-b7b8-0871f9835fd5",
+            "name": "Corr and Whit Oils Company & Friend",
+            "active": true,
+            "max_users": 1,
+            "license_expires": "2026-05-17T00:00:00+00:00"
+        },
+        "street": "6789 S Blvd",
+        "suite": "679",
+        "city": "Houston",
+        "state": "Texas",
+        "zip": "90078",
+        "country": "United States",
+        "active": true
     }
-];
+]
 // ── Role Builders ──────────────────────────────────────────────────────────────
 // Operator roles: 2 = view operated AFEs, 4 = view partner AFEs, 8 = billing
 // Partner roles:  3 = view, 5 = edit, 6 = approve/reject, 9 = library

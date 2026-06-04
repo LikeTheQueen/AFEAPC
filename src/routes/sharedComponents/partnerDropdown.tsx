@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useSupabaseData } from "src/types/SupabaseContext";
-import { fetchAllPartners } from "provider/fetch";
+import { fetchPartnerList } from "provider/fetch";
 import type { OperatorOrPartnerList } from "src/types/interfaces";
 import { editNonOpLibrary, superUserPermission } from "src/constants/variables";
+import { transformOperatorForDropDown } from "src/types/transform";
 
 type Props = {
     value: string;
@@ -12,7 +13,8 @@ type Props = {
 };
 
 export function PartnerDropdown({ value, onChange, limitedList }: Props) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [filteredPartners, setFilteredPartners] = useState<OperatorOrPartnerList[] | []>([]);
 
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -20,10 +22,28 @@ export function PartnerDropdown({ value, onChange, limitedList }: Props) {
         onChange?.(id);
     };
     useEffect(() => {
+    if( !loggedInUser || token === '') return;
     const load = async () => {
       if (!limitedList) {
-        const partnerList = await fetchAllPartners();
-        setFilteredPartners(partnerList ?? []);
+        const partnerList = await fetchPartnerList(token);
+        if(partnerList.ok) {
+          console.log(partnerList,'partnerlist data')
+          const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(partnerList.data);
+              const partnerListSorted = dataFormatted.sort((a,b) => {
+                if (a.apc_name === undefined && b.apc_name === undefined) {
+                  return 0;
+                }
+                if (a.apc_name === undefined) {
+                  return 1;
+                }
+                if (b.apc_name === undefined) {
+                  return -1;
+                }
+                return (a.apc_name.localeCompare(b.apc_name, undefined, { sensitivity: "base", numeric: true }));
+              });
+          setFilteredPartners(partnerListSorted ?? []);
+        }
+        
         return;
       }
 
@@ -37,7 +57,7 @@ export function PartnerDropdown({ value, onChange, limitedList }: Props) {
     };
 
     load();
-  }, [loggedInUser, limitedList]);
+  }, [loggedInUser, limitedList, token]);
  
   return (
     <>

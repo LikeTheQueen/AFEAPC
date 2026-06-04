@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { Button } from "@headlessui/react";
 import { type AddressType, type ParentCompanyWrite, type ParentCompany, type OperatorOrPartnerList } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanyRecordSupabase, addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorPartnerAddressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
+import { addOParentCompanyRecordSupabase, addParentCompanyAdressSupabase, addPartnerSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import { useSupabaseData } from 'src/types/SupabaseContext';
