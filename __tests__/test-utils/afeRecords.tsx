@@ -4143,6 +4143,19 @@ export const JoeyGreen_NoUserEditRights_CW_NonOpCW: UserProfileRecordSupabaseTyp
     operatorRoles: buildOpRolesNoUserEditRights(user_id_JoeyGreen, 'Joey', 'Green', 'rachel.green@corrwhitoils.com', apc_op_id_CW, apc_name_CW, address_CW, apc_address_id_CW, 100),
     partnerRoles:  buildPartnerRolesNoUserEditRights(user_id_JoeyGreen, 'Joey', 'Green', 'rachel.green@corrwhitoils.com', apc_partner_id_CW, apc_name_CW, address_partner_CW, apc_address_id_partner_CW, 110),
 };
+
+export const PheobeBuffett_NoUserEditRights_McKenzie: UserProfileRecordSupabaseType = {
+    firstName: 'Joey',
+    lastName: 'Green',
+    email: 'joey.green@corrwhitoils.com',
+    active: true,
+    is_super_user: false,
+    is_org_super_user: false,
+    apc_op_id_umbrella: apc_op_id_CW,
+    user_id: user_id_RachelGreen,
+    operatorRoles: buildOpRolesNoUserEditRights(user_id_JoeyGreen, 'Pheobe', 'Buffett', 'pheobe.buffet@mckenzie.com', apc_op_id_mckenzie, apc_name_Mc, address_Mc, apc_address_id_McKen, 100),
+    partnerRoles:  buildPartnerRolesNoUserEditRights(user_id_JoeyGreen, 'Pheobe', 'Buffett', 'pheobe.buffet@mckenzie.com', apc_partner_id_McKen, apc_name_Mc, address_partner_Mc, apc_address_id_partner_McKen, 110),
+};
 // No operator roles: can only see AFEs where CW is the partner
 export const MonicaGeller_NoOpRoles_CW_NonOpCW: UserProfileRecordSupabaseType = {
     firstName: 'Monica',

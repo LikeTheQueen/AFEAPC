@@ -1,5 +1,5 @@
 import { handleSendEmail } from "email/emailBasic";
-import { createSupportTicket } from "provider/write";
+import { insertSupportTicket } from "provider/write";
 import { useState } from "react";
 import { notifyStandard, notifyFailure } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
@@ -7,15 +7,17 @@ import { AtSymbolIcon } from "@heroicons/react/24/outline";
 import { supportEmail } from "src/constants/variables";
 
 export default function ContactSupport() {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [emailSubject, setEmailSubject] = useState<string>('');
   const [emailBody, setEmailBody] = useState<string>('');
 
   const handleClickSendEmail = async () => {
+    if(token === '') return;
   
-  const createSupportTicketResult = await createSupportTicket(emailSubject, emailBody, loggedInUser?.email!);
+  const insertSupportTicketResult = await insertSupportTicket(emailSubject, emailBody, loggedInUser?.email!, token);
   
-  if(createSupportTicketResult.ok) {
+  if(insertSupportTicketResult.ok) {
   await handleSendEmail(
     emailSubject,
     emailBody,
@@ -39,7 +41,7 @@ export default function ContactSupport() {
   setEmailSubject('');
   };
 
-  if(!createSupportTicketResult.ok) {
+  if(!insertSupportTicketResult.ok) {
   notifyFailure(`Unable to create a support ticket.  Try again or contact AFE Patner Support @ ${supportEmail}`);
   };
 

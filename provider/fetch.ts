@@ -1,17 +1,11 @@
 
 import { 
-  transformRolesGeneric, 
-  transformRoleEntrySupabase, 
+  transformRolesGeneric,  
   transformUserProfileRecordSupabase, 
-  transformPartnerMapRecordForDisplay,
-  transformPartnerSourceSystemAddress,
-  transformOperatorForDropDown,
   transformGLCodes,
-  transformGLCodeCrosswalk,
   transformSupportHistory,
   transformParentCompany} from 'src/types/transform';
 import  supabase  from './supabase';
-import type { OperatorOrPartnerList, ParentCompany } from 'src/types/interfaces';
 import { callEdge } from 'src/edge';
 import { supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from 'src/constants/variables';
 
@@ -442,4 +436,4 @@ export async function fetchAccountCodes(apc_op_id:string, apc_partner_id:string,
   };
 
 
-//transformOperatorPartnerAddress(data)
+

@@ -45,7 +45,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-  writeGLCodeMapping: vi.fn(),
+  insertGLMap: vi.fn(),
 }));
 
 // At the top of your describe block, create a helper
@@ -176,7 +176,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -187,8 +187,8 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_number: '5310.202',
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
-      apc_partner_account_id: 98,
-    }),
+       apc_partner_account_id: 98,
+    }), 'test-token'
   ]);
   });
 
@@ -220,7 +220,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -231,8 +231,8 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_number: '5310.202',
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
-      apc_partner_account_id: 98,
-    }),
+       apc_partner_account_id: 98,
+    }), 'test-token'
   ]);
   });
 
@@ -301,7 +301,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -312,8 +312,8 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_number: '5310.202',
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
-      apc_partner_account_id: 98,
-    }),
+       apc_partner_account_id: 98,
+    }), 'test-token'
   ]);
   });
 
@@ -347,7 +347,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -393,7 +393,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -445,7 +445,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     expect.objectContaining({
       apc_operator_id: 'op-1',
       apc_partner_id: 'op-1',
@@ -456,8 +456,8 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_number: '5310.202',
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
-      apc_partner_account_id: 98,
-    }),
+       apc_partner_account_id: 98,
+    }), 'test-token'
   ]);
   });
 
@@ -503,7 +503,7 @@ describe('View and Edit GL Code Mappings',() => {
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     {
       apc_operator_id: 'op-1',
       apc_op_account_id: 1,
@@ -576,7 +576,7 @@ await user.click(within(pendingRow).getAllByRole('button', { name: /delete mappi
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     
     {
       apc_operator_id: 'op-1',
@@ -638,7 +638,7 @@ await user.click(within(pendingRow).getAllByRole('button', { name: /delete mappi
   expect(saveButton).not.toBeDisabled();
   await user.click(saveButton);
 
-   expect(writeProvider.writeGLCodeMapping).toHaveBeenCalledWith([
+   expect(writeProvider.insertGLMap).toHaveBeenCalledWith([
     
     {
       apc_operator_id: 'op-1',

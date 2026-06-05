@@ -1,6 +1,6 @@
 import  supabase  from './supabase';
 import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, ParentCompany, ParentCompanyWrite, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
-import { callEdge } from 'src/edge';
+import { callEdge, callEdgeFile } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
 import type { UUID } from 'crypto';
 
@@ -20,17 +20,7 @@ import type { UUID } from 'crypto';
       }
     return;
   };
-  export const insertDocument = async(filepath: string, fileToUpload: File) => {
-    const { data, error } = await supabase.storage
-          .from('AFE_Docs')
-          .upload(filepath, fileToUpload);
   
-        if (error) {
-          writeToFunctionLogs('insertDocument', error.message, null, 'ERROR', 'Attach Doc to AFE in AFE Detail');
-          return {ok: false};
-        }
-    return {ok: true};
-  };
 
   export const addOParentCompanySupabase = async (name: string) => {
     const { data, error } = await supabase.from('PARENT_COMPANY')
@@ -422,16 +412,6 @@ import type { UUID } from 'crypto';
       return data;
   };
 
-  export const createSupportTicket = async(subject: string, message: string, created_by_email: string ) => {
-    const { data, error } = await supabase.from('SUPPORT_HISTORY').insert({
-      subject: subject, message: message, created_by_email: created_by_email
-    }).select();
-    if(error) {
-      return {ok: false, data: error.message};
-    }
-    return {ok: true, data: data};
-  };
-
   export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ): Promise<ApiResponse<{ related_ticket: { created_by_email: string } }>> => {
     const { data, error } = await supabase.from('SUPPORT_HISTORY_THREAD').insert({
       comment: comment, comment_date: comment_date, related_ticket: related_ticket
@@ -506,6 +486,14 @@ import type { UUID } from 'crypto';
     
     return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type }, token);
   };
+
+  export async function insertSupportTicket(subject: string, message: string, created_by_email: string, token: string) {
+    
+    type TogglePayload = { subject: string; message: string; created_by_email: string; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_support_ticket", { subject, message, created_by_email }, token);
+  };
   
   export async function createNewUser(email: string, password: string, token: string) {
     
@@ -546,6 +534,22 @@ import type { UUID } from 'crypto';
     
     return callEdge<TogglePayload, ToggleResult>("insert_Partner_Record", { partnerRecord }, token);
   };
+
+  export async function insertGLMap(glMapRecord: GLMappingRecord[], token: string) {
+    
+    type TogglePayload = { glMapRecord: GLMappingRecord[]; };
+    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_gl_map", { glMapRecord }, token);
+  };
+
+  export async function insertAFEDocument(filepath: string, fileToUpload: File, token: string) {
+  const formData = new FormData();
+  formData.append('filepath', filepath);
+  formData.append('fileToUpload', fileToUpload);
+
+  return callEdgeFile<{ ok: boolean }>("insert_afe_document", formData, token);
+};
 
 
 //UPDATE DATA

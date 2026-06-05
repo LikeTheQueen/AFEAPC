@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { type GLCodeType } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { writeGLCodeMapping } from "provider/write";
+import { insertGLMap } from "provider/write";
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -11,9 +11,11 @@ import { PartnerDropdown } from "src/routes/sharedComponents/partnerDropdown";
 import { type GLMappingRecord } from 'src/types/interfaces';
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
+import { useSupabaseData } from "src/types/SupabaseContext";
 
 export default function GLMapping() {
-
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? '';
     const [cumaltiveGLMap, setCumaltiveGLMap] = useState<GLMappingRecord[] | []>([]);
     const [currentGLMap, setCurrentGLMap] = useState<GLMappingRecord | null>(null);
     const [loading, setLoading] = useState(false);
@@ -134,8 +136,8 @@ export default function GLMapping() {
     setCurrentGLMap(null);
 };
     const saveGLMappingRecords = () => {
-        if (cumaltiveGLMap.length < 1) return;
-        writeGLCodeMapping(cumaltiveGLMap);
+        if (cumaltiveGLMap.length < 1 || token === '') return;
+        insertGLMap(cumaltiveGLMap, token);
         setCumaltiveGLMap([]);
     };
     const removeMapping = (index: number) => {

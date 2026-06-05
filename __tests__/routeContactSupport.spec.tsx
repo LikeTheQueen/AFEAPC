@@ -22,7 +22,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
 }));
  
  vi.mock('provider/write', () => ({
-     createSupportTicket: vi.fn(),
+     insertSupportTicket: vi.fn(),
  }));
 
  vi.mock('src/helpers/helpers', () => ({
@@ -140,7 +140,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
      });
 
      test('User fills in subject and message and tests submit button gets okay response', async () => {
-        (writeProvider.createSupportTicket as Mock).mockResolvedValue({ok: true, data:ticketCreation});
+        (writeProvider.insertSupportTicket as Mock).mockResolvedValue({ok: true, data:ticketCreation});
         (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
          await setupWithSelections(user);
 
@@ -167,7 +167,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          await user.click(submitButton);
 
          await waitFor(() => {
-          expect(writeProvider.createSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email);
+          expect(writeProvider.insertSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email, 'test-token');
          })
 
          await waitFor(() => {
@@ -204,7 +204,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
      });
 
      test('User fills in subject and message and tests submit button gets error response', async () => {
-        (writeProvider.createSupportTicket as Mock).mockResolvedValue({ok: false, data:'Error'});
+        (writeProvider.insertSupportTicket as Mock).mockResolvedValue({ok: false, data:'Error'});
         (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
          await setupWithSelections(user);
 
@@ -231,7 +231,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW
          await user.click(submitButton);
 
          await waitFor(() => {
-          expect(writeProvider.createSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email);
+          expect(writeProvider.insertSupportTicket).toHaveBeenCalledWith('I want to contact you', 'About this thing', RachelGreen_AllPermissions_CW_NonOpCW.email, 'test-token');
          })
 
          await waitFor(() => {

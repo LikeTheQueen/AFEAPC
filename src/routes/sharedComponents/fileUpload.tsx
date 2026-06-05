@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { insertAFEHistory, insertDocument, insertIntoAFEDocTable } from 'provider/write';
+import { insertAFEHistory, insertAFEDocument, insertIntoAFEDocTable } from 'provider/write';
 import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { handleSendEmail } from 'email/emailBasic';
 import { fetchEmailsForNonOperatorUsers, fetchEmailsForOperatorUsers } from 'provider/fetch';
@@ -59,7 +59,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
     try{
       setUploading(true);
       const [uploadFileResults, docTableResults] = await Promise.all([
-        insertDocument(filePath, fileToUpload),
+        insertAFEDocument(filePath, fileToUpload, token),
         insertIntoAFEDocTable(apc_afe_id, apc_op_id, apc_part_id, filePath, fileToUpload.name, fileName, fileExt!, fileBytes, checksum, isNonOpAFEAgreement)
       ]);
 
