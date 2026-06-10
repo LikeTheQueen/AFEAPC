@@ -210,6 +210,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
                               <div className="relative mt-6 flex-1 px-4 sm:px-4 overflow-y-auto">
                                 <NotificationsGridPreFiltered
                                     apc_afe_id={apc_afe_id}
+                                    token={token}
                                 ></NotificationsGridPreFiltered>
                               </div>
                             </div>

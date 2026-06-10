@@ -15,7 +15,7 @@ vi.mock('provider/write', () => ({
   updateOpAddress: vi.fn(),
   updatePartnerNameStatus: vi.fn(),
   updatePartnerAddress: vi.fn(),
-  addPartnerSupabase: vi.fn(),
+  insertNonOp: vi.fn(),
 }));
 
 vi.mock('src/helpers/helpers', () => ({
@@ -243,7 +243,7 @@ describe('Edit Operators',() => {
       const user = userEvent.setup();  
       const operatorFaked = RachelGreen_AllPermissions_CW_NonOpCWAthena.operatorRoles[0];
       const nonOperatedAddresses = RachelGreen_AllPermissions_CW_NonOpCWAthena.partnerRoles.filter(nonOp => nonOp.apc_op_id === operatorFaked.apc_id && (nonOp.role === 1 || nonOp.role === 9)) ?? [];
-      vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+      vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
                   ok: true,
                   data: [{
                     created_at: "2025-04-20T23:05:38+00:00",
@@ -251,8 +251,7 @@ describe('Edit Operators',() => {
                     id: "record-d",
                     active: true,
                     apc_op_id: operatorFaked.apc_id
-                  }],
-                  message: undefined
+                  }]
               });
      
 
@@ -313,7 +312,7 @@ describe('Edit Operators',() => {
         await user.click(saveOpNameAddress[3]);
 
         await waitFor(() => {
-          expect(writeProvider.addPartnerSupabase).toHaveBeenCalledWith(
+          expect(writeProvider.insertNonOp).toHaveBeenCalledWith(
             'CMS Co',
             operatorFaked.apc_id,
             {
@@ -325,7 +324,7 @@ describe('Edit Operators',() => {
               zip: "12399",
               country:"United States",
               address_active: true,
-            }
+            }, 'test-token'
           )
         });
 

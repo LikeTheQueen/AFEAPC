@@ -11,9 +11,7 @@ import {
   operatorAddedtoSupabaseReturn,
   operatorBillingAddressToCreate,
   partnerAddedtoSupabaseReturn,
-  nonOpAddressToCreate,
   nonOpAddressAddedResponse,
-  partnerID1,
   operatorAddedtoSupabaseReturnWithoutSourceSystem,
   operatorAddedtoSupabaseReturnNoID, 
   partnerAddedtoSupabaseReturnNoID,
@@ -34,11 +32,10 @@ import { apc_parent_company_CWFriends, ParentCompanyDropdown } from './test-util
 }));
 
 vi.mock('../provider/write', () => ({
-  addOperatorSupabase: vi.fn(),
-  addOperatorAdressSupabase: vi.fn(),
-  addPartnerSupabase: vi.fn(),
+  insertOperatorFullRecord: vi.fn(),
+  insertNonOp: vi.fn(),
   addOperatorPartnerAddressSupabase: vi.fn(),
-  addOParentCompanySupabase: vi.fn(),
+  insertParentCompany: vi.fn(),
   addParentCompanyAdressSupabase: vi.fn(),
 }));
 
@@ -72,7 +69,7 @@ describe('Create New Operator',() => {
       }
     );
 
-    vi.mocked(writeProvider.addOParentCompanySupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertParentCompany).mockResolvedValue({
       ok: true,
       data: {
       id: parentID,
@@ -82,8 +79,7 @@ describe('Create New Operator',() => {
       active: true,
       max_users: 1,
       license_expires: '2024-01-01T00:00:00Z',
-    },
-      message: undefined
+    }
     });
 
     renderWithProviders(<CreateOperator />, {
@@ -362,7 +358,7 @@ describe('Create New Operator',() => {
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOParentCompanySupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertParentCompany).mockResolvedValue({
       ok: true,
       data: {
       id: parentID,
@@ -372,39 +368,22 @@ describe('Create New Operator',() => {
       active: true,
       max_users: 1,
       license_expires: '2024-01-01T00:00:00Z',
-    },
-      message: undefined
+    }
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturn,
-        message: undefined
+        address: operatorAddressAddedResponse
     });
 
-    vi.mocked(writeProvider.addParentCompanyAdressSupabase).mockResolvedValue({
-        ok: true,
-        data: parentCompanyAddressAddedResponse,
-        message: undefined
-    });
-
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
-        ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
-    });
     
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: partnerAddedtoSupabaseReturn,
-        message: undefined
+        data: partnerAddedtoSupabaseReturn
     });
 
-    vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: nonOpAddressAddedResponse,
-        message: undefined
-    });
+    
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
@@ -483,12 +462,8 @@ describe('Create New Operator',() => {
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOParentCompanySupabase).toHaveBeenCalledWith('Corr Mike Oils');
-      expect(writeProvider.addParentCompanyAdressSupabase).toHaveBeenCalledWith(parentID, operatorBillingAddressToCreate);
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, parentID);
-       expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
-        '2323232', operatorBillingAddressToCreate
-      );
+      expect(writeProvider.insertParentCompany).toHaveBeenCalledWith('Corr Mike Oils', operatorBillingAddressToCreate, 'test-token');
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, parentID, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();
@@ -528,7 +503,7 @@ describe('Create New Operator',() => {
     await user.click(operatorSaveOpNonOpAdddress);
 
     await waitFor(() => {
-      expect(writeProvider.addPartnerSupabase).toHaveBeenCalledWith(
+      expect(writeProvider.insertNonOp).toHaveBeenCalledWith(
         'Corr Mike Oils','2323232', {
           address_active: true,
           city: "Austin",
@@ -538,7 +513,7 @@ describe('Create New Operator',() => {
           street: "1235 Main Street",
           suite: "",
           zip: "98987",
-        }
+        }, 'test-token'
       );
     });
 
@@ -574,29 +549,18 @@ describe('Create New Operator',() => {
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturnWithoutSourceSystem,
-        message: undefined
-    });
-
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
-        ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
+        address: operatorAddressAddedResponse
     });
     
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: partnerAddedtoSupabaseReturn,
-        message: undefined
+        data: partnerAddedtoSupabaseReturn
     });
 
-    vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: nonOpAddressAddedResponse,
-        message: undefined
-    });
+    
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
@@ -683,8 +647,7 @@ describe('Create New Operator',() => {
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).not.toHaveBeenCalled();
-       expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
+      expect(writeProvider.insertOperatorFullRecord).not.toHaveBeenCalled();
     });
 
     expect(operatorSave).toBeDisabled();
@@ -724,13 +687,10 @@ describe('Create New Operator',() => {
     await user.click(operatorSaveOpNonOpAdddress);
 
     await waitFor(() => {
-      expect(writeProvider.addPartnerSupabase).not.toHaveBeenCalled();
+      expect(writeProvider.insertNonOp).not.toHaveBeenCalled();
     });
 
-    await waitFor(() => {
-      expect(writeProvider.addOperatorPartnerAddressSupabase).not.toHaveBeenCalled();
-    });
-
+    
     expect(operatorStreetInput[1]).toHaveValue('1235 Main Street');
     
     expect(savedAddressesList).toHaveAttribute('hidden');
@@ -763,29 +723,18 @@ describe('Create New Operator',() => {
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: false,
-        data: null,
         message: 'Role Security Issue'
     });
 
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
-        ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
-    });
     
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: partnerAddedtoSupabaseReturn,
-        message: undefined
+        data: partnerAddedtoSupabaseReturn
     });
 
-    vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: nonOpAddressAddedResponse,
-        message: undefined
-    });
+   
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
@@ -873,8 +822,7 @@ describe('Create New Operator',() => {
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
-      expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();
@@ -937,21 +885,14 @@ describe('Create New Operator',() => {
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturn,
-        message: undefined
-    });
-
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
-        ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
+        address: operatorAddressAddedResponse
     });
     
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: false,
-        data: null,
         message: 'Row level security error'
     });
 
@@ -1039,10 +980,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
-       expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
-        '2323232', operatorBillingAddressToCreate
-      );
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();
@@ -1079,7 +1017,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSaveOpNonOpAdddress);
 
     await waitFor(() => {
-      expect(writeProvider.addPartnerSupabase).toHaveBeenCalledWith(
+      expect(writeProvider.insertNonOp).toHaveBeenCalledWith(
         'Corr Mike Oils','2323232', {
           address_active: true,
           city: "Austin",
@@ -1089,7 +1027,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
           street: "1235 Main Street",
           suite: "",
           zip: "98987",
-        }
+        }, 'test-token'
       );
     });
 
@@ -1122,29 +1060,17 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
-        ok: true,
-        data: operatorAddedtoSupabaseReturn,
-        message: undefined
-    });
-
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: false,
-        data: null,
         message: 'Role Security'
     });
     
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: partnerAddedtoSupabaseReturn,
-        message: undefined
+        data: partnerAddedtoSupabaseReturn
     });
 
-    vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: nonOpAddressAddedResponse,
-        message: undefined
-    });
+    
 
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
@@ -1228,10 +1154,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
-      expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
-        '2323232', operatorBillingAddressToCreate
-      );
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();
@@ -1294,30 +1217,18 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturnNoID,
-        message: undefined
+        address: operatorAddressAddedResponse
     });
 
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
-    });
-    
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: partnerAddedtoSupabaseReturn,
-        message: undefined
+        data: partnerAddedtoSupabaseReturn
     });
 
-    vi.mocked(writeProvider.addOperatorPartnerAddressSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: nonOpAddressAddedResponse,
-        message: undefined
-    });
-
+   
     renderWithProviders(<CreateOperator />, {
       supabaseOverrides: {
         loggedInUser: loggedInUserSuperUser,
@@ -1400,8 +1311,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
-      expect(writeProvider.addOperatorAdressSupabase).not.toHaveBeenCalled();
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();
@@ -1464,22 +1374,16 @@ expect(savedAddressesList).toHaveAttribute('hidden');
       data: partnersLinkedOrUnlinked
     });
 
-    vi.mocked(writeProvider.addOperatorSupabase).mockResolvedValue({
+    vi.mocked(writeProvider.insertOperatorFullRecord).mockResolvedValue({
         ok: true,
         data: operatorAddedtoSupabaseReturn,
-        message: undefined
+        address: operatorAddressAddedResponse
     });
 
-    vi.mocked(writeProvider.addOperatorAdressSupabase).mockResolvedValue({
+   
+    vi.mocked(writeProvider.insertNonOp).mockResolvedValueOnce({
         ok: true,
-        data: operatorAddressAddedResponse,
-        message: undefined
-    });
-    
-    vi.mocked(writeProvider.addPartnerSupabase).mockResolvedValueOnce({
-        ok: true,
-        data: partnerAddedtoSupabaseReturnNoID,
-        message: undefined
+        data: partnerAddedtoSupabaseReturnNoID
     });
 
     renderWithProviders(<CreateOperator />, {
@@ -1564,10 +1468,7 @@ expect(savedAddressesList).toHaveAttribute('hidden');
     await user.click(operatorSave);
 
     await waitFor(() => {
-      expect(writeProvider.addOperatorSupabase).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends);
-      expect(writeProvider.addOperatorAdressSupabase).toHaveBeenCalledWith(
-        '2323232', operatorBillingAddressToCreate
-      );
+      expect(writeProvider.insertOperatorFullRecord).toHaveBeenCalledWith('Corr Mike Oils',2, apc_parent_company_CWFriends, operatorBillingAddressToCreate, 'test-token');
     });
 
     expect(operatorSave).toBeDisabled();

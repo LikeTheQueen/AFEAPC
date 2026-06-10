@@ -1,14 +1,18 @@
 import { useState } from "react";
 import type { PartnerRowData } from 'src/types/interfaces';
-import { writePartnerlistFromSourceToDB } from 'provider/write';
+import { insertOperatorPartnerList } from 'provider/write';
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { getDistinctItemsByProperties, parseRowsToPartnerData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
+import { useSupabaseData } from "src/types/SupabaseContext";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 
 const expectedHeaders = ["Source_id","Name", "Street", "Suite", "City", "State", "Zip", "Country"];
 
 export default function PartnerFileUpload() {
+    const { loggedInUser, session } = useSupabaseData()
+    const token = session?.access_token ?? '';
     const [data, setData] = useState<PartnerRowData[]>([]);
     const [fileName, setFileName] = useState('');
     const [rowsToShow, setRowsToShow] = useState<PartnerRowData[]>([]);
@@ -17,6 +21,7 @@ export default function PartnerFileUpload() {
     const [opAPCIDArray, setOpAPCIDArray] = useState<string[]>([]);
     const [distinctPartnerArray, setDistinctPartnerArray] = useState<PartnerRowData[]>([]);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handlePageChange = (paginatedData: PartnerRowData[], page: number) => {
     setRowsToShow(paginatedData);
@@ -80,22 +85,32 @@ export default function PartnerFileUpload() {
     setIsDisabled(false);
     setFileName('');
     notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: Partners were NOT saved)`);
+    setErrorMessage(null);
   };
 
   const handleClickSave = async () => {
-    const writePartnerListResult = await writePartnerlistFromSourceToDB(data);
+    if(token === '') return;
+    try {
+      const writePartnerListResult = await insertOperatorPartnerList(data, token);
     if(writePartnerListResult.ok) {
       notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
+      setData([]);
+      setDistinctPartnerArray([]);
+      setIsDisabled(false);
+      setFileName('');
     }
     if(!writePartnerListResult.ok) {
       notifyFailure(`There was an error adding your partner list.\n\n(TLDR: ${writePartnerListResult.message})`);
+      setErrorMessage(writePartnerListResult.message);
     }
-    setData([]);
-    setDistinctPartnerArray([]);
-    setIsDisabled(false);
-    setFileName('');
+    } catch(error) {
+      const err = error as Error
+      const parsed = JSON.parse(err.message)
+      setErrorMessage(parsed.message);
+    } finally{
+      return;
+    }
   };
-
 
   return (
     <>
@@ -137,6 +152,15 @@ export default function PartnerFileUpload() {
     </div>
     
         <div className="bg-white">
+          <div hidden={errorMessage === null } className="flex md:col-span-5 justify-center max-w-7xl mx-auto py-4">
+                              <NoSelectionOrEmptyArrayMessage
+                              message={
+                              <>
+                                  Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  There was an issue when updating the user: <span>{errorMessage}</span>
+                              </>
+                              }>
+                              </NoSelectionOrEmptyArrayMessage>
+                          </div>
                 <table className="table-auto min-w-full ring-1 ring-[var(--darkest-teal)]/70 rounded-t-md">
                     <thead>
                     <tr>

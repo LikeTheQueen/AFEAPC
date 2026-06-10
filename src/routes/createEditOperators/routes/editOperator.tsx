@@ -1,6 +1,6 @@
 import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { addPartnerSupabase, updateOpAddress, updateOperatorNameStatus, updateNonOpAddress, updatePartnerNameStatus, updatePartnerWithOpID } from 'provider/write';
+import { insertNonOp, updateOpAddress, updateOperatorNameStatus, updateNonOpAddress, updatePartnerNameStatus, updatePartnerWithOpID } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
@@ -276,7 +276,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
   };
   async function handleClickSaveNewNonOp() {
     try {
-          const insertPartnerResult = await addPartnerSupabase(newNonOpAddress.apc_name!, newNonOpAddress.apc_op_id!, newNonOpAddress.apc_address!);
+          const insertPartnerResult = await insertNonOp(newNonOpAddress.apc_name!, newNonOpAddress.apc_op_id!, newNonOpAddress.apc_address!, token);
     
           if(insertPartnerResult.ok) {
             setSaveNewNonOpAddress(false);

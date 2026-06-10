@@ -1,4 +1,3 @@
-import CreateOperator from 'src/routes/createEditOperators/routes/createOperator';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
@@ -7,7 +6,6 @@ import { screen, waitFor, within, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 import { 
-  partnersLinkedOrUnlinked, 
   partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed,
   partnersLinkedOrUnlinkedNoUnclaimed,
   partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames,
@@ -25,7 +23,7 @@ import {
 
  vi.mock('../provider/fetch', () => ({
   fetchNonOpList: vi.fn(),
-  fetchClaimProofPrompt: vi.fn(),
+  fetchClaimProof: vi.fn(),
   verifyClaimProof: vi.fn(),
 }));
 
@@ -178,7 +176,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -227,7 +225,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -243,7 +241,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: false, data: null, message: 'No Records to Verify'});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: false, message: 'No Records to Verify'});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -293,7 +291,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -309,7 +307,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: false, data: null, message: 'No recods to verify against'});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: false, message: 'No recods to verify against'});
         const currentOpID = '1234567';
     console.log(typeof claimProofResultNoID.id !== 'number')
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -359,7 +357,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -409,7 +407,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -459,7 +457,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -509,7 +507,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
       
     });
     const newVerificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -531,7 +529,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
     
@@ -582,7 +580,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -648,7 +646,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -698,7 +696,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     user.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -752,7 +750,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -799,7 +797,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -854,7 +852,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
     
@@ -902,7 +900,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -975,7 +973,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
         const currentOpID = '1234567';
     
@@ -1023,7 +1021,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -1099,7 +1097,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
     
@@ -1151,7 +1149,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(currentOpID);
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(currentOpID, 'test-token');
     });
   
     const verificationDialog = await screen.findByRole('dialog', { name: /Verification Required/i });
@@ -1221,7 +1219,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -1270,13 +1268,13 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(
-        currentOpID
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(
+        currentOpID, 'test-token'
       ); 
     });
 });
 
-test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with opID', async () => {
+test('Displays a list of unclaimed partner addresses and the user clicks an TWO addresses to claim and save with the opID', async () => {
     const mockPartnersFetch = vi.mocked(fetchProvider.fetchNonOpList);
         mockPartnersFetch.mockResolvedValue({
           ok: true,
@@ -1284,7 +1282,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
         });
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -1333,8 +1331,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(
-        currentOpID
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(
+        currentOpID, 'test-token'
       ); 
     });
 });
@@ -1349,7 +1347,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -1398,8 +1396,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(
-        currentOpID
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(
+        currentOpID, 'test-token'
       ); 
     });
 
@@ -1473,7 +1471,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {
@@ -1522,8 +1520,8 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(vi.mocked(fetchProvider.fetchClaimProofPrompt)).toHaveBeenCalledWith(
-        currentOpID
+      expect(vi.mocked(fetchProvider.fetchClaimProof)).toHaveBeenCalledWith(
+        currentOpID, 'test-token'
       ); 
     });
 
@@ -1637,7 +1635,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
 
     vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
-    vi.mocked(fetchProvider.fetchClaimProofPrompt).mockResolvedValue({ok: true, data: claimProofResult, message: undefined});
+    vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
     
     renderWithProviders(<PartnerToOperatorGrid currentOpID={currentOpID} token='test-token' />, {

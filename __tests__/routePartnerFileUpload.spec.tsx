@@ -16,7 +16,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    writePartnerlistFromSourceToDB: vi.fn(),
+    insertOperatorPartnerList: vi.fn(),
 }));
 
 vi.mock('src/helpers/helpers', () => ({
@@ -165,8 +165,8 @@ describe('Partner File Upload', () => {
 
     test('Allows user to upload the Partner List and saves the list', async () => {
 
-        vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
-            .mockResolvedValue({ ok: true, message: undefined });
+        vi.mocked(writeProvider.insertOperatorPartnerList)
+            .mockResolvedValue({ ok: true });
 
         renderWithProviders(<PartnerFileUpload />, {
             supabaseOverrides: {
@@ -246,7 +246,7 @@ describe('Partner File Upload', () => {
         await user.click(savePartnerList);
 
         await waitFor(() => {
-            expect(writeProvider.writePartnerlistFromSourceToDB).toHaveBeenCalledWith(
+            expect(writeProvider.insertOperatorPartnerList).toHaveBeenCalledWith(
                 [{
                     source_id: 'S1',
                     apc_op_id: 'operator-123',
@@ -270,7 +270,7 @@ describe('Partner File Upload', () => {
                     zip: '80201',
                     country: 'US',
                     active: true
-                }],
+                }],'test-token'
             )
             const rows = screen.getAllByRole('row')
             expect(rows).toHaveLength(1)
@@ -282,7 +282,7 @@ describe('Partner File Upload', () => {
 
     test('Allows user to upload the Partner List and saves the list but returns an error on SAVE', async () => {
 
-        vi.mocked(writeProvider.writePartnerlistFromSourceToDB)
+        vi.mocked(writeProvider.insertOperatorPartnerList)
             .mockResolvedValue({ ok: false, message: 'Error' });
 
         renderWithProviders(<PartnerFileUpload />, {
@@ -363,7 +363,7 @@ describe('Partner File Upload', () => {
         await user.click(savePartnerList);
 
         await waitFor(() => {
-            expect(writeProvider.writePartnerlistFromSourceToDB).toHaveBeenCalledWith(
+            expect(writeProvider.insertOperatorPartnerList).toHaveBeenCalledWith(
                 [{
                     source_id: 'S1',
                     apc_op_id: 'operator-123',
@@ -387,13 +387,13 @@ describe('Partner File Upload', () => {
                     zip: '80201',
                     country: 'US',
                     active: true
-                }],
+                }],'test-token'
             )
             const rows = screen.getAllByRole('row')
-            expect(rows).toHaveLength(1)
+            expect(rows).toHaveLength(2)
         });
 
-        expect(savePartnerList).toBeDisabled();
+        expect(savePartnerList).not.toBeDisabled();
         expect(notifyFailure).toHaveBeenCalled();
     });
 

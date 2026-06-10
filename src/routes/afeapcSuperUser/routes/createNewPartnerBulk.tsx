@@ -1,13 +1,16 @@
 import { useState } from "react";
 import type { AddressType, OperatorType, UnrelatedPartnerRowData } from 'src/types/interfaces';
-import { addUnrelatedPartnerSupabase } from 'provider/write';
+import { insertAPCPartner } from 'provider/write';
 import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { parseRowsToUnrelatedPartnerData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
+import { useSupabaseData } from "src/types/SupabaseContext";
 
 const expectedHeaders = ["Name", "Street", "Suite", "City", "State", "Zip", "Country"];
 
 export default function PartnerFileUploadAFEAPC() {
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? '';
     const [data, setData] = useState<{ operator: OperatorType; address: AddressType }[]>([]);
     const [fileName, setFileName] = useState('');
     const [rowsToShow, setRowsToShow] = useState<UnrelatedPartnerRowData[]>([]);
@@ -75,8 +78,9 @@ export default function PartnerFileUploadAFEAPC() {
   };
 
   const handleClickSave = async () => {
+    if(token === '') return;
     for (const {operator, address } of data) {
-        const writePartnerListResult = await addUnrelatedPartnerSupabase(operator.name, address);
+        const writePartnerListResult = await insertAPCPartner(operator.name, address, token);
     if(writePartnerListResult.ok) {
       notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: Partners ARE saved)`);
     }

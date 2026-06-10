@@ -1,4 +1,4 @@
-import { fetchClaimProofPrompt, verifyClaimProof, fetchNonOpList } from 'provider/fetch';
+import { fetchClaimProof, verifyClaimProof, fetchNonOpList } from 'provider/fetch';
 import { useEffect, useMemo, useState, memo } from 'react';
 import type { OperatorPartnerAddressWithOpNameType, PartnerRecordToUpdate, ClaimProof } from 'src/types/interfaces';
 import LoadingPage from './sharedComponents/loadingPage';
@@ -24,7 +24,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     const [partnerDocIDFocused, setPartnerDocIDFocused] = useState(false);
     const [verificationErrorMessage, setVerificationErrorMessage] = useState<string | null>(null);
     const [claimProofNoRecordToVerify, setClaimProofNoRecordToVerify] = useState(false);
-    const { loggedInUser, session } = useSupabaseData();
+    const { loggedInUser } = useSupabaseData();
     
 
 
@@ -102,9 +102,10 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       if(loggedInUser?.is_super_user) {
         await updatePartnerWithOpID(partnerListToLink);
       } else {
-        const claimProofResult = await fetchClaimProofPrompt(currentOpID!);
+        const claimProofResult = await fetchClaimProof(currentOpID!, token);
         if(claimProofResult.ok) {
-          const claimProofTransformed = transformClaimProof(claimProofResult.data);
+          console.log(claimProofResult.data)
+          const claimProofTransformed = transformClaimProof(claimProofResult.data[0]);
           setClaimProof(claimProofTransformed);
           setClaimProofOpen(true);
         } else {

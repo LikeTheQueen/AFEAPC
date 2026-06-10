@@ -1,4 +1,4 @@
-import { fetchSystemHistory, fetchSystemHistoryCount } from "provider/fetch";
+import { fetchSystemHistories } from "provider/fetch";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react"
 import { formatDateShort } from "src/helpers/styleHelpers";
 import { type SystemHistory } from "src/types/interfaces";
@@ -7,45 +7,64 @@ import UniversalPagination from "../../sharedComponents/pagnation";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import React from "react";
+import { useSupabaseData } from "src/types/SupabaseContext";
+import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
+import { supportEmail } from "src/constants/variables";
+import LoadingPage from "src/routes/sharedComponents/loadingPage";
 
 export default function SystemHistories() {
-const [systemHistory, setSystemHistory] = useState<SystemHistory[] | []>([]); 
-// State for paginated data
-    const [rowsToShow, setRowsToShow] = useState<SystemHistory[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [maxRowsToShow, setMaxRowsToShow] = useState(
+  const [systemHistory, setSystemHistory] = useState<SystemHistory[] | []>([]); 
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
+  const [loading, setLoading] = useState(true);
+  // State for paginated data
+  const [rowsToShow, setRowsToShow] = useState<SystemHistory[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [maxRowsToShow, setMaxRowsToShow] = useState(
   window.innerWidth >= 640 ? 5 : 3);
-    const minRange = (0);
-    const [maxRange, setMaxRange] = useState(23);
-    const [totalSystemHistoryRowCount, setTotalSystemHistoryRowCount] = useState(0);
-    const [selectedOperator, setSelectedOperator] = useState('');
-    const [actionList, setActionList] = useState<string [] | []>([]);
-    const [userList, setUserList] = useState<string [] | []>([]);
-    const [selectedAction, setSelectedAction] = useState('');
-    const [selectedUser, setSelectedUser] = useState('');
-    const [descriptionSearch, setDescriptionSearch] = useState('');
+  const minRange = (0);
+  const [maxRange, setMaxRange] = useState(23);
+  const [fetchSystemHistoryError, setFetchSystemHistoryError] = useState<string | null>(null);
+  const [totalSystemHistoryRowCount, setTotalSystemHistoryRowCount] = useState(0);
+  const [selectedOperator, setSelectedOperator] = useState('');
+  const [actionList, setActionList] = useState<string [] | []>([]);
+  const [userList, setUserList] = useState<string [] | []>([]);
+  const [selectedAction, setSelectedAction] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
+  const [descriptionSearch, setDescriptionSearch] = useState('');
 
 useEffect(() => {
+  if (!loggedInUser || !token) return;
+
     let isMounted = true;
+
     async function getSystemHistory() {
+      setLoading(true);
         try {
-            const result = await fetchSystemHistory(minRange,maxRange);
-        
-            if(result.length > 0 ) {
-              
-                const transformedSystemHistory = transformSystemHistory(result);
-                setSystemHistory(transformedSystemHistory.sort((a,b) => b.id - a.id));
+            const result = await fetchSystemHistories(minRange,maxRange, token);
+            if (!isMounted) return;
+
+            if(result.ok) {
+              setTotalSystemHistoryRowCount(result.count);
+              const transformedSystemHistory = transformSystemHistory(result.data);
+              setSystemHistory(transformedSystemHistory.sort((a,b) => b.id - a.id));
+            } else {
+              throw new Error(result.message);
             }
-        } finally {
+        } catch(error) {
+          setFetchSystemHistoryError(error instanceof Error ? error.message : String(error));
+        }finally {
             if(isMounted) {
-                return;
+                setLoading(false);
             }
         }
-    }; getSystemHistory();
+    } 
+    
+    getSystemHistory();
     return () => {
             isMounted = false;
         };
-},[maxRange])
+},[maxRange, token, loggedInUser]);
 
 useEffect(() => {
   let isMounted = true;
@@ -63,14 +82,6 @@ useEffect(() => {
     isMounted = false;
   };
 },[systemHistory])
-
-useMemo(() => {
-  async function getSystemHistoryRowCount() {
-    const systemHistoryRowCountResult = await fetchSystemHistoryCount();
-    setTotalSystemHistoryRowCount(systemHistoryRowCountResult);
-  }; getSystemHistoryRowCount();
-  
-},[])
 
 function handleActionListChange(e: React.ChangeEvent<HTMLSelectElement>) {
   setSelectedAction(e.target.value);
@@ -104,11 +115,22 @@ const filteredSystemHistory = useMemo(() => {
 
 const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
         setRowsToShow(paginatedData);
-        //setCurrentPage(page);
+        setCurrentPage(page);
     };
 
   return (
     <>
+    <div hidden={fetchSystemHistoryError === null} className="flex justify-center items-center min-h-screen px-10">
+          <NoSelectionOrEmptyArrayMessage
+            message={
+          <>
+              Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! We ran into an error getting the System History.  Please reach out to {supportEmail} if the issue persists. 
+              <br/>
+              {fetchSystemHistoryError}
+          </>
+            }>
+            </NoSelectionOrEmptyArrayMessage>
+    </div>
     <div className="px-4 py-4 sm:px-6 sm:py-6">
       <h2 className="text-lg sm:text-xl font-semibold custom-style">System Changes</h2>
         <p className="text-xs/6 2xl:text-sm/6 custom-style-long-text px-3">
@@ -190,6 +212,8 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             </div>
       </div>
       {/* System History table */}
+      {loading ? <div className="flex justify-center items-center min-h-screen px-10"><LoadingPage></LoadingPage></div> : (
+        <>
       <div className="relative min-h-135 overflow-auto">
       <table className="pb-16 mt-6 w-full text-left text-xs/6 2xl:text-sm/6 whitespace-normal">
         <colgroup>
@@ -281,6 +305,8 @@ const handlePageChange = (paginatedData: SystemHistory[], page: number) => {
             {systemHistory.length >= totalSystemHistoryRowCount ? "That's Everything!" : "Load More"}
           </button>
       </div>
+        </>
+      )}
     </div>
     <div>
     </div>

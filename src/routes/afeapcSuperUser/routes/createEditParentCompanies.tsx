@@ -1,10 +1,10 @@
 
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
-import { type OperatorType, type AFESourceSystemType, type AddressType, type ParentCompanyWrite, type ParentCompany } from 'src/types/interfaces';
-import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanyRecordSupabase, addParentCompanyAdressSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
-import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
-import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
+import { type AddressType, type ParentCompanyWrite, type ParentCompany } from 'src/types/interfaces';
+import { useEffect, useState } from 'react';
+import { insertParentCompanyFullRecord, updateParentCompany, updateParentCompanyAdressSupabase } from 'provider/write';
+import { isAddressValid } from 'src/helpers/helpers';
+import { notifyStandard } from "src/helpers/helpers";
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { useSupabaseData } from 'src/types/SupabaseContext';
 
@@ -33,7 +33,7 @@ export function CreateParentCompany() {
     }; 
     
 
-    const { loggedInUser, session } = useSupabaseData();
+    const { session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [parentCompany, setParentCompany] = useState<ParentCompanyWrite>(parentCompanyBlank)
     const [parentCoBillingAddress, setParentCOBillAddress] = useState<AddressType>(parentCoAddressBlank);
@@ -72,18 +72,12 @@ export function CreateParentCompany() {
     setParentCoWriteErrorMessage('The Billing Address is not valid');
     return;
   }
-let parentCompanyID =''
+
   try {
     
-    const createParentCompany = await addOParentCompanyRecordSupabase(parentCompany);
+    const createParentCompany = await insertParentCompanyFullRecord(parentCompany, parentCoBillingAddress, token);
     if (!createParentCompany.ok) throw new Error(createParentCompany.message);
 
-    const parentCompanyAddressRecord = await addParentCompanyAdressSupabase(
-      createParentCompany.data.id, parentCoBillingAddress
-    );
-    if (!parentCompanyAddressRecord.ok) throw new Error(parentCompanyAddressRecord.message);
-
-    parentCompanyID = createParentCompany.data.id;
     setShowSaved(true);
     notifyStandard(`Parent Company name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
 
@@ -107,13 +101,13 @@ let parentCompanyID =''
           <div className="px-4 py-2 mb-4">
             <div className="grid max-w-5xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               <div className="sm:col-span-3">
-                <label htmlFor="name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
+                <label htmlFor="apc_name" className="block text-sm/6 font-medium text-[var(--darkest-teal)] custom-style">
                   Parent Company Name
                 </label>
                 <div className="mt-1">
                     <input
-                      id="name"
-                      name="name"
+                      id="apc_name"
+                      name="apc_name"
                       type="text"
                       placeholder="Nav Oil Inc."
                       autoComplete="off"
@@ -291,6 +285,8 @@ let parentCompanyID =''
 };
 
 export function EditParentCompany({selectedParentCompany, billingAddress, showSaveMessage}: Props) {
+    const { session } = useSupabaseData();
+    const token = session?.access_token ?? "";
     const [parentCompany, setParentCompany] = useState<ParentCompany>(selectedParentCompany)
     const [parentCoBillingAddress, setParentCOBillAddress] = useState<AddressType>(billingAddress);
     const [showSaved, setShowSaved] = useState<boolean>(false);
@@ -338,7 +334,7 @@ export function EditParentCompany({selectedParentCompany, billingAddress, showSa
 
   try {
     
-    const createParentCompany = await updateOParentCompanyRecordSupabase(parentCompany);
+    const createParentCompany = await updateParentCompany(parentCompany, token);
     if (!createParentCompany.ok) throw new Error(createParentCompany.message);
 
     const parentCompanyAddressRecord = await updateParentCompanyAdressSupabase(

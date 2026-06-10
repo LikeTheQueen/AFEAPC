@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { insertAFEHistory, insertAFEDocument, insertIntoAFEDocTable } from 'provider/write';
+import { insertAFEHistory, insertAFEDocument, insertAFEDocumentRecord } from 'provider/write';
 import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { handleSendEmail } from 'email/emailBasic';
-import { fetchEmailsForNonOperatorUsers, fetchEmailsForOperatorUsers } from 'provider/fetch';
+import { fetchEmailsNonOperator, fetchEmailsOperator } from 'provider/fetch';
 import { supportEmail } from 'src/constants/variables';
 
 type FileUploadProps = {
@@ -45,7 +45,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
         setIsNonOpAFEAgreement(undefined);
       }  
       setFileToUpload(e.target.files[0]);
-  }
+  };
   async function submitFile() {
     if(fileToUpload === null || isNonOpAFEAgreement === undefined) return;
 
@@ -60,7 +60,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
       setUploading(true);
       const [uploadFileResults, docTableResults] = await Promise.all([
         insertAFEDocument(filePath, fileToUpload, token),
-        insertIntoAFEDocTable(apc_afe_id, apc_op_id, apc_part_id, filePath, fileToUpload.name, fileName, fileExt!, fileBytes, checksum, isNonOpAFEAgreement)
+        insertAFEDocumentRecord(apc_afe_id, apc_op_id, apc_part_id, filePath, fileToUpload.name, fileName, fileExt!, fileBytes, checksum, isNonOpAFEAgreement, token)
       ]);
 
       if (!uploadFileResults.ok || !docTableResults.ok) {
@@ -68,7 +68,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
       }
       if (uploadFileResults.ok && docTableResults.ok) {
         let emails = [supportEmail];
-        const emailAddresses = mode === 'Partner' ? await fetchEmailsForOperatorUsers(apc_op_id) : await fetchEmailsForNonOperatorUsers(apc_part_id);
+        const emailAddresses = mode === 'Partner' ? await fetchEmailsOperator(apc_op_id, token) : await fetchEmailsNonOperator(apc_part_id, token);
         
         if(emailAddresses.ok && emailAddresses.data.length > 0) {
           emails = emailAddresses.data;

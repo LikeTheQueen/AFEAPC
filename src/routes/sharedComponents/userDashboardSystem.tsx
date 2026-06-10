@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive, updateUserProfile } from 'provider/write';
+import { updateUserActiveStatusToInactive, updateUserActiveStatusToActive, updateUserRecord } from 'provider/write';
 import { type UserFullNameAndEmail } from "src/types/interfaces";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { Field, Label, Switch } from "@headlessui/react";
+import NoSelectionOrEmptyArrayMessage from "./noSelectionOrEmptyArrayMessage";
 
 
 export default function UserDashboard({ userList =[] }: {  userList: UserFullNameAndEmail[];}) {
@@ -11,6 +12,7 @@ export default function UserDashboard({ userList =[] }: {  userList: UserFullNam
     const { loggedInUser, session } = useSupabaseData();
     const token = session?.access_token ?? "";
     const [users, setUsers] = useState(userList); 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         setUsers(userList);
@@ -71,24 +73,36 @@ export default function UserDashboard({ userList =[] }: {  userList: UserFullNam
             );
     
             try {
-                const updateUserOrgStatus = await updateUserProfile(userID, is_super_org_user)
-                if (!updateUserOrgStatus.ok) {
-    
-                    setUsers(prevUsers =>
-                        prevUsers.map(user =>
-                            user.id === userID ? { ...user, is_org_super_user: !is_super_org_user } : user
-                        )
-                    );
-    
-                    notifyFailure(`Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still ${!is_super_org_user ? 'ON' : 'OFF'})`)
-    
-                } else {
-                    notifyStandard(`Shut-In Complete.  Super User access has been sealed off.\n\n(TLDR: Super User Access is now ${is_super_org_user ? 'ON' : 'OFF'})`)
-                }
-    
-            } finally {
-                return;
-            }
+                        const updateUserOrgStatus = await updateUserRecord(userID, is_super_org_user, token)
+            
+                        if (!updateUserOrgStatus.ok) {
+            
+                            setUsers(prevUsers =>
+                                prevUsers.map(user =>
+                                    user.id === userID ? { ...user, is_org_super_user: !is_super_org_user } : user
+                                )
+                            );
+                            setErrorMessage(updateUserOrgStatus.message);
+                            notifyFailure(`Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still ${!is_super_org_user ? 'ON' : 'OFF'})`)
+            
+                        } else {
+                            notifyStandard(`Shut-In Complete.  Super User access has been sealed off.\n\n(TLDR: Super User Access is now ${is_super_org_user ? 'ON' : 'OFF'})`)
+                        }
+            
+                    } catch(error) {
+            
+                        setUsers(prevUsers =>
+                                prevUsers.map(user =>
+                                    user.id === userID ? { ...user, is_org_super_user: !is_super_org_user } : user
+                                )
+                            );
+                        const err = error as Error;
+                        const parsed = JSON.parse(err.message);
+                        setErrorMessage(parsed.message);
+            
+                    } finally {
+                        return;
+                    }
         };
    
     return (
@@ -102,6 +116,15 @@ export default function UserDashboard({ userList =[] }: {  userList: UserFullNam
                     <br></br><p className="text-base/6 text-[var(--darkest-teal)] custom-style-long-text">If you need your profile deactivated, you’ll have to contact AFE Partner Connections.</p>
                 </div>
                 <div className="md:col-span-5 ">
+                    <div hidden={errorMessage === null } className="flex md:col-span-5 justify-center max-w-7xl mx-auto py-4">
+                        <NoSelectionOrEmptyArrayMessage
+                        message={
+                        <>
+                            Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! Nice to see you here.  There was an issue when updating the user: <span>{errorMessage}</span>
+                        </>
+                        }>
+                        </NoSelectionOrEmptyArrayMessage>
+                    </div>
 
                 <table className="min-w-full divide-y divide-[var(--darkest-teal)]/30 mb-4 shadow-2xl">
                 <thead>

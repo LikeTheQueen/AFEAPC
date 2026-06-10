@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatBubbleLeftEllipsisIcon, ClockIcon } from "@heroicons/react/24/outline";
 
 import { handleSendEmail } from "email/emailBasic";
-import { fetchSupportHistory } from "provider/fetch";
+import { fetchSupportHistories } from "provider/fetch";
 import { createSupportTicketThread, updateSupportTicket } from "provider/write";
 
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
@@ -14,10 +14,11 @@ import { useSupabaseData } from "src/types/SupabaseContext";
 import { CheckCircle2 } from "lucide-react";
 
 import { supportEmail } from "src/constants/variables";
+import { transformSupportHistory } from "src/types/transform";
 
 export default function SupportHistory() {
-  const { loggedInUser } = useSupabaseData();
-
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [supportHistories, setSupportHistories] = useState<SupportHistory[]>([]);
   const [supportHistoryError, setSupportHistoryError] = useState<string | null>(null);
   const [rowsToShow, setRowsToShow] = useState<SupportHistory[]>([]);
@@ -30,25 +31,27 @@ export default function SupportHistory() {
   const scrollRefs = useRef<Record<number, HTMLDivElement | null>>({});
  
   const getHistory = useCallback(async () => {
-    if (!loggedInUser?.user_id) return;
+    if (!loggedInUser?.user_id || token === '') return;
     setIsLoading(true);
-    const supportHistory = await fetchSupportHistory(
+    const supportHistory = await fetchSupportHistories(
       loggedInUser.user_id,
-      loggedInUser.is_super_user
+      loggedInUser.is_super_user,
+      token
     );
     
     if(supportHistory.ok) {
-    setSupportHistories(supportHistory.data);
+    const transformedSupportHistory = transformSupportHistory(supportHistory.data);
+    setSupportHistories(transformedSupportHistory);
     }
 
     if(!supportHistory.ok) {
       setSupportHistoryError(supportHistory.message);
     }
     setIsLoading(false);
-  }, [loggedInUser?.user_id, loggedInUser?.is_super_user]);
+  }, [loggedInUser?.user_id, loggedInUser?.is_super_user, token]);
 
   useEffect(() => {
-    if (!loggedInUser?.user_id) return;
+    if (!loggedInUser?.user_id || token === '') return;
     void getHistory();
   }, [getHistory]);
 

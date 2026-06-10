@@ -2,7 +2,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AFESourceSystemType, type AddressType } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanySupabase, addOperatorAdressSupabase, addOperatorSupabase, addParentCompanyAdressSupabase, addPartnerSupabase } from 'provider/write';
+import { insertParentCompany, insertOperatorFullRecord, insertNonOp } from 'provider/write';
 import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
@@ -132,30 +132,20 @@ export default function CreateOperator() {
 let parentCompanyID =''
   try {
     if(parentCompanyAPCID === '') {
-    const createParentCompany = await addOParentCompanySupabase(operator.name);
+    const createParentCompany = await insertParentCompany(operator.name, operatorBillingAddress, token);
     if (!createParentCompany.ok) throw new Error(createParentCompany.message);
-
-    const parentCompanyAddressRecord = await addParentCompanyAdressSupabase(
-      createParentCompany.data.id, operatorBillingAddress
-    );
-    if (!parentCompanyAddressRecord.ok) throw new Error(parentCompanyAddressRecord.message);
 
     parentCompanyID = createParentCompany.data.id;
   }
-    const insertOperatorResult = await addOperatorSupabase(
-      operator.name, operator.source_system, parentCompanyID !== '' ? parentCompanyID : parentCompanyAPCID
+    const insertOperatorResult = await insertOperatorFullRecord(
+      operator.name, operator.source_system, parentCompanyID !== '' ? parentCompanyID : parentCompanyAPCID, operatorBillingAddress, token
     );
     if (!insertOperatorResult.ok) throw new Error(insertOperatorResult.message);
 
     const transformedOperatorResult = transformOperatorSingle(insertOperatorResult.data);
     if (transformedOperatorResult.id === undefined) throw new Error('Operator ID missing after insert');
 
-    const operatorAddressRecord = await addOperatorAdressSupabase(
-      transformedOperatorResult.id, operatorBillingAddress
-    );
-    if (!operatorAddressRecord.ok) throw new Error(operatorAddressRecord.message);
-
-    const transformedAddress = transformAddressSupabase(operatorAddressRecord.data);
+    const transformedAddress = transformAddressSupabase(insertOperatorResult.address);
 
     // Only mark saved once everything has succeeded
     setOperator(transformedOperatorResult);
@@ -174,11 +164,10 @@ let parentCompanyID =''
     }
     
     try {
-      const insertPartnerResult = await addPartnerSupabase(operator.name, operator.id, singleNonOpAddress);
+      const insertPartnerResult = await insertNonOp(operator.name, operator.id, singleNonOpAddress, token);
 
       if(insertPartnerResult.ok) {
-
-        const transformedPartnerResult = transformPartnerSingle(insertPartnerResult.data);
+        
         const trasnformedAddress = transformAddressSupabase(insertPartnerResult.data);
         
         setSingleNonOpAddress(trasnformedAddress);

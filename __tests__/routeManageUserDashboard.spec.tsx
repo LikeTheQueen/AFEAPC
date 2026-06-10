@@ -26,7 +26,7 @@ vi.mock('provider/write', () => ({
   updateUserActiveStatusToInactive: vi.fn(),
   updateUserActiveStatusToActive: vi.fn(),
   writeorUpadateUserRoles: vi.fn(),
-  updateUserProfile: vi.fn(),
+  updateUserRecord: vi.fn(),
   writeToFunctionLogs: vi.fn(),
 }));
 
@@ -297,22 +297,20 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
       data: userListActiveOrInactive
     });
 
-   vi.mocked(writeProvider.updateUserProfile)
+   vi.mocked(writeProvider.updateUserRecord)
     .mockResolvedValueOnce({
       ok: false,
-      message: undefined
+      message: 'Issue'
     })
     .mockResolvedValueOnce({
       ok: true,
-      message: undefined
     })
     .mockResolvedValueOnce({
       ok: false,
-      message: undefined
+      message: 'Issue'
     })
     .mockResolvedValueOnce({
       ok: true,
-      message: undefined
     });
 
     renderWithProviders(<UserStatusDashboard />, {
@@ -360,7 +358,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
 
     await user.click(orgtoggle[0]);
 
-    expect(writeProvider.updateUserProfile).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true);
+    expect(writeProvider.updateUserRecord).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true, 'test-token');
 
     expect(notifyFailure).toHaveBeenCalledWith(
           `Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still OFF)`
@@ -368,7 +366,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
     
     await user.click(orgtoggle[0]);
     
-    expect(writeProvider.updateUserProfile).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true);
+    expect(writeProvider.updateUserRecord).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true, 'test-token');
 
     expect(notifyStandard).toHaveBeenCalledWith(
           `Shut-In Complete.  Super User access has been sealed off.\n\n(TLDR: Super User Access is now ON)`
@@ -376,7 +374,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
     
     await user.click(orgtoggle[1]);
 
-    expect(writeProvider.updateUserProfile).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', false);
+    expect(writeProvider.updateUserRecord).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', false, 'test-token');
 
     expect(notifyFailure).toHaveBeenCalledWith(
            `Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still ON)`
@@ -384,7 +382,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
     
     await user.click(orgtoggle[1]);
 
-    expect(writeProvider.updateUserProfile).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', false);
+    expect(writeProvider.updateUserRecord).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', false, 'test-token');
 
     expect(notifyStandard).toHaveBeenCalledWith(
           `Shut-In Complete.  Super User access has been sealed off.\n\n(TLDR: Super User Access is now OFF)`
@@ -401,7 +399,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
       data: userListActiveOrInactive
     });
 
-    const mockDeactivateUser = vi.mocked(writeProvider.updateUserProfile);
+    const mockDeactivateUser = vi.mocked(writeProvider.updateUserRecord);
     mockDeactivateUser.mockResolvedValue({
       ok: false,
       message: 'Error updating Org Super User Status'
@@ -452,7 +450,7 @@ describe('Manage User Active and Inactive standard user Standard User Screen',()
 
     await user.click(orgtoggle[0]);
 
-    expect(writeProvider.updateUserProfile).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true);
+    expect(writeProvider.updateUserRecord).toHaveBeenCalledWith('77ef7dd6-bd03-4500-b599-ad1447e8c489', true, 'test-token');
 
     expect(notifyFailure).toHaveBeenCalledWith(
           `Pressure held.  Super User access has not been updated.\n\n(TLDR: Super User Access is still OFF)`

@@ -2,7 +2,6 @@ import  supabase  from './supabase';
 import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, ParentCompany, ParentCompanyWrite, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge, callEdgeFile } from 'src/edge';
 import { notifyStandard } from 'src/helpers/helpers';
-import type { UUID } from 'crypto';
 
   //INSERT FUNCTIONS API CALLS
 
@@ -19,149 +18,6 @@ import type { UUID } from 'crypto';
         return null;
       }
     return;
-  };
-  
-
-  export const addOParentCompanySupabase = async (name: string) => {
-    const { data, error } = await supabase.from('PARENT_COMPANY')
-    .insert({name: name, active:true})
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-
-      return {ok: true, data: data, message: undefined};
-  };
-
-  export const addOParentCompanyRecordSupabase = async (parentCompany: ParentCompanyWrite) => {
-    const { data, error } = await supabase.from('PARENT_COMPANY')
-    .insert({
-      name: parentCompany.apc_name, 
-      max_users: parentCompany.max_users ?? 1,
-      license_expires: parentCompany.license_expires ? new Date(parentCompany.license_expires).toISOString() : new Date(),
-      active:true})
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-
-      return {ok: true, data: data, message: undefined};
-  };
-
-  export const updateOParentCompanyRecordSupabase = async (parentCompany: ParentCompany) => {
-    const { data, error } = await supabase.from('PARENT_COMPANY')
-    .update({
-      name: parentCompany.apc_name, 
-      max_users: parentCompany.max_users,
-      license_expires: parentCompany.license_expires,
-      active:true})
-    .eq('id', parentCompany.apc_id)
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-
-      return {ok: true, data: data, message: undefined};
-  };
-
-  export const addOperatorSupabase = async (name: string, source_system:number, parent_company:string) => {
-    const { data, error } = await supabase.from('OPERATORS')
-    .insert({name: name, source_system: source_system, active:true, parent_company: parent_company})
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-
-      return {ok: true, data: data, message: undefined};
-  };
-
-  export const addPartnerSupabase = async (name: string, apc_op_id:string, address: AddressType) => {
-    const { data, error } = await supabase.from('PARTNERS')
-    .insert({name: name, active:true, apc_op_id:apc_op_id})
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-      const apc_id = data.id;
-      const { data: dataAddress, error: errorAdress } = await supabase.from('PARTNER_ADDRESS')
-    .insert({apc_id: apc_id, 
-      apc_op_id: apc_op_id,
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country })
-    .select()
-    .single();
-    if (errorAdress) {
-         return { ok: false, data:null, message: errorAdress.message};
-      }
-      return {ok: true, data:dataAddress, message: undefined};
-  };
-
-  export const addUnrelatedPartnerSupabase = async (name: string, address: AddressType) => {
-    const { data, error } = await supabase.from('PARTNERS')
-    .insert({name: name, active:true})
-    .select()
-    .single();
-    if (error) {
-        return {ok: false, data: null, message: error.message};
-      }
-      const apc_id = data.id;
-      const { data: dataAddress, error: errorAdress } = await supabase.from('PARTNER_ADDRESS')
-    .insert({apc_id: apc_id, 
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country })
-    .select()
-    .single();
-    if (errorAdress) {
-         return { ok: false, data:null, message: errorAdress.message};
-      }
-      return {ok: true, data:dataAddress, message: undefined};
-  };
-
-  export const addOperatorAdressSupabase = async (apc_id: string, address: AddressType) => {
-    const { data, error } = await supabase.from('OPERATOR_ADDRESS')
-    .insert({apc_id: apc_id, 
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country })
-      .select()
-      .single();
-    if (error) {
-        return { ok: false, data: null, message: error.message};
-      }
-      return {ok: true, data:data, message: undefined};
-  };
-
-  export const addParentCompanyAdressSupabase = async (apc_id: string, address: AddressType) => {
-    const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS')
-    .insert({apc_id: apc_id, 
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country })
-      .select()
-      .single();
-    if (error) {
-        return { ok: false, data: null, message: error.message};
-      }
-      return {ok: true, data:data, message: undefined};
   };
 
   export const updateParentCompanyAdressSupabase = async (address: AddressType) => {
@@ -181,44 +37,6 @@ import type { UUID } from 'crypto';
         return { ok: false, data: null, message: error.message};
       }
       return {ok: true, data:data, message: undefined};
-  };
-
-  export const addOperatorPartnerAddressSupabase = async (apc_id: UUID, address: AddressType) => {
-    const { data, error } = await supabase.from('PARTNER_ADDRESS')
-    .insert({apc_id: apc_id, 
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country })
-    .select()
-    .single();
-    if (error) {
-         return { ok: false, data:null, message: error.message};
-      }
-      return {ok: true, data:data, message: undefined};
-  };
-
-
-
-  export const updateUserProfile = async(id:string, is_org_super_user: boolean) => {
-    const { data, error } = await supabase.from('USER_PROFILE')
-    .update({is_org_super_user: is_org_super_user})
-    .eq('id', id);
-    if (error) {
-        return {ok: false, message: error.message};
-      }
-      return {ok:true, message: undefined};
-  };
-
-  export const writeUserRolesforOperator = async(roles:RoleTypeSupabaseOperator[]) => {
-  const { data, error } = await supabase.from('OPERATOR_USER_CROSSWALK').upsert(roles);
-  if (error) {
-        console.error(`Error adding roles for user`, error);
-        return null;
-      }
-      return;
   };
 
   export const writeorUpadateUserRoles = async(roles:RoleEntryWrite[], table: string) => {
@@ -251,15 +69,6 @@ import type { UUID } from 'crypto';
       return {ok:true, message: ''};
   };
 
-  export const writeSuperUserProfile = async(user_id: string) => {
-    const { data, error } = await supabase.from('USER_ROLES').insert({user_id: user_id, role:1});
-    if (error) {
-        console.error(`Error adding Super User`, error);
-        return null;
-      }
-      return;
-  };
-
   export const updatePartnerWithOpID = async(partnerRecordID: PartnerRecordToUpdate[]) => {
     const ids = partnerRecordID.map(x => x.id);
     const apc_op_id = partnerRecordID[0].apc_op_id;
@@ -282,34 +91,6 @@ import type { UUID } from 'crypto';
       //return notifyStandard(`Partner address updatedaasasas. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);
   };
 
-  export const writePartnerlistFromSourceToDB = async(partnerRecords: PartnerRowData[]) => {
-    console.log(partnerRecords);
-    const { data, error } = await supabase.from('AFE_PARTNERS_EXECUTE').insert(partnerRecords).select();
-    if (error) {
-        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
-        return {ok: false, message: error.message};
-      }
-      return {ok: true, message: undefined};
-  };
-
-   export const writePartnerlistForAFEPartnerConnections = async(partnerRecords: OperatorType, partnerAddress: AddressType) => {
-    const { data, error } = await supabase.from('PARTNERS').insert(partnerRecords).select();
-    if (error) {
-        writeToFunctionLogs('writePartnerlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Partners');
-        return {ok: false, message: error.message};
-      }
-      return {ok: true, message: undefined};
-  };
-
-  export const writePartnerMappingsToDB = async(partnerRecords: PartnerMappingRecord[]) => {
-    const { error } = await supabase.from('PARTNERS_CROSSWALK').insert(partnerRecords);
-    
-    if (error) {
-        return {ok:false, message: error.message};
-      }
-      return {ok:true};
-  };
-  
   export const updatePartnerProcessedMapping = async(partnerSourceID: string[], mapValue: boolean) => {
    const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('source_id',partnerSourceID).select();
     
@@ -318,15 +99,6 @@ import type { UUID } from 'crypto';
         return null;
       }
       return data;
-  };
-
-  export const updatePartnerProcessedMapValue = async(id: number[], mapValue: boolean) => {
-   const {error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).in('id',id);
-    
-    if (error) {
-        return {ok:false, message: error.message};
-      }
-      return {ok:true};
   };
 
   export const updatePartnerProcessedStatus = async(id: number, status: boolean) => {
@@ -392,24 +164,6 @@ import type { UUID } from 'crypto';
     }
 
     return { ok: true, message: undefined };
-};
-
-  export const updateGLAccountCodeStatus = async(id: number, status: boolean ) => {
-    const { error } = await supabase.from('GL_CODES_PROCESSED').update({'active': status}).eq('id',id);
-    if (error) {
-        console.error(`Error modifying the GL Account Code`, error);
-        return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR changing the account code: ${error.message})`);
-      }
-      return notifyStandard(`GL Account Code saved. Books are balanced and the wellhead’s pressure-tight.\n\n(TLDR: GL Account Codes changes SAVED)`);
-  };
-
-  export const writeGLCodeMapping = async(glMappings: GLMappingRecord[]) => {
-    const { data, error } = await supabase.from('GL_CODE_CROSSWALK').insert(glMappings).select();
-    if (error) {
-        console.error(`Error adding the GL CodeMappings`, error);
-        return null;
-      }
-      return data;
   };
 
   export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ): Promise<ApiResponse<{ related_ticket: { created_by_email: string } }>> => {
@@ -430,29 +184,6 @@ import type { UUID } from 'crypto';
       return {ok:false, data: null, message: error.message};
     }
    return {ok:true, data: data as any, message: null};
-  };
-
-  export const insertIntoAFEDocTable = async(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean ) => {
-    const { data, error } = await supabase.from('AFE_PROCESSED_FILE').insert({
-      apc_afe_id: apc_afe_id, 
-      apc_op_id: apc_op_id, 
-      apc_partner_id: apc_partner_id, 
-      storage_path: storage_path, 
-      filename: filename, 
-      filename_display: filename_display, 
-      mimetype: mimetype, 
-      byte_size: byte_size, 
-      isAttachment: !isNonOpSignedAFE, 
-      isForm: false, 
-      isNonOpSignedAFE: isNonOpSignedAFE, 
-      documentDate: new Date(),
-      checksum: checksum
-    }).select()
-    if (error) {
-          writeToFunctionLogs('insertIntoAFEDocTable', error.message, null, 'ERROR', 'Attach Doc to AFE in AFE Detail could not create reference records');
-          return {ok: false};
-        }
-    return {ok: true};
   };
 
   interface AFEFilterCondition {
@@ -477,6 +208,14 @@ import type { UUID } from 'crypto';
       return {ok: false, message: error?.message, data: []}
     }
     return {ok: true, message: null, data: data}
+  };
+// DELETE TEST RECORDS
+  export async function deletTestRecords(table: string, idNumber: number, idString: string, token: string) {
+    
+    type TogglePayload = { table: string; idNumber: number; idString: string; };
+    type ToggleResult  = { ok: true; } | { ok: false; };
+    
+    return callEdge<TogglePayload, ToggleResult>("delete_test_records", { table, idNumber, idString }, token);
   };
 //INSERT DATA
   export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
@@ -549,8 +288,71 @@ import type { UUID } from 'crypto';
   formData.append('fileToUpload', fileToUpload);
 
   return callEdgeFile<{ ok: boolean }>("insert_afe_document", formData, token);
-};
+  };
 
+  export async function insertAFEDocumentRecord(apc_afe_id: string, apc_op_id: string, apc_partner_id: string, storage_path: string, filename: string, filename_display: string, mimetype: string, byte_size: number, checksum: string, isNonOpSignedAFE: boolean, token: string) {
+    
+    type TogglePayload = { apc_afe_id: string; apc_op_id: string; apc_partner_id: string; storage_path: string; filename: string; filename_display: string; mimetype: string; byte_size: number; checksum: string; isNonOpSignedAFE: boolean; };
+    type ToggleResult  = { ok: true; } | { ok: false; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_afe_doc_table", { apc_afe_id, apc_op_id, apc_partner_id, storage_path, filename, filename_display, mimetype, byte_size, checksum, isNonOpSignedAFE }, token);
+  };
+
+  export async function insertParentCompany(name: string, address: AddressType, token: string) {
+    
+    type TogglePayload = { name: string; address: AddressType; };
+    type ToggleResult  = { ok: true; data: any; } | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_parent_company", { name, address }, token);
+  };
+
+  export async function insertParentCompanyFullRecord(parentCompany: ParentCompanyWrite, address: AddressType, token: string) {
+    
+    type TogglePayload = { parentCompany: ParentCompanyWrite; address: AddressType; };
+    type ToggleResult  = { ok: true; data: any; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_parent_company_full_record", { parentCompany, address }, token);
+  };
+
+  export async function insertOperatorFullRecord(name: string, source_system: number, parent_company: string, address: AddressType, token: string) {
+    
+    type TogglePayload = { name: string; source_system: number; parent_company: string; address: AddressType; };
+    type ToggleResult  = { ok: true; data: any; address: any } | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_operator_full_record", { name, source_system, parent_company, address }, token);
+  };
+
+  export async function insertAPCPartner(name: string, address: AddressType, token: string) {
+    
+    type TogglePayload = { name: string; address: AddressType; };
+    type ToggleResult  = { ok: true; data: any; } | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_apc_partner", { name, address }, token);
+  };
+
+  export async function insertOperatorPartnerList(partnerRecords: PartnerRowData[], token: string) {
+    
+    type TogglePayload = { partnerRecords: PartnerRowData[]; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_operator_partner_list", { partnerRecords }, token);
+  };
+
+  export async function insertPartnerMapping(partnerRecords: PartnerMappingRecord[], token: string) {
+    
+    type TogglePayload = { partnerRecords: PartnerMappingRecord[]; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_partner_mapping", { partnerRecords }, token);
+  };
+
+  export async function insertNonOp(name: string, apc_op_id:string, address: AddressType, token: string) {
+    
+    type TogglePayload = { name: string; apc_op_id:string; address: AddressType; };
+    type ToggleResult  = { ok: true; data: any} | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_non_op", { name, apc_op_id, address }, token);
+  };
 
 //UPDATE DATA
   export async function updateGLCodeMapping(id: number, active: boolean, token: string) {
@@ -634,4 +436,27 @@ export async function updatePartnerNameStatus(partnerRecord: RoleEntryRead, toke
     return callEdge<TogglePayload, ToggleResult>("update_Partner_Name_and_Status", { partnerRecord }, token);
   };
  
-  
+export async function updateParentCompany(parentCompany: ParentCompany, token: string) {
+    
+    type TogglePayload = { parentCompany: ParentCompany; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_parent_company", { parentCompany }, token);
+  };
+
+export async function updateGLAccountStatus(id: number, active: boolean, token: string) {
+    
+    type TogglePayload = { id: number; active: boolean; };
+    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_gl_account_status", { id, active }, token);
+  };
+
+export async function updateUserRecord(id: string, is_org_super_user: boolean, token: string) {
+    
+    type TogglePayload = { id: string; is_org_super_user: boolean; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_user_profile", { id, is_org_super_user }, token);
+  };
+

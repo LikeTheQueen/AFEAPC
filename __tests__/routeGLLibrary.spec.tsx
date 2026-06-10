@@ -9,17 +9,10 @@ import GLLibrary from 'src/routes/libraries/routes/glLibrary';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
  } from './test-utils/afeRecords';
-import {
-    operatorPartnerLibrary,
-    partnerListInAPC,
-    savedMapOnePartner,
-    savedMapOnePartnerSelectDeselectSelectNew,
-    twoMappedPartnerRecords,
-    savedMapOnePartnerAddressUndefined,
-    operatorMappedLibrary
-} from './test-utils/mapPatnerRecords';
+
 
 import { WhitAndCorrOilAccountCodes, WhitAndCorrOilAccountCodesNonOP } from './test-utils/accountCodeGls';
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 
  vi.mock('src/routes/sharedComponents/operatorDropdown', () => ({
   OperatorDropdown: ({ value, onChange }: { value: string; onChange: (id: string) => void }) => (
@@ -54,8 +47,13 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    updateGLAccountCodeStatus: vi.fn(),
+    updateGLAccountStatus: vi.fn(),
 }));
+
+vi.mock('src/helpers/helpers', () => ({
+     notifyStandard: vi.fn(),
+     notifyFailure: vi.fn(),
+ }));
 
 // At the top of your describe block, create a helper
 const setupWithSelections = async (
@@ -172,7 +170,11 @@ describe('View and edit the GL Code Library',() => {
             ok: true,
             data: WhitAndCorrOilAccountCodes
           });
-
+        (writeProvider.updateGLAccountStatus as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes[0]
+          });
         await setupWithSelections(user);
         await waitFor(() => {
           expect(fetchProvider.fetchAccountCodes).toHaveBeenCalled();
@@ -186,6 +188,45 @@ describe('View and edit the GL Code Library',() => {
     
       const accountRow = screen.getAllByText('9210.201')[0].closest('tr')!;
       await user.click(within(accountRow).getByRole('button'));
+
+      await waitFor(() => {
+        expect(writeProvider.updateGLAccountStatus).toHaveBeenCalledWith(WhitAndCorrOilAccountCodes[0].id, !WhitAndCorrOilAccountCodes[0].active, 'test-token')
+      });
+
+      expect(notifyStandard).toHaveBeenCalledWith(`GL Account Code saved. Books are balanced and the wellhead’s pressure-tight.\n\n(TLDR: GL Account Codes changes SAVED)`)
+    
+      });
+    
+    test('Fetches account codes and allows users to delete one Op account codes but returns an error in response', async () => {
+        (fetchProvider.fetchAccountCodes as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes
+          });
+        (writeProvider.updateGLAccountStatus as Mock)
+          .mockResolvedValue({
+            ok: false,
+            message: 'RLS ISSUE'
+          });
+        await setupWithSelections(user);
+        await waitFor(() => {
+          expect(fetchProvider.fetchAccountCodes).toHaveBeenCalled();
+        });
+        
+        await waitFor(() => {
+          expect(screen.getAllByText('9210.201')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('9210.202')[0]).toBeInTheDocument();
+        });
+        
+    
+      const accountRow = screen.getAllByText('9210.201')[0].closest('tr')!;
+      await user.click(within(accountRow).getByRole('button'));
+
+      await waitFor(() => {
+        expect(writeProvider.updateGLAccountStatus).toHaveBeenCalledWith(WhitAndCorrOilAccountCodes[0].id, !WhitAndCorrOilAccountCodes[0].active, 'test-token')
+      });
+
+      expect(notifyFailure).toHaveBeenCalledWith(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR changing the account code: RLS ISSUE)`)
     
       });
 
@@ -194,6 +235,11 @@ describe('View and edit the GL Code Library',() => {
           .mockResolvedValue({
             ok: true,
             data: WhitAndCorrOilAccountCodesNonOP
+          });
+        (writeProvider.updateGLAccountStatus as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodesNonOP[0]
           });
 
         await setupWithSelectionsNonOpAccount(user);
@@ -245,6 +291,11 @@ describe('View and edit the GL Code Library',() => {
           .mockResolvedValue({
             ok: true,
             data: WhitAndCorrOilAccountCodes
+          });
+        (writeProvider.updateGLAccountStatus as Mock)
+          .mockResolvedValue({
+            ok: true,
+            data: WhitAndCorrOilAccountCodes[0]
           });
 
         await setupWithSelections(user);

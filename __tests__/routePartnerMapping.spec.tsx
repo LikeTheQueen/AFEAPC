@@ -55,7 +55,7 @@ vi.mock('provider/fetch', () => ({
 
 vi.mock('provider/write', () => ({
     updatePartnerProcessedMapValue: vi.fn(),
-  writePartnerMappingsToDB: vi.fn(),
+  insertPartnerMapping: vi.fn(),
 }));
 
 // At the top of your describe block, create a helper
@@ -215,13 +215,9 @@ describe('View and edit the partner mappings',() => {
         await user.click(saveButton);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([86], true);
-        });
-
-        await waitFor(() => {
-            expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+            expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
                 expect.objectContaining(savedMapOnePartner),
-            ]);
+            ], 'test-token');
         });
 
     });
@@ -300,13 +296,9 @@ describe('View and edit the partner mappings',() => {
   await user.click(saveButton);
 
   await waitFor(() => {
-  expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([46], true);
-    });
-
-  await waitFor(() => {
-  expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+  expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
       expect.objectContaining(savedMapOnePartnerAddressUndefined),
-    ]);
+    ], 'test-token');
     });
 
     });
@@ -356,13 +348,9 @@ describe('View and edit the partner mappings',() => {
         await user.click(saveButton);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([86], true);
-        });
-
-        await waitFor(() => {
-            expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+            expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
                 expect.objectContaining(savedMapOnePartner),
-            ]);
+            ], 'test-token');
         });
 
     });
@@ -413,20 +401,10 @@ describe('View and edit the partner mappings',() => {
   await user.click(saveButton);
 
   await waitFor(() => {
-  expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([90], true);
-    });
-
-  
-  await waitFor(() => {
-  expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+  expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
       expect.objectContaining(savedMapOnePartnerSelectDeselectSelectNew),
-    ]);
-    });
-
-    
-
-
-    
+    ], 'test-token');
+    });   
     });
 
     test('Fetches the Operators partners and APC Partner List and lets the user select, deselect, select new, create map, save map of multiples', async () => {
@@ -471,12 +449,7 @@ describe('View and edit the partner mappings',() => {
         await user.click(saveButton);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([86,90], true);
-        });
-
-
-        await waitFor(() => {
-            expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith(twoMappedPartnerRecords);
+            expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith(twoMappedPartnerRecords, 'test-token');
         });
 
     });
@@ -532,14 +505,9 @@ describe('View and edit the partner mappings',() => {
         await user.click(saveButton);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([86], true);
-        });
-
-
-        await waitFor(() => {
-            expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+            expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
                 expect.objectContaining(savedMapOnePartner),
-            ]);
+            ], 'test-token');
         });
 
     });
@@ -595,14 +563,9 @@ describe('View and edit the partner mappings',() => {
         await user.click(saveButton);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapValue).toHaveBeenCalledWith([86], true);
-        });
-
-
-        await waitFor(() => {
-            expect(writeProvider.writePartnerMappingsToDB).toHaveBeenCalledWith([
+            expect(writeProvider.insertPartnerMapping).toHaveBeenCalledWith([
                 expect.objectContaining(savedMapOnePartner),
-            ]);
+            ], 'test-token');
         });
 
     });

@@ -1,5 +1,5 @@
 import { vi, test, expect, describe, afterEach } from 'vitest';
-import { fetchRolesGeneric, fetchUserProfileRecordFromSupabase } from '../provider/fetch';
+import { fetchRolesGeneric, fetchUserProfile } from '../provider/fetch';
 import { transformRolesGeneric, transformUserProfileRecordSupabase } from 'src/types/transform';
 
 const mockSelectBasic = vi.fn();
@@ -60,33 +60,3 @@ describe('fetchRolesGeneric', () => {
   });
 });
 
-describe('fetchUserProfileRecordFromSupabase', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test('returns empty array on error', async () => {
-    mockSingle.mockResolvedValueOnce({ data: null, error: { message: 'DB error' } });
-
-    const result = await fetchUserProfileRecordFromSupabase('test-token-string');
-
-    expect(result).toBeNull();
-  });
-
-  test('returns empty array when data is null', async () => {
-    mockSingle.mockResolvedValueOnce({ data: null, error: null });
-
-    const result = await fetchUserProfileRecordFromSupabase('test-token-string');
-
-    expect(result).toBeNull();
-  });
-
-  test('returns transformed user on success', async () => {
-    const mockData = [{ id: 2, name: 'Admin' }];
-    mockSingle.mockResolvedValueOnce({ data: mockData, error: null });
-
-    const result = await fetchUserProfileRecordFromSupabase('test-token-string');
-
-    expect(result).toEqual(transformUserProfileRecordSupabase(mockData));
-  });
-});

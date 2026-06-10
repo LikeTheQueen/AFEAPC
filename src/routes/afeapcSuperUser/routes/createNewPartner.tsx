@@ -2,7 +2,7 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type OperatorType, type AddressType } from 'src/types/interfaces';
 import { useState } from 'react';
-import { addUnrelatedPartnerSupabase } from 'provider/write';
+import { insertAPCPartner } from 'provider/write';
 import { isAddressValid, notifyFailure } from 'src/helpers/helpers';
 import { notifyStandard } from "src/helpers/helpers";
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
@@ -25,7 +25,8 @@ export default function CreateOperator() {
         address_active: true,
     }; 
     
-    const { loggedInUser } = useSupabaseData();
+    const { loggedInUser, session } = useSupabaseData();
+    const token = session?.access_token ?? '';
     const [partner, setPartner] = useState<OperatorType>(operatorBlank);
     const [partnerAddress, setPartnerAddress] = useState<AddressType>(opAddressBlank);
     const [showSaved, setShowSaved] = useState<boolean>(false);
@@ -45,6 +46,7 @@ export default function CreateOperator() {
   };
   
   async function handleClickSavePartnerName() {
+  if(token === '') return;
   // Validate everything upfront before any writes
   if (!partner.name ) {
     setPartnerWriteErrorMessage('The Partner name is not valid');
@@ -58,8 +60,8 @@ export default function CreateOperator() {
 
   try {
     
-    const insertPartnerResult = await addUnrelatedPartnerSupabase(
-      partner.name, partnerAddress
+    const insertPartnerResult = await insertAPCPartner(
+      partner.name, partnerAddress, token
     );
     if (!insertPartnerResult.ok) throw new Error(insertPartnerResult.message);
     notifyStandard(`Partner name and address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Partner and their address ARE saved)`);

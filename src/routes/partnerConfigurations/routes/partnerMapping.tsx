@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { type PartnerRowData, type OperatorPartnerAddressType, type PartnerMappingDisplayRecord } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
 import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { updatePartnerProcessedMapValue, writePartnerMappingsToDB } from "provider/write";
+import { insertPartnerMapping } from "provider/write";
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
@@ -45,6 +45,7 @@ export default function PartnerMapping() {
     const [hideMappedSourcePartners, setHideMappedSourcePartners] = useState<boolean>(false);
     const [hideMappedAPCPartners, setHideMappedAPCPartners] = useState<boolean>(false);
     const [errorGettingAPCPartnerList, setErrorGettingAPCPartnerList] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handlePageChange = (paginatedData: PartnerMapDisplay[], page: number) => {
         setRowsToShow(paginatedData);
@@ -200,30 +201,35 @@ export default function PartnerMapping() {
         setCurrentPartnerMapDisplay(null);
     };
     const savePartnerMappingRecords = async () => {
-        if (cumaltivePartnerMapDisplay.length < 1) return;
+        if (cumaltivePartnerMapDisplay.length < 1 || token === '') return;
 
         const mappedData: PartnerMappingRecord[] = cumaltivePartnerMapDisplay.map(
             ({ apc_partner_id, source_partner_id }) => ({ 
                 partner_id: apc_partner_id, operator: opAPCID, op_partner_id: source_partner_id 
             })
         );
+        try{
+            const mappingResult = await insertPartnerMapping(mappedData, token);   
+            if (mappingResult.ok ) {
+                notifyStandard(`Partner Mappings have been saved. Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`);
+                setCumlativePartnerDisplay([]);
+                setRowsToShow([]);
+            }
 
-        const mappedPartnerUpdate = cumaltivePartnerMapDisplay.map(
-            ({ afe_partner_processed_id }) => (afe_partner_processed_id!));
+            if(!mappingResult.ok) {
+                notifyFailure(`Flow Blocked, the connection never came online.\n\n(TLDR: Partner Mappings NOT saved)`);
+            }
+
+        } catch(error) {
+            const err = error as Error;
+            const parsed = JSON.parse(err.message);
+            setErrorMessage(parsed.message);
+        } finally {
+            return;
+        }
         
-        const [mappingResult, processedResult] = await Promise.all([
-            updatePartnerProcessedMapValue(mappedPartnerUpdate, true),
-            writePartnerMappingsToDB(mappedData)
-        ]);    
-        
-        if (mappingResult?.ok && processedResult?.ok) {
-        notifyStandard(`Partner Mappings have been saved. Let's call it a clean tie-in.\n\n(TLDR: Partner Mappings ARE saved)`);
-        setCumlativePartnerDisplay([]);
-        setRowsToShow([]);
-    } else {
-        notifyFailure(`Flow Blocked, the connection never came online.\n\n(TLDR: Partner Mappings NOT saved)`);
-    }
     };
+
     const removeMapping = (index: number) => {
         setCumlativePartnerDisplay(prevMap => {
             const updatedMap = [...prevMap];
@@ -236,7 +242,7 @@ export default function PartnerMapping() {
             return updatedMap;
         });
     };
-    
+
     return (
         <>
             <div>
@@ -267,6 +273,15 @@ export default function PartnerMapping() {
                     </div>
                 ) : (
                     <div className="mt-10">
+                        <div hidden={errorMessage === null } className="flex md:col-span-5 justify-center max-w-7xl mx-auto py-4">
+                            <NoSelectionOrEmptyArrayMessage
+                            message={
+                            <>
+                                Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>!  There was an issue when saving the partner mapping: <span>{errorMessage}</span>
+                            </>
+                            }>
+                            </NoSelectionOrEmptyArrayMessage>
+                        </div>
                         <div className="grid grid-cols-1 gap-x-8 gap-y-8 px-0 py-0 sm:px-0 sm:grid-cols-2 pb-8">
                             {/* Partner Library in your AFE System */}
                             <div className="text-sm/6 2xl:text-base/7">

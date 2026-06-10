@@ -12,7 +12,7 @@ import SupportHistory from 'src/routes/support/routes/supportHistory';
 import { RachelGreen_AllPermissions_CW_NonOpCW, loggedInUserIsSuperUser, userNoUserId
  } from './test-utils/afeRecords';
 
-import { supportHistory, singleTicketThreadResponse, orginalTicketUpdatedResponse } from './test-utils/supportHistory';
+import { supportHistories, singleTicketThreadResponse, orginalTicketUpdatedResponse } from './test-utils/supportHistory';
 import { supportEmail } from 'src/constants/variables';
 
 vi.mock('../email/emailBasic', () => ({
@@ -21,7 +21,7 @@ vi.mock('../email/emailBasic', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-    fetchSupportHistory: vi.fn(),
+    fetchSupportHistories: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -143,11 +143,11 @@ describe('View and edit support tickets', () => {
     (writeProvider.createSupportTicketThread as Mock)
       .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
 
-    (fetchProvider.fetchSupportHistory as Mock)
-      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (fetchProvider.fetchSupportHistories as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistories });
 
     await setupWithSelections(user);
-    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
     expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
@@ -196,11 +196,11 @@ describe('View and edit support tickets', () => {
     (writeProvider.createSupportTicketThread as Mock)
       .mockResolvedValueOnce({ ok: false, data: null, message: 'Error Message' });
 
-    (fetchProvider.fetchSupportHistory as Mock)
-      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (fetchProvider.fetchSupportHistories as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistories });
 
     await setupWithSelections(user);
-    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
     expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
@@ -238,11 +238,11 @@ describe('View and edit support tickets', () => {
 
   test('No calls for support tickets are made if the user is not logged in', async () => {
 
-    (fetchProvider.fetchSupportHistory as Mock)
-      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (fetchProvider.fetchSupportHistories as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistories });
 
     await setupWithSelectionsNoUserID(user);
-    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(0);
+    expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(0);
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
     expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
@@ -253,13 +253,13 @@ describe('View and edit support tickets', () => {
 
   test('Shows an error when the call for Support Tickets fails', async () => {
 
-    (fetchProvider.fetchSupportHistory as Mock)
+    (fetchProvider.fetchSupportHistories as Mock)
       .mockResolvedValue({ ok: false, data: [], message: 'Error Message in the test' });
 
     await setupWithSelections(user);
 
     await waitFor(() => {
-      expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+      expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
     });
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
@@ -279,13 +279,13 @@ describe('View and edit support tickets', () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
     (writeProvider.createSupportTicketThread as Mock)
       .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
-    (fetchProvider.fetchSupportHistory as Mock)
-      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (fetchProvider.fetchSupportHistories as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistories });
     (writeProvider.updateSupportTicket as Mock)
       .mockResolvedValue({ ok: true, data: orginalTicketUpdatedResponse, message: null });
 
     await setupWithSelectionsSuperUser(user);
-    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
     expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();
@@ -365,13 +365,13 @@ describe('View and edit support tickets', () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
     (writeProvider.createSupportTicketThread as Mock)
       .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
-    (fetchProvider.fetchSupportHistory as Mock)
-      .mockResolvedValue({ ok: true, data: supportHistory, message: null });
+    (fetchProvider.fetchSupportHistories as Mock)
+      .mockResolvedValue({ ok: true, data: supportHistories });
     (writeProvider.updateSupportTicket as Mock)
       .mockResolvedValue({ ok: false, data: null, message: 'Returned Error' });
 
     await setupWithSelectionsSuperUser(user);
-    expect(fetchProvider.fetchSupportHistory).toHaveBeenCalledTimes(1);
+    expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
 
     expect(screen.getByText('Support History')).toBeInTheDocument();
     expect(screen.getByText('You can view all your support tickets anytime. If you need to add anything, just drop a comment on the ticket and we’ll see it.')).toBeInTheDocument();

@@ -6,7 +6,7 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from './test-utils/renderWithOptions';
 
-import ContactSupport from 'src/routes/support/routes/contactSupport';
+
 import FileUpload from 'src/routes/sharedComponents/fileUpload';
 
 import { RachelGreen_AllPermissions_CW_NonOpCW,
@@ -28,14 +28,14 @@ import { handleSendEmail } from 'email/emailBasic';
     });
 
  vi.mock('provider/fetch', () => ({
-   fetchEmailsForNonOperatorUsers: vi.fn(),
-   fetchEmailsForOperatorUsers: vi.fn(),
+   fetchEmailsNonOperator: vi.fn(),
+   fetchEmailsOperator: vi.fn(),
  }));
  
  vi.mock('provider/write', () => ({
      insertAFEHistory: vi.fn(),
      insertAFEDocument: vi.fn(),
-     insertIntoAFEDocTable: vi.fn(),
+     insertAFEDocumentRecord: vi.fn(),
  }));
 
  vi.mock('../email/emailBasic', () => ({
@@ -141,9 +141,9 @@ import { handleSendEmail } from 'email/emailBasic';
      test('Shows the File Upload field and option for non op agreement from the Partner POV', async () => {
         (writeProvider.insertAFEDocument as Mock)
         .mockResolvedValue({ ok: true });
-        (writeProvider.insertIntoAFEDocTable as Mock)
+        (writeProvider.insertAFEDocumentRecord as Mock)
         .mockResolvedValue({ ok: true });
-        (fetchProvider.fetchEmailsForOperatorUsers as Mock)
+        (fetchProvider.fetchEmailsOperator as Mock)
         .mockResolvedValue({
             ok: true,
             data:['eandv3851@gmail.com']
@@ -183,7 +183,7 @@ import { handleSendEmail } from 'email/emailBasic';
         'test-token'
         );
         
-        expect(writeProvider.insertIntoAFEDocTable).toHaveBeenCalledWith(
+        expect(writeProvider.insertAFEDocumentRecord).toHaveBeenCalledWith(
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
             apc_op_id_CWz,
             apc_partner_id_McKen,
@@ -193,10 +193,11 @@ import { handleSendEmail } from 'email/emailBasic';
             'pdf',
             12,
             "0000000000000000000000000000000000000000000000000000000000000000",
-            true
+            true,
+            'test-token'
         );
 
-        expect(fetchProvider.fetchEmailsForOperatorUsers).toHaveBeenLastCalledWith(apc_op_id_CWz);
+        expect(fetchProvider.fetchEmailsOperator).toHaveBeenLastCalledWith(apc_op_id_CWz,'test-token');
 
         expect(writeProvider.insertAFEHistory).toHaveBeenLastCalledWith(
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
@@ -213,11 +214,12 @@ import { handleSendEmail } from 'email/emailBasic';
      test('Shows the File Upload field and option for non op agreement from the Operator POV', async () => {
         (writeProvider.insertAFEDocument as Mock)
         .mockResolvedValue({ ok: true });
-        (writeProvider.insertIntoAFEDocTable as Mock)
+        (writeProvider.insertAFEDocumentRecord as Mock)
         .mockResolvedValue({ ok: true });
-        (fetchProvider.fetchEmailsForNonOperatorUsers as Mock)
+        (fetchProvider.fetchEmailsNonOperator as Mock)
         .mockResolvedValue({
             ok: true,
+            message:'',
             data:['eandv3851@gmail.com']
         })
  
@@ -250,7 +252,7 @@ import { handleSendEmail } from 'email/emailBasic';
         'test-token'
         );
         
-        expect(writeProvider.insertIntoAFEDocTable).toHaveBeenCalledWith(
+        expect(writeProvider.insertAFEDocumentRecord).toHaveBeenCalledWith(
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
             apc_op_id_CWz,
             apc_partner_id_McKen,
@@ -260,10 +262,11 @@ import { handleSendEmail } from 'email/emailBasic';
             'pdf',
             12,
             "0000000000000000000000000000000000000000000000000000000000000000",
-            false
+            false,
+            'test-token'
         );
 
-        expect(fetchProvider.fetchEmailsForNonOperatorUsers).toHaveBeenLastCalledWith(apc_partner_id_McKen);
+        expect(fetchProvider.fetchEmailsNonOperator).toHaveBeenLastCalledWith(apc_partner_id_McKen, 'test-token');
 
         expect(writeProvider.insertAFEHistory).toHaveBeenLastCalledWith(
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',

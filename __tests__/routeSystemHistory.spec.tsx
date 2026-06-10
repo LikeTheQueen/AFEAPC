@@ -13,7 +13,7 @@ import { RachelGreen_AllPermissions_CW_NonOpCW, loggedInUserIsSuperUser, userNoU
 import { systemHistory, systemHistoryLoadMore } from './test-utils/supportHistory';
 
 vi.mock('provider/fetch', () => ({
-    fetchSystemHistory: vi.fn(),
+    fetchSystemHistories: vi.fn(),
     fetchSystemHistoryCount: vi.fn(),
 }));
 
@@ -119,15 +119,16 @@ describe('View System History',() => {
 
     test('Loads screen and allows user to load more', async () => {
         
-        (fetchProvider.fetchSystemHistory as Mock)
-                  .mockResolvedValueOnce(systemHistory)
-                  .mockResolvedValueOnce(systemHistoryLoadMore);
-        (fetchProvider.fetchSystemHistoryCount as Mock)
-                  .mockResolvedValue(50);
+        (fetchProvider.fetchSystemHistories as Mock)
+                  .mockResolvedValueOnce({ok: true, data: systemHistory, count:50})
+                  .mockResolvedValueOnce({ok: true, data: systemHistoryLoadMore});
         
-                await setupWithSelections(user);
-                expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0,23);
-                expect(fetchProvider.fetchSystemHistoryCount).toHaveBeenCalled();
+        await setupWithSelections(user);
+
+        await waitFor(() => {
+          expect(fetchProvider.fetchSystemHistories).toHaveBeenCalledWith(0,23, 'test-token');
+        })
+        
 
         expect(screen.getByText('System Changes')).toBeInTheDocument();
         expect(screen.getByText(/Who's doing what and when are they're doing it./)).toBeInTheDocument();
@@ -147,7 +148,7 @@ describe('View System History',() => {
         await user.click(loadMoreButton[0]);
         });
 
-        expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0,47);
+        expect(fetchProvider.fetchSystemHistories).toHaveBeenCalledWith(0,47, 'test-token');
         await waitFor(() => {
         expect(screen.getByText(/Showing 1 to 5 of 48 changes/i)).toBeInTheDocument();
         });
@@ -155,15 +156,12 @@ describe('View System History',() => {
 
     test('Loads screen and allows user to load more and then filter', async () => {
 
-        (fetchProvider.fetchSystemHistory as Mock)
-            .mockResolvedValueOnce(systemHistory)
-            .mockResolvedValueOnce(systemHistoryLoadMore);
-        (fetchProvider.fetchSystemHistoryCount as Mock)
-            .mockResolvedValue(50);
+        (fetchProvider.fetchSystemHistories as Mock)
+            .mockResolvedValueOnce({ok: true, data: systemHistory, count:50})
+            .mockResolvedValueOnce({ok: true, data: systemHistoryLoadMore});
 
         await setupWithSelections(user);
-        expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0, 23);
-        expect(fetchProvider.fetchSystemHistoryCount).toHaveBeenCalled();
+        expect(fetchProvider.fetchSystemHistories).toHaveBeenCalledWith(0, 23, 'test-token');
 
         expect(screen.getByText('System Changes')).toBeInTheDocument();
         expect(screen.getByText(/Who's doing what and when are they're doing it./)).toBeInTheDocument();
@@ -198,7 +196,7 @@ describe('View System History',() => {
         await user.click(loadMoreButton[0]);
         });
 
-        expect(fetchProvider.fetchSystemHistory).toHaveBeenCalledWith(0, 47);
+        expect(fetchProvider.fetchSystemHistories).toHaveBeenCalledWith(0, 47, 'test-token');
         await waitFor(() => {
             expect(screen.getByText(/Showing 1 to 5 of 48 changes/i)).toBeInTheDocument();
         });

@@ -1,11 +1,8 @@
 
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { Button } from "@headlessui/react";
-import { type AddressType, type ParentCompanyWrite, type ParentCompany, type OperatorOrPartnerList } from 'src/types/interfaces';
+import { type AddressType, type ParentCompanyWrite, type ParentCompany } from 'src/types/interfaces';
 import { useEffect, useState, useMemo } from 'react';
-import { addOParentCompanyRecordSupabase, addParentCompanyAdressSupabase, addPartnerSupabase, updateOParentCompanyRecordSupabase, updateParentCompanyAdressSupabase } from 'provider/write';
-import { isAddressValid, isOperatorValid } from 'src/helpers/helpers';
-import { notifyStandard, useWarnUnsavedChanges } from "src/helpers/helpers";
 import { useSupabaseData } from 'src/types/SupabaseContext';
 import { handleTabChanged } from 'src/routes/sharedComponents/tabChange';
 import { CreateParentCompany, EditParentCompany } from './createEditParentCompanies';
@@ -17,70 +14,15 @@ const tabs = [
 ];
 
 export default function ParentCompanyInterface() {
-    let parentCompanyBlank = {
-        apc_name: '',
-        max_users: 0,
-        license_expires: '',
-        is_active: true,
-    }
     
-    let parentCoAddressBlank : AddressType = {
-        id:0,
-        street: '',
-        suite: '',
-        city: '',
-        state: '',
-        zip: '',
-        country: '',
-        address_active: true,
-    }; 
-    
-
-    const { loggedInUser, session } = useSupabaseData();
-    const token = session?.access_token ?? "";
+    const { loggedInUser } = useSupabaseData();
     const [tabList, setTabList] = useState(tabs);
     const [currentTab, setCurrentTab] = useState(1);
-    const [parentCompany, setParentCompany] = useState<ParentCompanyWrite>(parentCompanyBlank)
-    const [parentCoBillingAddress, setParentCOBillAddress] = useState<AddressType>(parentCoAddressBlank);
     const [showSaved, setShowSaved] = useState<boolean>(false);
     const [parentCompanyWriteErrorMessage, setParentCoWriteErrorMessage] = useState<string | null>(null);
     const [parentCompanySelected, setParentCompanySelected] = useState<ParentCompany>();
     const [parentCompanyID, setParentCompanyId] = useState('');
 
-    
-  
-  
-  async function handleClickSaveOpName() {
-  // Validate everything upfront before any writes
-  if (!parentCompany.apc_name ) {
-    setParentCoWriteErrorMessage('The Parent Company Name is not valid');
-    return;
-  }
-
-  if (!isAddressValid(parentCoBillingAddress)) {
-    setParentCoWriteErrorMessage('The Billing Address is not valid');
-    return;
-  }
-let parentCompanyID =''
-  try {
-    
-    const createParentCompany = await addOParentCompanyRecordSupabase(parentCompany);
-    if (!createParentCompany.ok) throw new Error(createParentCompany.message);
-
-    const parentCompanyAddressRecord = await addParentCompanyAdressSupabase(
-      createParentCompany.data.id, parentCoBillingAddress
-    );
-    if (!parentCompanyAddressRecord.ok) throw new Error(parentCompanyAddressRecord.message);
-
-    parentCompanyID = createParentCompany.data.id;
-    setShowSaved(true);
-    notifyStandard(`Parent Company name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
-
-  } catch (error) {
-    setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + error);
-  }
-  };
-  
 
   return (
     <>

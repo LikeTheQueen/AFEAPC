@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GLCodeType } from 'src/types/interfaces';
-import { updateGLAccountCodeStatus } from 'provider/write';
+import { updateGLAccountStatus } from 'provider/write';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { PartnerDropdown } from 'src/routes/sharedComponents/partnerDropdown';
@@ -9,6 +9,7 @@ import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { SingleCheckbox } from "src/routes/sharedComponents/singleCheckbox";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { transformGLCodes } from "src/types/transform";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 
 const headers = ["Account Group", "Account Number", "Account Description",""];
 
@@ -31,13 +32,12 @@ export default function GLLibrary() {
   };
 
   async function getAccountCodes() {
-    if (opAPCID === '' && partnerAPCID === '') return;
+    if ((opAPCID === '' && partnerAPCID === '') || token === '') return;
     setLoading(true);
     try {
         const glCodeList = await fetchAccountCodes(opAPCID, partnerAPCID, token)
 
         if(glCodeList.ok) {
-console.log(glCodeList.data)
             setAccountCodes(transformGLCodes(glCodeList.data));
         }
     } finally {
@@ -46,8 +46,13 @@ console.log(glCodeList.data)
   };
 
   async function handleDeleteAccount(accountIdx: number, status: boolean) {
-    await updateGLAccountCodeStatus(accountIdx, status);
-    getAccountCodes();
+    const updateGlCodeResult = await updateGLAccountStatus(accountIdx, status, token);
+    if(updateGlCodeResult.ok) {
+      getAccountCodes();
+      return notifyStandard(`GL Account Code saved. Books are balanced and the wellhead’s pressure-tight.\n\n(TLDR: GL Account Codes changes SAVED)`);
+    } else {
+      return notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR changing the account code: ${updateGlCodeResult.message})`);
+    }
   }
 
   useEffect(() => {

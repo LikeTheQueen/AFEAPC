@@ -41,7 +41,7 @@ vi.mock('src/routes/sharedComponents/partnerDropdown', () => ({
 }));
 
 vi.mock('provider/fetch', () => ({
-  fetchAccountCodesforOperatorToMap: vi.fn(),
+  fetchUnmappedGLCodes: vi.fn(),
 }));
 
 vi.mock('provider/write', () => ({
@@ -130,11 +130,11 @@ describe('View and Edit GL Code Mappings',() => {
         });
 
   test('Displays warning when the account lists are null', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText(/If they haven't been uploaded you can reach out to the Operator to let them know/i)).toBeInTheDocument();
       expect(screen.getByText(/If they haven't been uploaded head back to the upload screen to get those accounts in the system./i)).toBeInTheDocument();
@@ -147,11 +147,11 @@ describe('View and Edit GL Code Mappings',() => {
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -188,16 +188,16 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
        apc_partner_account_id: 98,
-    }), 'test-token'
-  ]);
+    })
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -232,16 +232,16 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
        apc_partner_account_id: 98,
-    }), 'test-token'
-  ]);
+    })
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and clears mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -272,11 +272,11 @@ describe('View and Edit GL Code Mappings',() => {
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping and save mapping if there is not account group or descriptions', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -313,16 +313,16 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
        apc_partner_account_id: 98,
-    }), 'test-token'
-  ]);
+    })
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping and save mapping if there is not account group or descriptions', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -360,15 +360,15 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_group: '',
       apc_partner_account_id: 104,
     }),
-  ]);
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create mapping selecting their GL then Operator GL and save mapping if there is not account group or descriptions', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -406,15 +406,15 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_group: '',
       apc_partner_account_id: 104,
     }),
-  ]);
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to select and unselect accounts, to create mapping and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -457,16 +457,16 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_description: 'SURFACE LEASE ACQUISITION',
       partner_account_group: '1. DRILLING',
        apc_partner_account_id: 98,
-    }), 'test-token'
-  ]);
+    })
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create multiple mappings and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -528,15 +528,15 @@ describe('View and Edit GL Code Mappings',() => {
       partner_account_group: '1. DRILLING',
       apc_partner_account_id: 100,
     },
-  ]);
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create multiple mappings, delete one and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -590,15 +590,15 @@ await user.click(within(pendingRow).getAllByRole('button', { name: /delete mappi
       partner_account_group: '1. DRILLING',
       apc_partner_account_id: 100,
     },
-  ]);
+  ], 'test-token');
   });
 
   test('Fetches account codes when both dropdowns are selected allows user to create multiple mappings, delete one MOBILE and save mapping', async () => {
-    (fetchProvider.fetchAccountCodesforOperatorToMap as Mock)
-      .mockResolvedValueOnce(operatorAccountCodes)
-      .mockResolvedValueOnce(nonOpOperatorAccountCodes);
+    (fetchProvider.fetchUnmappedGLCodes as Mock)
+      .mockResolvedValueOnce({ok: true, data: operatorAccountCodes})
+      .mockResolvedValueOnce({ok: true, data:nonOpOperatorAccountCodes});
     await setupWithSelections(user);
-    expect(fetchProvider.fetchAccountCodesforOperatorToMap).toHaveBeenCalledTimes(2);
+    expect(fetchProvider.fetchUnmappedGLCodes).toHaveBeenCalledTimes(2);
     await waitFor(() => {
       expect(screen.getByText('9210.201')).toBeInTheDocument();
       expect(screen.getByText('5310.202')).toBeInTheDocument();
@@ -652,7 +652,7 @@ await user.click(within(pendingRow).getAllByRole('button', { name: /delete mappi
       partner_account_group: '1. DRILLING',
       apc_partner_account_id: 100,
     },
-  ]);
+  ], 'test-token');
   });
 
     

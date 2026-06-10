@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect, useContext, useCallback, useMemo } from "react";
-import { fetchUserProfileRecordFromSupabase } from "../../provider/fetch";
+import { fetchUserProfile } from "../../provider/fetch";
 import type { UserProfileRecordSupabaseType } from "./interfaces";
 import supabase from '../../provider/supabase';
 import type { Session } from "@supabase/supabase-js";
+import { transformUserProfileRecordSupabase } from "./transform";
 
 
 export interface SupabaseContextType {
@@ -21,11 +22,23 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
   const [loggedInUser, setLoggedInUser] = useState<UserProfileRecordSupabaseType | null>(null);
 
   const fetchData = useCallback(async () => {
-    const authUserFormatted = await fetchUserProfileRecordFromSupabase(session?.user.id!);
-    setLoggedInUser(authUserFormatted);
-    setLoading(false);
+    if(!session?.user.id || !session.access_token) return;
+    try {
+      const userCall = await fetchUserProfile(session?.user.id!, session?.access_token!);
+    if(userCall.ok) {
+      const userFormatted = transformUserProfileRecordSupabase(userCall.data);
+      setLoggedInUser(userFormatted);
+    } else {
+      throw new Error('Cannot locate user');
+    }
+    } catch(error) {
+      console.error('Failed to fetch user profile', error);
+      await supabase.auth.signOut();
+    } finally{
+      setLoading(false);
+    }
 
-  }, [session?.user.id]);
+  }, [session?.user.id, session?.access_token]);
 
 
   useEffect(() => {

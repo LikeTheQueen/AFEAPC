@@ -1,9 +1,8 @@
 import { describe, it, vi, beforeEach, afterEach, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { SupabaseProvider, useSupabaseData } from '../src/types/SupabaseContext';
-import supabase from '../provider/supabase';
+import { SupabaseProvider, useSupabaseData } from '../../src/types/SupabaseContext';
+import supabase from '../../provider/supabase';
 import type { Session } from '@supabase/supabase-js';
-import type { AFEType, OperatorType } from 'src/types/interfaces';
 import '@testing-library/jest-dom';
 
 
@@ -73,11 +72,7 @@ describe('SupabaseProvider', () => {
         <TestComponent />
       </SupabaseProvider>
     );
-    expect(screen.getByTestId('loading')).toHaveTextContent('loading');
-
-    await waitFor(() => {
-      expect(screen.getByTestId('loading')).toHaveTextContent('loading');
-    });
+    
     expect(screen.getByTestId('session')).toHaveTextContent(JSON.stringify(mockSession));
   });
 

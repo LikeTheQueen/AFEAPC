@@ -146,6 +146,203 @@ export const supportHistory = [
     }
 ];
 
+export const supportHistories = [
+    {
+        "id": 2,
+        "created_at": "2025-11-29T08:04:24.637541+00:00",
+        "created_by": {
+            "id": "13e69340-d14c-45a9-96a8-142795925487",
+            "last_name": "Green",
+            "first_name": "Rachel"
+        },
+        "subject": "This is another issue that I have and it's a really long text and I need to limit the length of the subject instead of it going and going and going and going",
+        "message": "And I don't really get what the issue is so to speak\n",
+        "active": true,
+        "closed_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+        "closed_on": "2025-11-29T19:11:21.86+00:00",
+        "resolution": "I will resolve this",
+        "resolution_date": "2025-11-29T19:11:21.86+00:00",
+        "created_by_email": "eandv3851@gmail.com",
+        "SUPPORT_HISTORY_THREAD": [
+            {
+                "id": 3,
+                "active": true,
+                "comment": "That's okay",
+                "created_at": "2025-11-29T10:14:10.789981+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T10:14:10.39+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 4,
+                "active": true,
+                "comment": "I just need to ask a question",
+                "created_at": "2025-11-29T10:22:28.191288+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T10:22:27.917+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 5,
+                "active": true,
+                "comment": "this is a comme\nand I'm adding more",
+                "created_at": "2025-11-29T17:42:29.012952+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T17:42:28.407+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 6,
+                "active": true,
+                "comment": "Adding another",
+                "created_at": "2025-11-29T18:19:55.14005+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T18:19:54.693+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 7,
+                "active": true,
+                "comment": "Adding more\n",
+                "created_at": "2025-11-29T18:20:49.086483+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T18:20:48.399+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 8,
+                "active": true,
+                "comment": "And more",
+                "created_at": "2025-11-29T18:20:53.590136+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T18:20:53.154+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 9,
+                "active": true,
+                "comment": "And more",
+                "created_at": "2025-11-29T18:20:57.79627+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T18:20:57.356+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 10,
+                "active": true,
+                "comment": "And more",
+                "created_at": "2025-11-29T18:21:02.254219+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T18:21:01.827+00:00",
+                "related_ticket": 2
+            },
+            {
+                "id": 14,
+                "active": true,
+                "comment": "I am guessing you got this",
+                "created_at": "2026-04-17T19:27:27.525343+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2026-04-17T19:27:26.124+00:00",
+                "related_ticket": 2
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "created_at": "2025-11-29T06:49:02.708171+00:00",
+        "created_by": {
+            "id": "13e69340-d14c-45a9-96a8-142795925487",
+            "last_name": "Green",
+            "first_name": "Rachel"
+        },
+        "subject": "I have this issue you see",
+        "message": "And the thing is that it's the this thing doesn't mean anything at all.",
+        "active": false,
+        "closed_by": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+        "closed_on": "2025-12-01T18:05:01.168+00:00",
+        "resolution": "So this is resolved",
+        "resolution_date": "2025-12-01T18:05:01.168+00:00",
+        "created_by_email": "eandv3851@gmail.com",
+        "SUPPORT_HISTORY_THREAD": [
+            {
+                "id": 1,
+                "active": true,
+                "comment": "This is my comment",
+                "created_at": "2025-11-29T07:03:28.461447+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-11-29T07:03:13+00:00",
+                "related_ticket": 1
+            },
+            {
+                "id": 2,
+                "active": true,
+                "comment": "This is my second comment",
+                "created_at": "2025-11-29T07:04:00.773791+00:00",
+                "created_by": {
+                    "id": "13e69340-d14c-45a9-96a8-142795925487",
+                    "last_name": "Green",
+                    "first_name": "Rachel"
+                },
+                "comment_date": "2025-11-29T07:03:58+00:00",
+                "related_ticket": 1
+            },
+            {
+                "id": 12,
+                "active": true,
+                "comment": "This is a comment to add",
+                "created_at": "2025-12-01T15:45:48.733963+00:00",
+                "created_by": {
+                    "id": "5c76d13d-a0de-4589-9fef-f91a6817b846",
+                    "last_name": "Elizabeth",
+                    "first_name": "Queen"
+                },
+                "comment_date": "2025-12-01T15:45:48.376+00:00",
+                "related_ticket": 1
+            }
+        ]
+    }
+];
+
 export const ticketThreadResponse = [
     {
         "id": 18,

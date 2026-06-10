@@ -1317,14 +1317,22 @@ export const nonOpAddressAddedResponse = {
             "country": "United States"
 };
 
-export const claimProofResult = {
+export const claimProofResult = [{
         "id": 3,
         "afe_number": "06D111",
         "version_string": null,
         "apc_partner_name": "John Ross Exploration Inc",
         "partner_wi": 20
-    };
-
+    }];
+export const claimProof2 = [
+    {
+        "id": 27,
+        "afe_number": "26D014",
+        "version_string": "Base",
+        "apc_partner_name": "Mckenzie Oil",
+        "partner_wi": 18.5
+    }
+]
 export const claimProofResultNoID = {
         "id": null,
         "afe_number": "06D111",

@@ -1,11 +1,11 @@
-import { fetchAFEDetails, fetchAFEHistoryCount, fetchAFENotificationCount, fetchNotifications } from "provider/fetch";
+import { fetchAFEDetails, fetchAFENotifications } from "provider/fetch";
 import { startTransition, useCallback, useEffect, useMemo, useState } from "react"
 import { formatDateShort } from "src/helpers/styleHelpers";
-import { type AFEType, type Notifications } from "src/types/interfaces";
+import { type Notifications } from "src/types/interfaces";
 import { transformNotifications, transformSingleAFE } from "src/types/transform";
 import UniversalPagination from "../../sharedComponents/pagnation";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
-import { viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
+import { supportEmail, viewNonOpAFEPermission, viewOperatedAFEPermission } from "src/constants/variables";
 import { doesUserHaveRole } from "src/helpers/helpers";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
@@ -14,12 +14,15 @@ import { useNavigate } from "react-router";
 
 type FilterNotificationProp = {
   apc_afe_id: string;
+  token: string;
 }
 
 export default function NotificationsGrid() {
   const navigate = useNavigate();
-  const { loggedInUser, loading, session } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const [loading, setLoading] = useState(true);
   const token = session?.access_token ?? "";
+  const [notificationError, setNotificationError] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
 // State for paginated data
   const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
@@ -46,39 +49,44 @@ export default function NotificationsGrid() {
 
 
 useEffect(() => {
-    let isMounted = true;
-    async function getNotifications() {
-      if(loading || !loggedInUser) {
-            return;
-          }
-          if(doesUserHaveViewOpAFERole === null || !doesUserHaveViewNonOpAFERole && !doesUserHaveViewOpAFERole) {
-            return;
-          }
-        try {
-            const result = await fetchNotifications(minRange, maxRange, false);
-            if(result.length > 0 ) {
-                const transformedNotifications = transformNotifications(result);
-                setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
-            }
-        } finally {
-            if(isMounted) {
-                return;
-            }
-        }
-    }; getNotifications();
-    return () => {
-            isMounted = false;
-        };
-    
-},[maxRange, loggedInUser, loading]);
-
-useMemo(() => {
-  async function getNotificationHistoryRowCount() {
-    const afeHistoryRowCountResult = await fetchAFENotificationCount();
-    setTotalNotificationHistoryRowCount(afeHistoryRowCountResult);
-  }; getNotificationHistoryRowCount();
+  // Wait for session/user to be ready
+  if (!loggedInUser || !token) return;
   
-},[loggedInUser])
+  // Wait for roles to resolve
+  if (doesUserHaveViewOpAFERole === null || doesUserHaveViewNonOpAFERole === null) return;
+  
+  // User has no roles — stop loading, nothing to fetch
+  if (!doesUserHaveViewOpAFERole && !doesUserHaveViewNonOpAFERole) {
+    setLoading(false);
+    return;
+  }
+
+  let isMounted = true;
+
+  async function getNotifications() {
+    setLoading(true);
+    try {
+      const result = await fetchAFENotifications(minRange, maxRange, false, '', token);
+      if (!isMounted) return;
+      if (result.ok) {
+        setTotalNotificationHistoryRowCount(result.count);
+        setNotifications(transformNotifications(result.data).sort((a, b) => b.id - a.id));
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications', error);
+      setNotificationError(error instanceof Error ? error.message : String(error));
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  }
+
+  getNotifications();
+  return () => { isMounted = false; };
+
+}, [maxRange, token, loggedInUser, doesUserHaveViewOpAFERole, doesUserHaveViewNonOpAFERole]);
+
 
 useEffect(() => {
   let isMounted = true;
@@ -181,6 +189,17 @@ async function handlePartnerStatusChanged(notification: Notifications) {
   
   return (
     <>
+    <div hidden={notificationError === null} className="flex justify-center items-center min-h-screen px-10">
+      <NoSelectionOrEmptyArrayMessage
+              message={
+            <>
+               Oh hey there <span className="font-bold">{loggedInUser?.firstName}  {loggedInUser?.lastName}</span>! We ran into an error getting the AFE History.  Please reach out to {supportEmail} if the issue persists. 
+               <br/>
+               {notificationError}
+            </>
+              }>
+              </NoSelectionOrEmptyArrayMessage>
+    </div>
     <div hidden={loading || doesUserHaveViewOpAFERole === null || doesUserHaveViewNonOpAFERole === null || doesUserHaveViewOpAFERole || doesUserHaveViewNonOpAFERole} className="flex max-w-7xl mx-auto justify-center px-4 sm:px-24 pt-[20vh] sm:pt-[33vh] sm:py-4">
               <NoSelectionOrEmptyArrayMessage
               message={
@@ -189,8 +208,8 @@ async function handlePartnerStatusChanged(notification: Notifications) {
             </>
               }>
               </NoSelectionOrEmptyArrayMessage>
-          </div>
-    <div hidden={loading || doesUserHaveViewOpAFERole === null || (!doesUserHaveViewOpAFERole && !doesUserHaveViewNonOpAFERole)} className="px-4 py-4 sm:px-6 sm:py-6">
+      </div>
+    <div hidden={notificationError !== null || loading || doesUserHaveViewOpAFERole === null || (!doesUserHaveViewOpAFERole && !doesUserHaveViewNonOpAFERole)} className="px-4 py-4 sm:px-6 sm:py-6">
       <h2 className="text-lg sm:text-xl font-semibold custom-style">AFE Histories</h2>
        <p className="text-xs/6 2xl:text-sm/6 custom-style-long-text px-3">
                 Cumlative history of actions taken on all AFEs.
@@ -376,7 +395,7 @@ async function handlePartnerStatusChanged(notification: Notifications) {
                   <div className="custom-style-long-text text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)]">{item.description}</div>
               </td>
               <td className="px-1 py-1 pl-3 sm:pl-0 text-xs/6 2xl:text-sm/6 sm:pr-8 lg:pr-20">
-                  <div className="block text-[var(--darkest-teal)] custom-style text-center sm:block">{item.afe_number} {item.afe_version} {item.partner_status}</div>
+                  <div className="block text-[var(--darkest-teal)] custom-style text-center sm:block">{item.afe_number} {item.afe_version}</div>
               </td>
               <td className="hidden px-1 py-1 pl-0 text-center text-xs/6 2xl:text-sm/6 text-[var(--darkest-teal)] custom-style md:table-cell lg:pr-20">
                 {formatDateShort(item.created_at)}
@@ -424,9 +443,11 @@ async function handlePartnerStatusChanged(notification: Notifications) {
   )
 };
 
-export function NotificationsGridPreFiltered({apc_afe_id}: FilterNotificationProp) {
+export function NotificationsGridPreFiltered({apc_afe_id, token}: FilterNotificationProp) {
   
     const [notifications, setNotifications] = useState<Notifications[] | []>([]); 
+    const [loading, setLoading] = useState(true);
+    const [notificationError, setNotificationError] = useState<string | null>(null);
 // State for paginated data
     const [rowsToShow, setRowsToShow] = useState<Notifications[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
@@ -444,34 +465,34 @@ export function NotificationsGridPreFiltered({apc_afe_id}: FilterNotificationPro
 
   
     useEffect(() => {
-    let isMounted = true;
-    async function getNotifications() {
-        try {
-            const result = await fetchNotifications(minRange, maxRange, true, apc_afe_id);
-        
-            if(result.length > 0 ) {
-                const transformedNotifications = transformNotifications(result);
-                setNotifications(transformedNotifications.sort((a,b) => b.id - a.id));
-            }
-        } finally {
-            if(isMounted) {
-                return;
-            }
-        }
-    }; getNotifications();
-    return () => {
-            isMounted = false;
-        };
-    
-},[maxRange])
-
-useMemo(() => {
-  async function getAFEHistoryRowCount() {
-    const afeHistoryRowCountResult = await fetchAFEHistoryCount(apc_afe_id);
-    setTotalAFEHistoryRowCount(afeHistoryRowCountResult);
-  }; getAFEHistoryRowCount();
   
-},[])
+  let isMounted = true;
+
+  async function getNotifications() {
+    setLoading(true);
+    try {
+      const result = await fetchAFENotifications(minRange, maxRange, true, apc_afe_id, token);
+      if (!isMounted) return;
+      if (result.ok) {
+        setTotalAFEHistoryRowCount(result.count);
+        setNotifications(transformNotifications(result.data).sort((a, b) => b.id - a.id));
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications', error);
+      setNotificationError(error instanceof Error ? error.message : String(error));
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  }
+
+  getNotifications();
+  return () => { isMounted = false; };
+
+    }, [maxRange, token]);
+
+
 
 useEffect(() => {
   let isMounted = true;

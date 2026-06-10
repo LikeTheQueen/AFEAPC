@@ -1,4 +1,4 @@
-import { fetchAccountCodesforOperatorToMap } from "provider/fetch";
+import { fetchUnmappedGLCodes } from "provider/fetch";
 import { useState, useEffect, useMemo } from "react";
 import { type GLCodeType } from "src/types/interfaces";
 import { ArrowRightIcon } from "@heroicons/react/16/solid";
@@ -12,6 +12,7 @@ import { type GLMappingRecord } from 'src/types/interfaces';
 import NoSelectionOrEmptyArrayMessage from "src/routes/sharedComponents/noSelectionOrEmptyArrayMessage";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { useSupabaseData } from "src/types/SupabaseContext";
+import { transformGLCodes } from "src/types/transform";
 
 export default function GLMapping() {
     const { session } = useSupabaseData();
@@ -39,13 +40,19 @@ export default function GLMapping() {
             if (opAPCID === '' || partnerAPCID === '') return;
             setLoading(true);
             try {
-                const operatorAccountList = await fetchAccountCodesforOperatorToMap(opAPCID, partnerAPCID, true, false);
-                const partnerAccountList = await fetchAccountCodesforOperatorToMap(opAPCID, partnerAPCID, false, true);
-
-                if (isMounted) {
-                    setOperatorAccountCodes(operatorAccountList ?? []);
-                    setPartnerAccountCodes(partnerAccountList ?? []);
-
+                const [operatorAccountList, partnerAccountList] = await Promise.all([
+                    fetchUnmappedGLCodes(opAPCID, partnerAPCID, true, false, token),
+                    fetchUnmappedGLCodes(opAPCID, partnerAPCID, false, true,token)
+                ]);
+                
+                if(operatorAccountList.ok && partnerAccountList.ok) {
+                    const operatorAccountTransformed = transformGLCodes(operatorAccountList.data);
+                    const partnerAccountListTransformed = transformGLCodes(partnerAccountList.data);
+                    
+                    if (isMounted) {
+                    setOperatorAccountCodes(operatorAccountTransformed ?? []);
+                    setPartnerAccountCodes(partnerAccountListTransformed ?? []);
+                    }
                 }
             } finally {
                 if (isMounted) {
