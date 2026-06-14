@@ -3,7 +3,7 @@ import { ChatBubbleLeftEllipsisIcon, ClockIcon } from "@heroicons/react/24/outli
 
 import { handleSendEmail } from "email/emailBasic";
 import { fetchSupportHistories } from "provider/fetch";
-import { createSupportTicketThread, updateSupportTicket } from "provider/write";
+import { insertSupportTicketThread, updateSupportTicketResolution } from "provider/write";
 
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { formatDateShort } from "src/helpers/styleHelpers";
@@ -93,11 +93,11 @@ export default function SupportHistory() {
   };
 
   const handleComment = async (related_ticket: number) => {
+    if(!loggedInUser || token === '') return;
     const comment = commentVal[related_ticket] || "";
     if (!comment.trim()) return;
-
-    const newCommentResult = await createSupportTicketThread(comment, new Date(), related_ticket);
-
+    try{
+    const newCommentResult = await insertSupportTicketThread(comment, related_ticket, token);
     if(newCommentResult.ok) {
     if(!loggedInUser?.is_super_user) {
     await handleSendEmail(
@@ -127,23 +127,40 @@ export default function SupportHistory() {
       [related_ticket]: "",
     }));
     void getHistory();
-  } if(!newCommentResult.ok) {
-    await handleSendEmail(
-        `New comment on ticket #${related_ticket} ERROR`,
-        `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
-        'Support Team',
-        loggedInUser?.firstName!,
-        loggedInUser?.email!,
-        supportEmail,
-        "https://afepartner.com/mainscreen/supporthistory"
-      );
-    notifyFailure(`Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`);
-  }
-  };
+    } if(!newCommentResult.ok) {
+      await handleSendEmail(
+          `New comment on ticket #${related_ticket} ERROR`,
+          `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
+          'Support Team',
+          loggedInUser?.firstName!,
+          loggedInUser?.email!,
+          supportEmail,
+          "https://afepartner.com/mainscreen/supporthistory"
+        );
+      notifyFailure(`Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`);
+    }
+    } catch(error){
+      const err = error as Error
+      const parsed = JSON.parse(err.message)
+      await handleSendEmail(
+          `New comment on ticket #${related_ticket} ERROR`,
+          `${loggedInUser?.firstName} ${loggedInUser?.lastName} has added a new comment: ${comment}`,
+          'Support Team',
+          loggedInUser?.firstName!,
+          loggedInUser?.email!,
+          supportEmail,
+          "https://afepartner.com/mainscreen/supporthistory"
+        );
+      notifyFailure(`Unable to save comment.  Please try again or contact AFE Partner Support @ ${supportEmail}`);
+    } finally{
+      return;
+    }
+    };
 
   const handleCloseTicket = async (id: number, active: boolean) => {
-    if (!loggedInUser?.user_id) return;
-    const originalSupportTicketUpdated = await updateSupportTicket(id, active, loggedInUser.user_id, resolutionVal[id] || "");
+    if (!loggedInUser?.user_id || token === '') return;
+    try{
+    const originalSupportTicketUpdated = await updateSupportTicketResolution(id, active, loggedInUser.user_id, resolutionVal[id] || "", token);
     
     if(originalSupportTicketUpdated.ok) {
     await handleSendEmail(
@@ -158,6 +175,13 @@ export default function SupportHistory() {
     void getHistory();
     } if(!originalSupportTicketUpdated.ok) {
       notifyFailure('The ticket resolution did not save.  Check the Logs');
+    }
+    } catch(error){
+      const err = error as Error
+      const parsed = JSON.parse(err.message)
+      notifyFailure(`The ticket resolution did not save.  Check the Logs ${parsed.message}`);
+    } finally{
+      return;
     }
   };
 

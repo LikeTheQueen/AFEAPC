@@ -77,7 +77,7 @@ export default function AFEHistory({ historyAFEs, apc_afe_id, userName, maxRowsT
 
     function handleComment() {
         const newComment: AFEHistorySupabaseType = { id: afeHistoryMaxId, afe_id: apc_afe_id, user: 'You', description: commentVal, type: "comment", created_at: new Date() };
-        insertAFEHistory(apc_afe_id, commentVal, 'comment', token);
+        insertAFEHistory(apc_afe_id, commentVal, 'comment', 'User adding comment to AFE', token);
         setCommentVal('');
         onCommentAdded?.(newComment);
     };

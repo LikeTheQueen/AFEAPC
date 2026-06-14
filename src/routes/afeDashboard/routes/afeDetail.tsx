@@ -173,7 +173,7 @@ export default function AFEDetailURL() {
         setDocToView(uri);
         if (uri !== '') setOpen(true);
         if(!loggedInUser?.is_super_user) {
-        insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', token)
+        insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' viewed the AFE attachment ', docName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file viewed', 'file viewed history', token)
         }
     } catch {
       notifyFailure(`Blind Well.  The file couldn’t be opened for viewing`);
@@ -196,7 +196,7 @@ export default function AFEDetailURL() {
       document.body.appendChild(a);
       a.click();
       a.remove(); 
-      insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', fileName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', token)
+      insertAFEHistory(afeRecord?.id!, loggedInUser!.firstName!.concat(' ', loggedInUser!.lastName!, ' downloaded the AFE attachment ', fileName, ' for AFE# ', afeRecord!.afe_number!, afeRecord?.version_string ? ' '.concat(afeRecord?.version_string) : ''), 'file download', 'File download history', token)
     } catch {
       notifyFailure(`Pressure Loss Detected.  The file couldn’t be delivered`);
     }

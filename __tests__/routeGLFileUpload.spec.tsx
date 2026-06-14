@@ -17,7 +17,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    writeGLAccountlistFromSourceToDB: vi.fn(),
+    insertGLAccount: vi.fn(),
 }));
 
 vi.mock('src/helpers/helpers', () => ({
@@ -171,8 +171,9 @@ describe('Account File Upload', () => {
 
     test('Allows user to upload the Account List and saves the list', async () => {
 
-        vi.mocked(writeProvider.writeGLAccountlistFromSourceToDB)
-            .mockResolvedValue({ ok: true, message: undefined });
+        vi.mocked(writeProvider.insertGLAccount)
+            .mockResolvedValueOnce({ok: true})
+            .mockResolvedValueOnce({ok: true});
 
         renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
@@ -249,37 +250,31 @@ describe('Account File Upload', () => {
         await user.click(saveAccountList);
 
         await waitFor(() => {
-            expect(writeProvider.writeGLAccountlistFromSourceToDB).toHaveBeenCalledWith(
-                [{
+            expect(writeProvider.insertGLAccount).toHaveBeenNthCalledWith(1,[{
                     account_number: 'acct-1',
-                    apc_op_id: 'operator-123',
-                    apc_part_id: null,
+                    apc_id: 'partner-123',
                     account_group: 'Drill',
                     account_description: 'Rig'
                 },
                 {
                     account_number: 'acct-1',
-                    apc_op_id: 'operator-124',
-                    apc_part_id: null,
+                    apc_id: 'partner-124',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                }],"GL_CODES_NONOP",'test-token')
+                expect(writeProvider.insertGLAccount).toHaveBeenNthCalledWith(2,[{
+                    account_number: 'acct-1',
+                    apc_id: 'operator-123',
                     account_group: 'Drill',
                     account_description: 'Rig'
                 },
                 {
                     account_number: 'acct-1',
-                    apc_op_id: null,
-                    apc_part_id: 'partner-123',
+                    apc_id: 'operator-124',
                     account_group: 'Drill',
                     account_description: 'Rig'
-                },
-                {
-                    account_number: 'acct-1',
-                    apc_op_id: null,
-                    apc_part_id: 'partner-124',
-                    account_group: 'Drill',
-                    account_description: 'Rig'
-                }
-            ],
-            )
+                }],"GL_CODES_OP",'test-token')
+
             const rows = screen.getAllByRole('row')
             expect(rows).toHaveLength(1)
         });
@@ -290,8 +285,9 @@ describe('Account File Upload', () => {
 
     test('Allows user to upload the Account List and saves the list but returns an error on SAVE', async () => {
 
-        vi.mocked(writeProvider.writeGLAccountlistFromSourceToDB)
-            .mockResolvedValue({ ok: false, message: 'Error' });
+        vi.mocked(writeProvider.insertGLAccount)
+            .mockResolvedValueOnce({ok: false, message: 'Error'})
+            .mockResolvedValueOnce({ok: false, message: 'Error'});
 
         renderWithProviders(<GLFileUpload />, {
             supabaseOverrides: {
@@ -368,42 +364,35 @@ describe('Account File Upload', () => {
         await user.click(saveAccountList);
 
         await waitFor(() => {
-            expect(writeProvider.writeGLAccountlistFromSourceToDB).toHaveBeenCalledWith(
-                [{
+            expect(writeProvider.insertGLAccount).toHaveBeenNthCalledWith(1,[{
                     account_number: 'acct-1',
-                    account_group: 'Drill',
-                    account_description: 'Rig',
-                    apc_op_id: 'operator-123',
-                    apc_part_id: null
-                },
-                {
-                    account_number: 'acct-1',
-                    apc_op_id: 'operator-124',
-                    apc_part_id: null,
+                    apc_id: 'partner-123',
                     account_group: 'Drill',
                     account_description: 'Rig'
                 },
                 {
                     account_number: 'acct-1',
-                    apc_op_id: null,
-                    apc_part_id: 'partner-123',
+                    apc_id: 'partner-124',
+                    account_group: 'Drill',
+                    account_description: 'Rig'
+                }],"GL_CODES_NONOP",'test-token')
+                expect(writeProvider.insertGLAccount).toHaveBeenNthCalledWith(2,[{
+                    account_number: 'acct-1',
+                    apc_id: 'operator-123',
                     account_group: 'Drill',
                     account_description: 'Rig'
                 },
                 {
                     account_number: 'acct-1',
-                    apc_op_id: null,
-                    apc_part_id: 'partner-124',
+                    apc_id: 'operator-124',
                     account_group: 'Drill',
                     account_description: 'Rig'
-                }
-            ],
-            )
+                }],"GL_CODES_OP",'test-token')
             const rows = screen.getAllByRole('row')
-            expect(rows).toHaveLength(1)
+            expect(rows).toHaveLength(2)
         });
 
-        expect(saveAccountList).toBeDisabled();
+        expect(saveAccountList).not.toBeDisabled();
         expect(notifyFailure).toHaveBeenCalled();
     });
 

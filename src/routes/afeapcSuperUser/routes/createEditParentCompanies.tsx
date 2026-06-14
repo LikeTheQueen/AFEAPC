@@ -2,8 +2,8 @@
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { type AddressType, type ParentCompanyWrite, type ParentCompany } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { insertParentCompanyFullRecord, updateParentCompany, updateParentCompanyAdressSupabase } from 'provider/write';
-import { isAddressValid } from 'src/helpers/helpers';
+import { insertParentCompanyFullRecord, updateParentCompany, updateParentCOAddress } from 'provider/write';
+import { isAddressValid, notifyFailure } from 'src/helpers/helpers';
 import { notifyStandard } from "src/helpers/helpers";
 import NoSelectionOrEmptyArrayMessage from 'src/routes/sharedComponents/noSelectionOrEmptyArrayMessage';
 import { useSupabaseData } from 'src/types/SupabaseContext';
@@ -74,15 +74,17 @@ export function CreateParentCompany() {
   }
 
   try {
-    
     const createParentCompany = await insertParentCompanyFullRecord(parentCompany, parentCoBillingAddress, token);
-    if (!createParentCompany.ok) throw new Error(createParentCompany.message);
-
+    if(!createParentCompany.ok) {
+      notifyFailure(`Unable to create Parent Company: ${createParentCompany.message}`);
+    }
     setShowSaved(true);
     notifyStandard(`Parent Company name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
-
   } catch (error) {
+    const err = error as Error
+    const parsed = JSON.parse(err.message)
     setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + error);
+    notifyFailure(`Unable to create Parent Company: ${parsed.message}`);
   }
   };
   
@@ -289,6 +291,8 @@ export function EditParentCompany({selectedParentCompany, billingAddress, showSa
     const token = session?.access_token ?? "";
     const [parentCompany, setParentCompany] = useState<ParentCompany>(selectedParentCompany)
     const [parentCoBillingAddress, setParentCOBillAddress] = useState<AddressType>(billingAddress);
+    const [updateParentCompanyName, setUpdateParentCompanyName] = useState(false);
+    const [updateParentCompanyAddress, setUpdateParentCompanyAddress] = useState(false);
     const [showSaved, setShowSaved] = useState<boolean>(false);
     const [parentCompanyWriteErrorMessage, setParentCoWriteErrorMessage] = useState<string | null>(null);
 
@@ -304,7 +308,8 @@ export function EditParentCompany({selectedParentCompany, billingAddress, showSa
     setParentCOBillAddress({
       ...parentCoBillingAddress,
       [e.target.name]: e.target.value
-    })
+    });
+    setUpdateParentCompanyAddress(true);
   };
   function handleParentCoNameChange(e: { target: { name: any; value: any; }; }) {
     if(e.target.name === 'max_users') {
@@ -318,10 +323,13 @@ export function EditParentCompany({selectedParentCompany, billingAddress, showSa
       [e.target.name]: e.target.value
     })
   }
+  setUpdateParentCompanyName(true);
   };
   
   async function handleClickSaveOpName() {
-  // Validate everything upfront before any writes
+
+  if(updateParentCompanyName && updateParentCompanyAddress) {
+    // Validate everything upfront before any writes
   if (!parentCompany.apc_name ) {
     setParentCoWriteErrorMessage('The Parent Company Name is not valid');
     return;
@@ -332,24 +340,82 @@ export function EditParentCompany({selectedParentCompany, billingAddress, showSa
     return;
   }
 
-  try {
-    
-    const createParentCompany = await updateParentCompany(parentCompany, token);
-    if (!createParentCompany.ok) throw new Error(createParentCompany.message);
-
-    const parentCompanyAddressRecord = await updateParentCompanyAdressSupabase(
-      parentCoBillingAddress
-    );
-    if (!parentCompanyAddressRecord.ok) throw new Error(parentCompanyAddressRecord.message);
-
-    
-    setShowSaved(true);
-    notifyStandard(`Parent Company name and billing address have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
-
-  } catch (error) {
-    setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + error);
+    try{
+      const[updateParentCompanyResult, updateParentCompanyAddressResult] = await Promise.all([
+        updateParentCompany(parentCompany, token),
+        updateParentCOAddress(parentCoBillingAddress, token)
+      ]);
+      if(updateParentCompanyResult.ok && updateParentCompanyAddressResult.ok) {
+        setShowSaved(true);
+        notifyStandard(`Parent Company changes have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
+      }
+      if(!updateParentCompanyResult.ok || !updateParentCompanyAddressResult.ok) {
+        notifyFailure(`There was an issue saving changes.  Check the logs`);
+        setParentCoWriteErrorMessage('Failed to save the Parent Company Changes.  Check the logs for details.');
+      }
+      
+    } catch(error){
+      const err = error as Error
+      const parsed = JSON.parse(err.message);
+      setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + parsed.message);
+    } finally{
+      return;
+    }
   }
-  };
+  //ONLY NEED TO UPDATE COMPANY ADDRESS
+  if(!updateParentCompanyName && updateParentCompanyAddress) {
+    // Validate everything upfront before any writes
+
+  if (!isAddressValid(parentCoBillingAddress)) {
+    setParentCoWriteErrorMessage('The Billing Address is not valid');
+    return;
+  }
+    try{
+      const updateParentCompanyResult = await updateParentCOAddress(parentCoBillingAddress, token);
+      if(!updateParentCompanyResult.ok) {
+        notifyFailure(`There was an issue saving changes.  Check the logs`);
+        setParentCoWriteErrorMessage('Failed to save the Parent Company Address: ' + updateParentCompanyResult.message);
+      }
+      if(updateParentCompanyResult.ok) {
+        setShowSaved(true);
+        notifyStandard(`Parent Company Address changes have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
+      }
+    } catch(error){
+      const err = error as Error
+      const parsed = JSON.parse(err.message);
+      notifyFailure(`There was an issue saving changes.  Check the logs`);
+      setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + parsed.message);
+    } finally{
+      return;
+    }
+  }
+  //ONLY NEED TO UPDATE THE COMPANY NAME RECORD
+  if(updateParentCompanyName && !updateParentCompanyAddress) {
+    // Validate everything upfront before any writes
+  if (!parentCompany.apc_name ) {
+    setParentCoWriteErrorMessage('The Parent Company Name is not valid');
+    return;
+  }
+    try{
+      const updateParentCompanyResult = await updateParentCompany(parentCompany, token);
+      if(!updateParentCompanyResult.ok) {
+        notifyFailure(`There was an issue saving changes.  Check the logs`);
+        setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + updateParentCompanyResult.message);
+      }
+      if(updateParentCompanyResult.ok) {
+        setShowSaved(true);
+        notifyStandard(`Parent Company changes have been saved  Let's call it a clean tie-in.\n\n(TLDR: Parent Company and billing address ARE saved)`);
+      }
+    } catch(error){
+      notifyFailure(`There was an issue saving changes.  Check the logs`);
+      const err = error as Error
+      const parsed = JSON.parse(err.message);
+      setParentCoWriteErrorMessage('Failed to save the Parent Company: ' + parsed.message);
+    } finally{
+      return;
+    }
+  }
+ };
   
   
   return (

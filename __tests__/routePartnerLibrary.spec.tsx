@@ -46,7 +46,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    updatePartnerProcessedStatus: vi.fn(),
+    updatePartnerActiveStatus: vi.fn(),
 }));
 
 // At the top of your describe block, create a helper
@@ -128,8 +128,8 @@ describe('View and edit the partner mappings',() => {
     test('Fetches the partners and allows users to delete a partner', async () => {
         (fetchProvider.fetchSourceSystemPartners as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
-        (writeProvider.updatePartnerProcessedStatus as Mock)
-          .mockResolvedValue({ok: true, message: undefined});
+        (writeProvider.updatePartnerActiveStatus as Mock)
+          .mockResolvedValue({ok: true});
 
         await setupWithSelections(user);
         expect(fetchProvider.fetchSourceSystemPartners).toHaveBeenCalledTimes(1);
@@ -149,8 +149,8 @@ describe('View and edit the partner mappings',() => {
     test('Fetches partners and allows users to bring one back from the dead', async () => {
         (fetchProvider.fetchSourceSystemPartners as Mock)
           .mockResolvedValue({ok:true, data: operatorPartnerLibrary4Records});
-          (writeProvider.updatePartnerProcessedStatus as Mock)
-          .mockResolvedValue({ok: true, message: undefined});
+          (writeProvider.updatePartnerActiveStatus as Mock)
+          .mockResolvedValue({ok: true});
 
         await setupWithSelections(user);
        expect(fetchProvider.fetchSourceSystemPartners).toHaveBeenCalledTimes(1);

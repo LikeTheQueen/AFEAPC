@@ -76,7 +76,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
 
         if(isNonOpAFEAgreement) {
         
-        await insertAFEHistory(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action', token);
+        await insertAFEHistory(apc_afe_id, 'The signed AFE has been uploaded by ' + userName + ' for ' + apc_partner_name, 'action', 'Uploading Non-Op Agreement', token);
         await handleSendEmail(
           `A signed AFE has been uploaded by ${userName} at ${apc_partner_name}`,
           `This message is to let you know that ${apc_partner_name} has uploaded a signed copy of the AFE.  The AFE Number is ${afe_number} (${afe_version})`,
@@ -88,7 +88,7 @@ async function sha256(ab: ArrayBuffer): Promise<string> {
           'View AFE'
         );
       } else {
-          await insertAFEHistory(apc_afe_id, 'An attachment has been uploaded by ' + userName + ' for ' + companyName, 'action', token);
+          await insertAFEHistory(apc_afe_id, 'An attachment has been uploaded by ' + userName + ' for ' + companyName, 'action', 'Uploading attachment', token);
           await handleSendEmail(
           `An attachment has been uploaded by ${userName} at ${companyName}`,
           `This message is to let you know that ${companyName} has uploaded an attachment for the AFE.  The AFE Number is ${afe_number} (${afe_version})`,

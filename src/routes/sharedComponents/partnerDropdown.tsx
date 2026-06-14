@@ -27,7 +27,6 @@ export function PartnerDropdown({ value, onChange, limitedList }: Props) {
       if (!limitedList) {
         const partnerList = await fetchPartnerList(token);
         if(partnerList.ok) {
-          console.log(partnerList,'partnerlist data')
           const dataFormatted: OperatorOrPartnerList[] = transformOperatorForDropDown(partnerList.data);
               const partnerListSorted = dataFormatted.sort((a,b) => {
                 if (a.apc_name === undefined && b.apc_name === undefined) {

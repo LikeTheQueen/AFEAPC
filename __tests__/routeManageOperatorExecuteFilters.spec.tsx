@@ -1,6 +1,7 @@
 import OperatorExecuteFilters from 'src/routes/createEditOperators/routes/manageOperatorExecuteFilters';
 import * as fetchProvider from 'provider/fetch';
 import * as writeProvider from "provider/write";
+import { notifyStandard, notifyFailure } from 'src/helpers/helpers';
 import { vi, type Mock } from 'vitest';
 import { getByRole, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -28,14 +29,13 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-  updateOperatorFilterFields: vi.fn(),
+  updateExecuteFilterFields: vi.fn(),
 }));
 
-vi.mock('react-toastify', () => ({
-  toast: vi.fn(),
-  Flip: {},
-  ToastContainer: () => null,
-}));
+vi.mock('src/helpers/helpers', () => ({
+     notifyStandard: vi.fn(),
+     notifyFailure: vi.fn(),
+ }));
 
 import { toast } from 'react-toastify';
 import { RachelGreen_ViewAFECW_NonOPAFECW_APCSuperUser } from './test-utils/afeRecords';
@@ -367,9 +367,8 @@ describe('Execute Filters for Operator',() => {
             data: operatorFilters
         });
 
-        vi.mocked(writeProvider.updateOperatorFilterFields).mockResolvedValue({
+        vi.mocked(writeProvider.updateExecuteFilterFields).mockResolvedValue({
             ok: true,
-            message: null,
             data: operatorFilters
         });
 
@@ -435,22 +434,19 @@ describe('Execute Filters for Operator',() => {
         await user.click(screen.getByRole('button', { name: /save changes/i }));
 
         await waitFor(() => {
-            expect(writeProvider.updateOperatorFilterFields).toHaveBeenCalled();
+            expect(writeProvider.updateExecuteFilterFields).toHaveBeenCalled();
             expect(screen.getByRole('button', { name: /save changes/i })).toBeDisabled()
         });
 
         await waitFor(() => {
-            expect(toast).toHaveBeenCalledWith(
-                expect.anything(),
-                expect.objectContaining({
-                    data: expect.stringContaining("Line Secured")
-                })
+            expect(notifyStandard).toHaveBeenCalledWith(
+                `Line Secured.  Your filters are in place and the integration is running tight.\n\n(TLDR: Operator's AFE Filters and Well Fields ARE saved.)`
             );
         });
 
     });
 
-    test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and save response', async () => {
+    test('It should show the AFE Filters and Well Fields when an Operator is selected for that Operator and make the Save Changes button clickable when the user adds valid JSON and error response', async () => {
         const user = userEvent.setup()
 
         vi.mocked(fetchProvider.fetchAFEExecuteFilters).mockResolvedValue({
@@ -458,10 +454,9 @@ describe('Execute Filters for Operator',() => {
             data: operatorFilters
         });
 
-        vi.mocked(writeProvider.updateOperatorFilterFields).mockResolvedValue({
+        vi.mocked(writeProvider.updateExecuteFilterFields).mockResolvedValue({
             ok: false,
-            message: 'Error',
-            data: []
+            message: 'Error'
         });
 
         renderWithProviders(<OperatorExecuteFilters />, {
@@ -526,20 +521,16 @@ describe('Execute Filters for Operator',() => {
         await user.click(screen.getByRole('button', { name: /save changes/i }));
 
         await waitFor(() => {
-            expect(writeProvider.updateOperatorFilterFields).toHaveBeenCalled();
+            expect(writeProvider.updateExecuteFilterFields).toHaveBeenCalled();
             expect(screen.getByRole('button', { name: /save changes/i })).toBeEnabled()
         });
 
         await waitFor(() => {
-            expect(toast).toHaveBeenCalledWith(
-                expect.anything(),
-                expect.objectContaining({
-                    data: expect.stringContaining("Flow Disrupted.")
-                })
+            expect(notifyFailure).toHaveBeenCalledWith(
+                `Flow Disrupted.  Your filters weren’t saved. The line didn’t hold.\n\n(TLDR: Operator's AFE Filters and Well Fields DID NOT save.)`
             );
         });
 
     });
 
-    
 });

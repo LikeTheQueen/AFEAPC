@@ -25,7 +25,7 @@ vi.mock('provider/fetch', () => ({
 vi.mock('provider/write', () => ({
   updateUserActiveStatusToInactive: vi.fn(),
   updateUserActiveStatusToActive: vi.fn(),
-  writeorUpadateUserRoles: vi.fn(),
+  insertOrUpdatePermissions: vi.fn(),
   updateUserRecord: vi.fn(),
   writeToFunctionLogs: vi.fn(),
 }));
@@ -644,10 +644,10 @@ describe('Manage User Permissions Standard user screen',() => {
                 ok: true,
                 data: limitedPermissionList
             });
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
     
             renderWithProviders(<UserPermissionDashboard />, {
                               supabaseOverrides: {
@@ -713,8 +713,8 @@ describe('Manage User Permissions Standard user screen',() => {
                 await user.click(saveopPermissionButton);
                 
                await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(1,
-                    updatedPermissions,'OPERATOR_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).toHaveBeenNthCalledWith(1,
+                    updatedPermissions,'OPERATOR_USER_PERMISSIONS', 'test-token'
                 );
 
                 });
@@ -738,8 +738,8 @@ describe('Manage User Permissions Standard user screen',() => {
 
                 await user.click(saveNonopPermissionButton);
                 await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(2,
-                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).toHaveBeenNthCalledWith(2,
+                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS','test-token'
                );
 
                 });
@@ -754,10 +754,10 @@ describe('Manage User Permissions Standard user screen',() => {
                 data: limitedPermissionList
             });
 
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
     
             renderWithProviders(<UserPermissionDashboard />, {
                               supabaseOverrides: {
@@ -832,8 +832,8 @@ describe('Manage User Permissions Standard user screen',() => {
                 await user.click(saveopPermissionButton);
                 
                await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).not.toBeCalledWith(
-                    updatedPermissions,'OPERATOR_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).not.toBeCalledWith(
+                    updatedPermissions,'OPERATOR_USER_PERMISSIONS', 'test-token'
                 );
 
                 });
@@ -844,8 +844,8 @@ describe('Manage User Permissions Standard user screen',() => {
 
                 await user.click(saveNonopPermissionButton);
                 await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).not.toBeCalledWith(
-                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).not.toBeCalledWith(
+                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS', 'test-token'
                );
 
                 });
@@ -872,10 +872,10 @@ describe('Manage User Permissions System Super User Screen',() => {
                 data: limitedPermissionList
             });
 
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
-            vi.mocked(writeProvider.writeorUpadateUserRoles)
-            .mockResolvedValueOnce({ok:true, message: ''});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
+            vi.mocked(writeProvider.insertOrUpdatePermissions)
+            .mockResolvedValueOnce({ok:true});
     
             renderWithProviders(<SuperUserDash />, {
                               supabaseOverrides: {
@@ -941,8 +941,8 @@ describe('Manage User Permissions System Super User Screen',() => {
                 await user.click(saveopPermissionButton);
                 
                await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(1,
-                    updatedPermissions,'OPERATOR_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).toHaveBeenNthCalledWith(1,
+                    updatedPermissions,'OPERATOR_USER_PERMISSIONS', 'test-token'
                 );
 
                 });
@@ -966,8 +966,8 @@ describe('Manage User Permissions System Super User Screen',() => {
 
                 await user.click(saveNonopPermissionButton);
                 await waitFor(() => {
-                    expect(writeProvider.writeorUpadateUserRoles).toHaveBeenNthCalledWith(2,
-                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS'
+                    expect(writeProvider.insertOrUpdatePermissions).toHaveBeenNthCalledWith(2,
+                    updatedNonPermissions,'PARTNER_USER_PERMISSIONS', 'test-token'
                );
 
                 });

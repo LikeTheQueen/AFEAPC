@@ -16,7 +16,7 @@ export async function callEdge<TReq, TRes>(
     body: JSON.stringify(payload),
     signal
   });
-  //console.log(res)
+  console.log(res)
   //console.log(res.status)
   //console.log(await res.text())
   if (!res.ok) throw new Error(await res.text());

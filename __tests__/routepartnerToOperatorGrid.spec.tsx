@@ -28,7 +28,7 @@ import {
 }));
 
 vi.mock('../provider/write', () => ({
-  updatePartnerWithOpID: vi.fn(),
+  updatePartnerWithOpId: vi.fn(),
 }));
 
 describe('Link Partner Addresses to Operator',() => {
@@ -175,7 +175,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -240,7 +240,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: false, message: 'No Records to Verify'});
         const currentOpID = '1234567';
     
@@ -306,7 +306,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: false, message: 'No recods to verify against'});
         const currentOpID = '1234567';
     console.log(typeof claimProofResultNoID.id !== 'number')
@@ -406,7 +406,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -528,7 +528,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
@@ -622,12 +622,12 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     });
 
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -645,7 +645,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -749,7 +749,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -851,7 +851,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
@@ -949,12 +949,12 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     expect(validEntries).not.toBeVisible();
 
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -972,7 +972,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
         const currentOpID = '1234567';
@@ -1038,8 +1038,6 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
     expect(validEntryWarningsPartner).not.toBeVisible();
     expect(validEntryWarningsAFE).not.toBeVisible();
 
-    
-
     expect(submitButtons).toBeInTheDocument();
     expect(submitButtons).toBeDisabled();
 
@@ -1071,15 +1069,15 @@ test('Displays a list of unclaimed partner addresses and the user clicks an addr
         'test-token')
     });
 
-    expect(validEntries).toBeVisible();
-
+    expect(screen.getByText(/Error:/i)).toBeVisible();
+    //screen.debug();
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).not.toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).not.toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -1096,7 +1094,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedTwoUnclaimed
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
         const currentOpID = '1234567';
@@ -1198,12 +1196,12 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     expect(validEntries).not.toBeVisible();
 
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4e47b',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -1218,7 +1216,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedTwoWithNullNames
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -1281,7 +1279,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullNames
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
         const currentOpID = '1234567';
     
@@ -1345,7 +1343,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: true, data: true});
@@ -1445,7 +1443,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     expect(validEntries).toHaveAttribute('hidden');
 
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4e488',
           apc_op_id: currentOpID
@@ -1454,7 +1452,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -1469,7 +1467,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
@@ -1569,7 +1567,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     expect(validEntries).toBeVisible();
 
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).not.toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).not.toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4e488',
           apc_op_id: currentOpID
@@ -1578,7 +1576,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     await waitFor(() => {
@@ -1633,7 +1631,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           data: partnersLinkedOrUnlinkedOneClaimedFourUnclaimedOneWithNullName
         });
 
-    vi.mocked(writeProvider.updatePartnerWithOpID).mockResolvedValue({ok: true});
+    vi.mocked(writeProvider.updatePartnerWithOpId).mockResolvedValue({ok: true});
         const currentOpID = '1234567';
     vi.mocked(fetchProvider.fetchClaimProof).mockResolvedValue({ok: true, data: claimProofResult});
     vi.mocked(fetchProvider.verifyClaimProof).mockResolvedValue({ok: false, message: 'Verification Failed'});
@@ -1684,7 +1682,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
     fireEvent.click(saveButton);
     
     await waitFor(() => {
-      expect(vi.mocked(writeProvider.updatePartnerWithOpID)).toHaveBeenCalledWith([
+      expect(vi.mocked(writeProvider.updatePartnerWithOpId)).toHaveBeenCalledWith([
         {
           id: 'ecb2c585-9225-4957-98ce-d4315af4e488',
           apc_op_id: currentOpID
@@ -1693,7 +1691,7 @@ test('Displays a list of unclaimed partner addresses and the user clicks an TWO 
           id: 'ecb2c585-9225-4957-98ce-d4315af4654e',
           apc_op_id: currentOpID
         }
-      ]);
+      ], 'test-token');
     });
 
     

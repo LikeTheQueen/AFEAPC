@@ -26,8 +26,8 @@ vi.mock('provider/fetch', () => ({
 
 vi.mock('provider/write', () => ({
     createSupportTicket: vi.fn(),
-    createSupportTicketThread: vi.fn(),
-    updateSupportTicket: vi.fn(),
+    insertSupportTicketThread: vi.fn(),
+    updateSupportTicketResolution: vi.fn(),
 }));
 
 vi.mock('src/helpers/helpers', () => ({
@@ -140,8 +140,8 @@ describe('View and edit support tickets', () => {
 
   test('Loads screen and allows user to send comment', async () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
-    (writeProvider.createSupportTicketThread as Mock)
-      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+    (writeProvider.insertSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse });
 
     (fetchProvider.fetchSupportHistories as Mock)
       .mockResolvedValue({ ok: true, data: supportHistories });
@@ -173,7 +173,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
+      expect(writeProvider.insertSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', 2, 'test-token');
 
       expect(emailProvider.handleSendEmail).toHaveBeenCalledWith(
         'New comment on ticket #2',
@@ -193,8 +193,8 @@ describe('View and edit support tickets', () => {
 
   test('Error saving comment', async () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValue({ ok: true });
-    (writeProvider.createSupportTicketThread as Mock)
-      .mockResolvedValueOnce({ ok: false, data: null, message: 'Error Message' });
+    (writeProvider.insertSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: false, message: 'Error Message' });
 
     (fetchProvider.fetchSupportHistories as Mock)
       .mockResolvedValue({ ok: true, data: supportHistories });
@@ -226,7 +226,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', expect.any(Date), 2);
+      expect(writeProvider.insertSupportTicketThread).toHaveBeenCalledWith('Can I get help on this?', 2, 'test-token');
     });
 
     expect(notifyFailure).toHaveBeenCalledWith(
@@ -277,12 +277,12 @@ describe('View and edit support tickets', () => {
   test('Loads screen and allows Super User to send comment and resolve', async () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-    (writeProvider.createSupportTicketThread as Mock)
-      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+    (writeProvider.insertSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse });
     (fetchProvider.fetchSupportHistories as Mock)
       .mockResolvedValue({ ok: true, data: supportHistories });
-    (writeProvider.updateSupportTicket as Mock)
-      .mockResolvedValue({ ok: true, data: orginalTicketUpdatedResponse, message: null });
+    (writeProvider.updateSupportTicketResolution as Mock)
+      .mockResolvedValue({ ok: true, data: orginalTicketUpdatedResponse });
 
     await setupWithSelectionsSuperUser(user);
     expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
@@ -317,7 +317,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+      expect(writeProvider.insertSupportTicketThread).toHaveBeenCalledWith('Can I get more details', 2, 'test-token');
 
       expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
         1,
@@ -340,7 +340,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix");
+      expect(writeProvider.updateSupportTicketResolution).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix", 'test-token');
 
       expect(emailProvider.handleSendEmail).toHaveBeenNthCalledWith(
         2,
@@ -363,12 +363,12 @@ describe('View and edit support tickets', () => {
   test('Loads screen and allows Super User to send comment but resolve fails', async () => {
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
     (emailProvider.handleSendEmail as Mock).mockResolvedValueOnce({ ok: true });
-    (writeProvider.createSupportTicketThread as Mock)
-      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse, message: null });
+    (writeProvider.insertSupportTicketThread as Mock)
+      .mockResolvedValueOnce({ ok: true, data: singleTicketThreadResponse });
     (fetchProvider.fetchSupportHistories as Mock)
       .mockResolvedValue({ ok: true, data: supportHistories });
-    (writeProvider.updateSupportTicket as Mock)
-      .mockResolvedValue({ ok: false, data: null, message: 'Returned Error' });
+    (writeProvider.updateSupportTicketResolution as Mock)
+      .mockResolvedValue({ ok: false, message: 'Returned Error' });
 
     await setupWithSelectionsSuperUser(user);
     expect(fetchProvider.fetchSupportHistories).toHaveBeenCalledTimes(1);
@@ -403,7 +403,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.createSupportTicketThread).toHaveBeenCalledWith('Can I get more details', expect.any(Date), 2);
+      expect(writeProvider.insertSupportTicketThread).toHaveBeenCalledWith('Can I get more details', 2, 'test-token');
     });
 
     await waitFor(() => {
@@ -429,7 +429,7 @@ describe('View and edit support tickets', () => {
     });
 
     await waitFor(() => {
-      expect(writeProvider.updateSupportTicket).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix");
+      expect(writeProvider.updateSupportTicketResolution).toHaveBeenCalledWith(2, false, "13e69340-d14c-45a9-96a8-142795925487", "Nevermind I fix",'test-token');
     });
 
     expect(notifyFailure).toHaveBeenCalledWith(

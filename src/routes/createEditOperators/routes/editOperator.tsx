@@ -1,6 +1,6 @@
 import { type AddressType, type OperatorPartnerRecord, type PartnerRecordToDisown, type RoleEntryRead } from 'src/types/interfaces';
 import { useEffect, useState } from 'react';
-import { insertNonOp, updateOpAddress, updateOperatorNameStatus, updateNonOpAddress, updatePartnerNameStatus, updatePartnerWithOpID } from 'provider/write';
+import { insertNonOp, updateOpAddress, updateOperatorNameStatus, updateNonOpAddress, updatePartnerNameStatus, updatePartnerWithOpId } from 'provider/write';
 import PartnerToOperatorGrid from 'src/routes/partnerToOperatorGrid';
 import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorNonOperatorAddressCard } from './helpers/addressCard';
@@ -46,6 +46,7 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
     //Disown the Non Op Address
     const [partnerList, setPartnerList] = useState<OperatorPartnerRecord[] | []>([]);    
     const [partnerListToDisown, setPartnerListToDisown] = useState<PartnerRecordToDisown[]>([]);
+    const [updateNonOpError, setUpdateNonOpError] = useState<string | null>(null);
 
     
 //Use Effect to set the Operator Record that is being edited, the Partner List and the array to know which Partner may have changed    
@@ -363,7 +364,23 @@ export default function EditOperator({token, opToEdit, NonOpAddress} : EditOpera
  
   };
   async function updatePartnerWithOpIDChange() {
-          updatePartnerWithOpID(partnerListToDisown)
+          try{
+                    const updatePartnerOPIDResult = await updatePartnerWithOpId(partnerListToDisown, token);
+                    if(updatePartnerOPIDResult.ok) {
+                      notifyStandard(`New acreage secured. The non-op address has been successfully claimed.\n\n(TLDR: Non-Op Address is claimed)`);
+                    }
+                    if(!updatePartnerOPIDResult.ok) {
+                      notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n(TLDR: Non-op Address is NOT claimed)`);
+                      setUpdateNonOpError(updatePartnerOPIDResult.message);
+                    }
+                  } catch(error) {
+                    const err = error as Error
+                    const parsed = JSON.parse(err.message)
+                    notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n${parsed.message}\n\n(TLDR: Non-op Address is NOT claimed)`);
+                    setUpdateNonOpError(parsed.message);
+                  } finally{
+                    return;
+                  }
   };
   async function handleClickDisownPartner(partnerIdx: number, id: string) {
   await handleDisownPartner(partnerIdx,id);

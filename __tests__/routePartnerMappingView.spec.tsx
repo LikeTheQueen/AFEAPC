@@ -40,8 +40,7 @@ vi.mock('provider/fetch', () => ({
 }));
 
 vi.mock('provider/write', () => ({
-    updatePartnerMapping: vi.fn(),
-    updatePartnerProcessedMapping: vi.fn(),
+    updatePartnerMap: vi.fn(),
 }));
 
 // At the top of your describe block, create a helper
@@ -182,6 +181,8 @@ describe('View and edit the partner mappings',() => {
     test('User deletes a partner mapping', async () => {
         (fetchProvider.fetchMappedPartners as Mock)
         .mockResolvedValue({ok: true, data: mappedRecords});
+        (writeProvider.updatePartnerMap as Mock)
+        .mockResolvedValue({ok: true});
         
         await setupWithSelections(user);
 
@@ -205,44 +206,7 @@ describe('View and edit the partner mappings',() => {
         await user.click(deleteButton[0]);
 
         await waitFor(() => {
-            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([38], false);
-        });
-        await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d'], false);
-        });
-        
-    });
-
-    test('User deletes a partner mapping', async () => {
-        (fetchProvider.fetchMappedPartners as Mock)
-         .mockResolvedValue({ok: true, data: mappedRecords});
-        
-        await setupWithSelections(user);
-
-        expect(screen.getByText('View and Manage your Partner Mappings')).toBeInTheDocument();
-        expect(screen.getByText('Select an Operator to View Mappings For:')).toBeInTheDocument();
-        expect(fetchProvider.fetchMappedPartners).toHaveBeenCalledTimes(1);
-
-        await waitFor(() => {
-            expect(screen.getAllByText('Mckenzie Oil')[0]).toBeInTheDocument();
-            expect(screen.getByText('McLane Gas and Oil')).toBeInTheDocument();
-            expect(screen.getAllByText('Mewbourne Oil Company')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Navigator Corporation')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Nav Corp Gas and Oil')[0]).toBeInTheDocument();
-        });
-
-        const row = screen.getByRole('row', { name: /McLane Gas and Oil/i });
-
-        expect(row).toBeInTheDocument();
-        const deleteButton = within(row!).getAllByRole('button', { name: /delete mapping/i });
-
-        await user.click(deleteButton[1]);
-
-        await waitFor(() => {
-            expect(writeProvider.updatePartnerMapping).toHaveBeenCalledWith([38], false);
-        });
-        await waitFor(() => {
-            expect(writeProvider.updatePartnerProcessedMapping).toHaveBeenCalledWith(['86d027f1-a2b2-49c2-b5c2-d706b1f8fb5d'], false);
+            expect(writeProvider.updatePartnerMap).toHaveBeenCalledWith(38, false, 'test-token');
         });
         
     });

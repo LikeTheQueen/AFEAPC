@@ -127,7 +127,7 @@ export interface AFEType {
   }
   
   export interface RoleEntryWrite{
-    id?: number;
+    id?: number | null;
     role: number | null;
     active: boolean;
     user_id?: string;
@@ -398,7 +398,7 @@ export interface PartnerMappingRecord {
 };
 
 export interface PartnerMappingDisplayRecord {
-  id: string;
+  id: number;
   apc_partner: OperatorPartnerAddressType;
   source_partner: PartnerRowData;
 };

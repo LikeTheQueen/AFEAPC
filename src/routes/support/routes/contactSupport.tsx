@@ -45,7 +45,6 @@ export default function ContactSupport() {
   notifyFailure(`Unable to create a support ticket.  Try again or contact AFE Patner Support @ ${supportEmail}`);
   };
 
-
 };
 
   return (

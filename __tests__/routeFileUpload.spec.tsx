@@ -203,6 +203,7 @@ import { handleSendEmail } from 'email/emailBasic';
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
             'The signed AFE has been uploaded by Pheobe Buffett for Mckenzie Oil',
             'action',
+            'Uploading Non-Op Agreement',
             'test-token'
         );
 
@@ -272,6 +273,7 @@ import { handleSendEmail } from 'email/emailBasic';
             '7a69eb26-e0ce-436d-88db-d114db6a1f2b',
             'An attachment has been uploaded by Pheobe Buffett for Corr and Whit Oils Company & Friends',
             'action',
+            'Uploading attachment',
             'test-token'
         );
 

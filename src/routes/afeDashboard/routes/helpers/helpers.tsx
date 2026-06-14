@@ -6,12 +6,12 @@ import { handleSendEmail, sendAFEStatusChangeEmailToOperator, sendAFEStatusChang
 
 export async function handlePartnerArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
   await updateAFEPartnerArchiveStatus(id, archivedStatus, token);
-  await insertAFEHistory(id, description, type, token);
+  await insertAFEHistory(id, description, type, 'Partner archiving AFE', token);
 };
 
 export function handleOperatorArchiveStatusChange(id: string, archivedStatus: boolean, description: string, type: string, token: string) {
   updateAFEOperatorArchiveStatus(id, archivedStatus, token);
-  insertAFEHistory(id, description, type, token);
+  insertAFEHistory(id, description, type, 'Operator archiving AFE', token);
 };
 
 export function getViewRoleOperatorIds(user: UserProfileRecordSupabaseType | null) {
@@ -48,7 +48,7 @@ export async function handleThePartnerStatusChange(
     notifyFailure(`Unable to update the AFE status.  Contact ${supportEmail} if the problem persists`);
     return { ok: false };
   } else {
-    await insertAFEHistory(afeRecord.id, description, type, token);
+    await insertAFEHistory(afeRecord.id, description, type, 'Partner status change', token);
     
     //Send to Operator
     sendAFEStatusChangeEmailToOperator(afeRecord, newPartnerStatus, loggedInUserFirstName, loggedInUserLastName, loggedinUserEmail);

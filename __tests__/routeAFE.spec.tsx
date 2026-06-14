@@ -778,7 +778,7 @@ describe('displaying AFEs', () => {
 
     await waitFor(() => {
       expect(writeProvider.updateAFEPartnerStatus).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','Viewed','test-token');
-      expect(writeProvider.insertAFEHistory).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action', 'test-token');
+      expect(writeProvider.insertAFEHistory).toHaveBeenCalledWith('e3899d13-c74b-4604-87e3-ba07b613e12e','The Partner Status on the AFE changed from New to Viewed','action', 'Partner status change','test-token');
       expect(emailProvider.sendAFEStatusChangeEmailToOperator).toHaveBeenCalledWith(
         responseTransformed[12],
         'Viewed',

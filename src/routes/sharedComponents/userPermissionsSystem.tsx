@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { type RoleEntryWrite, type RoleEntryRead, type PartnerRoleEntryWrite } from "src/types/interfaces";
 import { checkedByRole, getRoleIndex } from "../../routes/createEditUsers/routes/helpers/helpers";
-import { writeorUpadateUserRoles } from "provider/write";
+import { insertOrUpdatePermissions } from "provider/write";
 import React from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { nonOperatorEditUsers, operatorEditUsers } from "src/constants/variables";
@@ -26,7 +26,8 @@ type GroupedData = {
 };
 
 export default function PermissionDashboard({ readOnly = false, operatorRoles = [], partnerRoles = [] }:{ readOnly?: boolean; operatorRoles: RoleEntryRead[]; partnerRoles: RoleEntryRead[]; }) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [opRoles, setOpRoles] = useState(operatorRoles);
   const [opRolesWrite, setOpRolesWrite] = useState<RoleEntryWrite[] | []>([]);
   const [partRoles, setPartnerRoles] = useState(partnerRoles);
@@ -215,7 +216,6 @@ const isOperatorRowDisabled = (apc_id: string) => {
 
     return !userOperatorRole;
 };
- 
   return (
     <>
     <div className="py-4 sm:py-0">
@@ -345,7 +345,7 @@ const isOperatorRowDisabled = (apc_id: string) => {
         disabled={opRolesWrite.length>0 ? false : true}
         hidden={readOnly}
         className="w-60 cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-        onClick={(e) => {writeorUpadateUserRoles(opRolesWrite,'OPERATOR_USER_PERMISSIONS'), setOpRolesWrite([])}}>
+        onClick={(e) => {insertOrUpdatePermissions(opRolesWrite,'OPERATOR_USER_PERMISSIONS', token), setOpRolesWrite([])}}>
             Save Operated Permissions
         </button>
     </div>
@@ -478,7 +478,7 @@ const isOperatorRowDisabled = (apc_id: string) => {
         disabled={partnerRolesWrite.length>0 ? false : true}
         hidden={readOnly}
         className="w-60 cursor-pointer disabled:cursor-not-allowed w-35 rounded-md bg-[var(--dark-teal)] outline-[var(--dark-teal)] outline-1 -outline-offset-1 disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white shadow-xs hover:bg-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)] justify-end"
-        onClick={(e) => {writeorUpadateUserRoles(partnerRolesWrite, 'PARTNER_USER_PERMISSIONS'), setPartnerRolesWrite([])}}>
+        onClick={(e) => {insertOrUpdatePermissions(partnerRolesWrite, 'PARTNER_USER_PERMISSIONS', token), setPartnerRolesWrite([])}}>
             Save Non-Op Permissions
         </button>
     </div>

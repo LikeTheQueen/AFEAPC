@@ -2,12 +2,13 @@ import { fetchClaimProof, verifyClaimProof, fetchNonOpList } from 'provider/fetc
 import { useEffect, useMemo, useState, memo } from 'react';
 import type { OperatorPartnerAddressWithOpNameType, PartnerRecordToUpdate, ClaimProof } from 'src/types/interfaces';
 import LoadingPage from './sharedComponents/loadingPage';
-import { updatePartnerWithOpID } from 'provider/write';
+import { updatePartnerWithOpId } from 'provider/write';
 import NoSelectionOrEmptyArrayMessage from './sharedComponents/noSelectionOrEmptyArrayMessage';
 import { transformOperatorPartnerAddressWithOpName, transformClaimProof } from 'src/types/transform';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useSupabaseData } from "../types/SupabaseContext";
+import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 
 export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID: string | null, token: string}) {
     const [partnerListToLink, setPartnerListToLink] = useState<PartnerRecordToUpdate[]>([]);
@@ -25,9 +26,8 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
     const [verificationErrorMessage, setVerificationErrorMessage] = useState<string | null>(null);
     const [claimProofNoRecordToVerify, setClaimProofNoRecordToVerify] = useState(false);
     const { loggedInUser } = useSupabaseData();
+    const [updateNonOpError, setUpdateNonOpError] = useState<string | null>(null);
     
-
-
     const opId = currentOpID;
     
     useEffect(() => {
@@ -51,7 +51,6 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
         } catch (error) {
 
           if (isMounted) {
-            console.error('Failed to load partners:', error);
             setFetchErrorMessage(error as string);
             setLoading(false);
           }
@@ -98,13 +97,29 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
         })
     };
 
-    async function updatePartnerWithOpIDVerification() {
+    async function updatePartnerWithOpIdVerification() {
       if(loggedInUser?.is_super_user) {
-        await updatePartnerWithOpID(partnerListToLink);
+        try{
+          const updatePartnerOPIDResult = await updatePartnerWithOpId(partnerListToLink, token);
+          if(updatePartnerOPIDResult.ok) {
+            notifyStandard(`New acreage secured. The non-op address has been successfully claimed.\n\n(TLDR: Non-Op Address is claimed)`);
+          }
+          if(!updatePartnerOPIDResult.ok) {
+            notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n(TLDR: Non-op Address is NOT claimed)`);
+            setUpdateNonOpError(updatePartnerOPIDResult.message);
+          }
+        } catch(error) {
+          const err = error as Error
+          const parsed = JSON.parse(err.message)
+          notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n${parsed.message}\n\n(TLDR: Non-op Address is NOT claimed)`);
+          setUpdateNonOpError(parsed.message);
+        } finally{
+          return;
+        }
+        
       } else {
         const claimProofResult = await fetchClaimProof(currentOpID!, token);
         if(claimProofResult.ok) {
-          console.log(claimProofResult.data)
           const claimProofTransformed = transformClaimProof(claimProofResult.data[0]);
           setClaimProof(claimProofTransformed);
           setClaimProofOpen(true);
@@ -115,32 +130,48 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
       }
     };
 
-    async function handleVerifiationSubmit() {
-      
-      const checkValidAFEDocID = isValidUUID(claimProofAFEDocID!);
-        setClaimProofAFEDocIDValid(checkValidAFEDocID);
-      const checkValidPartnerDocID = isValidUUID(claimProofPartnerDocID!);
-        setClaimProofPartnerDocIDValid(checkValidPartnerDocID);
-      
-        if(!checkValidAFEDocID || !checkValidPartnerDocID) {
-          return;
-        } 
-          try {
-            const verifyResult = await verifyClaimProof(claimProofAFEDocID!, claimProofPartnerDocID!, claimProof?.id!, token);
-          
-            if(!verifyResult.ok) {
-              throw new Error('Verification Failed');
-            }
+  async function handleVerifiationSubmit() {
 
-            await updatePartnerWithOpID(partnerListToLink);
-            
-            setClaimProofOpen(false);
+    const checkValidAFEDocID = isValidUUID(claimProofAFEDocID!);
+    setClaimProofAFEDocIDValid(checkValidAFEDocID);
+    const checkValidPartnerDocID = isValidUUID(claimProofPartnerDocID!);
+    setClaimProofPartnerDocIDValid(checkValidPartnerDocID);
 
-          } catch (error) {
-            setVerificationErrorMessage('Verification Failed');
-            return;
-          }
-    };
+    if (!checkValidAFEDocID || !checkValidPartnerDocID) {
+      return;
+    }
+    try {
+      const verifyResult = await verifyClaimProof(claimProofAFEDocID!, claimProofPartnerDocID!, claimProof?.id!, token);
+
+      if (!verifyResult.ok) {
+        setVerificationErrorMessage(verifyResult.message);
+        return;
+      }
+
+      try {
+        const updatePartnerOPIDResult = await updatePartnerWithOpId(partnerListToLink, token);
+        if (updatePartnerOPIDResult.ok) {
+          notifyStandard(`New acreage secured. The non-op address has been successfully claimed.\n\n(TLDR: Non-Op Address is claimed)`);
+        }
+        if (!updatePartnerOPIDResult.ok) {
+          notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n(TLDR: Non-op Address is NOT claimed)`);
+          setUpdateNonOpError(updatePartnerOPIDResult.message);
+        }
+      } catch (error) {
+        const err = error as Error
+        const parsed = JSON.parse(err.message)
+        notifyFailure(`Acreage acquisition failed. The non-op address remains unclaimed.\n\n${parsed.message}\n\n(TLDR: Non-op Address is NOT claimed)`);
+        setUpdateNonOpError(parsed.message);
+      } finally {
+        setClaimProofOpen(false);
+      }
+    } catch (error) {
+      const err = error as Error
+      const parsed = JSON.parse(err.message)
+      setVerificationErrorMessage(parsed.message);
+      return;
+    }
+  };
 
     const isValidUUID = (uuid: string) => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -225,7 +256,7 @@ export function PartnerToOperatorGrid ({currentOpID = null, token}:{currentOpID:
             disabled={opId === null || partnerListToLink.length < 1}
             onClick={async (e: any) => {
               e.preventDefault();
-              updatePartnerWithOpIDVerification();
+              updatePartnerWithOpIdVerification();
             }}
             className="cursor-pointer disabled:cursor-not-allowed rounded-md bg-[var(--dark-teal)] disabled:bg-[var(--darkest-teal)]/20 disabled:text-[var(--darkest-teal)]/40 disabled:outline-none px-3 py-2 text-sm/6 font-semibold custom-style text-white hover:bg-[var(--bright-pink)] hover:outline-[var(--bright-pink)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--bright-pink)]">
             Save

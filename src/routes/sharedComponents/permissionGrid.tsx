@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type RoleEntryWrite, type RoleEntryRead, type GroupedUser } from "src/types/interfaces";
 import { checkedByRole, checkedByRoleEntryWrite, getRoleIndex, getRoleIndexRoleEntryWrite } from "../createEditUsers/routes/helpers/helpers";
-import { writeorUpadateUserRoles } from "provider/write";
+import { insertOrUpdatePermissions } from "provider/write";
 import React from "react";
 import { useSupabaseData } from "src/types/SupabaseContext";
 import { nonOperatedPermissionHeaders, nonOperatedPermissionRoles, operatedPermissionHeaders, operatedPermissionRoles } from "src/constants/variables";
@@ -17,13 +17,11 @@ type PermissionGridData = {
 
 
 export default function PermissionDashboards({ profileView, allUserRoles = [], apcIDEditPriv, mode }: PermissionGridData) {
-  const { loggedInUser } = useSupabaseData();
+  const { loggedInUser, session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [allUsersPermissions, setAllUsersPermissions] = useState(allUserRoles);
   const [permissionHeaders, setPermissionHeaders] = useState<String[] | []>([]);
   const [roleValueArray, setRoleValueArray] = useState<number[] | []>([]);
-
-  const [opRolesWrite, setOpRolesWrite] = useState<RoleEntryWrite[] | []>([]);
-  const [partnerRolesWrite, setPartnerRolesWrite] = useState<RoleEntryWrite[] | []>([]);
   const [rolesWrite, setRolesWrite] = useState<RoleEntryWrite[] | []>([]);
   const [hideRowsUserCannotEdit, setHideRowsUserCannotEdit] = useState(!profileView);
 
@@ -50,50 +48,8 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
   roleValue: number,
   roleID: number | undefined,
   isChecked: boolean
-) => {
-  if(mode === 'Operated') {
-  setOpRolesWrite(prevRoles => {
-    const updatedRoles = [...prevRoles];
-    const existingIndex = updatedRoles.findIndex(
-      entry => entry.apc_id === apc_id && entry.apc_address_id === apc_address_id && entry.user_id === user_id && entry.role === roleValue
-    );
-
-    if (existingIndex > -1) {
-        updatedRoles.splice(existingIndex,1);
-      } else {
-        updatedRoles.push({
-          user_id: user_id,
-          role: roleValue,
-          apc_id: apc_id,
-          apc_address_id: apc_address_id,
-          active: isChecked,
-          id: roleID
-        });
-      }
-      return updatedRoles;
-  });
-} else {
-  setPartnerRolesWrite(prevRoles => {
-    const updatedRoles = [...prevRoles];
-    const existingIndex = updatedRoles.findIndex(
-      entry => entry.apc_id === apc_id && entry.apc_address_id === apc_address_id && entry.user_id === user_id && entry.role === roleValue
-    );
-
-    if (existingIndex > -1) {
-        updatedRoles.splice(existingIndex,1);
-      } else {
-        updatedRoles.push({
-          user_id: user_id,
-          role: roleValue,
-          apc_id: apc_id,
-          apc_address_id: apc_address_id,
-          active: isChecked,
-          id: roleID
-        });
-      }
-    return updatedRoles;
-  });
-}   setRolesWrite(prevRoles => {
+  ) => {
+  setRolesWrite(prevRoles => {
     const updatedRoles = [...prevRoles];
     const existingIndex = updatedRoles.findIndex(
       entry => entry.apc_id === apc_id && entry.apc_address_id === apc_address_id && entry.user_id === user_id && entry.role === roleValue
@@ -116,33 +72,42 @@ export default function PermissionDashboards({ profileView, allUserRoles = [], a
   };
 
   async function handleClickSave () {
+    if(token === '') return;
     if(mode === 'Operated') {
-      const permissionResult = await writeorUpadateUserRoles(rolesWrite,'OPERATOR_USER_PERMISSIONS');
+      try{
+        const permissionResult = await insertOrUpdatePermissions(rolesWrite,'OPERATOR_USER_PERMISSIONS', token);
       if(!permissionResult.ok) {
         notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${permissionResult.message}\n\n(TLDR: Permissions are NOT saved)`);
-        setOpRolesWrite([]);
-        setRolesWrite([]);
       } else {
         notifyStandard(`Permissions are saved.  Let's call it a clean tie-in.\n\n(TLDR: Permissions ARE saved)`);
-        setOpRolesWrite([]);
+      }
+      } catch(error) {
+          const err = error as Error
+          const parsed = JSON.parse(err.message)
+          notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${parsed.message}\n\n(TLDR: Permissions are NOT saved)`);
+      } finally{
         setRolesWrite([]);
+        return;
       }
       
     } else {
-      const permissionResult = await writeorUpadateUserRoles(rolesWrite, 'PARTNER_USER_PERMISSIONS'); 
+      try{
+        const permissionResult = await insertOrUpdatePermissions(rolesWrite,'PARTNER_USER_PERMISSIONS', token);
       if(!permissionResult.ok) {
         notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${permissionResult.message}\n\n(TLDR: Permissions are NOT saved)`);
-        setPartnerRolesWrite([]);
-        setRolesWrite([]);
       } else {
         notifyStandard(`Permissions are saved.  Let's call it a clean tie-in.\n\n(TLDR: Permissions ARE saved)`);
-        setPartnerRolesWrite([]);
+      }
+      } catch(error) {
+          const err = error as Error
+          const parsed = JSON.parse(err.message)
+          notifyFailure(`Permissions have NOT been saved.  Let's call it a busted pipe.\n\n${parsed.message}\n\n(TLDR: Permissions are NOT saved)`);
+      } finally{
         setRolesWrite([]);
+        return;
       }
     }
-    return;
   }
-
 
   return (
     <>

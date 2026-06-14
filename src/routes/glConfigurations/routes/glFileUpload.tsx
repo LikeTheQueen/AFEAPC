@@ -1,16 +1,21 @@
-import { useMemo, useState } from "react";
-import type { GLCodeRowData } from 'src/types/interfaces';
-import { writeGLAccountlistFromSourceToDB } from 'provider/write';
+import { useEffect, useMemo, useState } from "react";
+import { type GLCodeRowDataWrite, type GLCodeRowData } from 'src/types/interfaces';
+import { insertGLAccount } from 'provider/write';
 import { notifyFailure, notifyStandard, useWarnUnsavedChanges } from 'src/helpers/helpers';
 import { OperatorDropdownMultiSelect } from 'src/routes/sharedComponents/operatorDropdownMultiSelect';
 import { PartnerDropdownMultiSelect } from 'src/routes/sharedComponents/partnerDropdownMultiSelect';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { getDistinctAccountsByProperties, parseRowsToAccountData, readWorkbook, validateHeaders } from 'src/helpers/fileUploadHelpers';
+import { useSupabaseData } from "src/types/SupabaseContext";
 
 const expectedHeaders = ["account_number", "account_group", "account_description"];
 
 export default function GLFileUpload() {
+  const { session } = useSupabaseData();
+  const token = session?.access_token ?? '';
   const [data, setData] = useState<GLCodeRowData[]>([]);
+  const [dataOperatedCodes, setDataOperatedCodes] = useState<GLCodeRowDataWrite[]>([]);
+  const [dataNonOperatedCodes, setDataNonOperatedCodes] = useState<GLCodeRowDataWrite[]>([]);
   const [fileName, setFileName] = useState('');
   const [rowsToShow, setRowsToShow] = useState<GLCodeRowData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -85,21 +90,119 @@ export default function GLFileUpload() {
   };
 
   const handleClickSave = async () => {
-    const writeAccountsToDBResults = await writeGLAccountlistFromSourceToDB(data);
-
-    if(!writeAccountsToDBResults.ok) {
-      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes: ${writeAccountsToDBResults.message})`);
-    }
-
-    if(writeAccountsToDBResults.ok) {
-      notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
-    }
+    if(data.length < 1 || token === '') return;
     
-    setIsDisabled(false); 
-    setFileName(''); 
-    setData([]); 
-    setDistinctAccountArray([]); 
-  }
+    if(dataNonOperatedCodes.length > 0 && dataOperatedCodes.length > 0) {
+      try{
+        const [writeAccountCodeNONOPResults, writeAccountCodeOPResults] = await Promise.all([
+          insertGLAccount(dataNonOperatedCodes, 'GL_CODES_NONOP', token),
+          insertGLAccount(dataOperatedCodes, 'GL_CODES_OP', token),
+        ]);
+
+        if(writeAccountCodeNONOPResults.ok && writeAccountCodeOPResults.ok) {
+          notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
+          setIsDisabled(false); 
+          setFileName(''); 
+          setData([]); 
+          setDistinctAccountArray([]); 
+          setDataNonOperatedCodes([]);
+          setDataOperatedCodes([]);
+        }
+        if(!writeAccountCodeNONOPResults.ok && !writeAccountCodeOPResults.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes for both Operated and Non-Operated)`);
+        }
+        if(!writeAccountCodeNONOPResults.ok && writeAccountCodeOPResults.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the Non Op account codes: ${writeAccountCodeNONOPResults.message})`);
+        }
+        if(writeAccountCodeNONOPResults.ok && !writeAccountCodeOPResults.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the Operated account codes: ${writeAccountCodeOPResults.message})`);
+        }
+      } catch(error) {
+        notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes for both Operated and Non-Operated)`);
+        setIsDisabled(false); 
+        setFileName(''); 
+        setData([]); 
+        setDistinctAccountArray([]); 
+        setDataNonOperatedCodes([]);
+        setDataOperatedCodes([]);
+      } finally{
+        return;
+      }
+    };
+
+    if(dataOperatedCodes.length > 0 && dataNonOperatedCodes.length < 1) {
+      try{
+        const writeAccountCodesResult = await insertGLAccount(dataOperatedCodes, 'GL_CODES_OP', token)
+        if(!writeAccountCodesResult.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the Operated account codes: ${writeAccountCodesResult.message})`);
+        }
+        notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
+        setIsDisabled(false); 
+        setFileName(''); 
+        setData([]); 
+        setDistinctAccountArray([]); 
+        setDataNonOperatedCodes([]);
+        setDataOperatedCodes([]);
+      } catch(error) {
+        notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes)`);
+        setIsDisabled(false); 
+        setFileName(''); 
+        setData([]); 
+        setDistinctAccountArray([]); 
+        setDataNonOperatedCodes([]);
+        setDataOperatedCodes([]);
+      } finally{
+        return;
+      }
+    };
+
+    if(dataOperatedCodes.length < 1 && dataNonOperatedCodes.length > 0) {
+      try{
+        const writeAccountCodesResult = await insertGLAccount(dataNonOperatedCodes, 'GL_CODES_NONOP', token)
+        if(!writeAccountCodesResult.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the Non-Operated account codes: ${writeAccountCodesResult.message})`);
+        }
+        notifyStandard(`Changes tucked in safely.  Now they need to be mapped.\n\n(TLDR: GL Account Codes ARE saved)`);
+        setIsDisabled(false); 
+        setFileName(''); 
+        setData([]); 
+        setDistinctAccountArray([]); 
+        setDataNonOperatedCodes([]);
+        setDataOperatedCodes([]);
+      } catch(error) {
+        notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the account codes)`);
+        setIsDisabled(false); 
+        setFileName(''); 
+        setData([]); 
+        setDistinctAccountArray([]); 
+        setDataNonOperatedCodes([]);
+        setDataOperatedCodes([]);
+      } finally{
+        return;
+      }
+    };
+  };
+
+  useEffect(() => {
+    const dataOP: GLCodeRowDataWrite[] = data
+    .filter(r => r.apc_op_id != null)
+    .map(r => ({
+            account_number: r.account_number,
+            account_group: r.account_group,
+            account_description: r.account_description,
+            apc_id: r.apc_op_id
+        }));
+    const dataNONOP: GLCodeRowDataWrite[] = data
+    .filter(r => r.apc_part_id != null)
+    .map(r => ({
+            account_number: r.account_number,
+            account_group: r.account_group,
+            account_description: r.account_description,
+            apc_id: r.apc_part_id
+        }));
+    setDataOperatedCodes(dataOP);
+    setDataNonOperatedCodes(dataNONOP);
+  },[data]);
 
   return (
     <>

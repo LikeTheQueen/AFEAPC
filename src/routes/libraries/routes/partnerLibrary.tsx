@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PartnerRowData } from 'src/types/interfaces';
-import { updatePartnerProcessedStatus } from 'provider/write';
+import { updatePartnerActiveStatus } from 'provider/write';
 import UniversalPagination from 'src/routes/sharedComponents/pagnation';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
 import { fetchSourceSystemPartners } from "provider/fetch";
@@ -58,18 +58,24 @@ export default function PartnerLibrary() {
   };
 
   async function handleDeletePartner(partnerIdx: number, status: boolean) {
-    const updatePartnerResult = await updatePartnerProcessedStatus(partnerIdx, status);
-    if(updatePartnerResult.ok) {
-      getPartners();
-      notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+    try{
+      const updatePartnerResult = await updatePartnerActiveStatus(partnerIdx, status, token);
+        if(updatePartnerResult.ok) {
+          getPartners();
+          notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
+        }
+        if(!updatePartnerResult.ok) {
+          notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${updatePartnerResult.message})`);
+        return;
+        }
+    } catch(error) {
+        const err = error as Error
+        const parsed = JSON.parse(err.message)
+        notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${parsed.message})`);
+    } finally{
       return;
     }
-
-    if(!updatePartnerResult.ok) {
-      notifyFailure(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${updatePartnerResult.message})`);
-    return;
-    }
-  }
+  };
 
   useEffect(() => {
     if (opAPCID === '') return;

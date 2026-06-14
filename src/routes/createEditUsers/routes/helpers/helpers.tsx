@@ -48,7 +48,7 @@ export const handleNewUser = async(
             await updateUserActiveStatusToInactive(newUser.data, token)
          }
 
-         const userresult = await createNewUserProfile(newUser.data, firstName, lastName, email, active, is_super_user, token, apc_op_id_umbrella, is_org_super_user);
+         await createNewUserProfile(newUser.data, firstName, lastName, email, active, is_super_user, token, apc_op_id_umbrella, is_org_super_user);
 
          if(roles.length>0) {
             const opRoles = filterOperatorRolePermissions(roles, newUser.data);

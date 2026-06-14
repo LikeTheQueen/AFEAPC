@@ -1,7 +1,6 @@
 import  supabase  from './supabase';
-import type { AddressType, ApiResponse, GLCodeRowData, GLMappingRecord, OperatorPartnerRecord, OperatorType, ParentCompany, ParentCompanyWrite, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
+import type { AddressType, ApiResponse, GLCodeRowData, GLCodeRowDataWrite, GLMappingRecord, OperatorPartnerRecord, OperatorType, ParentCompany, ParentCompanyWrite, PartnerMappingRecord, PartnerRecordToUpdate, PartnerRowData, RoleEntryRead, RoleEntryWrite, RoleTypeSupabaseOperator } from 'src/types/interfaces';
 import { callEdge, callEdgeFile } from 'src/edge';
-import { notifyStandard } from 'src/helpers/helpers';
 
   //INSERT FUNCTIONS API CALLS
 
@@ -20,172 +19,7 @@ import { notifyStandard } from 'src/helpers/helpers';
     return;
   };
 
-  export const updateParentCompanyAdressSupabase = async (address: AddressType) => {
-    const { data, error } = await supabase.from('PARENT_COMPANY_ADDRESS')
-    .update({
-      street: address.street, 
-      suite: address.suite, 
-      city: address.city, 
-      state: address.state, 
-      zip: address.zip, 
-      country: address.country, 
-      active: address.address_active})
-      .eq('id', address.id)
-      .select()
-      .single();
-    if (error) {
-        return { ok: false, data: null, message: error.message};
-      }
-      return {ok: true, data:data, message: undefined};
-  };
-
-  export const writeorUpadateUserRoles = async(roles:RoleEntryWrite[], table: string) => {
-  const withID = roles.filter(role => !(Number.isNaN(role.id)))
-  const withoutID = roles.filter(role => (Number.isNaN(role.id)))
-
-  if (withID.length>0) {
-    const { data, error } = await supabase.from(table).upsert(withID).select();
-    if (error) {
-        writeToFunctionLogs('writeorUpadateUserRoles',error.message, null, 'WARN', 'Manage Permissions UI');
-        return {ok:false, message: error.message};
-      }
-    return {ok:true, message: ''};
-  }
-  if (withoutID.length>0) {
-    const removeIDColumn: RoleEntryWrite[] = withoutID.map(item => ({
-      user_id: item.user_id,
-      apc_id: item.apc_id,
-      apc_address_id: item.apc_address_id,
-      active: item.active,
-      role: item.role
-    }))
-  const { data, error } = await supabase.from(table).insert(removeIDColumn);
   
-  if (error) {
-        writeToFunctionLogs('writeorUpadateUserRoles',error.message, null, 'WARN', 'Manage Permissions UI');
-        return {ok:false, message: error.message};
-      }
-  }
-      return {ok:true, message: ''};
-  };
-
-  export const updatePartnerWithOpID = async(partnerRecordID: PartnerRecordToUpdate[]) => {
-    const ids = partnerRecordID.map(x => x.id);
-    const apc_op_id = partnerRecordID[0].apc_op_id;
-    console.log(apc_op_id,'opid', ids,'ids')
-    const [{ error: partnersError }, { error: partnerAddressError }] = await Promise.all([
-    supabase.from('PARTNERS').update({ 'apc_op_id': apc_op_id }).in('id', ids),
-    supabase.from('PARTNER_ADDRESS').update({ 'apc_op_id': apc_op_id }).in('apc_id', ids)
-    ]);
-    
-    if (partnersError || partnerAddressError) {
-      if(partnersError) {
-        console.error(`Error updating Partner with Operator ID`, partnersError);
-        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${partnersError.message})`);
-      } else if(partnerAddressError) {
-        console.error(`Error updating Partner Address with Operator ID`, partnerAddressError);
-        return notifyStandard(`There was an error claiming the partner address.\n\n(TLDR: ${partnerAddressError.message})`);
-      }
-    }
-      return {ok: true};
-      //return notifyStandard(`Partner address updatedaasasas. Fresh coordinates locked in and the route’s clear. No leaks detected.\n\n(TLDR: Partner Addresses ARE saved)`);
-  };
-
-  export const updatePartnerProcessedMapping = async(partnerSourceID: string[], mapValue: boolean) => {
-   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'mapped': mapValue}).eq('source_id',partnerSourceID).select();
-    
-    if (error) {
-        console.error(`Error adding the Operator's Partner Maps`, error, data);
-        return null;
-      }
-      return data;
-  };
-
-  export const updatePartnerProcessedStatus = async(id: number, status: boolean) => {
-   const {data, error} = await supabase.from('AFE_PARTNERS_PROCESSED').update({'active': status}).eq('id',id).select();
-    
-    if (error) {
-        console.error(`Error updating the Partners Processed Table`, error, data);
-        return {ok: false, message: error.message};
-        //return notifyStandard(`Well shut-in, no data flowed to the database\n\n(TLDR: ERROR saving the partner changes: ${error.message})`);
-      }
-      return {ok: true, message: undefined};
-      //return notifyStandard(`Partner changes saved. Link established and the system didn’t even hiccup.\n\n(TLDR: Partner changes ARE saved)`);
-  };
-
-  export const updatePartnerMapping = async(partnerSourceID: string[], mapValue: boolean) => {
-   const {data, error} = await supabase.from('PARTNERS_CROSSWALK').update({'active': mapValue}).eq('id',partnerSourceID).select();
-    
-    if (error) {
-        console.error(`Error updating the Partner Mapping Record`, error, data);
-        return null;
-      }
-      return data;
-  };
-
-  export const writeGLAccountlistFromSourceToDB = async (accountRecords: GLCodeRowData[]) => {
-    const opRecords = accountRecords
-    .filter(r => r.apc_op_id != null)
-    .map(r => ({
-            account_number: r.account_number,
-            account_group: r.account_group,
-            account_description: r.account_description,
-            apc_id: r.apc_op_id
-        }));
-    const partRecords = accountRecords
-    .filter(r => r.apc_part_id != null)
-    .map(r => ({
-            account_number: r.account_number,
-            account_group: r.account_group,
-            account_description: r.account_description,
-            apc_id: r.apc_part_id
-        }));
-
-    if (opRecords.length > 0) {
-        const { error } = await supabase
-            .from('GL_CODES_OP')
-            .upsert(opRecords, { onConflict: 'account_number, apc_id' })
-            .select();
-        if (error) {
-            writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes for Operator');
-            return { ok: false, message: error.message };
-        }
-    }
-
-    if (partRecords.length > 0) {
-        const { error } = await supabase
-            .from('GL_CODES_NONOP')
-            .upsert(partRecords, { onConflict: 'account_number, apc_id' })
-            .select();
-        if (error) {
-            writeToFunctionLogs('writeGLAccountlistFromSourceToDB', error.message, null, 'ERROR', 'Upload Account Codes for Non-Operator');
-            return { ok: false, message: error.message };
-        }
-    }
-
-    return { ok: true, message: undefined };
-  };
-
-  export const createSupportTicketThread = async(comment: string, comment_date: Date, related_ticket: number ): Promise<ApiResponse<{ related_ticket: { created_by_email: string } }>> => {
-    const { data, error } = await supabase.from('SUPPORT_HISTORY_THREAD').insert({
-      comment: comment, comment_date: comment_date, related_ticket: related_ticket
-    }).select('*, related_ticket(created_by_email)').single();
-    if(error) {
-      return {ok:false, data: null, message: error.message};
-    }
-    return {ok:true, data: data as any, message: null};
-  };
-
-  export const updateSupportTicket = async(id:number, active: boolean, user_id: string, resolution: string): Promise<ApiResponse<{ subject:string, resolution:string, created_by_email:string }>> => {
-    const { data, error } = await supabase.from('SUPPORT_HISTORY').update({
-      active: active, closed_by: user_id, closed_on: new Date(), resolution: resolution, resolution_date: new Date()
-    }).eq('id',id).select().single();
-    if(error) {
-      return {ok:false, data: null, message: error.message};
-    }
-   return {ok:true, data: data as any, message: null};
-  };
-
   interface AFEFilterCondition {
   LeftParenthesis?: string;
   RightParenthesis?: string;
@@ -217,13 +51,21 @@ import { notifyStandard } from 'src/helpers/helpers';
     
     return callEdge<TogglePayload, ToggleResult>("delete_test_records", { table, idNumber, idString }, token);
   };
+//UPSERT DATA
+  export async function insertOrUpdatePermissions(roles: RoleEntryWrite[], table: string, token: string) {
+    
+    type TogglePayload = { roles: RoleEntryWrite[]; table: string; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_or_update_permissions", { roles, table }, token);
+  };
 //INSERT DATA
-  export async function insertAFEHistory(afe_id: string, description: string, type: string, token: string) {
+  export async function insertAFEHistory(afe_id: string, description: string, type: string, purpose: string, token: string) {
     
-    type TogglePayload = { afe_id:string; description: string; type: string; };
-    type ToggleResult  = { ok: true; data: { afe_id: number; description: string; type: string; } } | { ok: false; message: string };
+    type TogglePayload = { afe_id:string; description: string; type: string; purpose: string; };
+    type ToggleResult  = { ok: true; data: any} | { ok: false; message: string };
     
-    return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type }, token);
+    return callEdge<TogglePayload, ToggleResult>("insert_AFE_history", { afe_id, description, type, purpose }, token);
   };
 
   export async function insertSupportTicket(subject: string, message: string, created_by_email: string, token: string) {
@@ -245,7 +87,7 @@ import { notifyStandard } from 'src/helpers/helpers';
   export async function createNewUserProfile(id: string, first_name: string, last_name: string, email: string, active: boolean, is_super_user: boolean, token: string, apc_op_id_umbrella: string, is_org_super_user: boolean) {
     
     type TogglePayload = { id: string; first_name: string; last_name: string; email: string; active: boolean; is_super_user: boolean; apc_op_id_umbrella: string; is_org_super_user: boolean;};
-    type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string; };
+    type ToggleResult  = { ok: true; data: any; } | { ok: false; message: string; };
     
     return callEdge<TogglePayload, ToggleResult>("create_New_User_Profile", { id, first_name, last_name, email, active, is_super_user, apc_op_id_umbrella, is_org_super_user }, token);
   };
@@ -253,7 +95,7 @@ import { notifyStandard } from 'src/helpers/helpers';
   export async function createUserRolesOperator(roles: RoleEntryWrite[], token: string) {
     
     type TogglePayload = { roles: RoleEntryWrite[]; };
-    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("create_Roles_Op_Permission", { roles }, token);
   };
@@ -261,7 +103,7 @@ import { notifyStandard } from 'src/helpers/helpers';
   export async function createUserRolesPartner(roles: RoleEntryWrite[], token: string) {
     
     type TogglePayload = { roles: RoleEntryWrite[]; };
-    type ToggleResult  = { ok: true; data: any[] } | { ok: false; message: string };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("create_Roles_Partner_Permission", { roles }, token);
   };
@@ -272,6 +114,14 @@ import { notifyStandard } from 'src/helpers/helpers';
     type ToggleResult  = { ok: true; id: string; } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("insert_Partner_Record", { partnerRecord }, token);
+  };
+
+  export async function insertGLAccount(glAccountRecord: GLCodeRowDataWrite[], table: string, token: string) {
+    
+    type TogglePayload = { glAccountRecord: GLCodeRowDataWrite[]; table: string; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_gl_account", { glAccountRecord, table }, token);
   };
 
   export async function insertGLMap(glMapRecord: GLMappingRecord[], token: string) {
@@ -354,6 +204,14 @@ import { notifyStandard } from 'src/helpers/helpers';
     return callEdge<TogglePayload, ToggleResult>("insert_non_op", { name, apc_op_id, address }, token);
   };
 
+  export async function insertSupportTicketThread(comment: string, related_ticket:number, token: string) {
+    
+    type TogglePayload = { comment: string; related_ticket:number; };
+    type ToggleResult  = { ok: true; data: any} | { ok: false; message: string; };
+    
+    return callEdge<TogglePayload, ToggleResult>("insert_support_ticket_thread", { comment, related_ticket }, token);
+  };
+
 //UPDATE DATA
   export async function updateGLCodeMapping(id: number, active: boolean, token: string) {
     
@@ -361,6 +219,22 @@ import { notifyStandard } from 'src/helpers/helpers';
     type ToggleResult  = { ok: true; data: { id: number; active: boolean } } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_GL_crosswalk_status", { id, active }, token);
+  };
+
+  export async function updatePartnerMap(id: number, mapValue: boolean, token: string) {
+    
+    type TogglePayload = { id: number; mapValue: boolean; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_partner_mapping", { id, mapValue }, token);
+  };
+
+  export async function updatePartnerActiveStatus(id: number, status: boolean, token: string) {
+    
+    type TogglePayload = { id: number; status: boolean; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_partner_active_status", { id, status }, token);
   };
 
   export async function updateAFEPartnerStatus(id: string, status: string, token: string) {
@@ -412,6 +286,14 @@ export async function updateOperatorNameStatus(operatorName: string, activeStatu
   };
   
 
+export async function updateParentCOAddress(parentCOAddress: AddressType, token: string) {
+    
+    type TogglePayload = { parentCOAddress: AddressType; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_parent_co_address", { parentCOAddress }, token);
+  };
+
 export async function updateOpAddress(operatorAddress: AddressType, token: string) {
     
     type TogglePayload = { operatorAddress: AddressType; };
@@ -434,6 +316,14 @@ export async function updatePartnerNameStatus(partnerRecord: RoleEntryRead, toke
     type ToggleResult  = { ok: true; data: any[]; } | { ok: false; message: string };
     
     return callEdge<TogglePayload, ToggleResult>("update_Partner_Name_and_Status", { partnerRecord }, token);
+  };
+
+export async function updatePartnerWithOpId(partnerRecord: PartnerRecordToUpdate[], token: string) {
+    
+    type TogglePayload = { partnerRecord: PartnerRecordToUpdate[]; };
+    type ToggleResult  = { ok: true; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_partner_with_opid", { partnerRecord }, token);
   };
  
 export async function updateParentCompany(parentCompany: ParentCompany, token: string) {
@@ -460,3 +350,18 @@ export async function updateUserRecord(id: string, is_org_super_user: boolean, t
     return callEdge<TogglePayload, ToggleResult>("update_user_profile", { id, is_org_super_user }, token);
   };
 
+export async function updateSupportTicketResolution(id: number, active: boolean, user_id: string, resolution: string, token: string) {
+    
+    type TogglePayload = { id: number; active: boolean; user_id: string; resolution: string; };
+    type ToggleResult  = { ok: true; data: any; } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_support_ticket", { id, active, user_id, resolution }, token);
+  };
+
+export async function updateExecuteFilterFields(apc_op_id: string, well_colums:string[], afe_filter: AFEFilterCondition[], token: string) {
+    
+    type TogglePayload = { apc_op_id: string; well_colums:string[]; afe_filter: AFEFilterCondition[]; };
+    type ToggleResult  = { ok: true; data: any } | { ok: false; message: string };
+    
+    return callEdge<TogglePayload, ToggleResult>("update_execute_filter_fields", { apc_op_id, well_colums, afe_filter }, token);
+  };

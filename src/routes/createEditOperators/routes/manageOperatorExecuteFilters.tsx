@@ -1,8 +1,8 @@
 import { fetchAFEExecuteFilters } from 'provider/fetch';
-import { updateOperatorFilterFields } from 'provider/write';
+import { updateExecuteFilterFields } from 'provider/write';
 import { useEffect, useState } from 'react';
 import { OperatorDropdown } from 'src/routes/sharedComponents/operatorDropdown';
-import { notifyStandard } from 'src/helpers/helpers';
+import { notifyFailure, notifyStandard } from 'src/helpers/helpers';
 import { useSupabaseData } from 'src/types/SupabaseContext';
 
 interface AFEFilterCondition {
@@ -107,16 +107,20 @@ export default function OperatorExecuteFilters() {
 
     const handleClickSave = async () => {
         try {
-            const updateResult = await updateOperatorFilterFields(opAPCID, wellColumns, afeFilter);
+            const updateResult = await updateExecuteFilterFields(opAPCID, wellColumns, afeFilter, token);
 
             if (!updateResult.ok) {
-                throw new Error(updateResult.message as any);
+                notifyFailure(`Flow Disrupted.  Your filters weren’t saved. The line didn’t hold.\n\n(TLDR: Operator's AFE Filters and Well Fields DID NOT save.)`);
             }
-            setUpdateSaved(true);
-            setSaveChangesDisabled(true);
-            notifyStandard(`Line Secured.  Your filters are in place and the integration is running tight.\n\n(TLDR: Operator's AFE Filters and Well Fields ARE saved.)`);
+            if(updateResult.ok) {
+                setUpdateSaved(true);
+                setSaveChangesDisabled(true);
+                notifyStandard(`Line Secured.  Your filters are in place and the integration is running tight.\n\n(TLDR: Operator's AFE Filters and Well Fields ARE saved.)`);
+            }
+            
         } catch (error) {
-            notifyStandard(`Flow Disrupted.  Your filters weren’t saved. The line didn’t hold.\n\n(TLDR: Operator's AFE Filters and Well Fields DID NOT save.)`);
+            notifyFailure(`Flow Disrupted.  Your filters weren’t saved. The line didn’t hold.\n\n(TLDR: Operator's AFE Filters and Well Fields DID NOT save.)`);
+        } finally{
             return;
         }
     };

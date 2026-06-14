@@ -4,8 +4,8 @@ import type { PartnerMappingDisplayRecord } from "src/types/interfaces";
 import LoadingPage from "src/routes/sharedComponents/loadingPage";
 import { ArrowRightIcon, ArrowTurnDownLeftIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { updatePartnerMapping, updatePartnerProcessedMapping } from "provider/write";
-import { notifyStandard } from "src/helpers/helpers";
+import { updatePartnerMap } from "provider/write";
+import { notifyFailure, notifyStandard } from "src/helpers/helpers";
 import { OperatorDropdown } from "src/routes/sharedComponents/operatorDropdown";
 import UniversalPagination from "src/routes/sharedComponents/pagnation";
 import { transformPartnerMapRecordForDisplay } from "src/types/transform";
@@ -58,11 +58,8 @@ export default function PartnerMappingView() {
     const removeMapping = (partnerIDX: number) => {
         const actualIndex = currentPage * maxRowsToShow + partnerIDX;
         const recordFromList = partnerMapRecord[actualIndex];
-        const recordToDeletePartnerProcessedTableArray: string[] = [];
-        const recordToDeletePartnerProcessedTable = recordFromList.source_partner.source_id;
-        const recordToDeleteMappingTableArray: string[] = [];
-        const recordToDeleteMappingTable = recordFromList.id;
-
+        const mappingToDelete = recordFromList.id;
+        
         setPartnerMapRecord(prevMap => {
             const updatedMap = [...prevMap];
             updatedMap.splice(actualIndex, 1);
@@ -70,10 +67,29 @@ export default function PartnerMappingView() {
         });
 
         async function deletePartnerRecord() {
-        recordToDeletePartnerProcessedTableArray.push(recordToDeletePartnerProcessedTable);
-        recordToDeleteMappingTableArray.push(recordToDeleteMappingTable);
-        updatePartnerMapping(recordToDeleteMappingTableArray, false);
-        updatePartnerProcessedMapping(recordToDeletePartnerProcessedTableArray, false);
+            try{
+                const updatePartnerResult = await updatePartnerMap(mappingToDelete, false, token);
+                if(!updatePartnerResult.ok) {
+                    notifyFailure(`Partner pipeline failed to shut in. The mapping remains active.\n\n(TLDR: Partner Mapping is NOT deleted)`);
+                    setPartnerMapRecord(prevMap => {
+                        const updatedMap = [...prevMap];
+                        updatedMap.push(recordFromList);
+                        return updatedMap;
+                    });
+                }
+                if(updatePartnerResult.ok) {
+                    notifyStandard(`Partner pipeline shut in successfully.\n\n(TLDR: Partner Mapping successfully deleted)`);
+                }
+            } catch(error) {
+                const err = error as Error
+                const parsed = JSON.parse(err.message)
+                notifyFailure(`Partner pipeline failed to shut in. The mapping remains active.\n\n(ERROR: ${parsed.message})`);
+                setPartnerMapRecord(prevMap => {
+                        const updatedMap = [...prevMap];
+                        updatedMap.push(recordFromList);
+                        return updatedMap;
+                    });
+            } finally{}
         };
         deletePartnerRecord();
     };
@@ -190,7 +206,7 @@ export default function PartnerMappingView() {
                                                                 <div className="m-2 size-6 pt-1 justify-self-end">
                                                                     <button
                                                                         aria-label="Delete mapping"
-                                                                        onClick={() => { removeMapping(partnerIdx), notifyStandard(`Partner pipeline shut in successfully.\n\n(TLDR: Partner Mapping successfully deleted)`) }}
+                                                                        onClick={() => { removeMapping(partnerIdx) }}
                                                                         className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                         <TrashIcon className="size-5" />
                                                                     </button>
@@ -221,7 +237,7 @@ export default function PartnerMappingView() {
                                                             <div className="size-6 justify-self-center pt-1 mr-3">
                                                                 <button
                                                                     aria-label="Delete mapping"
-                                                                    onClick={() => { removeMapping(partnerIdx), notifyStandard(`Partner pipeline shut in successfully.\n\n(TLDR: Partner Mapping successfully deleted)`) }}
+                                                                    onClick={() => { removeMapping(partnerIdx) }}
                                                                     className="text-red-500 hover:text-red-900 cursor-pointer ">
                                                                     <TrashIcon className="size-5" />
                                                                 </button>
